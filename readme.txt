@@ -5,3 +5,5 @@ raws.py contains classes and methods that allow for flexible querying of DF's ra
 settings.py sets some variables that are used to tell PyDwarf where to find raws, where to put the modified ones, and where to back up the originals, which scripts to run, in which order, and with what arguments. Lots of cool stuff. Scripts should always be located in the scripts/ directory underneath PyDwarf's root directory. Names specified in the list of scripts correspond to functions defined in any file within that directory, and any arguments specified here are passed via **kwargs. The first argument to those functions represents the raws object which can be queried and modified.
 
 pydwarf.py is where the magic happens. Screw around in settings.py before running it, then watch it make all sorts of changes to your raws.
+
+Please look at the scripts within the scripts/ directory for examples of how to work with PyDwarf.
