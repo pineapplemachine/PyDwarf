@@ -1,24 +1,25 @@
 import pydwarf
 from raws import *
-import settings
+from settings import exportsettings as settings
 from utils import copytree
 
 # Actually run the program
 def __main__():
     
-    print 'Running PyDwarf %s' % pydwarf.__version__
+    pydwarf.log = settings.log
+    pydwarf.log.info('Running PyDwarf %s' % pydwarf.__version__)
     
     if os.path.exists(settings.rawsdir):
     
         if settings.backup and settings.backupdir:
             copytree(settings.rawsdir, settings.backupdir)
         else:
-            print 'WARNING: Proceeding without backing up raws.'
+            pydwarf.log.warning('Proceeding without backing up raws.')
         
-        print 'Reading raws...'
+        pydwarf.log.info('Reading raws...')
         r = raws().read(dir=settings.rawsdir, verbose=False)
         
-        print 'Running scripts...'
+        pydwarf.log.info('Running scripts...')
         for script in settings.runscripts:
             
             scriptname = None
@@ -35,33 +36,34 @@ def __main__():
                 scriptfunc = pydwarf.urist.get(script)
             
             if scriptfunc:
-                print 'Running script %s%s...' % (scriptname, (' with args %s' % scriptargs) if scriptargs else '')
+                scriptinfo = 'Running script %s' % scriptname
+                if scriptargs: scriptinfo = '%s with args %s' % (scriptinfo, scriptargs)
+                pydwarf.log.info('%s...' % scriptinfo)
                 
                 try:
                     response = scriptfunc(r, **scriptargs) if scriptargs else scriptfunc(r)
                     success = response.get('success')
                     status = response['status'] if 'status' in response else ('Script ran %ssuccessfully' % ('' if success else 'un'))
-                    print '%s: %s' % ('SUCCESS' if success else 'FAILURE', status)
+                    pydwarf.log.info('%s: %s' % ('SUCCESS' if success else 'FAILURE', status))
                     
                 except Exception:
-                    print 'WARNING: Unhandled exception while running script %s.' % scriptname
-                    traceback.print_exc()
+                    pydwarf.log.exception('Unhandled exception while running script %s.' % scriptname)
                     
                 else:
-                    print 'Finished running script %s.' % scriptname
+                    pydwarf.log.info('Finished running script %s.' % scriptname)
                     
             else:
-                print 'WARNING: Failed to load script %s.' % scriptname
+                pydwarf.log.warning('Failed to load script %s.' % scriptname)
         
-        print 'Writing changes to raws...'
+        pydwarf.log.info('Writing changes to raws...')
         outputdir = settings.outputdir if settings.outputdir else settings.rawsdir
         if not os.path.exists(outputdir): os.makedirs(outputdir)
         r.write(outputdir, verbose=False)
         
-        print 'All done!'
+        pydwarf.log.info('All done!')
         
     else:
-        print 'Specified raws directory does not exist.'
+        pydwarf.log.info('Specified raws directory does not exist.')
 
 if __name__ == "__main__":
     __main__()
