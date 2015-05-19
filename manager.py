@@ -6,7 +6,6 @@ from utils import copytree
 # Actually run the program
 def __main__():
     
-    pydwarf.log = settings.log
     pydwarf.log.info('Running PyDwarf %s' % pydwarf.__version__)
     
     if os.path.exists(settings.rawsdir):
@@ -26,8 +25,8 @@ def __main__():
             scriptfunc = None
             scriptargs = None
             if isinstance(script, tuple) or isinstance(script, list):
-                script = script[0]
                 scriptargs = script[1]
+                script = script[0]
             if callable(script):
                 scriptname = script.__name__
                 scriptfunc = script
@@ -53,7 +52,7 @@ def __main__():
                     pydwarf.log.info('Finished running script %s.' % scriptname)
                     
             else:
-                pydwarf.log.warning('Failed to load script %s.' % scriptname)
+                pydwarf.log.error('Failed to load script %s.' % scriptname)
         
         pydwarf.log.info('Writing changes to raws...')
         outputdir = settings.outputdir if settings.outputdir else settings.rawsdir

@@ -3,14 +3,20 @@
 import sys
 sys.path.append('../')
 
+import pydwarf
+
 __all__ = []
-loaded = {}
 
 import pkgutil
 import inspect
 
 for loader, name, is_pkg in pkgutil.walk_packages(__path__):
-    module = loader.find_module(name).load_module(name)
-
-    for name, value in inspect.getmembers(module):
-        if not name.startswith('__'): __all__.append(name)
+    try:
+        pydwarf.log.debug('Loading script %s...' % name)
+        module = loader.find_module(name).load_module(name)
+        globals()[name] = module
+        __all__.append(name)
+        # for name, value in inspect.getmembers(module):
+        #     if not name.startswith('__'): __all__.append(name)
+    except:
+        pydwarf.log.exception('Failed to load script %s' % name)

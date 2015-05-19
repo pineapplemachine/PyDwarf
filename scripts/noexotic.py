@@ -2,8 +2,8 @@ import pydwarf
 
 @pydwarf.urist(
     version = 'alpha',
-    description = 'Replaces all [PET_EXOTIC] and [MOUNT_EXOTIC] tags with their non-exotic counterparts.',
-    author = 'Sophie Kirschner'
+    author = 'Sophie Kirschner',
+    description = 'Replaces all [PET_EXOTIC] and [MOUNT_EXOTIC] tags with their non-exotic counterparts.'
 )
 def noexotic(raws):
     pets = raws.all('PET_EXOTIC')

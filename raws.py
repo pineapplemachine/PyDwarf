@@ -151,7 +151,7 @@ class rawstoken:
             self.tabs = 0
             
     def __str__(self):
-        return '[%s%s]' %(self.value, (':%s' % ':'.join(self.args)) if self.args and len(self.args) else '')
+        return '[%s%s]' %(self.value, (':%s' % ':'.join([str(a) for a in self.args])) if self.args and len(self.args) else '')
     def __repr__(self):
         return '%s%s%s' % (self.prefix if self.prefix else '', str(self), self.suffix if self.suffix else '')
     
@@ -175,20 +175,23 @@ class rawstoken:
     '''
     Starting with this token, execute some query until any of the included checks hits a limit or until there are no more tokens to check.
     '''
-    def query(self, checks, reverse=False):
+    def query(self, checks, range=None, reverse=False):
         token = self.prev if reverse else self.next
         limit = False
+        count = 0
         for check in checks:
-            check.result = []
-        while token and (not limit):
-            for check in checks:
-                if check.match(token):
-                    check.result.append(token)
-                    if check.limit and len(check.result) >= check.limit:
-                        limit = True
-                        break
+            (checks[check] if isinstance(checks, dict) else check).result = []
+        while token and (not limit) and ((not range) or range > count):
+            for check in (checks.itervalues() if isinstance(checks, dict) else checks):
+                if (not check.limit) or len(check.result) < check.limit:
+                    if check.match(token):
+                        check.result.append(token)
+                elif check.limit_terminates:
+                    limit = True
+                    break
             token = token.prev if reverse else token.next
-        return [check.result for check in checks]
+            count += 1
+        return checks
     
     '''
     Get the first matching token.
@@ -197,7 +200,7 @@ class rawstoken:
         checks = (
             rawstokenquery(pretty=pretty, limit=1, **kwargs)
         ,)
-        result = self.query(checks, reverse)[0]
+        result = self.query(checks, reverse)[0].result
         return result[0] if result and len(result) else None
     
     '''
@@ -207,7 +210,7 @@ class rawstoken:
         checks = (
             rawstokenquery(pretty=pretty, **kwargs)
         ,)
-        return self.query(checks, reverse)[0]
+        return self.query(checks, reverse)[0].result
     
     '''
     Get a list of all tokens up to a match.
@@ -217,7 +220,37 @@ class rawstoken:
             rawstokenquery(),
             rawstokenquery(pretty=pretty, limit=1, **kwargs)
         )
-        return self.query(checks, reverse)[0]
+        return self.query(checks, reverse)[0].result
+        
+    '''
+    Get the first matching token, but abort when a token matching arguments prepended with 'until_' is encountered.
+    '''
+    def getuntil(self, pretty=None, until_pretty=None, reverse=False, **kwargs):
+        until_args, condition_args = {}, {}
+        for arg, value in kwargs.iteritems(): (until_args if arg.startswith('until_') else condition_args)[arg] = value
+        checks = (
+            rawstokenquery(pretty=until_pretty, limit=1, **until_args),
+            rawstokenquery(pretty=pretty, limit=1, **condition_args)
+        )
+        result = self.query(checks, reverse)[1].result
+        return result[0] if result and len(result) else None
+        
+    '''
+    Get a list of all matching tokens, but abort when a token matching arguments prepended with 'until_' is encountered.
+    '''
+    def alluntil(self, pretty=None, until_pretty=None, reverse=False, **kwargs):
+        until_args, condition_args = self.argsuntil(**kwargs)
+        checks = (
+            rawstokenquery(pretty=until_pretty, limit=1, **until_args),
+            rawstokenquery(pretty=pretty, **condition_args)
+        )
+        return self.query(checks, reverse)[1].result
+        
+    # utility function for getuntil and alluntil methods
+    def argsuntil(self, **kwargs):
+        until_args, condition_args = {}, {}
+        for arg, value in kwargs.iteritems(): (until_args if arg.startswith('until_') else condition_args)[arg] = value
+        return until_args, condition_args
         
     '''
     Determine whether this token matches some constraints.
@@ -261,8 +294,48 @@ class rawstoken:
         if right: right.prev = left
         return self
 
+class rawsboolquery:
+    def __init__(self, subs, operand=None, *args):
+        self.subs = subs
+        self.operand = operand
+        self.args = args
+    def match(self, token):
+        if self.operand == 'one':
+            count = 0
+            for sub in subs:
+                count += sub.match(token)
+                if count > 1: return False
+            return count == 1
+        elif self.operand == 'count' and self.args and len(self.args) == 1:
+            count = 0
+            for sub in subs:
+                count += sub.match(token)
+                if count > self.args[0]: return False
+            return count == self.args[0]
+        elif self.operand == 'any':
+            for sub in subs:
+                if sub.match(token): return True
+        elif self.operand == 'all':
+            for sub in subs:
+                if not sub.match(token): return False
+            return True
+    @staticmethod
+    def one(subs): return rawsboolquery(subs, 'one')
+    @staticmethod
+    def any(subs): return rawsboolquery(subs, 'any')
+    @staticmethod
+    def all(subs): return rawsboolquery(subs, 'all')
+    @staticmethod
+    def count(subs, number): return rawsboolquery(subs, 'count', number)
+
 class rawstokenquery:
-    def __init__(self, pretty=None, exact_token=None, exact_value=None, exact_args=None, exact_arg=None, re_value=None, re_args=None, re_arg=None, limit=None):
+    def __init__(self,
+        pretty=None,
+        exact_token=None, exact_value=None, exact_args=None, exact_arg=None,
+        re_value=None, re_args=None, re_arg=None, 
+        limit=None, limit_terminates=True,
+        anti=None
+    ):
         self.pretty = pretty
         if pretty:
             token = rawstoken(pretty=pretty)
@@ -276,7 +349,14 @@ class rawstokenquery:
         self.re_args = re_args
         self.re_arg = re_arg
         self.limit = limit
+        self.limit_terminates = limit_terminates
+        self.anti = anti
+    @staticmethod
+    def anti(**kwargs): return rawsboolquery(anti=True, **kwargs)
     def match(self, token):
+        result = self.basematch(token)
+        return not result if self.anti else result
+    def basematch(self, token):
         if self.exact_token == token:
             return False
         elif self.exact_value is not None and self.exact_value != token.value:

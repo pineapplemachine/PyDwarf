@@ -2,8 +2,8 @@ import pydwarf
 
 @pydwarf.urist(
     version = 'alpha',
-    description = 'Changes the appearance of each deer from a brown D to yellow d.',
-    author = 'Sophie Kirschner'
+    author = 'Sophie Kirschner',
+    description = 'Changes the appearance of each deer from a brown D to yellow d.'
 )
 def deerappear(raws):
     # Find the first token that looks like [CREATURE:DEER]

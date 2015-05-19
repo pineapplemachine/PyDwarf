@@ -24,4 +24,4 @@ class urist:
         return fn
     @staticmethod
     def get(name):
-        return urist.registered[name]
+        return urist.registered.get(name)
