@@ -20,12 +20,14 @@ rawsdir = os.path.join(dfdir, 'raw/objects')
 
 # Optionally specify an output directory which differs from the raws input directory.
 # Set to None to output to the raws directory itself.
-outputdir = os.path.join(dfdir, 'rawbak')
+outputdir = 'output/'
 
-# Runs each of these scripts in sequential order.
+# Runs each of the scripts in scripts/ in sequential order.
 # To run a script without arguments, simply put a string in the list.
 # To run a script with arguments, put a tuple in the list like: ('script_name', {'arg0': 1, 'arg1': 2})
-scripts = [
+# A function can optionally be specified in place of a string, and that function will be run instead.
+import scripts
+runscripts = [
     'deerappear',
     'noexotic'
 ]

@@ -1,4 +1,10 @@
-# Make each deer a yellow 'd' instead of a brown 'D'
+import pydwarf
+
+@pydwarf.urist(
+    version = 'alpha',
+    description = 'Changes the appearance of each deer from a brown D to yellow d.',
+    author = 'Sophie Kirschner'
+)
 def deerappear(raws):
     # Find the first token that looks like [CREATURE:DEER]
     deertoken = raws.get('CREATURE:DEER')
@@ -12,8 +18,8 @@ def deerappear(raws):
             deertile.args[0] = "'d'"
             # Change the token to look like [COLOR:6:0:1]
             deercolor.args[2] = '1'
-            return {'success': True}
+            return pydwarf.success()
         else:
-            return {'success': False, 'status': 'Appearance of deer token was not what I expected.'}
+            return pydwarf.failure('Appearance of deer token was not what I expected.')
     else:
-        return {'success': False, 'status': 'Could not find deer token.'}
+        return pydwarf.failure('I couldn\'t find the deer token.')
