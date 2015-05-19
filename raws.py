@@ -4,7 +4,7 @@ import re
 class raws:
     def __init__(self, dfdir=None):
         self.dfdir = dfdir
-        self.dfrawsdir = os.path.join(dfdir, 'raw/objects')
+        self.dfrawsdir = os.path.join(dfdir, 'raw/objects') if dfdir else None
         self.files = {}
         
     def readfile(self, path):
