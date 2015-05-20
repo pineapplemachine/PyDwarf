@@ -10,9 +10,10 @@ class raws:
         
     def getfile(self, filename):
         return self.files.get(filename)
-    def addfile(self, filename):
+    def addfile(self, filename=None, rfile=None):
+        if rfile and not filename: filename = rfile.header
         if filename in self.files: raise KeyError
-        rfile = rawsfile()
+        if not rfile: rfile = rawsfile(header=filename)
         self.files[filename] = rfile
         return rfile
     
@@ -162,7 +163,7 @@ class rawsfile:
         root = self.root()
         return root.all(pretty=pretty, includeself=True, **kwargs) if root else []
     def add(self, pretty=None, **kwargs):
-        return tail.add(pretty=pretty, **kwargs)
+        return self.tail().add(pretty=pretty, **kwargs)
         
 class rawstoken:
     def __init__(self, pretty=None, token=None, value=None, args=None, prefix=None, suffix=None, prev=None, next=None):
@@ -262,8 +263,7 @@ class rawstoken:
     Get the first matching token, but abort when a token matching arguments prepended with 'until_' is encountered.
     '''
     def getuntil(self, pretty=None, until_pretty=None, range=None, includeself=False, reverse=False, **kwargs):
-        until_args, condition_args = {}, {}
-        for arg, value in kwargs.iteritems(): (until_args if arg.startswith('until_') else condition_args)[arg] = value
+        until_args, condition_args = self.argsuntil(**kwargs)
         checks = (
             rawstokenquery(pretty=until_pretty, limit=1, **until_args),
             rawstokenquery(pretty=pretty, limit=1, **condition_args)
@@ -315,24 +315,24 @@ class rawstoken:
         if reverse:
             token.next = self
             token.prev = self.prev
-            self.prev.next = token
+            if self.prev: self.prev.next = token
             self.prev = token
         else:
             token.prev = self
             token.next = self.next
-            self.next.prev = token
+            if self.next: self.next.prev = token
             self.next = token
         return token
     def addall(self, tokens, reverse=False):
         if reverse:
             tokens[-1].next = self
             tokens[0].prev = self.prev
-            self.prev.next = tokens[0]
+            if self.prev: self.prev.next = tokens[0]
             self.prev = tokens[-1]
         else:
             tokens[0].prev = self
             tokens[-1].next = self.next
-            self.next.prev = tokens[-1]
+            if self.next: self.next.prev = tokens[-1]
             self.next = tokens[0]
         return tokens
     
@@ -388,7 +388,7 @@ class rawstokenquery:
             return False
         elif self.exact_value is not None and self.exact_value != token.value:
             return False
-        elif self.re_value is not None and self.re_value.match(token.value) == None:
+        elif self.re_value is not None and re.match(self.re_value, token.value) == None:
             return False
         if self.exact_args is not None:
             if not (len(self.exact_args) == len(token.args) and all([self.exact_args[i] == None or str(self.exact_args[i]) == token.args[i] for i in xrange(0, len(token.args))])):
