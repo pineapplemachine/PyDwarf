@@ -18,6 +18,9 @@ def mutator_remove(value):
         if tokenresult:
             for result in tokenresult: result.remove()
     return fn
+# Generic filters
+def filter_ore_veins(value):
+    return len(value.stoneclarity['ORE']) and any([env.args[1] == 'VEIN' for env in (value.stoneclarity['ENVIRONMENT'] + value.stoneclarity['ENVIRONMENT_SPEC'])])
 
 # Default to these rules when none are passed
 default_rules = [
@@ -42,13 +45,13 @@ default_rules = [
     # Make cobaltite not look like ore
     {
         'name': 'cobaltite',
-        'id': 'COBALTITE',
+        'id': 'COBALTITE', # Applies only to cobaltite
         'mutator': (mutator_generic('TILE', "'%'"), mutator_remove('ITEM_SYMBOL'))
     },
-    # Make all ores be represented by £ on the map and * in stockpiles
+    # Make all ores in veins be represented by £ on the map and * in stockpiles
     {
         'name': 'ore',
-        'group': 'ORE',
+        'filter': filter_ore_veins, # Applies to anything matching the filter: That is, an ore which appears in veins.
         'mutator': (mutator_generic('TILE', '156'), mutator_generic('ITEM_SYMBOL', "'*'"))
     },
     # Make all gems be represented by ☼ on the map and in stockpiles
@@ -118,7 +121,7 @@ def autofuels(raws, log=True):
     return fuels
 
 # Build dictionaries which inform stoneclarity of how various inorganics might be identified
-def builddicts(raws, fuels, log=True):
+def builddicts(query, raws, fuels, log=True):
     if log: pydwarf.log.info('Building dicts...')
     groups = {}
     ids = {}
@@ -126,52 +129,55 @@ def builddicts(raws, fuels, log=True):
     if log: pydwarf.log.info('I found %d inorganics. Processing...' % len(inorganics))
     for token in inorganics:
         # Get results of query
-        query = token.query(inorganics_query)
+        query = token.query(query)
         token.stoneclarity = {i: j.result for i, j in query.iteritems()}
         # Handle the simpler groups, 1:1 correspondence between whether some property was found and whether the inorganic belongs in some group
         for groupname in token.stoneclarity:
             if groupname not in ('FUEL', 'ENVIRONMENT', 'ENVIRONMENT_SPEC') and len(token.stoneclarity[groupname]):
-                if groupname not in groups: groups[groupname] = []
-                groups[groupname].append(token)
+                if groupname not in groups: groups[groupname] = set()
+                groups[groupname].add(token)
         # Handle metamorphic, sedimentary, igneous
         # Also veins and clusters, etc.
         for env in token.stoneclarity['ENVIRONMENT']:
             if env.nargs >= 2:
                 envtype = 'ENVIRONMENT_'+env.args[0]
-                veintype = env.args[1]
-                if envtype not in groups: groups[envtype] = []
-                if veintype not in groups: groups[veintype] = []
-                groups[envtype].append(token)
-                groups[veintype].append(token)
+                veintype = 'ENVIRONMENT_'+env.args[1]
+                if envtype not in groups: groups[envtype] = set()
+                if veintype not in groups: groups[veintype] = set()
+                groups[envtype].add(token)
+                groups[veintype].add(token)
         for env in token.stoneclarity['ENVIRONMENT_SPEC']:
             if env.nargs >= 2:
                 spectype = 'ENVIRONMENT_SPEC_'+env.args[0]
-                veintype = env.args[1]
-                if spectype not in groups: groups[spectype] = []
-                if veintype not in groups: groups[veintype] = []
-                groups[envtype].append(token)
-                groups[veintype].append(token)
+                veintype = 'ENVIRONMENT_SPEC_'+env.args[1]
+                if spectype not in groups: groups[spectype] = set()
+                if veintype not in groups: groups[veintype] = set()
+                groups[envtype].add(token)
+                groups[veintype].add(token)
         # Handle ids and fuels
         if token.nargs == 1:
             id = token.args[0]
             ids[id] = token
             if id in fuels:
-                if 'FUEL' not in groups: groups['FUEL'] = []
-                groups['FUEL'].append(token)
+                if 'FUEL' not in groups: groups['FUEL'] = set()
+                groups['FUEL'].add(token)
     if log: pydwarf.log.info('Finished building dicts! Found %d groups and %d ids.' % (len(groups), len(ids)))
     return groups, ids
 
-# From dicts built by builddicts and given a rule, return a list of inorganics which match that rule
+# From dicts built by builddicts and given a rule, return a set of inorganics which match that rule
 def getrulematches(rule, groups, ids):
-    matches = []
+    matches = set()
     if 'group' in rule:
         matchgroups = (rule['group'],) if isinstance(rule['group'], basestring) else rule['group']
         for groupname in matchgroups:
-            if groupname in groups: matches += groups[groupname]
+            if groupname in groups: matches = matches.union(groups[groupname])
     if 'id' in rule:
         matchids = (rule['id'],) if isinstance(rule['id'], basestring) else rule['id']
         for id in matchids:
-            if id in ids: matches.append(ids[id])
+            if id in ids: matches.add(ids[id])
+    if 'filter' in rule:
+        for inorganic in ids.itervalues():
+            if rule['filter'](inorganic): matches.add(inorganic)
     return matches
     
 # Applies a list of rules to matches based on built dicts
@@ -199,7 +205,7 @@ def applyrules(rules, groups, ids, log=True):
             other than default_rules to customize behavior, and refer to default_rules as an example of how rules are
             expected to be represented''',
         'query': '''This query is run for each inorganic found and looks for tokens that should be recognized as
-            indicators that some inorganic belongs to some group. Refer to the default query for more information.'''
+            indicators that some inorganic belongs to some group. Refer to the default query for more information.''',
         'fuels': '''If left unspecified, stoneclarity will attempt to automatically detect which inorganics are fuels.
             If you know that no prior script added new inorganics which can be made into coke then you can cut down a
             on execution time by setting fuels to fuels_vanilla.'''
@@ -207,7 +213,7 @@ def applyrules(rules, groups, ids, log=True):
 )
 def stoneclarity(raws, rules=default_rules, query=default_inorganics_query, fuels=None):
     if rules and len(rules):
-        groups, ids = builddicts(raws, fuels if fuels else autofuels(raws))
+        groups, ids = builddicts(query, raws, fuels if fuels else autofuels(raws))
         applyrules(rules, groups, ids)
         return pydwarf.success('Finished applying %d rules to %d inorganic groups and %d inorganic ids.' % (len(rules), len(groups), len(ids)))
     else:
