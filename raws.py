@@ -2,28 +2,32 @@ import os
 import re
 
 class raws:
-    def __init__(self, dfdir=None):
-        self.dfdir = dfdir
-        self.dfrawsdir = os.path.join(dfdir, 'raw/objects') if dfdir else None
+    '''Represents as a whole all the raws contained within a directory.'''
+    
+    def __init__(self):
+        '''Constructor for raws object.'''
         self.files = {}
         
-    def readfile(self, path):
-        with open(path, 'rb') as rfile:
-            self.files[os.path.basename(path)] = rawsfile(path, rfile)
+    def getfile(self, filename):
+        return self.files.get(filename)
     def addfile(self, filename):
-        self.files[filename] = rawsfile(parse=False)
+        if filename in self.files: raise KeyError
+        rfile = rawsfile()
+        self.files[filename] = rfile
+        return rfile
     
     '''
     Read raws from some directory.
     If no directory is specified, reads from a dfrawsdir attribute that can be indirectly specified in the constructor.
     '''
-    def read(self, dir=None, verbose=None):
-        if not dir: dir = self.dfrawsdir
+    def read(self, dir, log=None):
         for filename in os.listdir(dir):
             path = os.path.join(dir, filename)
             if filename.endswith('.txt') and os.path.isfile(path):
-                if verbose: print verbose % path
-                self.readfile(path)
+                if log: log.debug('Reading file %s...' % path)
+                with open(path, 'rb') as rfile:
+                    filenamekey = os.path.splitext(os.path.basename(path))[0]
+                    self.files[filenamekey] = rawsfile(path=path, rfile=rfile)
         return self
                 
     '''
@@ -31,13 +35,13 @@ class raws:
     If no directory is specified, saves to a dfrawsdir attribute that can be indirectly specified in the constructor.
     Be careful! You should back up your raws before overwriting them in this way.
     '''
-    def write(self, dir=None, verbose=None):
-        if not dir: dir = self.dfrawsdir
+    def write(self, dir, log=None):
         for filename in self.files:
             path = os.path.join(dir, filename)
+            if not path.endswith('.txt'): path += '.txt'
             with open(path, 'wb') as rfile:
-                if verbose: print verbose % path
-                rfile.write(repr(self.files[filename]))
+                if log: log.debug('Writing file %s...' % path)
+                self.files[filename].write(rfile)
         return self
     
     '''
@@ -65,18 +69,68 @@ class raws:
         for filename in self.files:
             for token in self.files[filename].tokens():
                 yield token
+             
+    @staticmethod
+    def pretty(data, implicitbraces=True):
+        tokens = [] # maintain a sequential list of tokens
+        pos = 0     # byte position in data
+        if data.find('[') == -1 and data.find(']') == -1:
+            if implicitbraces:
+                tokenparts = data.split(':')
+                token = rawstoken(
+                    value=tokenparts[0],
+                    args=tokenparts[1:],
+                )
+                return [token]
+            else:
+                raise ValueError
+        else:
+            while pos < len(data):
+                token = None
+                open = data.find('[', pos)
+                if open >= 0 and open < len(data):
+                    close = data.find(']', pos)
+                    if close >= 0 and close < len(data):
+                        prefix = data[pos:open]
+                        tokentext = data[open+1:close]
+                        tokenparts = tokentext.split(':')
+                        token = rawstoken(
+                            value=tokenparts[0],
+                            args=tokenparts[1:],
+                            prefix=prefix,
+                            prev=tokens[-1] if len(tokens) else None
+                        )
+                        pos = close+1
+                if token:
+                    if len(tokens): tokens[-1].next = token
+                    tokens.append(token)
+                else:
+                    break
+            if len(tokens) and pos<len(data):
+                tokens[-1].suffix = data[pos:]
+            return tokens
 
 class rawsfile:
-    def __init__(self, path=None, rfile=None):
+    def __init__(self, header=None, data=None, path=None, tokens=None, rfile=None):
+        if rfile: self.read(rfile)
+        self.header = header if header is not None else self.header
+        self.data = data if data is not None else self.data
         self.path = path
-        self.objects, self.objecttypes, self.data, self.header = None, None, None, None
-        if rfile: self.header, self.data = rfile.readline().strip(), rfile.read()
+        self.roottoken = None
+        self.tailtoken = None
         if self.data:
-            self.tokenslist = self.tokenize(self.data)
-            self.roottoken, self.tailtoken = (self.tokenslist[0], self.tokenslist[-1]) if (self.tokenslist and len(self.tokenslist)) else (None, None)
-        else:
-            self.tokenslist = []
-            self.roottoken, self.tailtoken = None, None
+            tokens = raws.pretty(self.data, implicitbraces=False)
+        if tokens:
+            if isinstance(tokens, list) or isinstance(tokens, tuple):
+                self.roottoken = tokens[0]
+                self.tailtoken = tokens[-1]
+            else:
+                firsttoken = True
+                for token in tokens:
+                    self.tailtoken = token
+                    if firsttoken:
+                        self.roottoken = token
+                        firsttoken = False
     def __str__(self):
         return '%s\n%s' %(self.header, ''.join([str(o) for o in self.tokens()]))
     def __repr__(self):
@@ -92,6 +146,11 @@ class rawsfile:
         while itrtoken:
             yield itrtoken
             itrtoken = itrtoken.next
+            
+    def read(self, rfile):
+        self.header, self.data = rfile.readline().strip(), rfile.read()
+    def write(self, rfile):
+        rfile.write(self.__repr__())
     
     def get(self, pretty=None, **kwargs):
         root = self.root()
@@ -105,34 +164,8 @@ class rawsfile:
         tail = tail.next
         return tail
         
-    def tokenize(self, data):
-        tokens = [] # maintain a sequential list of tokens
-        pos = 0     # byte position in data
-        while pos < len(data):
-            token = None
-            open = self.findnextchar(data, '[', pos)        # find the start of the next token
-            if open < len(data):
-                close = self.findnextchar(data, ']', open)  # find the close of this token
-                if close < len(data):
-                    prefix = data[pos:open]
-                    tokentext = data[open+1:close]
-                    tokenparts = tokentext.split(':')
-                    token = rawstoken(tokenparts[0], tokenparts[1:], prefix, None, tokens[-1] if len(tokens) else None)
-                    pos = close+1
-            if token:
-                if len(tokens): tokens[-1].next = token
-                tokens.append(token)
-            else:
-                break
-        if len(tokens) and pos<len(data):
-            tokens[-1].suffix = data[pos:]
-        return tokens
-    def findnextchar(self, data, char, start=0):
-        while start < len(data) and data[start] != char: start += 1
-        return start
-        
 class rawstoken:
-    def __init__(self, value=None, args=None, prefix=None, suffix=None, prev=None, next=None, pretty=None):
+    def __init__(self, pretty=None, token=None, value=None, args=None, prefix=None, suffix=None, prev=None, next=None):
         # tokens look like this: [value:arg1:arg2:...:argn]
         self.prev = prev            # previous token sequentially
         self.next = next            # next token sequentially
@@ -140,37 +173,33 @@ class rawstoken:
         self.args = args            # arguments for the token
         self.prefix = prefix        # non-token text between the preceding token and this one
         self.suffix = suffix        # between this token and the next/eof (should typically apply to eof)
-        if pretty: self.assign(pretty)
-        self.nargs = len(args) if args else 0
+        if pretty:
+            prettytokens = raws.pretty(pretty, implicitbraces=True)
+            if len(prettytokens) != 1: raise ValueError
+            self.copy(prettytokens[0])
+        if token: self.copy(token)
         if not self.args: self.args = []
-        if prefix:
-            self.prefixlines = prefix.split('\n')
-            self.tabs = self.prefixlines[-1].count('\t')
-        else:
-            self.prefixlines = []
-            self.tabs = 0
-            
+        self.nargs = len(self.args)
+        
     def __str__(self):
         return '[%s%s]' %(self.value, (':%s' % ':'.join([str(a) for a in self.args])) if self.args and len(self.args) else '')
     def __repr__(self):
         return '%s%s%s' % (self.prefix if self.prefix else '', str(self), self.suffix if self.suffix else '')
+        
+    def copy(self, other):
+        '''Copies attributes from another rawstoken to this one.'''
+        self.value = other.value
+        self.args = other.args
+        self.prefix = other.prefix
+        self.suffix = other.suffix
+        self.nargs = other.nargs
+        return self
     
-    def assign(self, pretty):
-        open = pretty.find('[')
-        close = pretty.find(']')
-        if not(open >= 0 or close >= 0):
-            open = 0
-            close = len(pretty)-1
-            tokentext = pretty
-        elif open == -1 or close == -1:
-            raise ValueError('Could not parse string %s as a token' % pretty)
-        else:
-            self.prefix = pretty[:open]
-            self.suffix = pretty[close:]
-            tokentext = pretty[open+1:close]
-        tokenparts = tokentext.split(':')
-        self.value = tokenparts[0]
-        self.args = tokenparts[1:]
+    def tokens(self, reverse=False):
+        itertoken = self.prev if reverse else self.next
+        while itertoken:
+            yield itertoken
+            itertoken = itertoken.prev if reverse else itertoken.next
     
     '''
     Starting with this token, execute some query until any of the included checks hits a limit or until there are no more tokens to check.
@@ -265,8 +294,17 @@ class rawstoken:
     '''
     Adds a token. If reverse is True, the token is added immediately before this one. If False, the token is added immediately after.
     '''
-    def add(self, pretty=None, reverse=False, **kwargs):
-        token = rawstoken(pretty=pretty, **kwargs)
+    def add(self, pretty=None, token=None, tokens=None, reverse=False):
+        if pretty:
+            return self.addall(raws.pretty(pretty), reverse)
+        elif tokens:
+            return self.addall(tokens, reverse)
+        elif token:
+            return self.addone(token if token else rawstoken(pretty=pretty), reverse)
+        else:
+            raise ValueError
+            
+    def addone(self, token, reverse=False):
         if reverse:
             token.next = self
             token.prev = self.prev
@@ -278,6 +316,18 @@ class rawstoken:
             self.next.prev = token
             self.next = token
         return token
+    def addall(self, tokens, reverse=False):
+        if reverse:
+            tokens[-1].next = self
+            tokens[0].prev = self.prev
+            self.prev.next = tokens[0]
+            self.prev = tokens[-1]
+        else:
+            tokens[0].prev = self
+            tokens[-1].next = self.next
+            self.next.prev = tokens[-1]
+            self.next = tokens[0]
+        return tokens
     
     '''
     Removes this token and the next count tokens in the direction indicated by reverse.
@@ -297,40 +347,6 @@ class rawstoken:
         if left: left.next = right
         if right: right.prev = left
         return self
-
-class rawsboolquery:
-    def __init__(self, subs, operand=None, *args):
-        self.subs = subs
-        self.operand = operand
-        self.args = args
-    def match(self, token):
-        if self.operand == 'one':
-            count = 0
-            for sub in subs:
-                count += sub.match(token)
-                if count > 1: return False
-            return count == 1
-        elif self.operand == 'count' and self.args and len(self.args) == 1:
-            count = 0
-            for sub in subs:
-                count += sub.match(token)
-                if count > self.args[0]: return False
-            return count == self.args[0]
-        elif self.operand == 'any':
-            for sub in subs:
-                if sub.match(token): return True
-        elif self.operand == 'all':
-            for sub in subs:
-                if not sub.match(token): return False
-            return True
-    @staticmethod
-    def one(subs): return rawsboolquery(subs, 'one')
-    @staticmethod
-    def any(subs): return rawsboolquery(subs, 'any')
-    @staticmethod
-    def all(subs): return rawsboolquery(subs, 'all')
-    @staticmethod
-    def count(subs, number): return rawsboolquery(subs, 'count', number)
 
 class rawstokenquery:
     def __init__(self,
@@ -380,3 +396,41 @@ class rawstokenquery:
             if not all([a[0]>=0 and a[0]<len(token.args) and re.match(a[1], token.args[a[0]]) for a in self.re_arg]):
                 return False
         return True
+
+class rawsboolquery(rawstokenquery):
+    def __init__(self, subs, operand=None, anti=None, *args):
+        self.subs = subs
+        self.operand = operand
+        self.anti = anti
+        self.args = args
+    def basematch(self, token):
+        if self.operand == 'one':
+            count = 0
+            for sub in subs:
+                count += sub.match(token)
+                if count > 1: return False
+            return count == 1
+        elif self.operand == 'count' and self.args and len(self.args) == 1:
+            count = 0
+            for sub in subs:
+                count += sub.match(token)
+                if count > self.args[0]: return False
+            return count == self.args[0]
+        elif self.operand == 'any':
+            for sub in subs:
+                if sub.match(token): return True
+        elif self.operand == 'all':
+            for sub in subs:
+                if not sub.match(token): return False
+            return True
+    @staticmethod
+    def one(subs): return rawsboolquery(subs, 'one')
+    @staticmethod
+    def any(subs): return rawsboolquery(subs, 'any')
+    @staticmethod
+    def all(subs): return rawsboolquery(subs, 'all')
+    @staticmethod
+    def none(subs): return rawsboolquery(subs, 'all', anti=True)
+    @staticmethod
+    def count(subs, number): return rawsboolquery(subs, 'count', number)
+    

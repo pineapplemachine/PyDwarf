@@ -3,20 +3,24 @@
 import sys
 sys.path.append('../')
 
+import os
+import imp
 import pydwarf
 
 __all__ = []
 
-import pkgutil
-import inspect
-
-for loader, name, is_pkg in pkgutil.walk_packages(__path__):
-    try:
-        pydwarf.log.debug('Loading script %s...' % name)
-        module = loader.find_module(name).load_module(name)
-        globals()[name] = module
-        __all__.append(name)
-        # for name, value in inspect.getmembers(module):
-        #     if not name.startswith('__'): __all__.append(name)
-    except:
-        pydwarf.log.exception('Failed to load script %s' % name)
+for root, dirs, files in os.walk(os.path.dirname(os.path.realpath(__file__))):
+    pydwarf.log.debug('Loading scripts in %s...' % root)
+    for filename in files:
+        path = os.path.join(root, filename)
+        modulename = '.'.join(os.path.basename(filename).split('.')[1:-1])
+        if filename.endswith('.py') and filename.startswith('pydwarf.'):
+            pydwarf.log.debug('Loading script %s from %s...' % (modulename, path))
+            try:
+                with open(path, 'U') as modulefile:
+                    module = imp.load_module(modulename, modulefile, path, ('.py', 'U', imp.PY_SOURCE))
+                    globals()[modulename] = module
+                    __all__.append(modulename)
+            except:
+                pydwarf.log.exception('Failed to load script from %s' % path)
+    pydwarf.log.debug('Finished loading scripts in %s.' % root)

@@ -101,32 +101,32 @@ default_inorganics_query = {
 }
 
 # Automatically get a list of INORGANIC IDs which describe fuels
-def autofuels(raws, log=True):
-    if log: pydwarf.log.info('No fuels specified, detecting...')
+def autofuels(raws, log=None):
+    if log: log.info('No fuels specified, detecting...')
     fuels = []
     for reaction in raws.all(exact_value='REACTION'): # For each reaction:
         # Does this reaction produce coke?
         reactionmakescoke = False
         for product in reaction.alluntil(exact_value='PRODUCT', until_exact_value='REACTION'):
             if product.args[-1] == 'COKE':
-                if log: pydwarf.log.debug('Found coke-producing reaction %s with product %s.' % (reaction, product))
+                if log: log.debug('Found coke-producing reaction %s with product %s.' % (reaction, product))
                 reactionmakescoke = True
                 break
         if reactionmakescoke:
             for reagent in reaction.alluntil(exact_value='REAGENT', until_exact_value='REACTION'):
                 if log: pydwarf.log.debug('Identified reagent %s as referring to a fuel.' % (reagent))
                 fuels.append(reagent.args[-1])
-    if log: pydwarf.log.info('Finished detecting fuels! These are the ones I found: %s' % fuels)
-    if not len(fuels): pydwarf.log.warning('Oops, failed to find any fuels.')
+    if log: log.info('Finished detecting fuels! These are the ones I found: %s' % fuels)
+    if not len(fuels): log.warning('Oops, failed to find any fuels.')
     return fuels
 
 # Build dictionaries which inform stoneclarity of how various inorganics might be identified
-def builddicts(query, raws, fuels, log=True):
-    if log: pydwarf.log.info('Building dicts...')
+def builddicts(query, raws, fuels, log=None):
+    if log: log.debug('Building dicts...')
     groups = {}
     ids = {}
     inorganics = raws.all(exact_value='INORGANIC')
-    if log: pydwarf.log.info('I found %d inorganics. Processing...' % len(inorganics))
+    if log: log.info('I found %d inorganics. Processing...' % len(inorganics))
     for token in inorganics:
         # Get results of query
         query = token.query(query)
@@ -161,11 +161,11 @@ def builddicts(query, raws, fuels, log=True):
             if id in fuels:
                 if 'FUEL' not in groups: groups['FUEL'] = set()
                 groups['FUEL'].add(token)
-    if log: pydwarf.log.info('Finished building dicts! Found %d groups and %d ids.' % (len(groups), len(ids)))
+    if log: log.debug('Finished building dicts! Found %d groups and %d ids.' % (len(groups), len(ids)))
     return groups, ids
 
 # From dicts built by builddicts and given a rule, return a set of inorganics which match that rule
-def getrulematches(rule, groups, ids):
+def getrulematches(rule, groups, ids, log=None):
     matches = set()
     if 'group' in rule:
         matchgroups = (rule['group'],) if isinstance(rule['group'], basestring) else rule['group']
@@ -183,19 +183,19 @@ def getrulematches(rule, groups, ids):
     return matches
     
 # Applies a list of rules to matches based on built dicts
-def applyrules(rules, groups, ids, log=True):
+def applyrules(rules, groups, ids, log=None):
     for rule in rules:
         if 'mutator' in rule:
             mutator = rule['mutator']
-            matches = getrulematches(rule, groups, ids)
-            if log: pydwarf.log.info('Applying %s rule to %d matches...' % (rule['name'] if 'name' in rule else 'unnamed', len(matches)))
+            matches = getrulematches(rule, groups, ids, log)
+            if log: log.info('Applying %s rule to %d matches...' % (rule['name'] if 'name' in rule else 'unnamed', len(matches)))
             for match in matches:
                 if callable(mutator):
                     mutator(match)
                 else:
                     for mut in mutator: mut(match)
         else:
-            if log: pydwarf.log.warning('Encountered %s rule with no mutators.' % rule['name'] if 'name' in rule else 'unnamed')
+            if log: log.warning('Encountered %s rule with no mutators.' % rule['name'] if 'name' in rule else 'unnamed')
 
 @pydwarf.urist(
     version = 'alpha',
@@ -215,7 +215,7 @@ def applyrules(rules, groups, ids, log=True):
 )
 def stoneclarity(raws, rules=default_rules, query=default_inorganics_query, fuels=None):
     if rules and len(rules):
-        groups, ids = builddicts(query, raws, fuels if fuels else autofuels(raws))
+        groups, ids = builddicts(query, raws, fuels if fuels else autofuels(raws, pydwarf.log), pydwarf.log)
         applyrules(rules, groups, ids)
         return pydwarf.success('Finished applying %d rules to %d inorganic groups and %d inorganic ids.' % (len(rules), len(groups), len(ids)))
     else:
