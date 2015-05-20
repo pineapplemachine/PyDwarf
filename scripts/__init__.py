@@ -10,7 +10,6 @@ import pydwarf
 __all__ = []
 
 for root, dirs, files in os.walk(os.path.dirname(os.path.realpath(__file__))):
-    pydwarf.log.debug('Loading scripts in %s...' % root)
     for filename in files:
         path = os.path.join(root, filename)
         modulename = '.'.join(os.path.basename(filename).split('.')[1:-1])
@@ -23,4 +22,3 @@ for root, dirs, files in os.walk(os.path.dirname(os.path.realpath(__file__))):
                     __all__.append(modulename)
             except:
                 pydwarf.log.exception('Failed to load script from %s' % path)
-    pydwarf.log.debug('Finished loading scripts in %s.' % root)

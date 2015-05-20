@@ -154,15 +154,15 @@ class rawsfile:
     
     def get(self, pretty=None, **kwargs):
         root = self.root()
-        return root.get(pretty=pretty, **kwargs) if root else None
+        return root.get(pretty=pretty, includeself=True, **kwargs) if root else None
+    def getlast(self, pretty=None, **kwargs):
+        tail = self.tail()
+        return tail.get(pretty=pretty, includeself=True, reverse=True, **kwargs) if tail else None
     def all(self, pretty=None, **kwargs):
         root = self.root()
-        return root.all(pretty=pretty, **kwargs) if root else []
+        return root.all(pretty=pretty, includeself=True, **kwargs) if root else []
     def add(self, pretty=None, **kwargs):
-        tail = self.tail()
-        tail.next = tail.add(pretty=pretty, **kwargs)
-        tail = tail.next
-        return tail
+        return tail.add(pretty=pretty, **kwargs)
         
 class rawstoken:
     def __init__(self, pretty=None, token=None, value=None, args=None, prefix=None, suffix=None, prev=None, next=None):
@@ -204,8 +204,8 @@ class rawstoken:
     '''
     Starting with this token, execute some query until any of the included checks hits a limit or until there are no more tokens to check.
     '''
-    def query(self, checks, range=None, reverse=False):
-        token = self.prev if reverse else self.next
+    def query(self, checks, range=None, includeself=False, reverse=False):
+        token = self if includeself else (self.prev if reverse else self.next)
         limit = False
         count = 0
         for check in checks:
@@ -225,55 +225,62 @@ class rawstoken:
     '''
     Get the first matching token.
     '''
-    def get(self, pretty=None, reverse=False, **kwargs):
+    def get(self, pretty=None, range=None, includeself=False, reverse=False, **kwargs):
         checks = (
             rawstokenquery(pretty=pretty, limit=1, **kwargs)
         ,)
-        result = self.query(checks, reverse)[0].result
+        result = self.query(checks, range=range, includeself=includeself, reverse=reverse)[0].result
         return result[0] if result and len(result) else None
+    
+    def getlast(self, pretty=None, range=None, includeself=False, reverse=False, **kwargs):
+        checks = (
+            rawstokenquery(pretty=pretty, **kwargs)
+        ,)
+        result = self.query(checks, range=range, includeself=includeself, reverse=reverse)[0].result
+        return result[-1] if result and len(result) else None
     
     '''
     Get a list of all matching tokens.
     '''
-    def all(self, pretty=None, reverse=False, **kwargs):
+    def all(self, pretty=None, range=None, includeself=False, reverse=False, **kwargs):
         checks = (
             rawstokenquery(pretty=pretty, **kwargs)
         ,)
-        return self.query(checks, reverse)[0].result
+        return self.query(checks, range=range, includeself=includeself, reverse=reverse)[0].result
     
     '''
     Get a list of all tokens up to a match.
     '''
-    def until(self, pretty=None, reverse=False, **kwargs):
+    def until(self, pretty=None, range=None, includeself=False, reverse=False, **kwargs):
         checks = (
             rawstokenquery(),
             rawstokenquery(pretty=pretty, limit=1, **kwargs)
         )
-        return self.query(checks, reverse)[0].result
+        return self.query(checks, range=range, includeself=includeself, reverse=reverse)[0].result
         
     '''
     Get the first matching token, but abort when a token matching arguments prepended with 'until_' is encountered.
     '''
-    def getuntil(self, pretty=None, until_pretty=None, reverse=False, **kwargs):
+    def getuntil(self, pretty=None, until_pretty=None, range=None, includeself=False, reverse=False, **kwargs):
         until_args, condition_args = {}, {}
         for arg, value in kwargs.iteritems(): (until_args if arg.startswith('until_') else condition_args)[arg] = value
         checks = (
             rawstokenquery(pretty=until_pretty, limit=1, **until_args),
             rawstokenquery(pretty=pretty, limit=1, **condition_args)
         )
-        result = self.query(checks, reverse)[1].result
+        result = self.query(checks, range=range, includeself=includeself, reverse=reverse)[1].result
         return result[0] if result and len(result) else None
         
     '''
     Get a list of all matching tokens, but abort when a token matching arguments prepended with 'until_' is encountered.
     '''
-    def alluntil(self, pretty=None, until_pretty=None, reverse=False, **kwargs):
+    def alluntil(self, pretty=None, until_pretty=None, range=None, includeself=False, reverse=False, **kwargs):
         until_args, condition_args = self.argsuntil(**kwargs)
         checks = (
             rawstokenquery(pretty=until_pretty, limit=1, **until_args),
             rawstokenquery(pretty=pretty, **condition_args)
         )
-        return self.query(checks, reverse)[1].result
+        return self.query(checks, range=range, includeself=includeself, reverse=reverse)[1].result
         
     # utility function for getuntil and alluntil methods
     def argsuntil(self, **kwargs):
