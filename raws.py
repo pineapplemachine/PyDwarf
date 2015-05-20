@@ -276,7 +276,7 @@ class rawstoken:
         checks = (
             rawstokenquery(pretty=until_pretty, limit=1, **until_args),
             rawstokenquery(pretty=pretty, **condition_args)
-        ,)
+        )
         result = self.query(checks, range=range, includeself=includeself, reverse=reverse)[1].result
         return result[-1] if result and len(result) else None
      

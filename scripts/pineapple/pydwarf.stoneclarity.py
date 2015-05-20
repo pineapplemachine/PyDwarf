@@ -95,7 +95,7 @@ default_inorganics_query = {
     'DISPLAY_COLOR': propertyquery(exact_value='DISPLAY_COLOR'),
     'BASIC_COLOR': propertyquery(exact_value='BASIC_COLOR'),
     'TILE_COLOR': propertyquery(exact_value='TILE_COLOR'),
-    'STATE_COLOR': propertyquery(exact_value='STATE_COLOR'),
+    'STATE_COLOR': rawstokenquery(exact_value='STATE_COLOR'),
     # Stop at the next [INORGANIC:] token
     'EOF': rawstokenquery(exact_value='INORGANIC', limit=1)
 }
@@ -133,7 +133,7 @@ def builddicts(query, raws, fuels, log=None):
         token.stoneclarity = {i: j.result for i, j in query.iteritems()}
         # Handle the simpler groups, 1:1 correspondence between whether some property was found and whether the inorganic belongs in some group
         for groupname in token.stoneclarity:
-            if groupname not in ('FUEL', 'ENVIRONMENT', 'ENVIRONMENT_SPEC') and len(token.stoneclarity[groupname]):
+            if len(token.stoneclarity[groupname]):
                 if groupname not in groups: groups[groupname] = set()
                 groups[groupname].add(token)
         # Handle metamorphic, sedimentary, igneous
