@@ -1,7 +1,11 @@
 import os
 import traceback
+import logging
 
 __version__ = 'alpha'
+
+# Make a default log object if none exists already
+if 'log' not in vars() and 'log' not in globals(): log = logging.getLogger()
 
 # Convenience functions which scripts can use for returning success/failure responses
 def success(status=None): return response(True, status)
