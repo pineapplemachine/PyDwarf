@@ -199,7 +199,7 @@ def applyrules(rules, groups, ids, log=True):
             other than default_rules to customize behavior, and refer to default_rules as an example of how rules are
             expected to be represented''',
         'query': '''This query is run for each inorganic found and looks for tokens that should be recognized as
-            indicators that some inorganic belongs to some group.'''
+            indicators that some inorganic belongs to some group. Refer to the default query for more information.'''
         'fuels': '''If left unspecified, stoneclarity will attempt to automatically detect which inorganics are fuels.
             If you know that no prior script added new inorganics which can be made into coke then you can cut down a
             on execution time by setting fuels to fuels_vanilla.'''
