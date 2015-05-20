@@ -62,9 +62,12 @@ def __main__():
                 
                 try:
                     response = scriptfunc(r, **scriptargs) if scriptargs else scriptfunc(r)
-                    success = response.get('success')
-                    status = response['status'] if 'status' in response else ('Script %s ran %ssuccessfully.' % (scriptname, '' if success else 'un'))
-                    pydwarf.log.info('%s: %s' % ('SUCCESS' if success else 'FAILURE', status))
+                    if response:
+                        success = response.get('success')
+                        status = response['status'] if 'status' in response else ('Script %s ran %ssuccessfully.' % (scriptname, '' if success else 'un'))
+                        pydwarf.log.info('%s: %s' % ('SUCCESS' if success else 'FAILURE', status))
+                    else:
+                        pydwarf.log.error('Received no response from script %s.' % scriptname)
                 except Exception:
                     pydwarf.log.exception('Unhandled exception while running script %s.' % scriptname)
                 else:
