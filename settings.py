@@ -57,7 +57,7 @@ import scripts
 managersettings.runscripts = [
     'deerappear',
     'noexotic',
-    ('stoneclarity', {'fuels': scripts.stoneclarity.vanilla_fuels})
+    {'name': 'stoneclarity', 'args': {'fuels': scripts.stoneclarity.vanilla_fuels}}
 ]
 
 # Specify the settings namespace that the manager needs to know about. (The rest is just noise.)

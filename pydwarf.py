@@ -22,9 +22,10 @@ class urist:
     def __init__(self, **kwargs):
         self.metadata = kwargs
     def __call__(self, fn):
-        self.name = fn.__name__
+        self.name = self.metadata['name'] if 'name' in self.metadata else fn.__name__
         self.fn = fn
-        urist.registered[self.name] = self.fn
+        if self.name not in urist.registered: urist.registered[self.name] = []
+        urist.registered[self.name].append(self)
         return fn
     @staticmethod
     def get(name):
