@@ -270,7 +270,16 @@ class rawstoken:
         )
         result = self.query(checks, range=range, includeself=includeself, reverse=reverse)[1].result
         return result[0] if result and len(result) else None
-        
+    
+    def getlastuntil(self, pretty=None, until_pretty=None, range=None, includeself=False, reverse=False, **kwargs):
+        until_args, condition_args = self.argsuntil(**kwargs)
+        checks = (
+            rawstokenquery(pretty=until_pretty, limit=1, **until_args),
+            rawstokenquery(pretty=pretty, **condition_args)
+        ,)
+        result = self.query(checks, range=range, includeself=includeself, reverse=reverse)[1].result
+        return result[-1] if result and len(result) else None
+     
     '''
     Get a list of all matching tokens, but abort when a token matching arguments prepended with 'until_' is encountered.
     '''
