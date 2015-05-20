@@ -176,8 +176,10 @@ def getrulematches(rule, groups, ids):
         for id in matchids:
             if id in ids: matches.add(ids[id])
     if 'filter' in rule:
-        for inorganic in ids.itervalues():
-            if rule['filter'](inorganic): matches.add(inorganic)
+        filters = (rule['filter'],) if callable(rule['filter']) else rule['filter']
+        for rulefilter in filters:
+            for inorganic in ids.itervalues():
+                if rulefilter(inorganic): matches.add(inorganic)
     return matches
     
 # Applies a list of rules to matches based on built dicts

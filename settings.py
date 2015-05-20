@@ -24,7 +24,7 @@ log.addHandler(stdouthandler)
 # Handler for log file output
 logfilehandler = logging.FileHandler(logfile)
 logfilehandler.setLevel(logging.DEBUG)
-logfilehandler.setFormatter(logging.Formatter('%(asctime)s: %(levelname)s: %(filename)s[%(lineno)s]: %(message)s', datetimeformat))
+logfilehandler.setFormatter(logging.Formatter('%(asctime)s: %(filename)s[%(lineno)s]: %(levelname)s: %(message)s', datetimeformat))
 log.addHandler(logfilehandler)
 
 def managersettings(): pass # Create a dummy function to be used as a namespace for PyDwarf manager settings
