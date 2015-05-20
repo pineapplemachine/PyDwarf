@@ -249,7 +249,11 @@ class rawstoken:
     # utility function for getuntil and alluntil methods
     def argsuntil(self, **kwargs):
         until_args, condition_args = {}, {}
-        for arg, value in kwargs.iteritems(): (until_args if arg.startswith('until_') else condition_args)[arg] = value
+        for arg, value in kwargs.iteritems():
+            if arg.startswith('until_'):
+                until_args[arg[6:]] = value
+            else:
+                condition_args[arg] = value
         return until_args, condition_args
         
     '''

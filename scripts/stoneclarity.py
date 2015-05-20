@@ -60,30 +60,39 @@ default_rules = [
 ]
 
 # You should specify fuels=vanilla_fuels if you know that no prior mod has modified DF's fuels
-vanilla_fuels = ['COAL', 'LIGNITE']
+vanilla_fuels = ['COAL_BITUMINOUS', 'LIGNITE']
 
 # Pass this dict when querying, starting with some INORGANIC, to find relevant tokens all in one go
+# ENVIRONMENT, ENVIRONMENT_SPEC, and FUEL groups are handled specially. Everything else is simply
+# a boolean check for a match, and matches get placed in the group identified by the key to which
+# a token query is matched.
 def propertyquery(**kwargs): return rawstokenquery(limit=1, limit_terminates=False, **kwargs) # Convenience function
-inorganics_query = {
+default_inorganics_query = {
     # Detect tokens which indicate what kind of inorganic this is
     'STONE': propertyquery(exact_value='IS_STONE'),
     'GEM': propertyquery(exact_value='IS_GEM'),
     'ORE': propertyquery(exact_value='METAL_ORE'),
-    'ENVIRONMENT': rawstokenquery(exact_value='ENVIRONMENT'),
-    'ENVIRONMENT_SPEC': rawstokenquery(exact_value='ENVIRONMENT_SPEC'),
     'FLUX': propertyquery(pretty='REACTION_CLASS:FLUX'),
     'GYPSUM': propertyquery(pretty='REACTION_CLASS:GYPSUM'),
+    'SOIL': propertyquery(exact_value='SOIL'),
+    'SOIL_SAND': propertyquery(exact_value='SOIL_SAND'),
+    'SOIL_OCEAN': propertyquery(exact_value='SOIL_OCEAN'),
     'METAMORPHIC': propertyquery(exact_value='METAMORPHIC'),
     'SEDIMENTARY': propertyquery(exact_value='SEDIMENTARY'),
     'IGNEOUS_ALL': propertyquery(exact_value='IGNEOUS_ALL'),
     'IGNEOUS_EXTRUSIVE': propertyquery(exact_value='IGNEOUS_EXTRUSIVE'),
     'IGNEOUS_INTRUSIVE': propertyquery(exact_value='IGNEOUS_INTRUSIVE'),
+    'AQUIFER': propertyquery(exact_value='AQUIFER'),
+    'NO_STONE_STOCKPILE': propertyquery(exact_value='NO_STONE_STOCKPILE'),
+    'ENVIRONMENT': rawstokenquery(exact_value='ENVIRONMENT'),
+    'ENVIRONMENT_SPEC': rawstokenquery(exact_value='ENVIRONMENT_SPEC'),
     # Detect tokens which represent appearance
     'TILE': propertyquery(exact_value='TILE'),
     'ITEM_SYMBOL': propertyquery(exact_value='ITEM_SYMBOL'),
     'DISPLAY_COLOR': propertyquery(exact_value='DISPLAY_COLOR'),
     'BASIC_COLOR': propertyquery(exact_value='BASIC_COLOR'),
     'TILE_COLOR': propertyquery(exact_value='TILE_COLOR'),
+    'STATE_COLOR': propertyquery(exact_value='STATE_COLOR'),
     # Stop at the next [INORGANIC:] token
     'EOF': rawstokenquery(exact_value='INORGANIC', limit=1)
 }
@@ -92,15 +101,17 @@ inorganics_query = {
 def autofuels(raws, log=True):
     if log: pydwarf.log.info('No fuels specified, detecting...')
     fuels = []
-    for reaction in raws.all('REACTION'): # For each reaction:
+    for reaction in raws.all(exact_value='REACTION'): # For each reaction:
         # Does this reaction produce coke?
         reactionmakescoke = False
-        for product in reaction.alluntil('PRODUCT', 'REACTION'):
+        for product in reaction.alluntil(exact_value='PRODUCT', until_exact_value='REACTION'):
             if product.args[-1] == 'COKE':
+                if log: pydwarf.log.debug('Found coke-producing reaction %s with product %s.' % (reaction, product))
                 reactionmakescoke = True
                 break
         if reactionmakescoke:
-            for reagent in reaction.alluntil('REAGENT', 'REACTION'):
+            for reagent in reaction.alluntil(exact_value='REAGENT', until_exact_value='REACTION'):
+                if log: pydwarf.log.debug('Identified reagent %s as referring to a fuel.' % (reagent))
                 fuels.append(reagent.args[-1])
     if log: pydwarf.log.info('Finished detecting fuels! These are the ones I found: %s' % fuels)
     if not len(fuels): pydwarf.log.warning('Oops, failed to find any fuels.')
@@ -118,8 +129,8 @@ def builddicts(raws, fuels, log=True):
         query = token.query(inorganics_query)
         token.stoneclarity = {i: j.result for i, j in query.iteritems()}
         # Handle the simpler groups, 1:1 correspondence between whether some property was found and whether the inorganic belongs in some group
-        for groupname in ('STONE', 'GEM', 'ORE', 'FLUX', 'GYPSUM', 'METAMORPHIC', 'SEDIMENTARY', 'IGNEOUS_ALL', 'IGNEOUS_EXTRUSIVE', 'IGNEOUS_INTRUSIVE'):
-            if token.stoneclarity.get(groupname) and len(token.stoneclarity[groupname]):
+        for groupname in token.stoneclarity:
+            if groupname not in ('FUEL', 'ENVIRONMENT', 'ENVIRONMENT_SPEC') and len(token.stoneclarity[groupname]):
                 if groupname not in groups: groups[groupname] = []
                 groups[groupname].append(token)
         # Handle metamorphic, sedimentary, igneous
@@ -187,12 +198,14 @@ def applyrules(rules, groups, ids, log=True):
             stockpiles, makes cobaltite use % unmined and • in stockpiles, makes all gems use ☼. Specify an object
             other than default_rules to customize behavior, and refer to default_rules as an example of how rules are
             expected to be represented''',
+        'query': '''This query is run for each inorganic found and looks for tokens that should be recognized as
+            indicators that some inorganic belongs to some group.'''
         'fuels': '''If left unspecified, stoneclarity will attempt to automatically detect which inorganics are fuels.
             If you know that no prior script added new inorganics which can be made into coke then you can cut down a
             on execution time by setting fuels to fuels_vanilla.'''
     }
 )
-def stoneclarity(raws, rules=default_rules, fuels=None):
+def stoneclarity(raws, rules=default_rules, query=default_inorganics_query, fuels=None):
     if rules and len(rules):
         groups, ids = builddicts(raws, fuels if fuels else autofuels(raws))
         applyrules(rules, groups, ids)
