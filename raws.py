@@ -16,6 +16,14 @@ class raws:
         if not rfile: rfile = rawsfile(header=filename)
         self.files[filename] = rfile
         return rfile
+    def setfile(self, filename=None, rfile=None):
+        if rfile and not filename: filename = rfile.header
+        self.files[filename] = rfile
+    def removefile(self, filename=None, rfile=None):
+        if rfile and not filename: filename = rfile.header
+        del self.files[filename]
+    def __getitem__(self, name): return self.getfile(name)
+    def __setitem__(self, name, value): return self.setfile(name, value)
     
     '''
     Read raws from some directory.
@@ -113,25 +121,31 @@ class raws:
 
 class rawsfile:
     def __init__(self, header=None, data=None, path=None, tokens=None, rfile=None):
-        if rfile: self.read(rfile)
-        self.header = header if header is not None else self.header
-        self.data = data if data is not None else self.data
+        if rfile:
+            self.read(rfile)
+            if header is not None: self.header = header
+            if data is not None: self.data = data
+        else:
+            self.header = header
+            self.data = data
         self.path = path
         self.roottoken = None
         self.tailtoken = None
         if self.data:
             tokens = raws.pretty(self.data, implicitbraces=False)
         if tokens:
-            if isinstance(tokens, list) or isinstance(tokens, tuple):
-                self.roottoken = tokens[0]
-                self.tailtoken = tokens[-1]
-            else:
-                firsttoken = True
-                for token in tokens:
-                    self.tailtoken = token
-                    if firsttoken:
-                        self.roottoken = token
-                        firsttoken = False
+            self.settokens(tokens)
+    def settokens(self, tokens):
+        if isinstance(tokens, list) or isinstance(tokens, tuple):
+            self.roottoken = tokens[0]
+            self.tailtoken = tokens[-1]
+        else:
+            firsttoken = True
+            for token in tokens:
+                self.tailtoken = token
+                if firsttoken:
+                    self.roottoken = token
+                    firsttoken = False
     def __str__(self):
         return '%s\n%s' %(self.header, ''.join([str(o) for o in self.tokens()]))
     def __repr__(self):
@@ -155,18 +169,41 @@ class rawsfile:
     
     def get(self, pretty=None, **kwargs):
         root = self.root()
-        return root.get(pretty=pretty, includeself=True, **kwargs) if root else None
+        return root.get(pretty=pretty, include_self=True, **kwargs) if root else None
     def getlast(self, pretty=None, **kwargs):
         tail = self.tail()
-        return tail.get(pretty=pretty, includeself=True, reverse=True, **kwargs) if tail else None
+        return tail.get(pretty=pretty, include_self=True, reverse=True, **kwargs) if tail else None
     def all(self, pretty=None, **kwargs):
         root = self.root()
-        return root.all(pretty=pretty, includeself=True, **kwargs) if root else []
-    def add(self, pretty=None, **kwargs):
-        return self.tail().add(pretty=pretty, **kwargs)
+        return root.all(pretty=pretty, include_self=True, **kwargs) if root else []
+    def add(self, pretty=None, token=None, tokens=None, **kwargs):
+        tail = self.tail()
+        if tail:
+            return tail.add(pretty=pretty, token=token, tokens=tokens, **kwargs)
+        else:
+            if pretty:
+                tokens = raws.pretty(tokens)
+                if len(tokens) == 1: token = tokens
+            if token:
+                self.headtoken = token
+                self.tailtoken = token
+                return token
+            elif tokens:
+                self.settokens(tokens)
+                return tokens
+            
         
 class rawstoken:
     def __init__(self, pretty=None, token=None, value=None, args=None, prefix=None, suffix=None, prev=None, next=None):
+        if pretty:
+            prettytokens = raws.pretty(pretty, implicitbraces=True)
+            if len(prettytokens) != 1: raise ValueError
+            token = prettytokens[0]
+        if token:
+            value = token.value
+            args = list(token.args) if token.args else []
+            prefix = token.prefix
+            suffix = token.suffix
         # tokens look like this: [value:arg1:arg2:...:argn]
         self.prev = prev            # previous token sequentially
         self.next = next            # next token sequentially
@@ -174,11 +211,6 @@ class rawstoken:
         self.args = args            # arguments for the token
         self.prefix = prefix        # non-token text between the preceding token and this one
         self.suffix = suffix        # between this token and the next/eof (should typically apply to eof)
-        if pretty:
-            prettytokens = raws.pretty(pretty, implicitbraces=True)
-            if len(prettytokens) != 1: raise ValueError
-            self.copy(prettytokens[0])
-        if token: self.copy(token)
         if not self.args: self.args = []
         self.nargs = len(self.args)
         
@@ -186,16 +218,24 @@ class rawstoken:
         return '[%s%s]' %(self.value, (':%s' % ':'.join([str(a) for a in self.args])) if self.args and len(self.args) else '')
     def __repr__(self):
         return '%s%s%s' % (self.prefix if self.prefix else '', str(self), self.suffix if self.suffix else '')
-        
-    def copy(self, other):
-        '''Copies attributes from another rawstoken to this one.'''
-        self.value = other.value
-        self.args = other.args
-        self.prefix = other.prefix
-        self.suffix = other.suffix
-        self.nargs = other.nargs
-        return self
     
+    @staticmethod
+    def copy(subject=None):
+        if isinstance(subject, rawstoken):
+            return rawstoken(token=subject)
+        elif subject is not None:
+            copied = []
+            prevtoken = None
+            for token in subject:
+                newtoken = rawstoken(token=token)
+                copied.append(newtoken)
+                newtoken.prev = prevtoken
+                if prevtoken: prevtoken.next = newtoken
+                prevtoken = newtoken
+            return copied
+        else:
+            raise ValueError
+        
     def tokens(self, reverse=False):
         itertoken = self.prev if reverse else self.next
         while itertoken:
@@ -205,20 +245,18 @@ class rawstoken:
     '''
     Starting with this token, execute some query until any of the included checks hits a limit or until there are no more tokens to check.
     '''
-    def query(self, checks, range=None, includeself=False, reverse=False):
-        token = self if includeself else (self.prev if reverse else self.next)
+    def query(self, checks, range=None, include_self=False, reverse=False):
+        token = self if include_self else (self.prev if reverse else self.next)
         limit = False
         count = 0
-        for check in checks:
-            (checks[check] if isinstance(checks, dict) else check).result = []
-        while token and (not limit) and ((not range) or range > count):
-            for check in (checks.itervalues() if isinstance(checks, dict) else checks):
+        checkiter = (checks.itervalues() if isinstance(checks, dict) else checks)
+        for check in checkiter: check.result = []
+        while token and ((not range) or range > count):
+            for check in checkiter:
                 if (not check.limit) or len(check.result) < check.limit:
-                    if check.match(token):
-                        check.result.append(token)
-                elif check.limit_terminates:
-                    limit = True
-                    break
+                    if check.match(token): check.result.append(token)
+                    if check.limit_terminates and len(check.result) == check.limit: limit = True; break
+            if limit: break
             token = token.prev if reverse else token.next
             count += 1
         return checks
@@ -226,70 +264,70 @@ class rawstoken:
     '''
     Get the first matching token.
     '''
-    def get(self, pretty=None, range=None, includeself=False, reverse=False, **kwargs):
+    def get(self, pretty=None, range=None, include_self=False, reverse=False, **kwargs):
         checks = (
             rawstokenquery(pretty=pretty, limit=1, **kwargs)
         ,)
-        result = self.query(checks, range=range, includeself=includeself, reverse=reverse)[0].result
+        result = self.query(checks, range=range, include_self=include_self, reverse=reverse)[0].result
         return result[0] if result and len(result) else None
     
-    def getlast(self, pretty=None, range=None, includeself=False, reverse=False, **kwargs):
+    def getlast(self, pretty=None, range=None, include_self=False, reverse=False, **kwargs):
         checks = (
             rawstokenquery(pretty=pretty, **kwargs)
         ,)
-        result = self.query(checks, range=range, includeself=includeself, reverse=reverse)[0].result
+        result = self.query(checks, range=range, include_self=include_self, reverse=reverse)[0].result
         return result[-1] if result and len(result) else None
     
     '''
     Get a list of all matching tokens.
     '''
-    def all(self, pretty=None, range=None, includeself=False, reverse=False, **kwargs):
+    def all(self, pretty=None, range=None, include_self=False, reverse=False, **kwargs):
         checks = (
             rawstokenquery(pretty=pretty, **kwargs)
         ,)
-        return self.query(checks, range=range, includeself=includeself, reverse=reverse)[0].result
+        return self.query(checks, range=range, include_self=include_self, reverse=reverse)[0].result
     
     '''
     Get a list of all tokens up to a match.
     '''
-    def until(self, pretty=None, range=None, includeself=False, reverse=False, **kwargs):
+    def until(self, pretty=None, range=None, include_self=False, reverse=False, **kwargs):
         checks = (
             rawstokenquery(),
             rawstokenquery(pretty=pretty, limit=1, **kwargs)
         )
-        return self.query(checks, range=range, includeself=includeself, reverse=reverse)[0].result
+        return self.query(checks, range=range, include_self=include_self, reverse=reverse)[0].result
         
     '''
     Get the first matching token, but abort when a token matching arguments prepended with 'until_' is encountered.
     '''
-    def getuntil(self, pretty=None, until_pretty=None, range=None, includeself=False, reverse=False, **kwargs):
+    def getuntil(self, pretty=None, until_pretty=None, range=None, include_self=False, reverse=False, **kwargs):
         until_args, condition_args = self.argsuntil(**kwargs)
         checks = (
             rawstokenquery(pretty=until_pretty, limit=1, **until_args),
             rawstokenquery(pretty=pretty, limit=1, **condition_args)
         )
-        result = self.query(checks, range=range, includeself=includeself, reverse=reverse)[1].result
+        result = self.query(checks, range=range, include_self=include_self, reverse=reverse)[1].result
         return result[0] if result and len(result) else None
     
-    def getlastuntil(self, pretty=None, until_pretty=None, range=None, includeself=False, reverse=False, **kwargs):
+    def getlastuntil(self, pretty=None, until_pretty=None, range=None, include_self=False, reverse=False, **kwargs):
         until_args, condition_args = self.argsuntil(**kwargs)
         checks = (
             rawstokenquery(pretty=until_pretty, limit=1, **until_args),
             rawstokenquery(pretty=pretty, **condition_args)
         )
-        result = self.query(checks, range=range, includeself=includeself, reverse=reverse)[1].result
+        result = self.query(checks, range=range, include_self=include_self, reverse=reverse)[1].result
         return result[-1] if result and len(result) else None
      
     '''
     Get a list of all matching tokens, but abort when a token matching arguments prepended with 'until_' is encountered.
     '''
-    def alluntil(self, pretty=None, until_pretty=None, range=None, includeself=False, reverse=False, **kwargs):
+    def alluntil(self, pretty=None, until_pretty=None, range=None, include_self=False, reverse=False, **kwargs):
         until_args, condition_args = self.argsuntil(**kwargs)
         checks = (
             rawstokenquery(pretty=until_pretty, limit=1, **until_args),
             rawstokenquery(pretty=pretty, **condition_args)
         )
-        return self.query(checks, range=range, includeself=includeself, reverse=reverse)[1].result
+        return self.query(checks, range=range, include_self=include_self, reverse=reverse)[1].result
         
     # utility function for getuntil and alluntil methods
     def argsuntil(self, **kwargs):
@@ -367,8 +405,10 @@ class rawstoken:
 class rawstokenquery:
     def __init__(self,
         pretty=None,
+        match_token=None,
         exact_token=None, exact_value=None, exact_args=None, exact_arg=None,
         re_value=None, re_args=None, re_arg=None, 
+        value_in=None,
         limit=None, limit_terminates=True,
         anti=None
     ):
@@ -377,6 +417,9 @@ class rawstokenquery:
             token = rawstoken(pretty=pretty)
             exact_value = token.value
             exact_args = token.args
+        if match_token:
+            exact_value = match_token.value
+            exact_args = match_token.args
         self.exact_token = exact_token
         self.exact_value = exact_value
         self.exact_args = exact_args
@@ -384,6 +427,7 @@ class rawstokenquery:
         self.re_value = re_value
         self.re_args = re_args
         self.re_arg = re_arg
+        self.value_in = value_in
         self.limit = limit
         self.limit_terminates = limit_terminates
         self.anti = anti
@@ -393,11 +437,12 @@ class rawstokenquery:
         result = self.basematch(token)
         return not result if self.anti else result
     def basematch(self, token):
-        if self.exact_token == token:
-            return False
-        elif self.exact_value is not None and self.exact_value != token.value:
-            return False
-        elif self.re_value is not None and re.match(self.re_value, token.value) == None:
+        if (
+            self.exact_token is not None and self.exact_token != token or
+            self.exact_value is not None and self.exact_value != token.value or
+            self.re_value is not None and re.match(self.re_value, token.value) == None or
+            self.value_in is not None and token.value not in self.value_in
+        ):
             return False
         if self.exact_args is not None:
             if not (len(self.exact_args) == len(token.args) and all([self.exact_args[i] == None or str(self.exact_args[i]) == token.args[i] for i in xrange(0, len(token.args))])):
