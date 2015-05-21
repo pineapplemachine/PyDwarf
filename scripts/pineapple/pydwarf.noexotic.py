@@ -4,9 +4,7 @@ import pydwarf
     version = 'alpha',
     author = 'Sophie Kirschner',
     description = 'Replaces all [PET_EXOTIC] and [MOUNT_EXOTIC] tags with their non-exotic counterparts.',
-    # Definitely compatible with 0.40.x and 0.31.x, probably works with anything else too and should
-    # at least not break anything even if not.
-    compatibility = ('0\.(40|31)\..*', '.*')
+    compatibility = (pydwarf.df_0_34, pydwarf.df_0_40)
 )
 def noexotic(raws):
     pets = raws.all('PET_EXOTIC')
