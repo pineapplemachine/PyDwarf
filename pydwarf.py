@@ -11,7 +11,7 @@ df_0_34 = '(0\.34\.(1[10]|0\d))'
 # Matches all DF 0.31.* releases
 df_0_31 = '(0\.31\.(2[0-5]|[01]\d))'
 # Matches all DF 0.34 and 0.31 releases
-df_0_3x = '|'.join(df_0_31, df_0_34)
+df_0_3x = '|'.join((df_0_31, df_0_34))
 # Matches all DF 0.28.* releases
 df_0_28 = '(0\.28\.181\.(40[abcd]|39[abcdef]))'
 # Matches all DF 0.27.* releases
@@ -23,7 +23,7 @@ df_0_22 = '(0\.22\.1(23\.23a|2[01]\.23[ab]|10\.(23[abc]|22[abcdef])|07\.21a))'
 # Matches all DF 0.21.* releases
 df_0_21 = '(0\.21\.(10(5\.21a|4\.(21[abc]|19[abc])|2\.19a|1\.19[abcd]|0\.19a)|9[53]\.19[abc]))'
 # Matches all DF 0.27, 0.23, 0.22, and 0.21 releases
-df_0_2x = '|'.join(df_0_21, df_0_22, df_0_23, df_0_27, df_0_28)
+df_0_2x = '|'.join((df_0_21, df_0_22, df_0_23, df_0_27, df_0_28))
 
 # Make a default log object if none exists already
 if 'log' not in vars() and 'log' not in globals(): log = logging.getLogger()

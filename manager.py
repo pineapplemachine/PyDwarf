@@ -39,7 +39,9 @@ def __main__():
                 scriptname = script.get('name')
                 scriptargs = script.get('args')
                 scriptmatch = script.get('match')
-                candidates = pydwarf.urist.get(scriptname, version=settings.dfversion, match=scriptmatch)
+                scriptignoreversion = script.get('ignoredfversion')
+                checkversion = None if scriptignoreversion else settings.dfversion
+                candidates = pydwarf.urist.get(scriptname, version=sheckversion, match=scriptmatch)
                 if candidates and len(candidates):
                     urist = candidates[0]
                     if len(candidates) > 1: pydwarf.log.warning('More than one fitting script has been specified, using a best guess.')                        
