@@ -1,6 +1,7 @@
 import pydwarf
 
 @pydwarf.urist(
+    name = 'pineapple.noexotic',
     version = 'alpha',
     author = 'Sophie Kirschner',
     description = 'Replaces all [PET_EXOTIC] and [MOUNT_EXOTIC] tags with their non-exotic counterparts.',

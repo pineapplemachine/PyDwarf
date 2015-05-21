@@ -1,7 +1,7 @@
 import pydwarf
 
 @pydwarf.urist(
-    name = 'deerappear',
+    name = 'pineapple.deerappear',
     version = 'alpha',
     author = 'Sophie Kirschner',
     description = 'Changes the appearance of each deer from a brown D to yellow d.',

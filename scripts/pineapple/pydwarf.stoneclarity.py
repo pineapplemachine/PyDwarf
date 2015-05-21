@@ -198,6 +198,7 @@ def applyrules(rules, groups, ids, log=None):
             if log: log.warning('Encountered %s rule with no mutators.' % rule['name'] if 'name' in rule else 'unnamed')
 
 @pydwarf.urist(
+    name = 'pineapple.stoneclarity',
     version = 'alpha',
     author = 'Sophie Kirschner',
     description = 'Allows powerful editing of the appearances of stone, ore, and gems.',

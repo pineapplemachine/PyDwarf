@@ -25,6 +25,19 @@ df_0_21 = '(0\.21\.(10(5\.21a|4\.(21[abc]|19[abc])|2\.19a|1\.19[abcd]|0\.19a)|9[
 # Matches all DF 0.27, 0.23, 0.22, and 0.21 releases
 df_0_2x = '|'.join((df_0_21, df_0_22, df_0_23, df_0_27, df_0_28))
 
+# Generates a regex which should properly match from, until, and each version in-between.
+# For example: pydwarf_range('0.40.14', '0.40.24')
+def df_revision_range(prettymin=None, prettymax=None, major=None, minor=None, minrevision=None, maxrevision=None):
+    if prettymin:
+        parts = prettymin.split('.')
+        major = parts[0] if len(parts) else '0'
+        minor = parts[1] if len(parts) > 1 else '0'
+        minrevision = parts[2] if len(parts) > 2 else '0'
+    if prettymax:
+        parts = prettymax.split('.')
+        maxrevision = parts[2] if len(parts) > 2 else '0'
+    return '%s\.%s\.(%s)' % (major, minor, '|'.join([str(r) for r in range(int(minrevision), int(maxrevision)+1)]))
+
 # Make a default log object if none exists already
 if 'log' not in vars() and 'log' not in globals(): log = logging.getLogger()
 
@@ -50,9 +63,15 @@ class urist:
             it ought to be compatible with but that hasn't been tested. This way, a version
             with a more confident compatibility indicator can be chosen over one with a less
             confident indicator.
+        namespace: Should correspond to an author or authors, groups of mods, or anything
+            really. When specified, it becomes possible for a user to conveniently reference
+            a particular one of multiple identically-named mods by a namespace. If there is
+            a period in a script name, the text preceding the last period is assumed to be
+            namespace and the text after the name.
             
     Standard metadata - PyDwarf does nothing special with these, but for the sake of standardization they ought to be included:
-        author: Indicates who created the script.
+        author: Indicates who created the script. In the case of multiple authors, an
+            iterable such as a tuple or list should be used to enumerate them.
         version: Indicates the script version.
         description: Describes the script's purpose and functioning.
         arguments: Should be a dict with argument names as keys corresponding to strings which
@@ -63,14 +82,21 @@ class urist:
     def __init__(self, **kwargs):
         self.metadata = kwargs
     def __call__(self, fn):
-        self.name = self.metadata['name'] if 'name' in self.metadata else fn.__name__
         self.fn = fn
+        if 'name' in self.metadata:
+            self.name, namespace = self.metadata['name']
+            if namespace is not None: self.metadata['namespace'] = namespace
+        else:
+            self.name = fn.__name__
         if self.name not in urist.registered: urist.registered[self.name] = []
         urist.registered[self.name].append(self)
         log.debug('Registered script %s.' % self.name)
         return fn
+    
     @staticmethod
     def get(name, version=None, match=None):
+        name, namespace = splitname(name)
+        if namespace is not None: match['namespace'] = namespace
         candidates = urist.registered.get(name)
         if candidates and len(candidates):
             if match:
@@ -93,4 +119,13 @@ class urist:
                 candidates = comp + nocomp
         return candidates
             
+    @staticmethod
+    def splitname(name):
+        if '.' in name:
+            nameparts = name.split('.')
+            name = nameparts[-1]
+            namespace = '.'.join(nameparts[-1:])
+            return name, namespace
+        else:
+            return name, None
 
