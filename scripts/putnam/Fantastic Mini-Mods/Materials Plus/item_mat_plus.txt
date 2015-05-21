@@ -1,0 +1,31 @@
+item_mat_plus
+
+[OBJECT:ITEM]
+
+[ITEM_TOOL:BERYLLIUM_TOKEN_P]
+[NAME:beryllium token:beryllium tokens]
+[VALUE:0]
+[TILE:66]
+[SIZE:1]
+[MATERIAL_SIZE:1]
+
+[ITEM_TOOL:SULFURIC_ACID_TOKEN_P]
+[NAME:sulfuric acid token:sulfuric acid tokens]
+[VALUE:0]
+[TILE:83]
+[SIZE:1]
+[MATERIAL_SIZE:1]
+
+[ITEM_TOOL:REDUCER_TOKEN_P]
+[NAME:reducer token:reducer tokens]
+[VALUE:0]
+[TILE:82]
+[SIZE:1]
+[MATERIAL_SIZE:1]
+
+[ITEM_TOOL:KROLL_TOKEN_P]
+[NAME:kroll token:kroll tokens]
+[VALUE:0]
+[TILE:75]
+[SIZE:1]
+[MATERIAL_SIZE:1]

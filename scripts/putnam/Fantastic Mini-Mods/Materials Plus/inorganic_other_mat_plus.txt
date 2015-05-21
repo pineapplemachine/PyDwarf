@@ -1,0 +1,17 @@
+inorganic_other_mat_plus
+
+[OBJECT:INORGANIC]
+
+[INORGANIC:SULFURIC_ACID_PUTNAM]
+    [USE_MATERIAL_TEMPLATE:STONE_TEMPLATE]
+	[STATE_NAME_ADJ:ALL_SOLID:frozen sulfuric acid]
+	[STATE_NAME_ADJ:LIQUID:sulfuric acid]
+	[STATE_NAME_ADJ:GAS:boiling sulfuric acid]
+	[DISPLAY_COLOR:0:7:1]
+	[MATERIAL_VALUE:5]
+	[SPEC_HEAT:1416]
+	[MELTING_POINT:10000] properly 10018, but that makes it solid at underground temperatures
+	[BOILING_POINT:10502]
+	[SOLID_DENSITY:1830]
+	[LIQUID_DENSITY:1830]
+    [STATE_COLOR:CLEAR]
