@@ -84,7 +84,7 @@ class urist:
     def __call__(self, fn):
         self.fn = fn
         if 'name' in self.metadata:
-            self.name, namespace = self.metadata['name']
+            self.name, namespace = urist.splitname(self.metadata['name'])
             if namespace is not None: self.metadata['namespace'] = namespace
         else:
             self.name = fn.__name__
@@ -95,7 +95,7 @@ class urist:
     
     @staticmethod
     def get(name, version=None, match=None):
-        name, namespace = splitname(name)
+        name, namespace = urist.splitname(name)
         if namespace is not None: match['namespace'] = namespace
         candidates = urist.registered.get(name)
         if candidates and len(candidates):
