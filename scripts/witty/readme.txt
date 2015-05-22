@@ -3,10 +3,6 @@ Restricted Nobles Ported to PyDwarf by Sophie Kirschner. (http://www.pineapplema
 
 How this works; 
 
-I used the CREATURE_CLASS token to declare an arbitrary distinction (DWARF or GOBLIN, in this case) for the 
-appropriate creature and then used the ALLOWED_CLASS (For Dwarf Only Nobles) or REJECTED_CLASS (Goblin Excluded Nobles)
-to restrict the allowed nobility. 
+I used the CREATURE_CLASS token to declare an arbitrary distinction (DWARF or GOBLIN, in this case) for the appropriate creature and then used the ALLOWED_CLASS (For Dwarf Only Nobles) or REJECTED_CLASS (Goblin Excluded Nobles) to restrict the allowed nobility. 
 
-All files changes are marked with a WM insignia. If you would like to remove the restriction to one of the noble positions
-just find the position in the entity_default.txt and remove either the ALLOWED_CLASS or REJECTED_CLASS token for that position. 
-Note all of this must be done before worldgen, and will have no effect if you make any changes during play. 
+All files changes are marked with a WM insignia. If you would like to remove the restriction to one of the noble positions just find the position in the entity_default.txt and remove either the ALLOWED_CLASS or REJECTED_CLASS token for that position. Note all of this must be done before worldgen, and will have no effect if you make any changes during play. 
