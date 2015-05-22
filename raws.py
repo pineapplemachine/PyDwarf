@@ -1,6 +1,101 @@
 import os
 import re
 
+class rawsqueryable:
+    '''
+    Starting with this token, execute some query until any of the included checks hits a limit or until there are no more tokens to check.
+    '''
+    def query(self, checks, tokeniter=None, range=None, include_self=False, reverse=False):
+        if tokeniter is None: tokeniter = self.tokens(range=range, include_self=include_self, reverse=reverse)
+        checkiter = (checks.itervalues() if isinstance(checks, dict) else checks)
+        limit = False
+        for check in checkiter: check.result = rawstokenlist()
+        for token in tokeniter:
+            for check in checkiter:
+                if (not check.limit) or len(check.result) < check.limit:
+                    if check.match(token): check.result.append(token)
+                    if check.limit_terminates and len(check.result) == check.limit: limit = True; break
+            if limit: break
+        return checks
+        
+    '''
+    Get the first matching token.
+    '''
+    def get(self, pretty=None, range=None, include_self=False, reverse=False, **kwargs):
+        checks = (
+            rawstokenquery(pretty=pretty, limit=1, **kwargs)
+        ,)
+        result = self.query(checks, range=range, include_self=include_self, reverse=reverse)[0].result
+        return result[0] if result and len(result) else None
+    
+    def getlast(self, pretty=None, range=None, include_self=False, reverse=False, **kwargs):
+        checks = (
+            rawstokenquery(pretty=pretty, **kwargs)
+        ,)
+        result = self.query(checks, range=range, include_self=include_self, reverse=reverse)[0].result
+        return result[-1] if result and len(result) else None
+    
+    '''
+    Get a list of all matching tokens.
+    '''
+    def all(self, pretty=None, range=None, include_self=False, reverse=False, **kwargs):
+        checks = (
+            rawstokenquery(pretty=pretty, **kwargs)
+        ,)
+        return self.query(checks, range=range, include_self=include_self, reverse=reverse)[0].result
+    
+    '''
+    Get a list of all tokens up to a match.
+    '''
+    def until(self, pretty=None, range=None, include_self=False, reverse=False, **kwargs):
+        checks = (
+            rawstokenquery(),
+            rawstokenquery(pretty=pretty, limit=1, **kwargs)
+        )
+        return self.query(checks, range=range, include_self=include_self, reverse=reverse)[0].result
+        
+    '''
+    Get the first matching token, but abort when a token matching arguments prepended with 'until_' is encountered.
+    '''
+    def getuntil(self, pretty=None, until_pretty=None, range=None, include_self=False, reverse=False, **kwargs):
+        until_args, condition_args = self.argsuntil(**kwargs)
+        checks = (
+            rawstokenquery(pretty=until_pretty, limit=1, **until_args),
+            rawstokenquery(pretty=pretty, limit=1, **condition_args)
+        )
+        result = self.query(checks, range=range, include_self=include_self, reverse=reverse)[1].result
+        return result[0] if result and len(result) else None
+    
+    def getlastuntil(self, pretty=None, until_pretty=None, range=None, include_self=False, reverse=False, **kwargs):
+        until_args, condition_args = self.argsuntil(**kwargs)
+        checks = (
+            rawstokenquery(pretty=until_pretty, limit=1, **until_args),
+            rawstokenquery(pretty=pretty, **condition_args)
+        )
+        result = self.query(checks, range=range, include_self=include_self, reverse=reverse)[1].result
+        return result[-1] if result and len(result) else None
+     
+    '''
+    Get a list of all matching tokens, but abort when a token matching arguments prepended with 'until_' is encountered.
+    '''
+    def alluntil(self, pretty=None, until_pretty=None, range=None, include_self=False, reverse=False, **kwargs):
+        until_args, condition_args = self.argsuntil(**kwargs)
+        checks = (
+            rawstokenquery(pretty=until_pretty, limit=1, **until_args),
+            rawstokenquery(pretty=pretty, **condition_args)
+        )
+        return self.query(checks, range=range, include_self=include_self, reverse=reverse)[1].result
+        
+    # utility function for getuntil and alluntil methods
+    def argsuntil(self, **kwargs):
+        until_args, condition_args = {}, {}
+        for arg, value in kwargs.iteritems():
+            if arg.startswith('until_'):
+                until_args[arg[6:]] = value
+            else:
+                condition_args[arg] = value
+        return until_args, condition_args
+
 class raws:
     '''Represents as a whole all the raws contained within a directory.'''
     
@@ -119,7 +214,7 @@ class raws:
                 tokens[-1].suffix = data[pos:]
             return tokens
 
-class rawsfile:
+class rawsfile(rawsqueryable):
     def __init__(self, header=None, data=None, path=None, tokens=None, rfile=None):
         if rfile:
             self.read(rfile)
@@ -136,51 +231,39 @@ class rawsfile:
         if tokens:
             self.settokens(tokens)
     def settokens(self, tokens):
-        if isinstance(tokens, list) or isinstance(tokens, tuple):
-            self.roottoken = tokens[0]
-            self.tailtoken = tokens[-1]
-        else:
-            firsttoken = True
-            for token in tokens:
-                self.tailtoken = token
-                if firsttoken:
-                    self.roottoken = token
-                    firsttoken = False
+        self.roottoken, self.tailtoken = rawstoken.firstandlast(tokens)
     def __str__(self):
         return '%s\n%s' %(self.header, ''.join([str(o) for o in self.tokens()]))
     def __repr__(self):
         return '%s\n%s' %(self.header, ''.join([repr(o) for o in self.tokens()]))
+        
     def root(self):
         while self.roottoken and self.roottoken.prev: self.roottoken = self.roottoken.prev
         return self.roottoken
     def tail(self):
         while self.tailtoken and self.tailtoken.next: self.tailtoken = self.tailtoken.next
         return self.tailtoken
-    def tokens(self):
-        itrtoken = self.root()
-        while itrtoken:
+        
+    def tokens(self, range=None, include_self=False, reverse=False):
+        if include_self: raise ValueError
+        count = 0
+        itrtoken = self.tail() if reverse else self.root()
+        while itrtoken and (range is None or range > count):
             yield itrtoken
-            itrtoken = itrtoken.next
+            itrtoken = itrtoken.prev if reverse else itrtoken.next
+            count += 1
             
     def read(self, rfile):
         self.header, self.data = rfile.readline().strip(), rfile.read()
     def write(self, rfile):
         rfile.write(self.__repr__())
     
-    def get(self, pretty=None, **kwargs):
-        root = self.root()
-        return root.get(pretty=pretty, include_self=True, **kwargs) if root else None
-    def getlast(self, pretty=None, **kwargs):
-        tail = self.tail()
-        return tail.get(pretty=pretty, include_self=True, reverse=True, **kwargs) if tail else None
-    def all(self, pretty=None, **kwargs):
-        root = self.root()
-        return root.all(pretty=pretty, include_self=True, **kwargs) if root else []
-    def add(self, pretty=None, token=None, tokens=None, **kwargs):
+    def add(self, auto=None, pretty=None, token=None, tokens=None, **kwargs):
         tail = self.tail()
         if tail:
-            return tail.add(pretty=pretty, token=token, tokens=tokens, **kwargs)
+            return tail.add(auto=auto, pretty=pretty, token=token, tokens=tokens, **kwargs)
         else:
+            pretty, token, tokens = rawstoken.auto(auto, pretty, token, tokens)
             if pretty:
                 tokens = raws.pretty(tokens)
                 if len(tokens) == 1: token = tokens
@@ -191,10 +274,19 @@ class rawsfile:
             elif tokens:
                 self.settokens(tokens)
                 return tokens
-            
         
-class rawstoken:
-    def __init__(self, pretty=None, token=None, value=None, args=None, prefix=None, suffix=None, prev=None, next=None):
+class rawstoken(rawsqueryable):
+    @staticmethod
+    def auto(auto, pretty, token, tokens):
+        # Convenience function for handling method arguments
+        if isinstance(auto, basestring): pretty = auto
+        elif isinstance(auto, rawstoken): token = auto
+        else: tokens = auto
+        return pretty, token, tokens
+        
+    def __init__(self, auto=None, pretty=None, token=None, value=None, args=None, prefix=None, suffix=None, prev=None, next=None):
+        pretty, token, tokens = rawstoken.auto(auto, pretty, token, None)
+        if tokens is not None: raise ValueError
         if pretty:
             prettytokens = raws.pretty(pretty, implicitbraces=True)
             if len(prettytokens) != 1: raise ValueError
@@ -221,6 +313,7 @@ class rawstoken:
     
     @staticmethod
     def copy(subject=None):
+        '''Copies some token or iterable collection of tokens.'''
         if isinstance(subject, rawstoken):
             return rawstoken(token=subject)
         elif subject is not None:
@@ -236,119 +329,22 @@ class rawstoken:
         else:
             raise ValueError
         
-    def tokens(self, reverse=False):
-        itertoken = self.prev if reverse else self.next
-        while itertoken:
+    def tokens(self, range=None, include_self=False, reverse=False):
+        count = 0
+        itertoken = self if include_self else (self.prev if reverse else self.next)
+        while itertoken and (range is None or range > count):
             yield itertoken
             itertoken = itertoken.prev if reverse else itertoken.next
-    
-    '''
-    Starting with this token, execute some query until any of the included checks hits a limit or until there are no more tokens to check.
-    '''
-    def query(self, checks, range=None, include_self=False, reverse=False):
-        token = self if include_self else (self.prev if reverse else self.next)
-        limit = False
-        count = 0
-        checkiter = (checks.itervalues() if isinstance(checks, dict) else checks)
-        for check in checkiter: check.result = []
-        while token and ((not range) or range > count):
-            for check in checkiter:
-                if (not check.limit) or len(check.result) < check.limit:
-                    if check.match(token): check.result.append(token)
-                    if check.limit_terminates and len(check.result) == check.limit: limit = True; break
-            if limit: break
-            token = token.prev if reverse else token.next
             count += 1
-        return checks
-    
-    '''
-    Get the first matching token.
-    '''
-    def get(self, pretty=None, range=None, include_self=False, reverse=False, **kwargs):
-        checks = (
-            rawstokenquery(pretty=pretty, limit=1, **kwargs)
-        ,)
-        result = self.query(checks, range=range, include_self=include_self, reverse=reverse)[0].result
-        return result[0] if result and len(result) else None
-    
-    def getlast(self, pretty=None, range=None, include_self=False, reverse=False, **kwargs):
-        checks = (
-            rawstokenquery(pretty=pretty, **kwargs)
-        ,)
-        result = self.query(checks, range=range, include_self=include_self, reverse=reverse)[0].result
-        return result[-1] if result and len(result) else None
-    
-    '''
-    Get a list of all matching tokens.
-    '''
-    def all(self, pretty=None, range=None, include_self=False, reverse=False, **kwargs):
-        checks = (
-            rawstokenquery(pretty=pretty, **kwargs)
-        ,)
-        return self.query(checks, range=range, include_self=include_self, reverse=reverse)[0].result
-    
-    '''
-    Get a list of all tokens up to a match.
-    '''
-    def until(self, pretty=None, range=None, include_self=False, reverse=False, **kwargs):
-        checks = (
-            rawstokenquery(),
-            rawstokenquery(pretty=pretty, limit=1, **kwargs)
-        )
-        return self.query(checks, range=range, include_self=include_self, reverse=reverse)[0].result
-        
-    '''
-    Get the first matching token, but abort when a token matching arguments prepended with 'until_' is encountered.
-    '''
-    def getuntil(self, pretty=None, until_pretty=None, range=None, include_self=False, reverse=False, **kwargs):
-        until_args, condition_args = self.argsuntil(**kwargs)
-        checks = (
-            rawstokenquery(pretty=until_pretty, limit=1, **until_args),
-            rawstokenquery(pretty=pretty, limit=1, **condition_args)
-        )
-        result = self.query(checks, range=range, include_self=include_self, reverse=reverse)[1].result
-        return result[0] if result and len(result) else None
-    
-    def getlastuntil(self, pretty=None, until_pretty=None, range=None, include_self=False, reverse=False, **kwargs):
-        until_args, condition_args = self.argsuntil(**kwargs)
-        checks = (
-            rawstokenquery(pretty=until_pretty, limit=1, **until_args),
-            rawstokenquery(pretty=pretty, **condition_args)
-        )
-        result = self.query(checks, range=range, include_self=include_self, reverse=reverse)[1].result
-        return result[-1] if result and len(result) else None
-     
-    '''
-    Get a list of all matching tokens, but abort when a token matching arguments prepended with 'until_' is encountered.
-    '''
-    def alluntil(self, pretty=None, until_pretty=None, range=None, include_self=False, reverse=False, **kwargs):
-        until_args, condition_args = self.argsuntil(**kwargs)
-        checks = (
-            rawstokenquery(pretty=until_pretty, limit=1, **until_args),
-            rawstokenquery(pretty=pretty, **condition_args)
-        )
-        return self.query(checks, range=range, include_self=include_self, reverse=reverse)[1].result
-        
-    # utility function for getuntil and alluntil methods
-    def argsuntil(self, **kwargs):
-        until_args, condition_args = {}, {}
-        for arg, value in kwargs.iteritems():
-            if arg.startswith('until_'):
-                until_args[arg[6:]] = value
-            else:
-                condition_args[arg] = value
-        return until_args, condition_args
-        
-    '''
-    Determine whether this token matches some constraints.
-    '''
+            
     def match(self, pretty=None, **kwargs):
+        '''Returns True if this method matches some rawstokenquery, false otherwise.'''
         return rawstokenquery(pretty=pretty, **kwargs).match(self)
         
-    '''
-    Adds a token. If reverse is True, the token is added immediately before this one. If False, the token is added immediately after.
-    '''
-    def add(self, pretty=None, token=None, tokens=None, reverse=False):
+    def add(self, auto=None, pretty=None, token=None, tokens=None, reverse=False):
+        '''Adds a token nearby this one. If reverse is False the token or tokens are
+        added immediately after. If it's True, they are added before.'''
+        pretty, token, tokens = rawstoken.auto(auto, pretty, token, tokens)
         if pretty:
             return self.addall(raws.pretty(pretty), reverse)
         elif tokens:
@@ -357,8 +353,21 @@ class rawstoken:
             return self.addone(token if token else rawstoken(pretty=pretty), reverse)
         else:
             raise ValueError
-            
+    
+    @staticmethod
+    def firstandlast(tokens):
+        # Utility method for getting the first and last items of some iterable
+        try:
+            return tokens[0], tokens[-1]
+        except:
+            first, last = None, None
+            for token in tokens:
+                if first is not None: first = token
+                last = token
+            return first, last            
+        
     def addone(self, token, reverse=False):
+        # Utility method called by add when adding a single token
         if reverse:
             token.next = self
             token.prev = self.prev
@@ -371,22 +380,22 @@ class rawstoken:
             self.next = token
         return token
     def addall(self, tokens, reverse=False):
+        # Utility method called by add when adding multiple tokens
+        first, last = rawstoken.firstandlast(tokens)
         if reverse:
-            tokens[-1].next = self
-            tokens[0].prev = self.prev
-            if self.prev: self.prev.next = tokens[0]
-            self.prev = tokens[-1]
+            last.next = self
+            first.prev = self.prev
+            if self.prev: self.prev.next = first
+            self.prev = last
         else:
-            tokens[0].prev = self
-            tokens[-1].next = self.next
+            first.prev = self
+            last.next = self.next
             if self.next: self.next.prev = tokens[-1]
-            self.next = tokens[0]
+            self.next = first
         return tokens
     
-    '''
-    Removes this token and the next count tokens in the direction indicated by reverse.
-    '''
     def remove(self, count=0, reverse=False):
+        '''Removes this token and the next count tokens in the direction indicated by reverse.'''
         left = self.prev
         right = self.next
         if count:
@@ -401,6 +410,14 @@ class rawstoken:
         if left: left.next = right
         if right: right.prev = left
         return self
+
+class rawstokenlist(list, rawsqueryable):
+    '''Extends list with token querying functionality.'''
+    def tokens(self, range=None, include_self=False, reverse=False):
+        if include_self: raise ValueError
+        for i in xrange(self.__len__()-1, -1, -1) if reverse else xrange(0, self.__len__()):
+            if range is not None and range <= count: break
+            yield self.__getitem__(i)
 
 class rawstokenquery:
     def __init__(self,
