@@ -29,29 +29,9 @@ def addwm(token, pretty): token.add('\n\t[%s] - WM ' % pretty)
 )
 def restrictnobles(raws, onlydwarves=False):
     return restrictnobles_custom(raws, (['DWARF'] if onlydwarves else None), (None if onlydwarves else ['GOBLIN']))
-    mountain = raws.get('ENTITY:MOUNTAIN')
-    if mountain:
-        positions = mountain.alluntil(exact_value='POSITION', until_exact_value='ENTITY')
-        for position in positions:
-            addwm(position, 'ALLOWED_CLASS:WITTY_DWARF' if onlydwarves else 'REJECTED_CLASS:WITTY_GOBLIN')
-        if onlydwarves:
-            dwarf = raws.get('CREATURE:DWARF')
-            if dwarf:
-                addwm(dwarf, 'CREATURE_CLASS:WITTY_DWARF')
-            else:
-                return pydwarf.failure('Couldn\'t find CREATURE:DWARF.')
-        else:
-            goblin = raws.get('CREATURE:GOBLIN')
-            if goblin:
-                addwm(goblin, 'CREATURE_CLASS:WITTY_GOBLIN')
-            else:
-                return pydwarf.failure('Couldn\'t find CREATURE:GOBLIN.')
-        return pydwarf.success('Restricted %d positions.' % len(positions))
-    else:
-        return pydwarf.failure('Couldn\'t find ENTITY:MOUNTAIN.')
 
 @pydwarf.urist(
-    name = 'restricted nobles custom',
+    name = 'witty.restrictednobles_custom',
     version = 'alpha',
     author = ('Witty', 'Sophie Kirschner'),
     description = 'Allows allowing and preventing various species from becoming dwarven nobles.',
