@@ -139,7 +139,7 @@ def builddicts(query, raws, fuels, log=None):
         # Handle metamorphic, sedimentary, igneous
         # Also veins and clusters, etc.
         for env in token.stoneclarity['ENVIRONMENT']:
-            if env.nargs >= 2:
+            if env.nargs() >= 2:
                 envtype = 'ENVIRONMENT_'+env.args[0]
                 veintype = 'ENVIRONMENT_'+env.args[1]
                 if envtype not in groups: groups[envtype] = set()
@@ -147,7 +147,7 @@ def builddicts(query, raws, fuels, log=None):
                 groups[envtype].add(token)
                 groups[veintype].add(token)
         for env in token.stoneclarity['ENVIRONMENT_SPEC']:
-            if env.nargs >= 2:
+            if env.nargs() >= 2:
                 spectype = 'ENVIRONMENT_SPEC_'+env.args[0]
                 veintype = 'ENVIRONMENT_SPEC_'+env.args[1]
                 if spectype not in groups: groups[spectype] = set()
@@ -155,7 +155,7 @@ def builddicts(query, raws, fuels, log=None):
                 groups[envtype].add(token)
                 groups[veintype].add(token)
         # Handle ids and fuels
-        if token.nargs == 1:
+        if token.nargs() == 1:
             id = token.args[0]
             ids[id] = token
             if id in fuels:
