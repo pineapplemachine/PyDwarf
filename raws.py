@@ -279,9 +279,11 @@ class rawstoken(rawsqueryable):
     @staticmethod
     def auto(auto, pretty, token, tokens):
         # Convenience function for handling method arguments
-        if isinstance(auto, basestring): pretty = auto
-        elif isinstance(auto, rawstoken): token = auto
-        else: tokens = auto
+        if auto is not None:
+            if isinstance(auto, basestring): pretty = auto
+            elif isinstance(auto, rawstoken): token = auto
+            elif isinstance(auto, rawsfile) or isinstance(auto, raws): tokens = auto.tokens()
+            else: tokens = auto
         return pretty, token, tokens
         
     def __init__(self, auto=None, pretty=None, token=None, value=None, args=None, prefix=None, suffix=None, prev=None, next=None):
@@ -304,7 +306,9 @@ class rawstoken(rawsqueryable):
         self.prefix = prefix        # non-token text between the preceding token and this one
         self.suffix = suffix        # between this token and the next/eof (should typically apply to eof)
         if not self.args: self.args = []
-        self.nargs = len(self.args)
+    
+    def nargs(self):
+        return len(self.args)
         
     def __str__(self):
         return '[%s%s]' %(self.value, (':%s' % ':'.join([str(a) for a in self.args])) if self.args and len(self.args) else '')
@@ -422,10 +426,11 @@ class rawstokenlist(list, rawsqueryable):
 class rawstokenquery:
     def __init__(self,
         pretty=None,
-        match_token=None,
-        exact_token=None, exact_value=None, exact_args=None, exact_arg=None,
+        match_token=None, exact_token=None,
+        exact_value=None, exact_args=None, exact_arg=None,
+        except_value=None,
         re_value=None, re_args=None, re_arg=None, 
-        value_in=None,
+        value_in=None, value_not_in=None, args_contains=None, args_count=None,
         limit=None, limit_terminates=True,
         anti=None
     ):
@@ -439,12 +444,16 @@ class rawstokenquery:
             exact_args = match_token.args
         self.exact_token = exact_token
         self.exact_value = exact_value
+        self.except_value = except_value
         self.exact_args = exact_args
         self.exact_arg = exact_arg
         self.re_value = re_value
         self.re_args = re_args
         self.re_arg = re_arg
         self.value_in = value_in
+        self.value_not_in = value_not_in
+        self.args_contains = args_contains
+        self.args_count = args_count
         self.limit = limit
         self.limit_terminates = limit_terminates
         self.anti = anti
@@ -455,23 +464,27 @@ class rawstokenquery:
         return not result if self.anti else result
     def basematch(self, token):
         if (
-            self.exact_token is not None and self.exact_token != token or
-            self.exact_value is not None and self.exact_value != token.value or
-            self.re_value is not None and re.match(self.re_value, token.value) == None or
-            self.value_in is not None and token.value not in self.value_in
+            (self.exact_token is not None and self.exact_token != token) or
+            (self.except_value is not None and self.except_value == token) or
+            (self.exact_value is not None and self.exact_value != token.value) or
+            (self.args_count is not None and self.args_count != token.nargs()) or
+            (self.value_in is not None and token.value not in self.value_in) or
+            (self.value_not_in is not None and token.value in self.value_not_in) or
+            (self.re_value is not None and re.match(self.re_value, token.value) == None) or
+            (self.args_contains is not None and str(self.args_contains) not in [str(a) for a in token.args])
         ):
             return False
         if self.exact_args is not None:
-            if not (len(self.exact_args) == len(token.args) and all([self.exact_args[i] == None or str(self.exact_args[i]) == token.args[i] for i in xrange(0, len(token.args))])):
+            if not (len(self.exact_args) == token.nargs() and all([self.exact_args[i] == None or str(self.exact_args[i]) == token.args[i] for i in xrange(0, token.nargs())])):
                 return False
         if self.exact_arg is not None:
-            if not all([a[0]>=0 and a[0]<len(token.args) and token.args[a[0]] == str(a[1]) for a in self.exact_arg]):
+            if not all([a[0]>=0 and a[0]<token.nargs() and token.args[a[0]] == str(a[1]) for a in self.exact_arg]):
                 return False
         if self.re_args is not None:
-            if not (len(self.re_args) == len(token.args) and all([self.re_args[i] == None or re.match(self.re_args[i], token.args[i]) for i in xrange(0, len(token.args))])):
+            if not (len(self.re_args) == token.nargs() and all([self.re_args[i] == None or re.match(self.re_args[i], token.args[i]) for i in xrange(0, token.nargs())])):
                 return False
         if self.re_arg is not None:
-            if not all([a[0]>=0 and a[0]<len(token.args) and re.match(a[1], token.args[a[0]]) for a in self.re_arg]):
+            if not all([a[0]>=0 and a[0]<token.nargs() and re.match(a[1], token.args[a[0]]) for a in self.re_arg]):
                 return False
         return True
 

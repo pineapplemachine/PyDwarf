@@ -96,7 +96,9 @@ class urist:
     @staticmethod
     def get(name, version=None, match=None):
         name, namespace = urist.splitname(name)
-        if namespace is not None: match['namespace'] = namespace
+        if namespace is not None:
+            if not match: match = {}
+            match['namespace'] = namespace
         candidates = urist.registered.get(name)
         if candidates and len(candidates):
             if match:

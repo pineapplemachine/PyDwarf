@@ -1,5 +1,5 @@
 Restricted Nobles created by Witty. (http://www.bay12forums.com/smf/index.php?topic=150702.0)
-Restricted Nobles Ported to PyDwarf by Sophie Kirschner. (http://www.pineapplemachine.com)
+Restricted Nobles ported to PyDwarf by Sophie Kirschner. (http://www.pineapplemachine.com)
 
 How this works; 
 
