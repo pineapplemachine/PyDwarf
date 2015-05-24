@@ -1,7 +1,7 @@
 # vim:fileencoding=UTF-8
 
 import pydwarf
-from raws import rawstokenquery
+from raws import rawstokenfilter
 
 # Generic mutators for use in rules
 def mutator_generic(value, *args):
@@ -69,35 +69,35 @@ vanilla_fuels = ['COAL_BITUMINOUS', 'LIGNITE']
 # ENVIRONMENT, ENVIRONMENT_SPEC, and FUEL groups are handled specially. Everything else is simply
 # a boolean check for a match, and matches get placed in the group identified by the key to which
 # a token query is matched.
-def propertyquery(**kwargs): return rawstokenquery(limit=1, limit_terminates=False, **kwargs) # Convenience function
+def propertyfilter(**kwargs): return rawstokenfilter(limit=1, limit_terminates=False, **kwargs) # Convenience function
 default_inorganics_query = {
     # Detect tokens which indicate what kind of inorganic this is
-    'STONE': propertyquery(exact_value='IS_STONE'),
-    'GEM': propertyquery(exact_value='IS_GEM'),
-    'ORE': propertyquery(exact_value='METAL_ORE'),
-    'FLUX': propertyquery(pretty='REACTION_CLASS:FLUX'),
-    'GYPSUM': propertyquery(pretty='REACTION_CLASS:GYPSUM'),
-    'SOIL': propertyquery(exact_value='SOIL'),
-    'SOIL_SAND': propertyquery(exact_value='SOIL_SAND'),
-    'SOIL_OCEAN': propertyquery(exact_value='SOIL_OCEAN'),
-    'METAMORPHIC': propertyquery(exact_value='METAMORPHIC'),
-    'SEDIMENTARY': propertyquery(exact_value='SEDIMENTARY'),
-    'IGNEOUS_ALL': propertyquery(exact_value='IGNEOUS_ALL'),
-    'IGNEOUS_EXTRUSIVE': propertyquery(exact_value='IGNEOUS_EXTRUSIVE'),
-    'IGNEOUS_INTRUSIVE': propertyquery(exact_value='IGNEOUS_INTRUSIVE'),
-    'AQUIFER': propertyquery(exact_value='AQUIFER'),
-    'NO_STONE_STOCKPILE': propertyquery(exact_value='NO_STONE_STOCKPILE'),
-    'ENVIRONMENT': rawstokenquery(exact_value='ENVIRONMENT'),
-    'ENVIRONMENT_SPEC': rawstokenquery(exact_value='ENVIRONMENT_SPEC'),
+    'STONE': propertyfilter(exact_value='IS_STONE'),
+    'GEM': propertyfilter(exact_value='IS_GEM'),
+    'ORE': propertyfilter(exact_value='METAL_ORE'),
+    'FLUX': propertyfilter(pretty='REACTION_CLASS:FLUX'),
+    'GYPSUM': propertyfilter(pretty='REACTION_CLASS:GYPSUM'),
+    'SOIL': propertyfilter(exact_value='SOIL'),
+    'SOIL_SAND': propertyfilter(exact_value='SOIL_SAND'),
+    'SOIL_OCEAN': propertyfilter(exact_value='SOIL_OCEAN'),
+    'METAMORPHIC': propertyfilter(exact_value='METAMORPHIC'),
+    'SEDIMENTARY': propertyfilter(exact_value='SEDIMENTARY'),
+    'IGNEOUS_ALL': propertyfilter(exact_value='IGNEOUS_ALL'),
+    'IGNEOUS_EXTRUSIVE': propertyfilter(exact_value='IGNEOUS_EXTRUSIVE'),
+    'IGNEOUS_INTRUSIVE': propertyfilter(exact_value='IGNEOUS_INTRUSIVE'),
+    'AQUIFER': propertyfilter(exact_value='AQUIFER'),
+    'NO_STONE_STOCKPILE': propertyfilter(exact_value='NO_STONE_STOCKPILE'),
+    'ENVIRONMENT': rawstokenfilter(exact_value='ENVIRONMENT'),
+    'ENVIRONMENT_SPEC': rawstokenfilter(exact_value='ENVIRONMENT_SPEC'),
     # Detect tokens which represent appearance
-    'TILE': propertyquery(exact_value='TILE'),
-    'ITEM_SYMBOL': propertyquery(exact_value='ITEM_SYMBOL'),
-    'DISPLAY_COLOR': propertyquery(exact_value='DISPLAY_COLOR'),
-    'BASIC_COLOR': propertyquery(exact_value='BASIC_COLOR'),
-    'TILE_COLOR': propertyquery(exact_value='TILE_COLOR'),
-    'STATE_COLOR': rawstokenquery(exact_value='STATE_COLOR'),
+    'TILE': propertyfilter(exact_value='TILE'),
+    'ITEM_SYMBOL': propertyfilter(exact_value='ITEM_SYMBOL'),
+    'DISPLAY_COLOR': propertyfilter(exact_value='DISPLAY_COLOR'),
+    'BASIC_COLOR': propertyfilter(exact_value='BASIC_COLOR'),
+    'TILE_COLOR': propertyfilter(exact_value='TILE_COLOR'),
+    'STATE_COLOR': rawstokenfilter(exact_value='STATE_COLOR'),
     # Stop at the next [INORGANIC:] token
-    'EOF': rawstokenquery(exact_value='INORGANIC', limit=1)
+    'EOF': rawstokenfilter(exact_value='INORGANIC', limit=1)
 }
 
 # Automatically get a list of INORGANIC IDs which describe fuels

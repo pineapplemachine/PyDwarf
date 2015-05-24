@@ -3,84 +3,84 @@ import re
 
 class rawsqueryable:
     
-    def query(self, checks, tokeniter=None, **kwargs):
+    def query(self, filters, tokeniter=None, **kwargs):
         '''Executes a query on some iterable containing tokens.
-        checks: A dict or other iterable containing rawstokenquery-like objects.
-        tokeniter: The query runs along this iterable until either a check has hit its limit or the tokens have run out.
-        range: The query will stop when it has checked this many tokens. If None, the query will not be stopped in this way.
+        filters: A dict or other iterable containing rawstokenfilter-like objects.
+        tokeniter: The query runs along this iterable until either a filter has hit its limit or the tokens have run out.
+        range: The query will stop when it has iterated over this many tokens. If None, the query will not be stopped in this way.
         **kwargs: If tokeniter is not given, then the object's token method will be called with these arguments and used instead.
         '''
         if tokeniter is None: tokeniter = self.tokens(**kwargs)
-        checkiter = (checks.itervalues() if isinstance(checks, dict) else checks)
+        filteriter = (filters.itervalues() if isinstance(filters, dict) else filters)
         limit = False
-        for check in checkiter: check.result = rawstokenlist()
+        for filter in filteriter: filter.result = rawstokenlist()
         for token in tokeniter:
-            for check in checkiter:
-                if (not check.limit) or len(check.result) < check.limit:
-                    if check.match(token): check.result.append(token)
-                    if check.limit_terminates and len(check.result) == check.limit: limit = True; break
+            for filter in filteriter:
+                if (not filter.limit) or len(filter.result) < filter.limit:
+                    if filter.match(token): filter.result.append(token)
+                    if filter.limit_terminates and len(filter.result) == filter.limit: limit = True; break
             if limit: break
-        return checks
+        return filters
         
     def get(self, pretty=None, range=None, include_self=False, reverse=False, **kwargs):
         '''Get the first matching token.'''
-        checks = (
-            rawstokenquery(pretty=pretty, limit=1, **kwargs)
+        filters = (
+            rawstokenfilter(pretty=pretty, limit=1, **kwargs)
         ,)
-        result = self.query(checks, range=range, include_self=include_self, reverse=reverse)[0].result
+        result = self.query(filters, range=range, include_self=include_self, reverse=reverse)[0].result
         return result[0] if result and len(result) else None
     
     def getlast(self, pretty=None, range=None, include_self=False, reverse=False, **kwargs):
         '''Get the last matching token.'''
-        checks = (
-            rawstokenquery(pretty=pretty, **kwargs)
+        filters = (
+            rawstokenfilter(pretty=pretty, **kwargs)
         ,)
-        result = self.query(checks, range=range, include_self=include_self, reverse=reverse)[0].result
+        result = self.query(filters, range=range, include_self=include_self, reverse=reverse)[0].result
         return result[-1] if result and len(result) else None
     
     def all(self, pretty=None, range=None, include_self=False, reverse=False, **kwargs):
         '''Get a list of all matching tokens.'''
-        checks = (
-            rawstokenquery(pretty=pretty, **kwargs)
+        filters = (
+            rawstokenfilter(pretty=pretty, **kwargs)
         ,)
-        return self.query(checks, range=range, include_self=include_self, reverse=reverse)[0].result
+        return self.query(filters, range=range, include_self=include_self, reverse=reverse)[0].result
     
     def until(self, pretty=None, range=None, include_self=False, reverse=False, **kwargs):
         '''Get a list of all tokens up to a match.'''
-        checks = (
-            rawstokenquery(),
-            rawstokenquery(pretty=pretty, limit=1, **kwargs)
+        filters = (
+            rawstokenfilter(),
+            rawstokenfilter(pretty=pretty, limit=1, **kwargs)
         )
-        return self.query(checks, range=range, include_self=include_self, reverse=reverse)[0].result
+        return self.query(filters, range=range, include_self=include_self, reverse=reverse)[0].result
         
     def getuntil(self, pretty=None, until_pretty=None, range=None, include_self=False, reverse=False, **kwargs):
         '''Get the first matching token, but abort when a token matching arguments prepended with 'until_' is encountered.'''
         until_args, condition_args = self.argsuntil(**kwargs)
-        checks = (
-            rawstokenquery(pretty=until_pretty, limit=1, **until_args),
-            rawstokenquery(pretty=pretty, limit=1, **condition_args)
+        filters = (
+            rawstokenfilter(pretty=until_pretty, limit=1, **until_args),
+            rawstokenfilter(pretty=pretty, limit=1, **condition_args)
         )
-        result = self.query(checks, range=range, include_self=include_self, reverse=reverse)[1].result
+        result = self.query(filters, range=range, include_self=include_self, reverse=reverse)[1].result
         return result[0] if result and len(result) else None
     
     def getlastuntil(self, pretty=None, until_pretty=None, range=None, include_self=False, reverse=False, **kwargs):
         '''Get the last matching token, up until a token matching arguments prepended with 'until_' is encountered.'''
         until_args, condition_args = self.argsuntil(**kwargs)
-        checks = (
-            rawstokenquery(pretty=until_pretty, limit=1, **until_args),
-            rawstokenquery(pretty=pretty, **condition_args)
+        filters = (
+            rawstokenfilter(pretty=until_pretty, limit=1, **until_args),
+            rawstokenfilter(pretty=pretty, **condition_args)
         )
-        result = self.query(checks, range=range, include_self=include_self, reverse=reverse)[1].result
+        result = self.query(filters, range=range, include_self=include_self, reverse=reverse)[1].result
         return result[-1] if result and len(result) else None
      
     def alluntil(self, pretty=None, until_pretty=None, range=None, include_self=False, reverse=False, **kwargs):
         '''Get a list of all matching tokens, but abort when a token matching arguments prepended with 'until_' is encountered.'''
         until_args, condition_args = self.argsuntil(**kwargs)
-        checks = (
-            rawstokenquery(pretty=until_pretty, limit=1, **until_args),
-            rawstokenquery(pretty=pretty, **condition_args)
+        filters = (
+            rawstokenfilter(pretty=until_pretty, limit=1, **until_args),
+            rawstokenfilter(pretty=pretty, **condition_args)
         )
-        return self.query(checks, range=range, include_self=include_self, reverse=reverse)[1].result
+        return self.query(filters, range=range, include_self=include_self, reverse=reverse)[1].result
         
     # utility function for getuntil and alluntil methods
     def argsuntil(self, **kwargs):
@@ -338,8 +338,8 @@ class rawstoken(rawsqueryable):
             count += 1
             
     def match(self, pretty=None, **kwargs):
-        '''Returns True if this method matches some rawstokenquery, false otherwise.'''
-        return rawstokenquery(pretty=pretty, **kwargs).match(self)
+        '''Returns True if this method matches some rawstokenfilter, false otherwise.'''
+        return rawstokenfilter(pretty=pretty, **kwargs).match(self)
         
     def add(self, auto=None, pretty=None, token=None, tokens=None, reverse=False):
         '''Adds a token nearby this one. If reverse is False the token or tokens are
@@ -419,7 +419,7 @@ class rawstokenlist(list, rawsqueryable):
             if range is not None and range <= count: break
             yield self.__getitem__(i)
 
-class rawstokenquery:
+class rawstokenfilter:
     def __init__(self,
         pretty=None,
         match_token=None, exact_token=None,
@@ -427,9 +427,50 @@ class rawstokenquery:
         except_value=None,
         re_value=None, re_args=None, re_arg=None, 
         value_in=None, value_not_in=None, args_contains=None, args_count=None,
-        limit=None, limit_terminates=True,
-        anti=None
+        anti=None,
+        limit=None, limit_terminates=True
     ):
+        '''Constructs an element of a query which either matches or doesn't match a given rawstoken.
+        Most arguments default to None. If some argument is None then that argument is not matched 
+        on.
+        
+        These arguments regard which tokens match and don't match the filter:
+        
+        pretty: If specified, the string is parsed as a token and its value and arguments are used
+            as exact_value and exact_args.
+        match_token: If specified, its value and arguments are used as exact_value and exact_args.
+        exact_token: If a token is not this exact object, then it doesn't match.
+        exact_value: If a token does not have this exact value, then it doesn't match.
+        exact_args: If every one of a token's arguments do not exactly match these arguments, then
+            it doesn't match. None values within this tuple- or list-like object are treated as
+            wildcards. (These None arguments match everything.)
+        exact_arg: An iterable containing tuple- or list-like objects where the first element is
+            an index and the second element is a string. If for any index/string pair a token's
+            argument at the index does not exactly match the string, then the token doesn't match.
+        except_value: If a token has this exact value, then it doesn't match.
+        re_value: If a token's value does not match this regular expression, then it doesn't match.
+        re_args: If every one of a token's arguments do not match these regular expressions, then
+            it doesn't match. None values within this tuple- or list-like object are treated as
+            wildcards. (These None arguments match everything.)
+        re_arg: An iterable containing tuple- or list-like objects where the first element is an
+            index and the second element is a regular expression string. If for any index/regex
+            pair a token's argument at the index does not match the regular expression, then the
+            token doesn't match.
+        value_in: If a token's value is not contained within this iterable, then it doesn't match.
+        value_not_in: If a token's value is contained within this iterable, then it doesn't match.
+        args_contains: If at least one of a token's arguments is not exactly this string, then it
+            doesn't match.
+        args_count: If a token's number of arguments is not exactly this, then it doesn't match.
+        
+        These arguments regard how the filter is treated in queries.
+        
+        limit: After matching this many tokens, the filter will cease to accumulate results. If
+            limit is None, then the filter will never cease as long as the query continues.
+        limit_terminates: After matching the number of tokens indicated by limit, if this is set
+            to True then the query of which this filter is a member is made to terminated. If
+            set to False, then this filter will only cease to accumulate results. Defaults to
+            True.
+        '''
         self.pretty = pretty
         if pretty:
             token = rawstoken(pretty=pretty)
@@ -450,11 +491,11 @@ class rawstokenquery:
         self.value_not_in = value_not_in
         self.args_contains = args_contains
         self.args_count = args_count
+        self.anti = anti
         self.limit = limit
         self.limit_terminates = limit_terminates
-        self.anti = anti
     @staticmethod
-    def anti(**kwargs): return rawsboolquery(anti=True, **kwargs)
+    def anti(**kwargs): return rawstokenfilter(anti=True, **kwargs)
     def match(self, token):
         result = self.basematch(token)
         return not result if self.anti else result
@@ -484,7 +525,7 @@ class rawstokenquery:
                 return False
         return True
 
-class rawsboolquery(rawstokenquery):
+class rawsboolfilter(rawstokenfilter):
     def __init__(self, subs, operand=None, anti=None, *args):
         self.subs = subs
         self.operand = operand
@@ -511,13 +552,13 @@ class rawsboolquery(rawstokenquery):
                 if not sub.match(token): return False
             return True
     @staticmethod
-    def one(subs): return rawsboolquery(subs, 'one')
+    def one(subs): return rawsboolfilter(subs, 'one')
     @staticmethod
-    def any(subs): return rawsboolquery(subs, 'any')
+    def any(subs): return rawsboolfilter(subs, 'any')
     @staticmethod
-    def all(subs): return rawsboolquery(subs, 'all')
+    def all(subs): return rawsboolfilter(subs, 'all')
     @staticmethod
-    def none(subs): return rawsboolquery(subs, 'all', anti=True)
+    def none(subs): return rawsboolfilter(subs, 'all', anti=True)
     @staticmethod
-    def count(subs, number): return rawsboolquery(subs, 'count', number)
+    def count(subs, number): return rawsboolfilter(subs, 'count', number)
     
