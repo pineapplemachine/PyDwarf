@@ -2,7 +2,7 @@
 
 ## Introduction
 
-I have an enormous love for Dwarf Fortress and nearly as great a love for modders. In the years I've been playing and following this game, I think that there's always been a gap where a really powerful raws mod manager could be. This is the niche PyDwarf is intended to fill: I want to give modders the power to query and modify Dwarf Fortress's raws files with an elegance hitherto unseen, and I want to give users the ability to apply these mods with a minimum of effort.
+I have an enormous love for Dwarf Fortress and nearly as great a love for mod authors. In the years I've been playing and following this game, I think that there's always been a gap where a really powerful raws mod manager could be. This is the niche PyDwarf is intended to fill: I want to give mod authors the power to query and modify Dwarf Fortress's raws files with an elegance hitherto unseen, and I want to give users the ability to apply these mods with a minimum of effort.
 
 ## For the user
 
