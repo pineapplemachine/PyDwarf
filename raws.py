@@ -82,8 +82,8 @@ class rawsqueryable:
         )
         return self.query(filters, range=range, include_self=include_self, reverse=reverse)[1].result
         
-    # utility function for getuntil and alluntil methods
     def argsuntil(self, **kwargs):
+        # utility function for handling arguments of getuntil and alluntil methods
         until_args, condition_args = {}, {}
         for arg, value in kwargs.iteritems():
             if arg.startswith('until_'):
@@ -304,6 +304,7 @@ class rawstoken(rawsqueryable):
         if not self.args: self.args = []
     
     def nargs(self):
+        '''Returns the number of arguments the token has. (Length of arguments list.)'''
         return len(self.args)
         
     def __str__(self):
@@ -342,8 +343,16 @@ class rawstoken(rawsqueryable):
         return rawstokenfilter(pretty=pretty, **kwargs).match(self)
         
     def add(self, auto=None, pretty=None, token=None, tokens=None, reverse=False):
-        '''Adds a token nearby this one. If reverse is False the token or tokens are
-        added immediately after. If it's True, they are added before.'''
+        '''Adds a token or tokens nearby this one. If reverse is False the token 
+        or tokens are added immediately after. If it's True, they are added before.
+        
+        auto: When the first argument is specified the intended assignment will be
+            detected automatically. If a rawstoken is specified it will be treated
+            as a token argument. If a string, pretty. If anything else, tokens.
+        pretty: Parses the string and adds the tokens within it.
+        token: Adds this one token.
+        tokens: Adds all of these tokens.
+        '''
         pretty, token, tokens = rawstoken.auto(auto, pretty, token, tokens)
         if pretty:
             return self.addall(raws.pretty(pretty), reverse)
@@ -424,8 +433,10 @@ class rawstokenfilter:
         pretty=None,
         match_token=None, exact_token=None,
         exact_value=None, exact_args=None, exact_arg=None,
-        except_value=None,
+        exact_prefix=None, exact_suffix=None,
         re_value=None, re_args=None, re_arg=None, 
+        re_prefix=None, re_suffix=None,
+        except_value=None,
         value_in=None, value_not_in=None, args_contains=None, args_count=None,
         anti=None,
         limit=None, limit_terminates=True
@@ -447,7 +458,10 @@ class rawstokenfilter:
         exact_arg: An iterable containing tuple- or list-like objects where the first element is
             an index and the second element is a string. If for any index/string pair a token's
             argument at the index does not exactly match the string, then the token doesn't match.
-        except_value: If a token has this exact value, then it doesn't match.
+        exact_prefix: If a token does not have this exact prefix - meaning the previous token's
+            suffix and its own prefix concatenated - then it doesn't match.
+        exact_suffix: If a token does not have this exact suffix - meaning its own suffix and the
+            next token's prefix concatenated - then it doesn't match.
         re_value: If a token's value does not match this regular expression, then it doesn't match.
         re_args: If every one of a token's arguments do not match these regular expressions, then
             it doesn't match. None values within this tuple- or list-like object are treated as
@@ -456,6 +470,11 @@ class rawstokenfilter:
             index and the second element is a regular expression string. If for any index/regex
             pair a token's argument at the index does not match the regular expression, then the
             token doesn't match.
+        re_prefix: If a token's prefix - meaning the previous token's suffix and its own prefix 
+            concatenated - does not match this regular expression string then it doesn't match.
+        re_suffix: If a token's suffix - meaning its own suffix and the next token's prefix
+            concatenated - does not match this regular expression string then it doesn't match.
+        except_value: If a token has this exact value, then it doesn't match.
         value_in: If a token's value is not contained within this iterable, then it doesn't match.
         value_not_in: If a token's value is contained within this iterable, then it doesn't match.
         args_contains: If at least one of a token's arguments is not exactly this string, then it
@@ -484,9 +503,13 @@ class rawstokenfilter:
         self.except_value = except_value
         self.exact_args = exact_args
         self.exact_arg = exact_arg
+        self.exact_prefix = exact_prefix
+        self.exact_suffix = exact_suffix
         self.re_value = re_value
         self.re_args = re_args
         self.re_arg = re_arg
+        self.re_prefix = re_prefix
+        self.re_suffix = re_suffix
         self.value_in = value_in
         self.value_not_in = value_not_in
         self.args_contains = args_contains
@@ -522,6 +545,14 @@ class rawstokenfilter:
                 return False
         if self.re_arg is not None:
             if not all([a[0]>=0 and a[0]<token.nargs() and re.match(a[1], token.args[a[0]]) for a in self.re_arg]):
+                return False
+        if self.exact_prefix is not None or self.re_prefix is not None:
+            match_prefix = (self.prev.suffix + self.prefix) if self.prev else self.prefix
+            if (self.exact_prefix is not None and match_prefix != self.exact_prefix) or (self.re_prefix is not None and re.match(self.re_prefix, match_prefix)):
+                return False
+        if self.exact_suffix is not None or self.re_suffix is not None:
+            match_suffix = (self.suffix + self.next.prefix) if self.next else self.suffix
+            if (self.exact_suffix is not None and match_suffix != self.exact_suffix) or (self.re_suffix is not None and re.match(self.re_suffix, match_suffix)):
                 return False
         return True
 
