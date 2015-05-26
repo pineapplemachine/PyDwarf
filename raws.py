@@ -311,6 +311,9 @@ class rawstoken(rawsqueryable):
         return '[%s%s]' %(self.value, (':%s' % ':'.join([str(a) for a in self.args])) if self.args and len(self.args) else '')
     def __repr__(self):
         return '%s%s%s' % (self.prefix if self.prefix else '', str(self), self.suffix if self.suffix else '')
+        
+    def equals(self, other):
+        return self.value == other.value and self.nargs() == other.nargs() and all([str(self.args[i]) == str(other.args[i]) for i in xrange(0, self.nargs())])
     
     @staticmethod
     def copy(subject=None):
@@ -359,7 +362,7 @@ class rawstoken(rawsqueryable):
         elif tokens:
             return self.addall(tokens, reverse)
         elif token:
-            return self.addone(token if token else rawstoken(pretty=pretty), reverse)
+            return self.addone(token, reverse)
         else:
             raise ValueError
     

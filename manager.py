@@ -30,7 +30,6 @@ def __main__():
             
             urist, scriptname, scriptfunc, scriptargs = getscript(script)
             
-            
             if scriptfunc:
                 scriptinfo = 'Running script %s' % scriptname
                 if scriptargs: scriptinfo = '%s with args %s' % (scriptinfo, scriptargs)
