@@ -2,19 +2,6 @@ import os
 import pydwarf
 from raws import rawsfile, rawstoken
 
-permitted_reactions = '''       
-\t[PERMITTED_REACTION:MANGANESE_STEEL_MAKING_BARS]
-\t[PERMITTED_REACTION:MANGANESE_STEEL_MAKING_ORE]
-\t[PERMITTED_REACTION:HIGH_SPEED_STEEL_MAKING]
-\t[PERMITTED_REACTION:BERYLLIUM_MACRO_PUTNAM]
-\t[PERMITTED_REACTION:KROLL_MACRO_PUTNAM]
-\t[PERMITTED_REACTION:BERYLLIUM_REFINING_PUTNAM_GEMS]
-\t[PERMITTED_REACTION:BERYLLIUM_REFINING_PUTNAM_BOULDER]
-\t[PERMITTED_REACTION:MAKE_SULFURIC_ACID_PUTNAM]
-\t[PERMITTED_REACTION:KROLL_PROCESS_BOULDER_PUTNAM]
-\t[PERMITTED_REACTION:KROLL_PROCESS_GEM_PUTNAM]
-\t[PERMITTED_REACTION:PIDGEON_PROCESS_PUTNAM]'''
-
 # Utility function for putting new properties after an inorganic's USE_MATERIAL_TEMPLATE token, if it has one
 # Otherwise, the property is just added after the INORGANIC object token.
 def addaftertemplate(inorganic, addition):
@@ -23,7 +10,7 @@ def addaftertemplate(inorganic, addition):
     return addafter.add(addition)
 
 @pydwarf.urist(
-    name = 'materials plus',
+    name = 'putnam.materialsplus',
     version = 'alpha',
     author = ('Putnam', 'Sophie Kirschner'),
     description = 'Adds a bunch of materials to the game.',
@@ -31,6 +18,7 @@ def addaftertemplate(inorganic, addition):
 )
 def materialsplus(raws):
     exceptions = 0
+    addedreactions = []
     
     try:
         for zircon in raws.all(exact_value='INORGANIC', re_args=['.* ZIRCON']):
@@ -74,13 +62,6 @@ def materialsplus(raws):
         pydwarf.log.exception('Failed to add reaction to dolomite.')
         exceptions += 1
         
-    try:
-        raws.get('ENTITY:MOUNTAIN').get(exact_value='PERMITTED_REACTION').add(permitted_reactions, reverse=True)
-        pydwarf.log.debug('Added permitted reactions.')
-    except:
-        pydwarf.log.exception('Failed to add permitted reactions.')
-        exceptions += 1
-    
     for root, dirs, files in os.walk(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'Materials Plus')):
         for filename in files:
             suffix = '_mat_plus.txt'
@@ -90,10 +71,20 @@ def materialsplus(raws):
                 rfile = raws.getfile(destname)
                 if rfile:
                     pydwarf.log.debug('Appending data to file %s from %s...' % (destname, path))
-                    with open(path, 'rb') as matplus: rfile.add(matplus)
+                    with open(path, 'rb') as matplusfile: rfile.add(pretty=matplusfile)
                 else:
-                    with open(path, 'rb') as matplus: raws.addfile(rfile=rawsfile(header=destname, rfile=matplus))
+                    with open(path, 'rb') as matplusfile: rfile = raws.addfile(rfile=rawsfile(header=destname, rfile=matplusfile))
                     pydwarf.log.debug('Adding data to new file %s.' % destname)
+                    addedreactions += rfile.all(exact_value='REACTION', args_count=1)
+                    
+    try:
+        mountain = raws.get('ENTITY:MOUNTAIN')
+        for reaction in addedreactions:
+            mountain.add(rawstoken(value='PERMITTED_REACTION', args=[reaction.args[0]]))
+        pydwarf.log.debug('Added %d permitted reactions.' % len(addedreactions))
+    except:
+        pydwarf.log.exception('Failed to add permitted reactions.')
+        exceptions += 1
                     
     if exceptions == 0:
         return pydwarf.success()

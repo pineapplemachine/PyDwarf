@@ -1,0 +1,31 @@
+item_macro_fantastic
+
+[OBJECT:ITEM]
+
+[ITEM_TOOL:SOAP_TOKEN_1_P]
+[NAME:ash token:ash tokens]
+[VALUE:0]
+[TILE:233]
+[SIZE:1]
+[MATERIAL_SIZE:1]
+
+[ITEM_TOOL:SOAP_TOKEN_2_P]
+[NAME:lye token:lye tokens]
+[VALUE:0]
+[TILE:233]
+[SIZE:1]
+[MATERIAL_SIZE:1]
+
+[ITEM_TOOL:SOAP_TOKEN_3_P]
+[NAME:soap token:soap tokens]
+[VALUE:0]
+[TILE:233]
+[SIZE:1]
+[MATERIAL_SIZE:1]
+
+[ITEM_TOOL:CLOTHES_TOKEN_P]
+[NAME:clothing set token:clothing set token]
+[VALUE:0]
+[TILE:233]
+[SIZE:1]
+[MATERIAL_SIZE:1]
