@@ -368,11 +368,22 @@ class rawstoken(rawsqueryable):
     def nargs(self):
         '''Returns the number of arguments the token has. (Length of arguments list.)'''
         return len(self.args)
+    def getarg(self, index):
+        '''Gets argument at index, returns None if the index is out of bounds.'''
+        return self.args[index] if index >= 0 and index < len(self.args) else None
+    def setarg(self, index, value):
+        '''Sets argument at index, also verifies that the input contains no illegal characters.'''
+        if any([char in str(value) for char in '[]:\'']): raise ValueError
+        self.args[index] = value
         
     def __str__(self):
         return '[%s%s]' %(self.value, (':%s' % ':'.join([str(a) for a in self.args])) if self.args and len(self.args) else '')
     def __repr__(self):
         return '%s%s%s' % (self.prefix if self.prefix else '', str(self), self.suffix if self.suffix else '')
+    def __eq__(self, other):
+        return self.equals(other)
+    def __ne__(self, other):
+        return not self.equals(other)
         
     def equals(self, other):
         return self.value == other.value and self.nargs() == other.nargs() and all([str(self.args[i]) == str(other.args[i]) for i in xrange(0, self.nargs())])
