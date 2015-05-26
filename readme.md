@@ -2,11 +2,15 @@
 
 ## Introduction
 
-I have an enormous love for Dwarf Fortress and nearly as great a love for mod authors. In the years I've been playing and following this game, I think that there's always been a gap where a really powerful raws mod manager could be. This is the niche PyDwarf is intended to fill: I want to give mod authors the power to query and modify Dwarf Fortress's raws files with an elegance hitherto unseen, and I want to give users the ability to apply these mods with a minimum of effort.
+PyDwarf is licensed via the exceptionally permissive [zlib/libpng license](https://github.com/pineapplemachine/PyDwarf/blob/master/license.txt). It's written for [Python 2.7](https://www.python.org/download/releases/2.7.8/) and is intended as a mod tool for the wonderful game [Dwarf Fortress](http://www.bay12games.com/dwarves/).
+
+PyDwarf is created and maintained by Sophie Kirschner. Many thanks to [Putnam](https://github.com/pineapplemachine/PyDwarf/tree/master/scripts/putnam), [Witty](https://github.com/pineapplemachine/PyDwarf/tree/master/scripts/witty), and [SmeepRocket](https://github.com/pineapplemachine/PyDwarf/tree/master/scripts/smeeprocket) for allowing their mods to be ported to PyDwarf and included in this repository.
+
+I have an enormous love for Dwarf Fortress and for its mods. In the years I've been playing and following this game, I think that there's always been a gap where a really powerful raws mod manager could be. This is the niche PyDwarf is intended to fill: I want to give mod authors the power to query and modify Dwarf Fortress's raws files with an elegance hitherto unseen, and I want to give users the ability to apply these mods with a minimum of effort.
 
 ## For the user
 
-Currently, to change things about PyDwarf like what directory it looks in for your raws, where it outputs the changes to, things of that nature, it looks in settings.py. This is a Python script which sets a number of variables that the mod manager needs to know about. For the most part, making these settings work with your particular computer will only be a matter of changing the values at the right-hand side of `some.directory = 'where'` assignments. This is a short-term solution for a young project, however - I understand that it may be overwhelming for those who haven't got programming experience on which to stand. In the future, PyDwarf will also accept simpler ini or ini-like configuration files that are much easier for the layperson to comprehend. But, to the point: Once you've got the settings ready you can apply the mods you've chosen by running manager.py.
+Currently, to change things about PyDwarf like what directory it looks in for your raws, where it outputs the changes to, things of that nature, it looks in settings.py. This is a Python script which sets a number of variables that the mod manager needs to know about. For the most part, making these settings work with your particular machine will only be a matter of changing the values at the right-hand side of `some.directory = 'where'` assignments. This is a short-term solution for a young project, however - I understand that it may be overwhelming for those who haven't got programming experience on which to stand. In the future, PyDwarf will also accept simpler ini or ini-like configuration files that are much easier for the layperson to comprehend. But, to the point: Once you've got the settings ready you can apply the mods you've chosen by running manager.py.
 
 ## For the mod author
 
