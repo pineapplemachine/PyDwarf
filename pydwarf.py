@@ -68,6 +68,8 @@ class urist:
             a particular one of multiple identically-named mods by a namespace. If there is
             a period in a script name, the text preceding the last period is assumed to be
             namespace and the text after the name.
+        dependency: Will cause an error to be logged when running a script without having
+            run all of its dependencies first.
             
     Standard metadata - PyDwarf does nothing special with these, but for the sake of standardization they ought to be included:
         author: Indicates who created the script. In the case of multiple authors, an
@@ -93,6 +95,12 @@ class urist:
         log.debug('Registered script %s.' % self.name)
         return fn
     
+    def meta(self, key):
+        return self.metadata.get(key)
+    
+    def matches(self, match):
+        return all([self.meta(i) == j for i, j in match.iteritems()]) if match else True
+    
     @staticmethod
     def get(name, version=None, match=None):
         name, namespace = urist.splitname(name)
@@ -102,7 +110,7 @@ class urist:
         candidates = urist.registered.get(name)
         if candidates and len(candidates):
             if match:
-                candidates = [c for c in candidates if all([c.metadata.get(i) == j for i, j in match.iteritems()])]
+                candidates = [c for c in candidates if c.matches(match)]
             if version:
                 comp = []
                 nocomp = []
@@ -120,6 +128,13 @@ class urist:
                         nocomp.append(candidate)
                 candidates = comp + nocomp
         return candidates
+        
+    @staticmethod
+    def forfunc(func):
+        for uristlist in registered:
+            for urist in uristlist:
+                if urist.fn == func: return urist
+        return None
             
     @staticmethod
     def splitname(name):
