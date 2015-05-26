@@ -1,15 +1,46 @@
 import os
 import re
+import inspect
+
+
 
 class rawsqueryable:
+    '''Classes which contain raws tokens should inherit from this in order to provide querying functionality.'''
+    
+    query_tokeniter_docstring = '''
+        tokeniter: The query runs along this iterable until either a filter has hit
+            its limit or the tokens have run out.'''
+    
+    quick_query_args_docstring = '''
+        %s
+        pretty: Convenience argument which acts as a substitute for directly
+            assigning a filter's exact_value and exact_args arguments. Some methods
+            also accept an until_pretty argument which acts as a substitute for
+            until_exact_value and until_exact_args.
+        **kwargs: If no tokeniter is specified, then arguments which correspond to
+            named arguments of the object's tokens method will be passed to that
+            method. All other arguments will be passed to the appropriate filters,
+            and for accepted arguments you should take a look at the rawstokenfilter
+            constructor's docstring. Some quick query methods support arguments
+            prepended with 'until_' to distinguish tokens that should be matched
+            from tokens that should terminate the query. (These methods are getuntil,
+            getlastuntil, and alluntil. The arguments for the until method should be
+            named normally.)
+    ''' % query_tokeniter_docstring
+    
+    def __getitem__(self, pretty): return self.get(pretty=pretty)
+    def __iter__(self): return self.tokens()
+    def __contains__(self, pretty): return self.get(pretty=pretty) is not None
     
     def query(self, filters, tokeniter=None, **kwargs):
         '''Executes a query on some iterable containing tokens.
+        
+        %s
         filters: A dict or other iterable containing rawstokenfilter-like objects.
-        tokeniter: The query runs along this iterable until either a filter has hit its limit or the tokens have run out.
-        range: The query will stop when it has iterated over this many tokens. If None, the query will not be stopped in this way.
-        **kwargs: If tokeniter is not given, then the object's token method will be called with these arguments and used instead.
-        '''
+        **kwargs: If tokeniter is not given, then the object's token method will be
+            called with these arguments and used instead.
+        ''' % rawsqueryable.query_tokeniter_docstring
+        
         if tokeniter is None: tokeniter = self.tokens(**kwargs)
         filteriter = (filters.itervalues() if isinstance(filters, dict) else filters)
         limit = False
@@ -22,68 +53,89 @@ class rawsqueryable:
             if limit: break
         return filters
         
-    def get(self, pretty=None, range=None, include_self=False, reverse=False, **kwargs):
-        '''Get the first matching token.'''
+    def get(self, pretty=None, tokeniter=None, **kwargs):
+        '''Get the first matching token.
+        %s''' % rawsqueryable.quick_query_args_docstring
+        
+        filter_args, tokens_args = self.argstokens(tokeniter, kwargs)
         filters = (
-            rawstokenfilter(pretty=pretty, limit=1, **kwargs)
+            rawstokenfilter(pretty=pretty, limit=1, **filter_args)
         ,)
-        result = self.query(filters, range=range, include_self=include_self, reverse=reverse)[0].result
+        result = self.query(filters, tokeniter, **tokens_args)[0].result
         return result[0] if result and len(result) else None
     
-    def getlast(self, pretty=None, range=None, include_self=False, reverse=False, **kwargs):
-        '''Get the last matching token.'''
+    def getlast(self, pretty=None, tokeniter=None, **kwargs):
+        '''Get the last matching token.
+        %s''' % rawsqueryable.quick_query_args_docstring
+        
+        filter_args, tokens_args = self.argstokens(tokeniter, kwargs)
         filters = (
-            rawstokenfilter(pretty=pretty, **kwargs)
+            rawstokenfilter(pretty=pretty, **filter_args)
         ,)
-        result = self.query(filters, range=range, include_self=include_self, reverse=reverse)[0].result
+        result = self.query(filters, tokeniter, **tokens_args)[0].result
         return result[-1] if result and len(result) else None
     
-    def all(self, pretty=None, range=None, include_self=False, reverse=False, **kwargs):
-        '''Get a list of all matching tokens.'''
+    def all(self, pretty=None, tokeniter=None, **kwargs):
+        '''Get a list of all matching tokens.
+        %s''' % rawsqueryable.quick_query_args_docstring
+        
+        filter_args, tokens_args = self.argstokens(tokeniter, kwargs)
         filters = (
-            rawstokenfilter(pretty=pretty, **kwargs)
+            rawstokenfilter(pretty=pretty, **filter_args)
         ,)
-        return self.query(filters, range=range, include_self=include_self, reverse=reverse)[0].result
+        return self.query(filters, tokeniter, **tokens_args)[0].result
     
-    def until(self, pretty=None, range=None, include_self=False, reverse=False, **kwargs):
-        '''Get a list of all tokens up to a match.'''
+    def until(self, pretty=None, tokeniter=None, **kwargs):
+        '''Get a list of all tokens up to a match.
+        %s''' % rawsqueryable.quick_query_args_docstring
+        
+        filter_args, tokens_args = self.argstokens(tokeniter, kwargs)
         filters = (
             rawstokenfilter(),
-            rawstokenfilter(pretty=pretty, limit=1, **kwargs)
+            rawstokenfilter(pretty=pretty, limit=1, **filter_args)
         )
-        return self.query(filters, range=range, include_self=include_self, reverse=reverse)[0].result
+        return self.query(filters, tokeniter, **tokens_args)[0].result
         
-    def getuntil(self, pretty=None, until_pretty=None, range=None, include_self=False, reverse=False, **kwargs):
-        '''Get the first matching token, but abort when a token matching arguments prepended with 'until_' is encountered.'''
-        until_args, condition_args = self.argsuntil(**kwargs)
+    def getuntil(self, pretty=None, until_pretty=None, tokeniter=None, **kwargs):
+        '''Get the first matching token, but abort when a token matching arguments prepended with 'until_' is encountered.
+        %s''' % rawsqueryable.quick_query_args_docstring
+        
+        filter_args, tokens_args = self.argstokens(tokeniter, kwargs)
+        until_args, condition_args = self.argsuntil(filter_args)
         filters = (
             rawstokenfilter(pretty=until_pretty, limit=1, **until_args),
             rawstokenfilter(pretty=pretty, limit=1, **condition_args)
         )
-        result = self.query(filters, range=range, include_self=include_self, reverse=reverse)[1].result
+        result = self.query(filters, tokeniter, **tokens_args)[1].result
         return result[0] if result and len(result) else None
     
-    def getlastuntil(self, pretty=None, until_pretty=None, range=None, include_self=False, reverse=False, **kwargs):
-        '''Get the last matching token, up until a token matching arguments prepended with 'until_' is encountered.'''
-        until_args, condition_args = self.argsuntil(**kwargs)
+    def getlastuntil(self, pretty=None, until_pretty=None, tokeniter=None, **kwargs):
+        '''Get the last matching token, up until a token matching arguments prepended with 'until_' is encountered.
+        %s''' % rawsqueryable.quick_query_args_docstring
+        
+        filter_args, tokens_args = self.argstokens(tokeniter, kwargs)
+        until_args, condition_args = self.argsuntil(filter_args)
         filters = (
             rawstokenfilter(pretty=until_pretty, limit=1, **until_args),
             rawstokenfilter(pretty=pretty, **condition_args)
         )
-        result = self.query(filters, range=range, include_self=include_self, reverse=reverse)[1].result
+        result = self.query(filters, tokeniter, **tokens_args)[1].result
         return result[-1] if result and len(result) else None
      
-    def alluntil(self, pretty=None, until_pretty=None, range=None, include_self=False, reverse=False, **kwargs):
-        '''Get a list of all matching tokens, but abort when a token matching arguments prepended with 'until_' is encountered.'''
-        until_args, condition_args = self.argsuntil(**kwargs)
+    def alluntil(self, pretty=None, until_pretty=None, tokeniter=None, **kwargs):
+        '''Get a list of all matching tokens, but abort when a token matching arguments prepended with 'until_' is encountered.
+        %s''' % rawsqueryable.quick_query_args_docstring
+        
+        filter_args, tokens_args = self.argstokens(tokeniter, kwargs)
+        until_args, condition_args = self.argsuntil(filter_args)
         filters = (
             rawstokenfilter(pretty=until_pretty, limit=1, **until_args),
             rawstokenfilter(pretty=pretty, **condition_args)
         )
-        return self.query(filters, range=range, include_self=include_self, reverse=reverse)[1].result
-        
-    def argsuntil(self, **kwargs):
-        # utility function for handling arguments of getuntil and alluntil methods
+        return self.query(filters, tokeniter, **tokens_args)[1].result
+    
+    def argsuntil(self, kwargs):
+        # Utility function for handling arguments of getuntil and alluntil methods
         until_args, condition_args = {}, {}
         for arg, value in kwargs.iteritems():
             if arg.startswith('until_'):
@@ -91,8 +143,22 @@ class rawsqueryable:
             else:
                 condition_args[arg] = value
         return until_args, condition_args
+        
+    def argstokens(self, tokeniter, kwargs):
+        # Utility function for separating arguments to pass on to a tokens iterator from arguments to pass to filters
+        if tokeniter is None and hasattr(self, 'tokens'):
+            filter_args, tokens_args = {}, {}
+            args = inspect.getargspec(self.tokens)[0]
+            for argname, argvalue in kwargs.iteritems():
+                (token_args if argname in args else filter_args)[argname] = argvalue
+            return filter_args, tokens_args
+        else:
+            return kwargs, {}
+        
 
-class raws:
+
+
+class raws(rawsqueryable):
     '''Represents as a whole all the raws contained within a directory.'''
     
     def __init__(self):
@@ -101,26 +167,34 @@ class raws:
         
     def getfile(self, filename):
         return self.files.get(filename)
-    def addfile(self, filename=None, rfile=None):
-        if rfile and not filename: filename = rfile.header
-        if filename in self.files: raise KeyError
-        if not rfile: rfile = rawsfile(header=filename)
-        self.files[filename] = rfile
-        return rfile
+    def addfile(self, filename=None, rfile=None, path=None):
+        if path is not None:
+            return self.addpath(path)
+        else:
+            if rfile and not filename: filename = rfile.header
+            if filename in self.files: raise KeyError
+            if not rfile: rfile = rawsfile(header=filename)
+            self.files[filename] = rfile
+            return rfile
     def setfile(self, filename=None, rfile=None):
         if rfile and not filename: filename = rfile.header
         self.files[filename] = rfile
     def removefile(self, filename=None, rfile=None):
         if rfile and not filename: filename = rfile.header
         del self.files[filename]
+        
+    def addpath(self, path):
+        with open(path, 'rb') as rfilestream:
+            rfile = rawsfile(path=path, rfile=rfilestream)
+            if rfile.header in self.files: raise ValueError
+            self.files[rfile.header] = rfile
+            return rfile
+        
     def __getitem__(self, name): return self.getfile(name)
     def __setitem__(self, name, value): return self.setfile(name, value)
     
-    '''
-    Read raws from some directory.
-    If no directory is specified, reads from a dfrawsdir attribute that can be indirectly specified in the constructor.
-    '''
     def read(self, dir, log=None):
+        '''Reads raws from all text files in the specified directory.'''
         for filename in os.listdir(dir):
             path = os.path.join(dir, filename)
             if filename.endswith('.txt') and os.path.isfile(path):
@@ -129,13 +203,9 @@ class raws:
                     filenamekey = os.path.splitext(os.path.basename(path))[0]
                     self.files[filenamekey] = rawsfile(path=path, rfile=rfile)
         return self
-                
-    '''
-    Save raws to some directory.
-    If no directory is specified, saves to a dfrawsdir attribute that can be indirectly specified in the constructor.
-    Be careful! You should back up your raws before overwriting them in this way.
-    '''
+        
     def write(self, dir, log=None):
+        '''Writes raws to the specified directory.'''
         for filename in self.files:
             path = os.path.join(dir, filename)
             if not path.endswith('.txt'): path += '.txt'
@@ -144,34 +214,15 @@ class raws:
                 self.files[filename].write(rfile)
         return self
     
-    '''
-    Get the first matching token.
-    '''
-    def get(self, pretty=None, **kwargs):
-        for filename in self.files:
-            got = self.files[filename].get(pretty=pretty, **kwargs)
-            if got: return got
-        return None
-        
-    '''
-    Get a list of all matching tokens.
-    '''
-    def all(self, pretty=None, **kwargs):
-        got = []
-        for filename in self.files:
-            got += self.files[filename].all(pretty=pretty, **kwargs)
-        return got
-    
-    '''
-    Iterate through all tokens in order.
-    '''
     def tokens(self):
+        '''Iterate through all tokens.'''
         for filename in self.files:
             for token in self.files[filename].tokens():
                 yield token
              
     @staticmethod
     def pretty(data, implicitbraces=True):
+        '''Parses a string, turns it into a list of tokens.'''
         tokens = [] # maintain a sequential list of tokens
         pos = 0     # byte position in data
         if data.find('[') == -1 and data.find(']') == -1:
@@ -210,7 +261,11 @@ class raws:
                 tokens[-1].suffix = data[pos:]
             return tokens
 
+
+
 class rawsfile(rawsqueryable):
+    '''Represents a single file within a raws directory.'''
+    
     def __init__(self, header=None, data=None, path=None, tokens=None, rfile=None):
         if rfile:
             self.read(rfile)
@@ -226,21 +281,26 @@ class rawsfile(rawsqueryable):
             tokens = raws.pretty(self.data, implicitbraces=False)
         if tokens:
             self.settokens(tokens)
+            
     def settokens(self, tokens):
         self.roottoken, self.tailtoken = rawstoken.firstandlast(tokens)
+        
     def __str__(self):
         return '%s\n%s' %(self.header, ''.join([str(o) for o in self.tokens()]))
     def __repr__(self):
         return '%s\n%s' %(self.header, ''.join([repr(o) for o in self.tokens()]))
         
     def root(self):
+        '''Gets the first token in the file.'''
         while self.roottoken and self.roottoken.prev: self.roottoken = self.roottoken.prev
         return self.roottoken
     def tail(self):
+        '''Gets the last token in the file.'''
         while self.tailtoken and self.tailtoken.next: self.tailtoken = self.tailtoken.next
         return self.tailtoken
         
     def tokens(self, range=None, include_self=False, reverse=False):
+        '''Iterate through all tokens.'''
         if include_self: raise ValueError
         count = 0
         itrtoken = self.tail() if reverse else self.root()
@@ -270,7 +330,9 @@ class rawsfile(rawsqueryable):
             elif tokens:
                 self.settokens(tokens)
                 return tokens
-        
+
+
+
 class rawstoken(rawsqueryable):
     @staticmethod
     def auto(auto, pretty, token, tokens):
