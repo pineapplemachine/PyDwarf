@@ -20,7 +20,7 @@ def addwm(token, pretty): token.add('\n\t[%s] - WM ' % pretty)
     Sophie: By default, this script will only prevent goblins from becoming nobles. Set
     the onlydwarves flag to True in order to prevent all other races as well.
     ''',
-    args = {
+    arguments = {
         'onlydwarves': '''Defaults to False. If True, only dwarves will be allowed to
             hold positions in Dwarven forts and civs. If False, only goblins will be
             prevented from holding those positions.'''
@@ -68,5 +68,4 @@ def restrictnobles_custom(raws, inclusions=None, exclusions=None):
         return pydwarf.success('Restricted %d positions.' % len(positions))
     else:
         return pydwarf.failure('Couldn\'t find ENTITY:MOUNTAIN.')
-    
     
