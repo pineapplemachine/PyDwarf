@@ -46,14 +46,14 @@ add_sterile_interaction = '''
 @pydwarf.urist(
     name = 'smeeprocket.transgender',
     version = 'alpha',
-    author = ('Smeeprocket', 'Sophie Kirschner'),
+    author = ('SmeepRocket', 'Sophie Kirschner'),
     description = 'Adds transgender and intersex castes to creatures.',
     arguments = {
         'species': '''An iterable containing each species that should be given transgender
             and intersex castes.''',
         'beards': '''If True, all dwarf castes will be given beards. If False, none of the
             added castes will have beards for any species. Defaults to True.''',
-        'frequency': '''Higher numbers cause rarer incidence of new castes.'''
+        'frequency': '''Higher numbers cause rarer incidence of added castes.'''
     },
     compatibility = pydwarf.df_0_40
 )
