@@ -334,6 +334,12 @@ class rawsfile(rawsqueryable):
 
 
 class rawstoken(rawsqueryable):
+    
+    auto_arg_docstring = '''
+        auto: When the first argument is specified the intended assignment will be
+            detected automatically. If a rawstoken is specified it will be treated
+            as a token argument. If a string, pretty. If anything else, tokens.'''
+    
     @staticmethod
     def auto(auto, pretty, token, tokens):
         # Convenience function for handling method arguments
@@ -345,6 +351,22 @@ class rawstoken(rawsqueryable):
         return pretty, token, tokens
         
     def __init__(self, auto=None, pretty=None, token=None, value=None, args=None, prefix=None, suffix=None, prev=None, next=None):
+        '''Constructs a token object.
+        
+        %s (However, a tokens argument is illegal here and attempting to create
+        a rawstoken using one will cause an exception.)
+        pretty: Parses the token's text from a string. A string without opening
+            and closing braces is considered to have them implicitly.
+        token: Copies this token's attributes from another.
+        value: The leftmost string between a token's brackets, where strings are
+            delimited by colons.
+        args: All except the leftmost string between a token's brackets.
+        prefix: Comment or formatting text preceding a token.
+        suffix: Comment or formatting text following a token.
+        prev: The previous token.
+        next: The following token.
+        ''' % rawstoken.auto_arg_docstring
+        
         pretty, token, tokens = rawstoken.auto(auto, pretty, token, None)
         if tokens is not None: raise ValueError
         if pretty:
@@ -386,6 +408,7 @@ class rawstoken(rawsqueryable):
         return not self.equals(other)
         
     def equals(self, other):
+        '''Returns True if two tokens have identical values and arguments, False otherwise.'''
         return self.value == other.value and self.nargs() == other.nargs() and all([str(self.args[i]) == str(other.args[i]) for i in xrange(0, self.nargs())])
     
     @staticmethod
@@ -422,13 +445,11 @@ class rawstoken(rawsqueryable):
         '''Adds a token or tokens nearby this one. If reverse is False the token 
         or tokens are added immediately after. If it's True, they are added before.
         
-        auto: When the first argument is specified the intended assignment will be
-            detected automatically. If a rawstoken is specified it will be treated
-            as a token argument. If a string, pretty. If anything else, tokens.
+        %s
         pretty: Parses the string and adds the tokens within it.
         token: Adds this one token.
         tokens: Adds all of these tokens.
-        '''
+        ''' % rawstoken.auto_arg_docstring
         pretty, token, tokens = rawstoken.auto(auto, pretty, token, tokens)
         if pretty:
             return self.addall(raws.pretty(pretty), reverse)
