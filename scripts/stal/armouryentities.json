@@ -1,0 +1,483 @@
+{
+    "MOUNTAIN": {
+        "SHOES": [
+            "ITEM_SHOES_CHAUSSE_CHAIN",
+            "ITEM_SHOES_GREAVES_LOWER",
+            "ITEM_SHOES_BOOTS",
+            "ITEM_SHOES_SHOES",
+            "ITEM_SHOES_ANKLE",
+            "ITEM_SHOES_CARBATINAE",
+            "ITEM_SHOES_SOCKS"
+        ],
+        "ARMOR": [
+            "ITEM_ARMOR_PLATE",
+            "ITEM_ARMOR_HAUBERK",
+            "ITEM_ARMOR_LAMELLAR",
+            "ITEM_ARMOR_JERKIN",
+            "ITEM_ARMOR_GAMBESON",
+            "ITEM_ARMOR_CLOAK",
+            "ITEM_ARMOR_CAPE",
+            "ITEM_ARMOR_COAT",
+            "ITEM_ARMOR_VEST",
+            "ITEM_ARMOR_DRESS",
+            "ITEM_ARMOR_ROBE",
+            "ITEM_ARMOR_SHIRT",
+            "ITEM_ARMOR_TUNIC"
+        ],
+        "WEAPON": [
+            "ITEM_WEAPON_SWORD_ARMING_SHORT",
+            "ITEM_WEAPON_SWORD_FALCHION",
+            "ITEM_WEAPON_DAGGER_FIGHTING",
+            "ITEM_WEAPON_AXE_HATCHET",
+            "ITEM_WEAPON_AXE_BATTLE",
+            "ITEM_WEAPON_AXE_HAMMER",
+            "ITEM_WEAPON_MACE_GOEDENDAG",
+            "ITEM_WEAPON_MACE_FLAIL",
+            "ITEM_WEAPON_MACE_FLAIL_SPIKED",
+            "ITEM_WEAPON_MACE_FLAIL_2H",
+            "ITEM_WEAPON_MACE_PERNACH",
+            "ITEM_WEAPON_HAMMER_WAR",
+            "ITEM_WEAPON_HAMMER_PICK",
+            "ITEM_WEAPON_HAMMER_MAUL",
+            "ITEM_WEAPON_SPEAR",
+            "ITEM_WEAPON_SPEAR_BOAR",
+            "ITEM_WEAPON_AXE_BARDICHE",
+            "ITEM_WEAPON_CROSSBOW",
+            "ITEM_WEAPON_CROSSBOW_BAYONET",
+            "ITEM_WEAPON_CROSSBOW_SIEGE",
+            "ITEM_WEAPON_AXE_TRAINING",
+            "ITEM_WEAPON_SWORD_TRAINING",
+            "ITEM_WEAPON_SPEAR_TRAINING",
+            "ITEM_WEAPON_HAMMER_TRAINING",
+            "ITEM_WEAPON_MACE_TRAINING"
+        ],
+        "SHIELD": [
+            "ITEM_SHIELD_KITE",
+            "ITEM_SHIELD_TOWER"
+        ],
+        "GLOVES": [
+            "ITEM_GLOVES_MITTENS",
+            "ITEM_GLOVES_GAUNTLETS",
+            "ITEM_GLOVES_GLOVES",
+            "ITEM_GLOVES_MITTENS_CHAIN",
+            "ITEM_GLOVES_GLOVES_CHAIN",
+            "ITEM_GLOVES_WRAP"
+        ],
+        "HELM": [
+            "ITEM_HELM_GREAT",
+            "ITEM_HELM_KETTLE",
+            "ITEM_HELM_BASCINET",
+            "ITEM_HELM_BARBUTE",
+            "ITEM_HELM_SALLET",
+            "ITEM_HELM_SKULLCAP",
+            "ITEM_HELM_COIF",
+            "ITEM_HELM_CAP",
+            "ITEM_HELM_CAP_ARMING",
+            "ITEM_HELM_HOOD"
+        ],
+        "DIGGER": [
+            "ITEM_WEAPON_PICK"
+        ],
+        "TOOL": [
+            "ITEM_TOOL_NEST_BOX",
+            "ITEM_TOOL_JUG",
+            "ITEM_TOOL_LARGE_POT",
+            "ITEM_TOOL_HIVE",
+            "ITEM_TOOL_MINECART",
+            "ITEM_TOOL_WHEELBARROW",
+            "ITEM_TOOL_STEPLADDER"
+        ],
+        "AMMO": {
+            "ITEM_WEAPON_CROSSBOW_SIEGE": [
+                "ITEM_AMMO_QUARREL"
+            ],
+            "ITEM_WEAPON_CROSSBOW_BAYONET": [
+                "ITEM_AMMO_BOLTS_BARB"
+            ],
+            "ITEM_WEAPON_CROSSBOW": [
+                "ITEM_AMMO_BOLTS_BARB"
+            ]
+        },
+        "PANTS": [
+            "ITEM_PANTS_GREAVES_UPPER",
+            "ITEM_PANTS_BRACCAE",
+            "ITEM_PANTS_PANTS",
+            "ITEM_PANTS_CHAUSSE",
+            "ITEM_PANTS_CHAUSSE_CHAIN",
+            "ITEM_PANTS_SKIRT",
+            "ITEM_PANTS_BRAIES",
+            "ITEM_PANTS_LOINCLOTH"
+        ]
+    },
+    "SKULKING": {
+        "SHOES": [
+            "ITEM_SHOES_SOCKS"
+        ],
+        "ARMOR": [
+            "ITEM_ARMOR_TUNIC"
+        ],
+        "WEAPON": [
+            "ITEM_WEAPON_SEAX_LONG",
+            "ITEM_WEAPON_SEAX_NARROW",
+            "ITEM_WEAPON_SEAX_BROAD",
+            "ITEM_WEAPON_SEAX_SHORT",
+            "ITEM_WEAPON_SPEAR",
+            "ITEM_WEAPON_SLING_STAFF",
+            "ITEM_WEAPON_ATLATL",
+            "ITEM_WEAPON_SWORD_TRAINING",
+            "ITEM_WEAPON_SPEAR_TRAINING"
+        ],
+        "GLOVES": [
+            "ITEM_GLOVES_WRAP"
+        ],
+        "HELM": [
+            "ITEM_HELM_HOOD",
+            "ITEM_HELM_CAP"
+        ],
+        "AMMO": {
+            "ITEM_WEAPON_ATLATL": [
+                "ITEM_AMMO_DARTS"
+            ],
+            "ITEM_WEAPON_SLING_STAFF": [
+                "ITEM_AMMO_BULLET"
+            ]
+        },
+        "PANTS": [
+            "ITEM_PANTS_BRACCAE",
+            "ITEM_PANTS_LOINCLOTH"
+        ]
+    },
+    "EVIL": {
+        "SHOES": [
+            "ITEM_SHOES_CHAUSSE_CHAIN",
+            "ITEM_SHOES_GREAVES_LOWER",
+            "ITEM_SHOES_BOOTS",
+            "ITEM_SHOES_SHOES",
+            "ITEM_SHOES_ANKLE",
+            "ITEM_SHOES_CARBATINAE",
+            "ITEM_SHOES_SANDALS",
+            "ITEM_SHOES_SOCKS"
+        ],
+        "ARMOR": [
+            "ITEM_ARMOR_PLATE",
+            "ITEM_ARMOR_HAUBERK",
+            "ITEM_ARMOR_JERKIN",
+            "ITEM_ARMOR_ROBE",
+            "ITEM_ARMOR_SHIRT",
+            "ITEM_ARMOR_TUNIC",
+            "ITEM_ARMOR_CLOAK"
+        ],
+        "WEAPON": [
+            "ITEM_WEAPON_SEAX_LONG",
+            "ITEM_WEAPON_SEAX_NARROW",
+            "ITEM_WEAPON_SEAX_BROAD",
+            "ITEM_WEAPON_SEAX_SHORT",
+            "ITEM_WEAPON_AXE_HATCHET",
+            "ITEM_WEAPON_SPEAR",
+            "ITEM_WEAPON_WHIP",
+            "ITEM_WEAPON_WHIP_HOOKED",
+            "ITEM_WEAPON_WHIP_KNOTTED",
+            "ITEM_WEAPON_WHIP_SCOURGE",
+            "ITEM_WEAPON_MACE_KNOBBED",
+            "ITEM_WEAPON_MACE_FLAIL",
+            "ITEM_WEAPON_MACE_FLAIL_SPIKED",
+            "ITEM_WEAPON_MACE_FLAIL_2H",
+            "ITEM_WEAPON_HAMMER_MAUL",
+            "ITEM_WEAPON_SLING_STAFF",
+            "ITEM_WEAPON_ATLATL",
+            "ITEM_WEAPON_SWORD_TRAINING",
+            "ITEM_WEAPON_SPEAR_TRAINING",
+            "ITEM_WEAPON_AXE_TRAINING",
+            "ITEM_WEAPON_MACE_TRAINING"
+        ],
+        "SHIELD": [
+            "ITEM_SHIELD_SHIELD",
+            "ITEM_SHIELD_KITE"
+        ],
+        "GLOVES": [
+            "ITEM_GLOVES_MITTENS",
+            "ITEM_GLOVES_GAUNTLETS",
+            "ITEM_GLOVES_GLOVES",
+            "ITEM_GLOVES_MITTENS_CHAIN",
+            "ITEM_GLOVES_GLOVES_CHAIN",
+            "ITEM_GLOVES_WRAP"
+        ],
+        "HELM": [
+            "ITEM_HELM_BARBUTE",
+            "ITEM_HELM_SALLET",
+            "ITEM_HELM_SKULLCAP",
+            "ITEM_HELM_CAP",
+            "ITEM_HELM_CAP_ARMING",
+            "ITEM_HELM_HOOD",
+            "ITEM_HELM_SCARF_HEAD"
+        ],
+        "DIGGER": [
+            "ITEM_WEAPON_PICK"
+        ],
+        "AMMO": {
+            "ITEM_WEAPON_ATLATL": [
+                "ITEM_AMMO_DARTS"
+            ],
+            "ITEM_WEAPON_SLING_STAFF": [
+                "ITEM_AMMO_BULLET"
+            ]
+        },
+        "PANTS": [
+            "ITEM_PANTS_BRACCAE",
+            "ITEM_PANTS_LOINCLOTH",
+            "ITEM_PANTS_PANTS"
+        ]
+    },
+    "SUBTERRANEAN_ANIMAL_PEOPLES": {
+        "WEAPON": [
+            "ITEM_WEAPON_SPEAR",
+            "ITEM_WEAPON_BLOWGUN",
+            "ITEM_WEAPON_ATLATL"
+        ],
+        "SHIELD": [
+            "ITEM_SHIELD_BUCKLER"
+        ],
+        "AMMO": {
+            "ITEM_WEAPON_ATLATL": [
+                "ITEM_AMMO_DARTS"
+            ],
+            "ITEM_WEAPON_BLOWGUN": [
+                "ITEM_AMMO_BLOWDARTS"
+            ]
+        }
+    },
+    "PLAINS": {
+        "SHOES": [
+            "ITEM_SHOES_SHOES",
+            "ITEM_SHOES_CHAUSSE_CHAIN",
+            "ITEM_SHOES_GREAVES_LOWER",
+            "ITEM_SHOES_ANKLE",
+            "ITEM_SHOES_BOOTS",
+            "ITEM_SHOES_SOCKS"
+        ],
+        "ARMOR": [
+            "ITEM_ARMOR_PLATE",
+            "ITEM_ARMOR_HAUBERK",
+            "ITEM_ARMOR_HAUBERGEON",
+            "ITEM_ARMOR_BRIGANDINE",
+            "ITEM_ARMOR_BYRNIE",
+            "ITEM_ARMOR_LAMELLAR",
+            "ITEM_ARMOR_CLOAK",
+            "ITEM_ARMOR_SURCOAT",
+            "ITEM_ARMOR_TABARD",
+            "ITEM_ARMOR_CAPE",
+            "ITEM_ARMOR_COAT",
+            "ITEM_ARMOR_VEST",
+            "ITEM_ARMOR_DRESS",
+            "ITEM_ARMOR_ROBE",
+            "ITEM_ARMOR_SHIRT",
+            "ITEM_ARMOR_TUNIC",
+            "ITEM_ARMOR_JERKIN",
+            "ITEM_ARMOR_AKETON",
+            "ITEM_ARMOR_GAMBESON"
+        ],
+        "WEAPON": [
+            "ITEM_WEAPON_SEAX_LONG",
+            "ITEM_WEAPON_SEAX_NARROW",
+            "ITEM_WEAPON_SEAX_BROAD",
+            "ITEM_WEAPON_SEAX_SHORT",
+            "ITEM_WEAPON_DAGGER_FIGHTING",
+            "ITEM_WEAPON_DAGGER_RONDEL",
+            "ITEM_WEAPON_SWORD_RAIDER",
+            "ITEM_WEAPON_SWORD_ARMING_SHORT",
+            "ITEM_WEAPON_SWORD_ARMING",
+            "ITEM_WEAPON_SWORD_ARMING_LONG",
+            "ITEM_WEAPON_LONGSWORD",
+            "ITEM_WEAPON_SWORD_GREAT",
+            "ITEM_WEAPON_SWORD_2H",
+            "ITEM_WEAPON_SWORD_FALCHION",
+            "ITEM_WEAPON_AXE_HATCHET",
+            "ITEM_WEAPON_AXE_RAIDER",
+            "ITEM_WEAPON_AXE_HAFTED",
+            "ITEM_WEAPON_MACE",
+            "ITEM_WEAPON_MACE_MORNINGSTAR",
+            "ITEM_WEAPON_MACE_FLAIL",
+            "ITEM_WEAPON_MACE_FLAIL_SPIKED",
+            "ITEM_WEAPON_MACE_FLANGED",
+            "ITEM_WEAPON_MACE_FLAIL",
+            "ITEM_WEAPON_MACE_FLAIL_2H",
+            "ITEM_WEAPON_MACE_KNOBBED",
+            "ITEM_WEAPON_MACE_PERNACH",
+            "ITEM_WEAPON_MACE_GOEDENDAG",
+            "ITEM_WEAPON_HAMMER_WAR",
+            "ITEM_WEAPON_HAMMER_HAFTED",
+            "ITEM_WEAPON_SPEAR",
+            "ITEM_WEAPON_PIKE_AWLPIKE",
+            "ITEM_WEAPON_SPEAR_SPETUM",
+            "ITEM_WEAPON_SPEAR_BOAR",
+            "ITEM_WEAPON_SPEAR_HEWING",
+            "ITEM_WEAPON_PIKE_PIKE",
+            "ITEM_WEAPON_PIKE_SWORD",
+            "ITEM_WEAPON_PIKE_GUISARME",
+            "ITEM_WEAPON_PIKE_HALBERD",
+            "ITEM_WEAPON_PIKE_VOULGE",
+            "ITEM_WEAPON_CROSSBOW",
+            "ITEM_WEAPON_LONGBOW",
+            "ITEM_WEAPON_ATLATL",
+            "ITEM_WEAPON_AXE_TRAINING",
+            "ITEM_WEAPON_SWORD_TRAINING",
+            "ITEM_WEAPON_SPEAR_TRAINING",
+            "ITEM_WEAPON_PIKE_TRAINING",
+            "ITEM_WEAPON_MACE_TRAINING",
+            "ITEM_WEAPON_HAMMER_TRAINING"
+        ],
+        "SHIELD": [
+            "ITEM_SHIELD_BUCKLER",
+            "ITEM_SHIELD_HEATER"
+        ],
+        "GLOVES": [
+            "ITEM_GLOVES_MITTENS",
+            "ITEM_GLOVES_GAUNTLETS",
+            "ITEM_GLOVES_GLOVES",
+            "ITEM_GLOVES_MITTENS_CHAIN",
+            "ITEM_GLOVES_GLOVES_CHAIN",
+            "ITEM_GLOVES_WRAP"
+        ],
+        "HELM": [
+            "ITEM_HELM_GREAT",
+            "ITEM_HELM_NASAL",
+            "ITEM_HELM_KETTLE",
+            "ITEM_HELM_BASCINET",
+            "ITEM_HELM_SALLET",
+            "ITEM_HELM_SKULLCAP",
+            "ITEM_HELM_COIF",
+            "ITEM_HELM_COIF_PADDED",
+            "ITEM_HELM_RAIDER",
+            "ITEM_HELM_CAP",
+            "ITEM_HELM_CAP_ARMING",
+            "ITEM_HELM_HOOD"
+        ],
+        "DIGGER": [
+            "ITEM_WEAPON_PICK"
+        ],
+        "TOOL": [
+            "ITEM_TOOL_CAULDRON",
+            "ITEM_TOOL_LADLE",
+            "ITEM_TOOL_BOWL",
+            "ITEM_TOOL_MORTAR",
+            "ITEM_TOOL_PESTLE",
+            "ITEM_TOOL_KNIFE_CARVING",
+            "ITEM_TOOL_KNIFE_BONING",
+            "ITEM_TOOL_KNIFE_SLICING",
+            "ITEM_TOOL_KNIFE_MEAT_CLEAVER",
+            "ITEM_TOOL_FORK_CARVING",
+            "ITEM_TOOL_NEST_BOX",
+            "ITEM_TOOL_JUG",
+            "ITEM_TOOL_LARGE_POT",
+            "ITEM_TOOL_HIVE",
+            "ITEM_TOOL_POUCH",
+            "ITEM_TOOL_WHEELBARROW"
+        ],
+        "AMMO": {
+            "ITEM_WEAPON_CROSSBOW": [
+                "ITEM_AMMO_BOLTS"
+            ],
+            "ITEM_WEAPON_LONGBOW": [
+                "ITEM_AMMO_ARROWS_HUNTING",
+                "ITEM_AMMO_ARROWS_HBODKIN",
+                "ITEM_AMMO_ARROWS_WAR",
+                "ITEM_AMMO_ARROWS_WBODKIN"
+            ],
+            "ITEM_WEAPON_ATLATL": [
+                "ITEM_AMMO_DARTS_LONG"
+            ]
+        },
+        "PANTS": [
+            "ITEM_PANTS_GREAVES_UPPER",
+            "ITEM_PANTS_PANTS",
+            "ITEM_PANTS_CHAUSSE",
+            "ITEM_PANTS_BRACCAE",
+            "ITEM_PANTS_SKIRT_LONG",
+            "ITEM_PANTS_LOINCLOTH"
+        ]
+    },
+    "FOREST": {
+        "SHOES": [
+            "ITEM_SHOES_CHAUSSE_CHAIN",
+            "ITEM_SHOES_GREAVES_LOWER",
+            "ITEM_SHOES_BOOTS",
+            "ITEM_SHOES_SANDALS",
+            "ITEM_SHOES_SOCKS"
+        ],
+        "ARMOR": [
+            "ITEM_ARMOR_BYRNIE",
+            "ITEM_ARMOR_SCALE",
+            "ITEM_ARMOR_LAMELLAR",
+            "ITEM_ARMOR_CLOAK",
+            "ITEM_ARMOR_CAPE",
+            "ITEM_ARMOR_COAT",
+            "ITEM_ARMOR_VEST",
+            "ITEM_ARMOR_DRESS",
+            "ITEM_ARMOR_ROBE"
+        ],
+        "WEAPON": [
+            "ITEM_WEAPON_SWORD_SABER",
+            "ITEM_WEAPON_SWORD_SCIMITAR",
+            "ITEM_WEAPON_SWORD_FALCHION",
+            "ITEM_WEAPON_DAGGER_FIGHTING",
+            "ITEM_WEAPON_AXE_BARDICHE",
+            "ITEM_WEAPON_MACE_FLAIL_2H",
+            "ITEM_WEAPON_PIKE_GLAIVE",
+            "ITEM_WEAPON_PIKE_SWORD",
+            "ITEM_WEAPON_SPEAR",
+            "ITEM_WEAPON_SPEAR_SPETUM",
+            "ITEM_WEAPON_ATLATL",
+            "ITEM_WEAPON_BOW",
+            "ITEM_WEAPON_SWORD_TRAINING",
+            "ITEM_WEAPON_SPEAR_TRAINING",
+            "ITEM_WEAPON_MACE_TRAINING",
+            "ITEM_WEAPON_PIKE_TRAINING"
+        ],
+        "SHIELD": [
+            "ITEM_SHIELD_SHIELD",
+            "ITEM_SHIELD_BUCKLER"
+        ],
+        "GLOVES": [
+            "ITEM_GLOVES_MITTENS",
+            "ITEM_GLOVES_GAUNTLETS",
+            "ITEM_GLOVES_GLOVES",
+            "ITEM_GLOVES_MITTENS_CHAIN",
+            "ITEM_GLOVES_GLOVES_CHAIN",
+            "ITEM_GLOVES_WRAP"
+        ],
+        "HELM": [
+            "ITEM_HELM_NASAL",
+            "ITEM_HELM_BARBUTE",
+            "ITEM_HELM_SALLET",
+            "ITEM_HELM_COIF",
+            "ITEM_HELM_SKULLCAP",
+            "ITEM_HELM_HOOD",
+            "ITEM_HELM_SCARF_HEAD",
+            "ITEM_HELM_WRAP",
+            "ITEM_HELM_BANDANA"
+        ],
+        "AMMO": {
+            "ITEM_WEAPON_BOW": [
+                "ITEM_AMMO_ARROWS_HUNTING",
+                "ITEM_AMMO_ARROWS_HBARB",
+                "ITEM_AMMO_ARROWS_WAR",
+                "ITEM_AMMO_ARROWS_WBARB"
+            ],
+            "ITEM_WEAPON_ATLATL": [
+                "ITEM_AMMO_DARTS",
+                "ITEM_AMMO_DARTS_LONG"
+            ]
+        },
+        "PANTS": [
+            "ITEM_PANTS_BRACCAE",
+            "ITEM_PANTS_GREAVES_UPPER",
+            "ITEM_PANTS_PANTS",
+            "ITEM_PANTS_CHAUSSE",
+            "ITEM_PANTS_CHAUSSE_CHAIN",
+            "ITEM_PANTS_SKIRT_SHORT",
+            "ITEM_PANTS_SKIRT",
+            "ITEM_PANTS_SKIRT_LONG",
+            "ITEM_PANTS_LOINCLOTH"
+        ]
+    }
+}
