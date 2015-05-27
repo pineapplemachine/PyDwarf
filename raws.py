@@ -1,7 +1,7 @@
 import os
 import re
 import inspect
-
+import itertools
 
 
 class rawsqueryable:
@@ -385,6 +385,7 @@ class rawstoken(rawsqueryable):
         self.args = args            # arguments for the token
         self.prefix = prefix        # non-token text between the preceding token and this one
         self.suffix = suffix        # between this token and the next/eof (should typically apply to eof)
+        self.removed = False        # keeps track of whether this token has been removed yet
         if not self.args: self.args = []
     
     def nargs(self):
@@ -397,9 +398,14 @@ class rawstoken(rawsqueryable):
         '''Sets argument at index, also verifies that the input contains no illegal characters.'''
         if any([char in str(value) for char in '[]:\'']): raise ValueError
         self.args[index] = value
+    def argsstr(self):
+        return ':'.join([str(a) for a in self.args])
         
+    def __hash__(self): # Not that this class is immutable, just means you'll need to be careful about when you're using token hashes
+        return hash('%s:%s' % (self.value, self.argsstr()) if self.nargs() else self.value)
+    
     def __str__(self):
-        return '[%s%s]' %(self.value, (':%s' % ':'.join([str(a) for a in self.args])) if self.args and len(self.args) else '')
+        return '[%s%s]' %(self.value, (':%s' % self.argsstr()) if self.args and len(self.args) else '')
     def __repr__(self):
         return '%s%s%s' % (self.prefix if self.prefix else '', str(self), self.suffix if self.suffix else '')
     def __eq__(self, other):
@@ -410,16 +416,24 @@ class rawstoken(rawsqueryable):
     def equals(self, other):
         '''Returns True if two tokens have identical values and arguments, False otherwise.'''
         return self.value == other.value and self.nargs() == other.nargs() and all([str(self.args[i]) == str(other.args[i]) for i in xrange(0, self.nargs())])
+        
+    @staticmethod
+    def tokensequal(atokens, btokens):
+        for atoken, btoken in itertools.izip(atokens, btokens):
+            if not atoken.equals(btoken): return False
+        return True
     
     @staticmethod
-    def copy(subject=None):
+    def copy(auto=None, token=None, tokens=None):
         '''Copies some token or iterable collection of tokens.'''
-        if isinstance(subject, rawstoken):
-            return rawstoken(token=subject)
-        elif subject is not None:
+        
+        pretty, token, tokens = rawstoken.auto(auto, None, token, tokens)
+        if token:
+            return rawstoken(token=token)
+        elif tokens:
             copied = []
             prevtoken = None
-            for token in subject:
+            for token in tokens:
                 newtoken = rawstoken(token=token)
                 copied.append(newtoken)
                 newtoken.prev = prevtoken
@@ -429,13 +443,21 @@ class rawstoken(rawsqueryable):
         else:
             raise ValueError
         
-    def tokens(self, range=None, include_self=False, reverse=False):
+    def tokens(self, range=None, include_self=False, reverse=False, until_token=None):
         count = 0
         itertoken = self if include_self else (self.prev if reverse else self.next)
-        while itertoken and (range is None or range > count):
+        while itertoken and (range is None or range > count) and (itertoken != until_token):
             yield itertoken
             itertoken = itertoken.prev if reverse else itertoken.next
             count += 1
+            
+    @staticmethod   
+    def iter(root, tail):
+        '''Iterate through tokens starting with root and ending at tail.'''
+        itertoken = root
+        while itertoken is not None and itertoken != tail:
+            yield itertoken
+            itertoken = itertoken.next
             
     def match(self, pretty=None, **kwargs):
         '''Returns True if this method matches some rawstokenfilter, false otherwise.'''
@@ -502,19 +524,22 @@ class rawstoken(rawsqueryable):
     
     def remove(self, count=0, reverse=False):
         '''Removes this token and the next count tokens in the direction indicated by reverse.'''
-        left = self.prev
-        right = self.next
-        if count:
-            token = self.prev if reverse else self.next
-            while count and token:
-                count -= 1
-                token = token.prev if reverse else token.next
-            if reverse:
-                left = token
-            else:
-                right = token
-        if left: left.next = right
-        if right: right.prev = left
+        if not self.removed:
+            left = self.prev
+            right = self.next
+            if count:
+                token = self.prev if reverse else self.next
+                while count and token:
+                    count -= 1
+                    token.removed = True
+                    token = token.prev if reverse else token.next
+                if reverse:
+                    left = token
+                else:
+                    right = token
+            if left: left.next = right
+            if right: right.prev = left
+            self.removed = True
         return self
 
 class rawstokenlist(list, rawsqueryable):
@@ -621,8 +646,8 @@ class rawstokenfilter:
         return not result if self.anti else result
     def basematch(self, token):
         if (
-            (self.exact_token is not None and self.exact_token != token) or
-            (self.except_value is not None and self.except_value == token) or
+            (self.exact_token is not None and self.exact_token is not token) or
+            (self.except_value is not None and self.except_value == token.value) or
             (self.exact_value is not None and self.exact_value != token.value) or
             (self.args_count is not None and self.args_count != token.nargs()) or
             (self.value_in is not None and token.value not in self.value_in) or
