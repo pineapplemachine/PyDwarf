@@ -1,0 +1,17 @@
+{
+    
+    "input":    "path/to/vanilla/raws",
+    "output":   "path/to/raws/output",
+    "backup":   "path/to/vanilla/backup",
+    
+    "version":  "dwarf.fortress.version",
+    
+    "scripts": [
+        "pineapple.noexotic",
+        "pineapple.nograzers",
+        "putnam.materialsplus",
+        "smeeprocket.transgender",
+        "witty.restrictednobles"
+    ]
+    
+}

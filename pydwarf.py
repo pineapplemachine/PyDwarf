@@ -99,8 +99,14 @@ class urist:
             self.name = fn.__name__
         if self.name not in urist.registered: urist.registered[self.name] = []
         urist.registered[self.name].append(self)
-        log.debug('Registered script %s.' % self.name)
+        log.debug('Registered script %s.' % self.getname())
         return fn
+        
+    def getname(self):
+        if 'namespace' in self.metadata:
+            return '.'.join((self.meta('namespace'), self.name))
+        else:
+            return self.name
     
     def meta(self, key):
         return self.metadata.get(key)
