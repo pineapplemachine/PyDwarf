@@ -1,6 +1,7 @@
 import re
+import os
 import pydwarf
-from raws import *
+import raws
 from settings import exportsettings as settings
 from utils import copytree
 
@@ -21,8 +22,8 @@ def __main__():
         else:
             pydwarf.log.warning('Proceeding without backing up raws.')
         
-        pydwarf.log.info('Reading raws from %s...' % settings.rawsdir)
-        r = raws().read(settings.rawsdir, pydwarf.log)
+        pydwarf.log.info('Reading raws from directory %s...' % settings.rawsdir)
+        r = raws.dir(path=settings.rawsdir, log=pydwarf.log)
         
         pydwarf.log.info('Running scripts...')
         successfulscripts = []

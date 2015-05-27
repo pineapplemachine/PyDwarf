@@ -1,7 +1,7 @@
 # vim:fileencoding=UTF-8
 
 import pydwarf
-from raws import rawstokenfilter
+import raws
 
 # Generic mutators for use in rules
 def mutator_generic(value, *args):
@@ -69,7 +69,7 @@ vanilla_fuels = ['COAL_BITUMINOUS', 'LIGNITE']
 # ENVIRONMENT, ENVIRONMENT_SPEC, and FUEL groups are handled specially. Everything else is simply
 # a boolean check for a match, and matches get placed in the group identified by the key to which
 # a token query is matched.
-def propertyfilter(**kwargs): return rawstokenfilter(limit=1, limit_terminates=False, **kwargs) # Convenience function
+def propertyfilter(**kwargs): return raws.tokenfilter(limit=1, limit_terminates=False, **kwargs) # Convenience function
 default_inorganics_query = {
     # Detect tokens which indicate what kind of inorganic this is
     'STONE': propertyfilter(exact_value='IS_STONE'),
@@ -87,24 +87,24 @@ default_inorganics_query = {
     'IGNEOUS_INTRUSIVE': propertyfilter(exact_value='IGNEOUS_INTRUSIVE'),
     'AQUIFER': propertyfilter(exact_value='AQUIFER'),
     'NO_STONE_STOCKPILE': propertyfilter(exact_value='NO_STONE_STOCKPILE'),
-    'ENVIRONMENT': rawstokenfilter(exact_value='ENVIRONMENT'),
-    'ENVIRONMENT_SPEC': rawstokenfilter(exact_value='ENVIRONMENT_SPEC'),
+    'ENVIRONMENT': raws.tokenfilter(exact_value='ENVIRONMENT'),
+    'ENVIRONMENT_SPEC': raws.tokenfilter(exact_value='ENVIRONMENT_SPEC'),
     # Detect tokens which represent appearance
     'TILE': propertyfilter(exact_value='TILE'),
     'ITEM_SYMBOL': propertyfilter(exact_value='ITEM_SYMBOL'),
     'DISPLAY_COLOR': propertyfilter(exact_value='DISPLAY_COLOR'),
     'BASIC_COLOR': propertyfilter(exact_value='BASIC_COLOR'),
     'TILE_COLOR': propertyfilter(exact_value='TILE_COLOR'),
-    'STATE_COLOR': rawstokenfilter(exact_value='STATE_COLOR'),
+    'STATE_COLOR': raws.tokenfilter(exact_value='STATE_COLOR'),
     # Stop at the next [INORGANIC:] token
-    'EOF': rawstokenfilter(exact_value='INORGANIC', limit=1)
+    'EOF': raws.tokenfilter(exact_value='INORGANIC', limit=1)
 }
 
 # Automatically get a list of INORGANIC IDs which describe fuels
-def autofuels(raws, log=None):
+def autofuels(dfraws, log=None):
     if log: log.info('No fuels specified, detecting...')
     fuels = []
-    for reaction in raws.all(exact_value='REACTION'): # For each reaction:
+    for reaction in dfraws.all(exact_value='REACTION'): # For each reaction:
         # Does this reaction produce coke?
         reactionmakescoke = False
         for product in reaction.alluntil(exact_value='PRODUCT', until_exact_value='REACTION'):
@@ -121,11 +121,11 @@ def autofuels(raws, log=None):
     return fuels
 
 # Build dictionaries which inform stoneclarity of how various inorganics might be identified
-def builddicts(query, raws, fuels, log=None):
+def builddicts(query, dfraws, fuels, log=None):
     if log: log.debug('Building dicts...')
     groups = {}
     ids = {}
-    inorganics = raws.all(exact_value='INORGANIC')
+    inorganics = dfraws.all(exact_value='INORGANIC')
     if log: log.info('I found %d inorganics. Processing...' % len(inorganics))
     for token in inorganics:
         # Get results of query
@@ -214,9 +214,9 @@ def applyrules(rules, groups, ids, log=None):
             on execution time by setting fuels to fuels_vanilla.'''
     }
 )
-def stoneclarity(raws, rules=default_rules, query=default_inorganics_query, fuels=None):
+def stoneclarity(dfraws, rules=default_rules, query=default_inorganics_query, fuels=None):
     if rules and len(rules):
-        groups, ids = builddicts(query, raws, fuels if fuels else autofuels(raws, pydwarf.log), pydwarf.log)
+        groups, ids = builddicts(query, dfraws, fuels if fuels else autofuels(dfraws, pydwarf.log), pydwarf.log)
         applyrules(rules, groups, ids)
         return pydwarf.success('Finished applying %d rules to %d inorganic groups and %d inorganic ids.' % (len(rules), len(groups), len(ids)))
     else:

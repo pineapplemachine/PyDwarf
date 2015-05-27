@@ -1,5 +1,5 @@
 import pydwarf
-from raws import rawstoken
+import raws
 
 default_species = [
     'DWARF', 'ELF', 'HUMAN', 'GOBLIN', 'KOBOLD', 'GREMLIN',
@@ -57,10 +57,10 @@ add_sterile_interaction = '''
     },
     compatibility = pydwarf.df_0_40
 )
-def trans(raws, species=default_species, beards=True, frequency=500):
+def trans(dfraws, species=default_species, beards=True, frequency=500):
     # Add new interaction
     pydwarf.log.debug('Adding sterility interaction...')
-    objinteraction = raws.get('OBJECT:INTERACTION')
+    objinteraction = dfraws.get('OBJECT:INTERACTION')
     if objinteraction:
         objinteraction.add(pretty=add_sterile_interaction)
     else:
@@ -70,7 +70,7 @@ def trans(raws, species=default_species, beards=True, frequency=500):
     castefailures = []
     for creature in species:
         pydwarf.log.debug('Handling creature %s...' % creature)
-        creaturetoken = raws.get(exact_value='CREATURE', exact_args=[creature])
+        creaturetoken = dfraws.getobj('CREATURE', creature)
         if creaturetoken:
             castes = creaturetoken.alluntil(exact_value='CASTE', args_count=1, until_exact_value='CREATURE')
             if len(castes) == 2 and ((castes[0].args[0] == 'MALE' and castes[1].args[0] == 'FEMALE') or (castes[1].args[0] == 'MALE' and castes[0].args[0] == 'FEMALE')):
@@ -79,18 +79,18 @@ def trans(raws, species=default_species, beards=True, frequency=500):
                 descriptiontoken = creaturetoken.get(exact_value='DESCRIPTION', args_count=1)
                 if descriptiontoken:
                     descriptiontoken.remove()
-                    for castetoken in castes: castetoken.add(token=rawstoken.copy(descriptiontoken))
+                    for castetoken in castes: castetoken.add(token=raws.token.copy(descriptiontoken))
                 
                 # Handle existing castes
                 for caste in castes:
                     # Add beards to dwarven women
                     if beards and caste.args[0] == 'FEMALE': caste.add(pretty=add_beard_tokens)
                     # Add population ratio token
-                    caste.add(rawstoken(value='POP_RATIO', args=[str(frequency)]))
+                    caste.add(raws.token(value='POP_RATIO', args=[str(frequency)]))
                 
                 # Add each new caste
                 for castename, castedict in additional_castes.iteritems():
-                    castetoken = castes[0].add(rawstoken(value='CASTE', args=[castename]), reverse=True)
+                    castetoken = castes[0].add(raws.token(value='CASTE', args=[castename]), reverse=True)
                     # Every new caste gets these tokens
                     castetoken.add(pretty=add_trans_tokens)
                     # Add beards to new dwarf castes
@@ -99,7 +99,7 @@ def trans(raws, species=default_species, beards=True, frequency=500):
                     if 'addtokens' in castedict: castetoken.add(pretty=castedict['addtokens'])
                     # Add the caste-specific description
                     description = ' '.join((descriptiontoken.args[0], castedict['description'])) if descriptiontoken else castedict['description']
-                    castetoken.add(rawstoken(value='DESCRIPTION', args=[description]))
+                    castetoken.add(raws.token(value='DESCRIPTION', args=[description]))
                     
             else:
                 pydwarf.log.error('Unexpected castes for creature %s: %s.' % (creature, castes))

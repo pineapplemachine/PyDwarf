@@ -8,7 +8,7 @@ import pydwarf
     compatibility = (pydwarf.df_0_3x, pydwarf.df_0_40)
 )
 def flybears(raws):
-    bears = raws.all(exact_value='CREATURE', re_args=['BEAR_.+'])
+    bears = raws.allobj('CREATURE', re_id='BEAR_.+')
     for bear in bears:
         bear.get('CASTE:FEMALE').add('FLIER')
     if len(bears):
