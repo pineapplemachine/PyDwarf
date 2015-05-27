@@ -1,13 +1,22 @@
 {
     
-    "input":    "path/to/vanilla/raws",
-    "output":   "path/to/raws/output",
-    "backup":   "path/to/vanilla/backup",
+    "comment": "This is an example file! Before running the manager you will need to change the provided paths to better suit your particular setup.",
     
-    "version":  "dwarf.fortress.version",
+    "input":    "E:/Sophie/Desktop/Files/Games/Dwarf Fortress/Dwarf Fortress/df_40_24_win/raw/objects",
+    "output":   "output",
+    "backup":   "backup",
+    
+    "version":  "0.40.24",
     
     "scripts": [
-        "pineapple.noexotic",
+        {
+            "name": "pineapple.deerappear",
+            "args": {"tile": "'d'", "color": [6, 0, 1]}
+        },
+        {
+            "name": "pineapple.noexotic",
+            "match": {"version": "alpha"}
+        },
         "pineapple.nograzers",
         "putnam.materialsplus",
         "smeeprocket.transgender",

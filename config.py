@@ -16,7 +16,7 @@ timestamp = datetime.now().strftime(datetimeformat)
 
 def __main__():
     
-    # Set to true to load configuration from config.py
+    # Set to True to load configuration from config.py
     use_json_config = True
     json_config_path = 'config.json'
 
@@ -103,7 +103,14 @@ def exportcustom():
     # To run a script with arguments, put a tuple in the list like: ('script_name', {'arg0': 1, 'arg1': 2})
     # A function can optionally be specified in place of a string, and that function will be run instead.
     conf.scripts = [
-        'pineapple.noexotic',
+        {
+            'name': 'pineapple.deerappear',
+            'args': {'tile': "'d'", 'color': [6, 0, 1]}
+        },
+        {
+            'name': 'pineapple.noexotic',
+            'match': {'version': 'alpha'}
+        },
         'pineapple.nograzers',
         'putnam.materialsplus',
         'smeeprocket.transgender',
