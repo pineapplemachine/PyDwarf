@@ -2,35 +2,40 @@ import re
 import os
 import pydwarf
 import raws
-from settings import exportsettings as settings
+import config
 from utils import copytree
 
 # Actually run the program
 def __main__():
     
+    conf = config.export() 
+    if not conf:
+        pydwarf.log.error('No configuration specified. Imported config package must contain an export function.')
+        exit(1)
+    
     pydwarf.log.info('Running PyDwarf %s.' % pydwarf.__version__)
-    if settings.dfversion is not None:
-        pydwarf.log.info('Managing Dwarf Fortress version %s.' % settings.dfversion)
+    if conf.dfversion is not None:
+        pydwarf.log.info('Managing Dwarf Fortress version %s.' % conf.dfversion)
     else:
-        pydwarf.log.error('No Dwarf Fortress version was specified in settings. Scripts will be run regardless of their indicated compatibility.')
+        pydwarf.log.error('No Dwarf Fortress version was specified in conf. Scripts will be run regardless of their indicated compatibility.')
     
-    if os.path.exists(settings.rawsdir):
+    if os.path.exists(conf.rawsdir):
     
-        if settings.backup and settings.backupdir:
-            pydwarf.log.info('Backing up raws to %s...' % settings.backupdir)
-            copytree(settings.rawsdir, settings.backupdir)
+        if conf.backup and conf.backupdir:
+            pydwarf.log.info('Backing up raws to %s...' % conf.backupdir)
+            copytree(conf.rawsdir, conf.backupdir)
         else:
             pydwarf.log.warning('Proceeding without backing up raws.')
         
-        pydwarf.log.info('Reading raws from directory %s...' % settings.rawsdir)
-        r = raws.dir(path=settings.rawsdir, log=pydwarf.log)
+        pydwarf.log.info('Reading raws from directory %s...' % conf.rawsdir)
+        r = raws.dir(path=conf.rawsdir, log=pydwarf.log)
         
         pydwarf.log.info('Running scripts...')
         successfulscripts = []
-        for script in settings.runscripts:
+        for script in conf.runscripts:
             pydwarf.log.debug('Handling script %s...' % script)
             
-            urist, scriptname, scriptfunc, scriptargs, scriptmatch = getscriptinfo(script)
+            urist, scriptname, scriptfunc, scriptargs, scriptmatch = getscriptinfo(script, conf.dfversion)
             
             if scriptfunc:
                 if checkdependencies(urist, successfulscripts):
@@ -59,7 +64,7 @@ def __main__():
             else:
                 pydwarf.log.error('Failed to retrieve script %s.' % scriptname)
         
-        outputdir = settings.outputdir if settings.outputdir else settings.rawsdir
+        outputdir = conf.outputdir if conf.outputdir else conf.rawsdir
         if os.path.exists(outputdir):
             pydwarf.log.info('Removing obsolete raws from %s...' % outputdir)
             for removefile in [os.path.join(outputdir, f) for f in os.listdir(outputdir)]:
@@ -77,7 +82,7 @@ def __main__():
     else:
         pydwarf.log.info('Specified raws directory does not exist.')
 
-def getscriptinfo(script):
+def getscriptinfo(script, dfversion):
     # A script can be specified in a variety of ways in the scripts iterable, this function is for understanding all the different options and returning the info the manager needs.
     
     urist = None
@@ -86,7 +91,7 @@ def getscriptinfo(script):
     scriptargs = None
     scriptmatch = None
     scriptignoreversion = None
-    checkversion = settings.dfversion
+    checkversion = dfversion
     
     if isinstance(script, pydwarf.urist):
         urist = script

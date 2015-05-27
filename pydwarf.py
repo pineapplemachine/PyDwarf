@@ -4,6 +4,9 @@ import re
 
 __version__ = 'alpha'
 
+# Make a default logger object
+log = logging.getLogger()
+
 # Can be expected to match all past and future 0.40.* releases. (Time of writing is 21 May 15, the most recent version is 0.40.24.)
 df_0_40 = '(0\.40\.\d{2,}[abcdefg]?)'
 # Matches all DF 0.34.* releases
@@ -38,9 +41,6 @@ def df_revision_range(prettymin=None, prettymax=None, major=None, minor=None, mi
         maxrevision = parts[2] if len(parts) > 2 else '0'
     return '%s\.%s\.(%s)' % (major, minor, '|'.join([str(r) for r in range(int(minrevision), int(maxrevision)+1)]))
 
-# Make a default log object if none exists already
-if 'log' not in vars() and 'log' not in globals(): log = logging.getLogger()
-
 # Convenience functions which scripts can use for returning success/failure responses
 def success(status=None): return response(True, status)
 def failure(status=None): return response(False, status)
@@ -49,7 +49,14 @@ def response(success=None, status=None):
     if success is not None: result['success'] = success
     if status is not None: result['status'] = status
     return result
-    
+
+class session:
+    def __init__(self, dfraws):
+        self.raws = dfraws
+        self.successful = []
+        self.failed = []
+        # todo
+
 # Functions in scripts must be decorated with this in order to be made available to PyDwarf
 class urist:
     '''Decorates a function as being an urist. Keyword arguments are treated as metadata.
@@ -145,4 +152,3 @@ class urist:
             return name, namespace
         else:
             return name, None
-
