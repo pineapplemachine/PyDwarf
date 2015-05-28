@@ -1,0 +1,15 @@
+item_library_shukaro
+
+[OBJECT:ITEM]
+
+[ITEM_TOY:ITEM_TABLET]
+[NAME:tablet:tablets]
+[HARD_MAT]
+
+[ITEM_TOY:ITEM_BOOK]
+[NAME:book:books]
+[HARD_MAT]
+
+[ITEM_TOY:ITEM_PAPER]
+[NAME:paper:paper]
+[HARD_MAT]
