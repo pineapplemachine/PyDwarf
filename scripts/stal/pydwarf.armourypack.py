@@ -191,7 +191,7 @@ def armourypack(dfraws, remove_entity_items=True, remove_attacks=('SCRATCH', 'BI
     try:
         armouryraws = raws.dir(path=armourydir, log=pydwarf.log)
     except:
-        pydwarf.log.exception('Unable to load armoury raws.')
+        return pydwarf.failure('Unable to load armoury raws.')
     
     additemstoraws(dfraws, armouryraws)
     additemstoents(dfraws, armouryraws, remove_entity_items)

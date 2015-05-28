@@ -67,10 +67,11 @@ def trans(dfraws, species=default_species, beards=True, frequency=500):
         return pydwarf.failure('Unable to add sterility interaction.')
     
     # Add new castes
+    creaturetokendict = dfraws.objdict('CREATURE')
     castefailures = []
     for creature in species:
         pydwarf.log.debug('Handling creature %s...' % creature)
-        creaturetoken = dfraws.getobj('CREATURE', creature)
+        creaturetoken = creaturetokendict.get(creature)
         if creaturetoken:
             castes = creaturetoken.alluntil(exact_value='CASTE', args_count=1, until_exact_value='CREATURE')
             if len(castes) == 2 and ((castes[0].args[0] == 'MALE' and castes[1].args[0] == 'FEMALE') or (castes[1].args[0] == 'MALE' and castes[0].args[0] == 'FEMALE')):

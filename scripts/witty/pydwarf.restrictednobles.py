@@ -51,7 +51,7 @@ def restrictnobles_custom(raws, inclusions=None, exclusions=None):
             pydwarf.log.debug('Handling position inclusions %s...' % inclusions)
             for inclusion in inclusions:
                 for position in positions: addwm(position, 'ALLOWED_CLASS:WITTY_%s' % inclusion)
-                creature = raws['creature_standard'].getobj('CREATURE', inclusion)
+                creature = raws.getobj('CREATURE', inclusion)
                 if creature:
                     addwm(creature, 'CREATURE_CLASS:WITTY_%s' % inclusion)
                 else:
@@ -60,7 +60,7 @@ def restrictnobles_custom(raws, inclusions=None, exclusions=None):
             pydwarf.log.debug('Handling position exclusions %s...' % exclusions)
             for exclusion in exclusions:
                 for position in positions: addwm(position, 'REJECTED_CLASS:WITTY_%s' % exclusion)
-                creature = raws['creature_standard'].getobj('CREATURE', exclusion)
+                creature = raws.getobj('CREATURE', exclusion)
                 if creature:
                     addwm(creature, 'CREATURE_CLASS:WITTY_%s' % exclusion)
                 else:
