@@ -1,8 +1,8 @@
 import os
-from queryable import rawsqueryable
+from queryable import rawsqueryable_obj
 from file import rawsfile
 
-class rawsdir(rawsqueryable):
+class rawsdir(rawsqueryable_obj):
     '''Represents as a whole all the raws contained within a directory.'''
     
     def __init__(self, **kwargs):

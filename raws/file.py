@@ -59,10 +59,10 @@ class rawsfile(rawsqueryable):
         else:
             pretty, token, tokens = rawstoken.auto(auto, pretty, token, tokens)
             if pretty:
-                tokens = rawstoken.parse(tokens)
-                if len(tokens) == 1: token = tokens
+                tokens = rawstoken.parse(pretty)
+                if len(tokens) == 1: token = tokens[0]
             if token:
-                self.headtoken = token
+                self.roottoken = token
                 self.tailtoken = token
                 return token
             elif tokens:

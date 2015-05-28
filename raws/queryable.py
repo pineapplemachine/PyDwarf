@@ -1,6 +1,8 @@
 import inspect
 from filters import *
 
+
+
 class rawsqueryable:
     '''Classes which contain raws tokens should inherit from this in order to provide querying functionality.'''
     
@@ -72,30 +74,6 @@ class rawsqueryable:
         result = self.query(filters, tokeniter, **tokens_args)[0].result
         return result[-1] if result and len(result) else None
     
-    def getobjheaders(self, type):
-        '''Gets OBJECT:X tokens where X is type. Is also prepared for special cases
-        like type=ITEM_PANTS matching OBJECT:ITEM.'''
-        typeparts = type.split('_')
-        return self.all(exact_value='OBJECT', re_args=('|'.join(typeparts),))
-        
-    def getobj(self, type, id):
-        '''Get the first object token matching a given type and id. (If there's more 
-            than one result for any given query then I'm afraid you've done something
-            silly with your raws.) This method should work properly with things like
-            CREATURE:X tokens showing up in entity_default.'''
-        for objecttoken in self.getobjheaders(type):
-            obj = objecttoken.get(exact_value=type, exact_args=(id,))
-            if obj: return obj
-        return None
-        
-    def allobj(self, type, exact_id=None, re_id=None):
-        '''Gets all objects matching a given type and optional id or id regex.'''
-        results = []
-        for objecttoken in self.getobjheaders(type):
-            for result in objecttoken.all(exact_value=type, exact_args=(exact_id,) if exact_id else None, re_args=(re_id,) if re_id else None):
-                results.append(result)
-        return results
-    
     def all(self, pretty=None, tokeniter=None, **kwargs):
         '''Get a list of all matching tokens.
         %s''' % rawsqueryable.quick_query_args_docstring
@@ -112,10 +90,10 @@ class rawsqueryable:
         
         filter_args, tokens_args = self.argstokens(tokeniter, kwargs)
         filters = (
-            rawstokenfilter(),
-            rawstokenfilter(pretty=pretty, limit=1, **filter_args)
+            rawstokenfilter(pretty=pretty, limit=1, **filter_args),
+            rawstokenfilter()
         )
-        return self.query(filters, tokeniter, **tokens_args)[0].result
+        return self.query(filters, tokeniter, **tokens_args)[1].result
         
     def getuntil(self, pretty=None, until_pretty=None, tokeniter=None, **kwargs):
         '''Get the first matching token, but abort when a token matching arguments prepended with 'until_' is encountered.
@@ -176,6 +154,58 @@ class rawsqueryable:
         else:
             return kwargs, {}
 
+
+
+class rawsqueryable_obj(rawsqueryable):
+    def __init__(self):
+        self.files = None
+    
+    def getobjheadername(self, type):
+        if type == 'WORD' or type == 'SYMBOL':
+            return 'LANGUAGE'
+        elif type.startswith('ITEM_'):
+            return 'ITEM'
+        elif type == 'COLOR' or type == 'SHAPE':
+            return 'DESCRIPTOR_%s' % type
+        elif type == 'COLOR_PATTERN':
+            return 'DESCRIPTOR_PATTERN'
+        else:
+            return type
+    
+    def getobjheaders(self, type):
+        '''Gets OBJECT:X tokens where X is type. Is also prepared for special cases
+        like type=ITEM_PANTS matching OBJECT:ITEM. Current as of DF version 0.40.24.'''
+        match_type = self.getobjheadername(type)
+        results = []
+        for rfile in self.files.itervalues():
+            root = rfile.root()
+            if root and root.value == 'OBJECT' and root.nargs() == 1 and root.args[0] == match_type:
+                results.append(root)
+        return results
+    
+    def getobj(self, type, id):
+        '''Get the first object token matching a given type and id. (If there's more 
+            than one result for any given query then I'm afraid you've done something
+            silly with your raws.) This method should work properly with things like
+            CREATURE:X tokens showing up in entity_default.'''
+        for objecttoken in self.getobjheaders(type):
+            obj = objecttoken.get(exact_value=type, exact_args=(id,))
+            if obj: return obj
+        return None
+        
+    def allobj(self, type, exact_id=None, re_id=None):
+        '''Gets all objects matching a given type and optional id or id regex.'''
+        results = []
+        for objecttoken in self.getobjheaders(type):
+            for result in objecttoken.all(exact_value=type, exact_args=(exact_id,) if exact_id else None, re_args=(re_id,) if re_id else None):
+                results.append(result)
+        return results
+        
+    def objdict(self, *args, **kwargs):
+        return {token.args[0]: token for token in self.allobj(*args, **kwargs)}
+
+
+
 class rawstokenlist(list, rawsqueryable):
     '''Extends builtin list with token querying functionality.'''
     
@@ -184,3 +214,5 @@ class rawstokenlist(list, rawsqueryable):
         for i in xrange(self.__len__()-1, -1, -1) if reverse else xrange(0, self.__len__()):
             if range is not None and range <= count: break
             yield self.__getitem__(i)
+
+
