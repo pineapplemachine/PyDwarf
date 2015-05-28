@@ -86,7 +86,7 @@ def exportcustom():
         dfdir = '/Users/pineapple/Desktop/stuff/dwarfort/df_osx_40_23'
         
     # Detect Dwarf Fortress version
-    conf.dfversion = getdfversion(dfdir)
+    conf.version = getdfversion(dfdir)
 
     # Read raws from this directory.
     conf.input = os.path.join(dfdir, 'raw/objects')
