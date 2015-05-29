@@ -21,7 +21,7 @@ By default, the settings file will load any python scripts contained within the 
 The backbone of PyDwarf is its ability to query and modify the raws. This happens in the currently poorly-documented raws.py. (I'm working on it!) Though it would be difficult to concisely explain all the functionality it affords a mod author, I believe an example can say volumes. This example snippet, run on vanilla Dwarf Fortress raws, would cause all female bears to fly: 
 
 ```
-for bear in raws.all(exact_value='CREATURE', re_args=['BEAR_.+']):
+for bear in df.allobj(type='CREATURE', re_id='BEAR_.+'):
     bear.get('CASTE:FEMALE').add('FLIER')
 ```
 
