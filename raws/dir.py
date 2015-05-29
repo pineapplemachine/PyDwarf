@@ -20,17 +20,21 @@ class rawsdir(rawsqueryable_obj):
             if filename in self.files: raise KeyError
             if not rfile: rfile = rawsfile(header=filename)
             self.files[filename] = rfile
+            rfile.dir = self
             return rfile
     def setfile(self, filename=None, rfile=None):
         if rfile and not filename: filename = rfile.header
+        rfile.dir = self
         self.files[filename] = rfile
     def removefile(self, filename=None, rfile=None):
+        if not rfile.dir = self: raise ValueError
         if rfile and not filename: filename = rfile.header
+        rfile.dir = None
         del self.files[filename]
         
     def addpath(self, path):
         with open(path, 'rb') as rfilestream:
-            rfile = rawsfile(path=path, rfile=rfilestream)
+            rfile = rawsfile(path=path, rfile=rfilestream, dir=self)
             if rfile.header in self.files: raise ValueError
             self.files[rfile.header] = rfile
             return rfile
@@ -47,7 +51,7 @@ class rawsdir(rawsqueryable_obj):
                 if log: log.debug('Reading file %s...' % filepath)
                 with open(filepath, 'rb') as rfile:
                     filenamekey = os.path.splitext(os.path.basename(filename))[0]
-                    self.files[filenamekey] = rawsfile(path=filepath, rfile=rfile)
+                    self.files[filenamekey] = rawsfile(path=filepath, rfile=rfile, dir=self)
         return self
         
     def write(self, path, log=None):

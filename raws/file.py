@@ -4,7 +4,7 @@ from token import rawstoken
 class rawsfile(rawsqueryable):
     '''Represents a single file within a raws directory.'''
     
-    def __init__(self, header=None, data=None, path=None, tokens=None, rfile=None):
+    def __init__(self, header=None, data=None, path=None, tokens=None, rfile=None, dir=None):
         if rfile:
             self.read(rfile)
             if header is not None: self.header = header
@@ -15,6 +15,7 @@ class rawsfile(rawsqueryable):
         self.path = path
         self.roottoken = None
         self.tailtoken = None
+        self.dir = dir
         if self.data:
             tokens = rawstoken.parse(self.data, implicit_braces=False)
         if tokens:
@@ -22,6 +23,11 @@ class rawsfile(rawsqueryable):
             
     def settokens(self, tokens):
         self.roottoken, self.tailtoken = rawstoken.firstandlast(tokens)
+        
+    def copy(self):
+        rfile = rawsfile(header=self.header, path=self.path, dir=self.dir)
+        rfile.settokens(rawstoken.copy(self.tokens()))
+        return rfile
         
     def __str__(self):
         return '%s\n%s' %(self.header, ''.join([str(o) for o in self.tokens()]))
@@ -68,3 +74,6 @@ class rawsfile(rawsqueryable):
             elif tokens:
                 self.settokens(tokens)
                 return tokens
+                
+    def remove(self):
+        self.dir.removefile(rfile=self)

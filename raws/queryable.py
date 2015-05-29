@@ -183,18 +183,20 @@ class rawsqueryable_obj(rawsqueryable):
                 results.append(root)
         return results
     
-    def getobj(self, type, id):
+    def getobj(self, pretty=None, type=None, exact_id=None):
         '''Get the first object token matching a given type and id. (If there's more 
             than one result for any given query then I'm afraid you've done something
             silly with your raws.) This method should work properly with things like
             CREATURE:X tokens showing up in entity_default.'''
+        type, exact_id = rawsqueryable_obj.objpretty(pretty, type, exact_id)
         for objecttoken in self.getobjheaders(type):
-            obj = objecttoken.get(exact_value=type, exact_args=(id,))
+            obj = objecttoken.get(exact_value=type, exact_args=(exact_id,))
             if obj: return obj
         return None
         
-    def allobj(self, type, exact_id=None, re_id=None):
+    def allobj(self, pretty=None, type=None, exact_id=None, re_id=None):
         '''Gets all objects matching a given type and optional id or id regex.'''
+        type, exact_id = rawsqueryable_obj.objpretty(pretty, type, exact_id)
         results = []
         for objecttoken in self.getobjheaders(type):
             for result in objecttoken.all(exact_value=type, exact_args=(exact_id,) if exact_id else None, re_args=(re_id,) if re_id else None):
@@ -203,6 +205,21 @@ class rawsqueryable_obj(rawsqueryable):
         
     def objdict(self, *args, **kwargs):
         return {token.args[0]: token for token in self.allobj(*args, **kwargs)}
+        
+    @staticmethod
+    def objpretty(pretty, type, id):
+        # Utility method for handling getobj/allobj arguments.
+        if pretty is not None:
+            if ':' in pretty:
+                parts = pretty.split(':')
+                if len(parts) != 2: raise ValueError
+                return parts[0], parts[1]
+            elif type is None:
+                return pretty, id
+            elif id is None:
+                return pretty, type
+        else:
+            return type, id
 
 
 
