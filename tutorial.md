@@ -28,7 +28,8 @@ The scripts specified in a config object's scripts attribute (or in the scripts 
 
 For convenient reference, this is an example config.json file:
 
-```{
+``` json
+{
     "input":    "E:/Sophie/Desktop/Files/Games/Dwarf Fortress/Dwarf Fortress/df_40_24_win/vanillaraw/objects",
     "output":   "E:/Sophie/Desktop/Files/Games/Dwarf Fortress/Dwarf Fortress/df_40_24_win/raw/objects",
     "backup":   "E:/Sophie/Desktop/Files/Games/Dwarf Fortress/Dwarf Fortress/df_40_24_win/rawbak/",
@@ -41,8 +42,8 @@ For convenient reference, this is an example config.json file:
         "smeeprocket.transgender",
         "witty.restrictednobles"
     ]
-}```
-
+}
+```
 
 
 # Applying Mods
@@ -61,14 +62,16 @@ Once a Python script has been created which is located in the correct place and 
 
 Here's an example script which, though it does nothing, would be properly understood by PyDwarf.
 
-```import pydwarf
+```python
+import pydwarf
 @pydwarf.urist(
     name = 'pineapple.example',
     author = 'Sophie Kirschner',
     description = 'This script doesn't actually do anything!'
 )
 def examplefunction(df):
-    pass```
+    pass
+```
 
 
 For more complete documentation regarding what metadata gets special consideration, refer to documentation in `pydwarf/urist.py`.
@@ -93,7 +96,7 @@ Unlike a `raws.dir` object, when such a query is performed on a `raws.file` or a
 
 Here's a simple example combining the various querying methods. This snippet would add a `[FLIER]` token to the female caste of each vanilla species of bear. (In summary: It makes female bears fly.)
 
-```
+```python
 for bear in df.allobj(type='CREATURE', re_id='BEAR_.+'):
     bear.get('CASTE:FEMALE').add('FLIER')
 ```
