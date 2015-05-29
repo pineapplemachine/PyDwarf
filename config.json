@@ -1,10 +1,10 @@
 {
     
-    "comment": "This is an example file! Before running the manager you will need to change the provided paths to better suit your particular setup.",
+    "comment":  "This is an example file! Before running the manager you will need to change the provided paths to better suit your particular setup.",
     
-    "input":    "E:/Sophie/Desktop/Files/Games/Dwarf Fortress/Dwarf Fortress/df_40_24_win/raw/objects",
-    "output":   "output",
-    "backup":   "backup",
+    "input":    "E:/Sophie/Desktop/Files/Games/Dwarf Fortress/Dwarf Fortress/df_40_24_win/vanillaraw/objects",
+    "output":   "E:/Sophie/Desktop/Files/Games/Dwarf Fortress/Dwarf Fortress/df_40_24_win/raw/objects",
+    "backup":   "E:/Sophie/Desktop/Files/Games/Dwarf Fortress/Dwarf Fortress/df_40_24_win/rawbak/",
     
     "version":  "0.40.24",
     
