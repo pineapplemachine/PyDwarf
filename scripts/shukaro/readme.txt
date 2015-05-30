@@ -1,9 +1,0 @@
-Dwarven Higher Learning created by Shukaro. (http://www.bay12forums.com/smf/index.php?topic=60853.0)
-Dwarven Higher Learning ported to PyDwarf by Sophie Kirschner. (http://www.pineapplemachine.com)
-
-Have you ever wondered to yourself, "Man, my dwarves are such idiots, I wish I could chisel some intelligence into their heads."? No? Then, er, disregard that last bit. What I present to you, here and now, no strings attached, is a workshop to solve a problem that you probably didn't even know you had! I call it, the Dwarven Higher Learning Mod. Now, what this thingawazzit does, is give your dwarves an opportunity to polish up some skills that they may have trouble practicing elsewhere. You know the situation, Urist McDoctor has your legendary axedwarf on your table, and he's got no idea how to stop him from bleeding out from wounds caused by rogue fluffy wamblers. Or you have precious little metal available on the glacier you so stupidly bravely embarked on, so you can't afford to waste it on dabbling weaponsmiths who've never handled a hammer before in their lives. This mod's workshops allow training through the time-honored traditions of; hitting rocks until your hands bleed, performing repetitive actions that will sap your will to live, practicing your skills on subjects that are worth less than most peasants (and won't sue for malpractice), and studying the works of your fellow dwarves, knowing full-well that you'll never be quite as good as them.
-
-Creation Forge created by Shukaro. (http://www.bay12forums.com/smf/index.php?topic=60815)
-Creation Forge ported to PyDwarf by Sophie Kirschner. (http://www.pineapplemachine.com)
-
-This is a simple workshop I modded in to help test custom reactions, buildings, and creatures. It's used to create various different items so that you don't have to set up an entire fortress to test some reactions. Hopefully it's a useful tool to people, even if it's just to look at the raw formatting.
