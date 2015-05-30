@@ -2,7 +2,7 @@ import os
 import pydwarf
 import raws
 
-smalldir = librarydir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'smallthingsmod')
+smalldir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'smallthingsmod')
 
 
 
@@ -52,11 +52,14 @@ shapenamedict = {
     compatibility = (pydwarf.df_0_2x, pydwarf.df_0_3x, pydwarf.df_0_40)
 )
 def prefstring(dfraws):
+    # Get the smallthings ModBase raws, which is where this data will be coming from
     smallraws = getsmallraws()
     if not smallraws: return pydwarf.failure('Failed to read smallthings raws.')
+    
     # Get all creatures
     smallcreatures = smallraws.allobj('CREATURE')
     dfcreaturesdict = dfraws.objdict('CREATURE')
+    
     # Add the new prefstrings
     failedcreatures = 0
     for smallcreature in smallcreatures:
@@ -68,6 +71,7 @@ def prefstring(dfraws):
             prefs = smallcreature.alluntil(exact_value='PREFSTRING', args_count=1, until_exact_value='CREATURE')
             dfcreature.add(tokens=raws.token.copy(prefs))
             pydwarf.log.debug('Added %d prefstrings to %s.' % (len(prefs), dfcreature))
+            
     # All done!
     return pydwarf.success('Added prefstrings to %d creatures.' % (len(smallcreatures) - failedcreatures))
 
@@ -90,21 +94,29 @@ def prefstring(dfraws):
     compatibility = (pydwarf.df_0_2x, pydwarf.df_0_3x, pydwarf.df_0_40)
 )
 def engraving(dfraws):
+    # Get the smallthings ModBase raws, which is where this data will be coming from
+    smallraws = getsmallraws()
+    if not smallraws: return pydwarf.failure('Failed to read smallthings raws.')
+    
+    # Get existing words and shapes
     dfwordsdict = dfraws.objdict('WORD')
     dfshapesdict = dfraws.objdict('SHAPE')
     
+    # Add a new file for the new shapes
     dfshapesfile = dfraws.addfile(filename='descriptor_shape_umiman')
     dfshapesfile.add('OBJECT:DESCRIPTOR_SHAPE')
     shapesadded = 0
     
-    smallraws = getsmallraws()
-    
+    # Add each shape
     for smallshape in smallraws['descriptor_shape_standard'].all(exact_value='SHAPE'):
-        if smallshape.args[0] not in dfshapesdict:
+        if smallshape.args[0] not in dfshapesdict: # Verify that the shape isn't already in the raws
             pydwarf.log.debug('Adding shape %s...' % smallshape)
             
+            # Get the tokens describing this shape
             smallshapetokens = smallshape.until(exact_value='SHAPE')
             
+            # Shapes in DF's descriptor_shape_standard all have a [WORD:X] token but these do not
+            # To compensate, let's do our best to map each shape to a word automatically
             smallshapename = smallshape.get(exact_value='NAME', args_count=2)
             if smallshapename:
                 useshapename = smallshapename.args[0].upper()
@@ -113,14 +125,18 @@ def engraving(dfraws):
             else:
                 pydwarf.log.error('Found no names for %s.' % shallshape)
                 
+            # Actually add the new shape to the raws
             dfshapesfile.add(raws.token.copy(smallshape))
             dfshapesfile.add(raws.token.copy(smallshapetokens))
             
+            # And also add the word, provided one was found
             if shapeword:
                 dfshapesfile.add(raws.token(value='WORD', args=(shapeword.args[0],)))
             else:
                 pydwarf.log.info('Found no word for %s, named %s.' % (smallshape, smallshapename))
             
+            # And on to the next iteration
             shapesadded += 1
-                
+    
+    # All done!
     return pydwarf.success('Added %s new shapes.' % shapesadded)
