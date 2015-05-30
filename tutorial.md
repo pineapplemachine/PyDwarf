@@ -66,10 +66,11 @@ Here's an example script which, though it does nothing, would be properly unders
 
 ```python
 import pydwarf
+
 @pydwarf.urist(
     name = 'pineapple.example',
     author = 'Sophie Kirschner',
-    description = 'This script doesn't actually do anything!'
+    description = 'This script doesn\'t actually do anything!'
 )
 def examplefunction(df):
     pass
