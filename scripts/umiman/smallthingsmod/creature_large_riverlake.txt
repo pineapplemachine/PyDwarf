@@ -1,0 +1,43 @@
+creature_large_riverlake
+
+[OBJECT:CREATURE]
+
+[CREATURE:HIPPO]
+	[!REPLACE]
+	[PREFSTRING:water-loving nature]
+	[PREFSTRING:barrel shaped bellies]
+	[PREFSTRING:tremendous girth]
+	[PREFSTRING:dangerous and aggresive behaviour]
+	[PREFSTRING:ivory canine teeth]
+
+[CREATURE:FISH_GAR_LONGNOSE]
+	[!REPLACE]
+	[PREFSTRING:long, narrow beaks]
+	[PREFSTRING:diamond-shaped scales]
+	[PREFSTRING:tough, teeth-laden mouths]
+	[PREFSTRING:hilarious mating behaviour]
+	[PREFSTRING:extended, cylindrical bodies]
+
+[CREATURE:FISH_CARP]
+	[!REPLACE]
+	[PREFSTRING:terrifying, nightmare-inducing nature]
+	[PREFSTRING:murderous, psychotic tendencies]
+	[PREFSTRING:unified hatred of all land-dwelling creatures]
+	[PREFSTRING:many variations of colour]
+	[PREFSTRING:googly stare]
+
+[CREATURE:FISH_TIGERFISH]
+	[!REPLACE]
+	[PREFSTRING:dominating appearance]
+	[PREFSTRING:distinctive protruding teeth]
+	[PREFSTRING:spirited fishing battles]
+	[PREFSTRING:dotted colouration]
+	[PREFSTRING:noteworthy size... for a freshwater fish]
+
+[CREATURE:FISH_PIKE]
+	[!REPLACE]
+	[PREFSTRING:sharply-pointed heads]
+	[PREFSTRING:mottled grey-green colouration]
+	[PREFSTRING:love of eating roaches]
+	[PREFSTRING:genocidal behaviour]
+	[PREFSTRING:hard-to-fish nature]

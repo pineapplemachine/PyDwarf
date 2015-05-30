@@ -1,0 +1,19 @@
+creature_reptiles
+
+[OBJECT:CREATURE]
+
+[CREATURE:LIZARD]
+	[!REPLACE]
+	[PREFSTRING:close relationship with the formidable dragon]
+	[PREFSTRING:subtle colour changes]
+	[PREFSTRING:short, plated necks]
+	[PREFSTRING:forked tongues]
+	[PREFSTRING:coloured dewlaps]
+
+[CREATURE:TURTLE]
+	[!REPLACE]
+	[PREFSTRING:shield-strength shells]
+	[PREFSTRING:habit of retreating into their shells]
+	[PREFSTRING:moist and tender flavour]
+	[PREFSTRING:old age]
+	[PREFSTRING:stiff movements, as if one were burdened by load]

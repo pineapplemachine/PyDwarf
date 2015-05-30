@@ -1,0 +1,11 @@
+creature_annelids
+
+[OBJECT:CREATURE]
+
+[CREATURE:WORM]
+	[!REPLACE]
+	[PREFSTRING:wriggling, elongated, soft-bodies]
+	[PREFSTRING:mindless digging]
+	[PREFSTRING:thankless contributions]
+	[PREFSTRING:adversity towards water]
+	[PREFSTRING:simplicity]

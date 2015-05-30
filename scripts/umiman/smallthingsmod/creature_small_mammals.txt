@@ -1,0 +1,43 @@
+creature_small_mammals
+
+[OBJECT:CREATURE]
+
+[CREATURE:RAT]
+	[!REPLACE]
+	[PREFSTRING:scampering]
+	[PREFSTRING:innocence]
+	[PREFSTRING:availability as emergency food rations]
+	[PREFSTRING:ease to consume: just pick one up by the tail and chomp]
+	[PREFSTRING:cute pink noses]
+
+[CREATURE:SQUIRREL_GRAY]
+	[!REPLACE]
+	[PREFSTRING:frantically shy nature]
+	[PREFSTRING:counter shading]
+	[PREFSTRING:lavish tails]
+	[PREFSTRING:round dreys]
+	[PREFSTRING:attentive and alert watchfulness]
+
+[CREATURE:SQUIRREL_RED]
+	[!REPLACE]
+	[PREFSTRING:rust-red colouring]
+	[PREFSTRING:reluctance to share]
+	[PREFSTRING:bad memory]
+	[PREFSTRING:adorable eating posture]
+	[PREFSTRING:curled, bushy tails]
+
+[CREATURE:CHIPMUNK]
+	[!REPLACE]
+	[PREFSTRING:white-striped backs]
+	[PREFSTRING:habit of collecting and storing]
+	[PREFSTRING:bulging cheeks]
+	[PREFSTRING:expansive burrow networks]
+	[PREFSTRING:small paws]
+
+[CREATURE:HEDGEHOG]
+	[!REPLACE]
+	[PREFSTRING:many, many, many spines]
+	[PREFSTRING:ability to roll into a tight ball]
+	[PREFSTRING:protruding, black noses]
+	[PREFSTRING:playful looks]
+	[PREFSTRING:powerful performance as pest control]

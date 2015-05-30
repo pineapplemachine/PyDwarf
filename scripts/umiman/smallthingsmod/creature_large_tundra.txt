@@ -1,0 +1,27 @@
+creature_large_tundra
+
+[OBJECT:CREATURE]
+
+[CREATURE:MUSKOX]
+	[!REPLACE]
+	[PREFSTRING:... smell]
+	[PREFSTRING:thick, soft and wooly black coats]
+	[PREFSTRING:curved, forward-facing horns]
+	[PREFSTRING:generally shaggy appearance]
+	[PREFSTRING:wall-like herd defensive formations]
+
+[CREATURE:ELK]
+	[!REPLACE]
+	[PREFSTRING:massive, branching antlers]
+	[PREFSTRING:ritualized mating behaviours]
+	[PREFSTRING:bugling. Loud series of screams, that is]
+	[PREFSTRING:lean, nonfatty meat]
+	[PREFSTRING:considerable harems]
+
+[CREATURE:BEAR_POLAR]
+	[!REPLACE]
+	[PREFSTRING:snow white pelts]
+	[PREFSTRING:cute, black facial features]
+	[PREFSTRING:preference for harsh, indomitable cold]
+	[PREFSTRING:still-hunting methodology]
+	[PREFSTRING:habit of washing themselves]

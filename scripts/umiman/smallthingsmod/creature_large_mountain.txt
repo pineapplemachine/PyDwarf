@@ -1,0 +1,43 @@
+creature_large_mountain
+
+[OBJECT:CREATURE]
+
+[CREATURE:GOAT_MOUNTAIN]
+	[!REPLACE]
+	[PREFSTRING:goatees]
+	[PREFSTRING:long horns]
+	[PREFSTRING:surefootedness]
+	[PREFSTRING:mountain-loving personality]
+	[PREFSTRING:wooly, white coats]
+
+[CREATURE:MARMOT_HOARY]
+	[!REPLACE]
+	[PREFSTRING:high-pitched whistles]
+	[PREFSTRING:silver-grey fur]
+	[PREFSTRING:cute stature]
+	[PREFSTRING:fearless ways]
+	[PREFSTRING:burrows]
+
+[CREATURE:BIRD_EAGLE_GIANT]
+	[!REPLACE]
+	[PREFSTRING:fear-inducing talons]
+	[PREFSTRING:enormous wingspans]
+	[PREFSTRING:frightful dietary habits]
+	[PREFSTRING:arrogant nature]
+	[PREFSTRING:all-encompasing shadows]
+
+[CREATURE:GNOME_MOUNTAIN]
+	[!REPLACE]
+	[PREFSTRING:ability to hold liquor]
+	[PREFSTRING:stocky legs]
+	[PREFSTRING:adorable clothing]
+	[PREFSTRING:intrepidness]
+	[PREFSTRING:love of the finer things in life]
+
+[CREATURE:GNOME_DARK]
+	[!REPLACE]
+	[PREFSTRING:ability to get their hands on alcohol]
+	[PREFSTRING:silly walk]
+	[PREFSTRING:funny skin]
+	[PREFSTRING:suicidal tendencies]
+	[PREFSTRING:wide, yellow eyes]

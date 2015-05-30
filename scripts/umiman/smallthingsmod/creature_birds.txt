@@ -1,0 +1,43 @@
+creature_birds
+
+[OBJECT:CREATURE]
+
+[CREATURE:BIRD_BLUEJAY]
+	[!REPLACE]
+	[PREFSTRING:distinct jayer-jayer call]
+	[PREFSTRING:crown of feathers]
+	[PREFSTRING:vocal talent]
+	[PREFSTRING:gull-like scream]
+	[PREFSTRING:fanciful colour]
+	
+[CREATURE:BIRD_CARDINAL]
+	[!REPLACE]
+	[PREFSTRING:striking red plumage]
+	[PREFSTRING:pronounced crest]
+	[PREFSTRING:love of the woodlands]
+	[PREFSTRING:song-learning ability]
+	[PREFSTRING:bonding-behaviour]
+
+[CREATURE:BIRD_GRACKLE]
+	[!REPLACE]
+	[PREFSTRING:harsh, raucous calls]
+	[PREFSTRING:iridescent black plumage]
+	[PREFSTRING:cacophony]
+	[PREFSTRING:whistling notes]
+	[PREFSTRING:gregarious consumption]
+
+[CREATURE:BIRD_ORIOLE]
+	[!REPLACE]
+	[PREFSTRING:risky nesting choices]
+	[PREFSTRING:seasonal movements]
+	[PREFSTRING:bright and showy feathers]
+	[PREFSTRING:mimicry]
+	[PREFSTRING:arboreal nature]
+
+[CREATURE:BIRD_RW_BLACKBIRD]
+	[!REPLACE]
+	[PREFSTRING:suggestion of dark places]
+	[PREFSTRING:potential to be baked in pies]
+	[PREFSTRING:representation of creeping death]
+	[PREFSTRING:vigilance]
+	[PREFSTRING:melodious songs]

@@ -1,0 +1,27 @@
+creature_fanciful
+
+[OBJECT:CREATURE]
+
+[CREATURE:CHIMERA]
+	[!REPLACE]
+	[PREFSTRING:immortal make]
+	[PREFSTRING:embodiments of the forces of nature]
+	[PREFSTRING:maned heads]
+	[PREFSTRING:dragon-scaled bodies]
+	[PREFSTRING:snakish tails]
+
+[CREATURE:CENTAUR]
+	[!REPLACE]
+	[PREFSTRING:liminal state]
+	[PREFSTRING:untamable nature]
+	[PREFSTRING:legendary hunting skill]
+	[PREFSTRING:half-and-half composition]
+	[PREFSTRING:desire for wide open plains]
+
+[CREATURE:GRIFFON]
+	[!REPLACE]
+	[PREFSTRING:kingly stature]
+	[PREFSTRING:lordship over both the beasts and the birds]
+	[PREFSTRING:divine power]
+	[PREFSTRING:fearsome appearance]
+	[PREFSTRING:heraldic potential]

@@ -1,0 +1,11 @@
+creature_amphibians
+
+[OBJECT:CREATURE]
+
+[CREATURE:TOAD]
+	[!REPLACE]
+	[PREFSTRING:princely potential]
+	[PREFSTRING:beauty]
+	[PREFSTRING:warty skin]
+	[PREFSTRING:uncaring philosophy]
+	[PREFSTRING:bassy croaking]
