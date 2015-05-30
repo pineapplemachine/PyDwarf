@@ -27,7 +27,7 @@ class rawsdir(rawsqueryable_obj):
         rfile.dir = self
         self.files[filename] = rfile
     def removefile(self, filename=None, rfile=None):
-        if not rfile.dir = self: raise ValueError
+        if not rfile.dir == self: raise ValueError
         if rfile and not filename: filename = rfile.header
         rfile.dir = None
         del self.files[filename]

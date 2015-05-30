@@ -1,5 +1,6 @@
 import itertools
 from queryable import rawsqueryable
+from filters import rawstokenfilter
 
 class rawstoken(rawsqueryable):
     
@@ -66,7 +67,17 @@ class rawstoken(rawsqueryable):
         if any([char in str(value) for char in '[]:\'']): raise ValueError
         self.args[index] = value
     def argsstr(self):
+        '''Return arguments joined by ':'.'''
         return ':'.join([str(a) for a in self.args])
+        
+    def arg(self):
+        '''When a token is expected to have only one argument, this method can be used
+        to access it. It there's one argument it will be returned, otherwise an
+        exception will be raised.'''
+        if len(self.args) == 1:
+            return self.args[0]
+        else:
+            raise ValueError
         
     def __hash__(self): # Not that this class is immutable, just means you'll need to be careful about when you're using token hashes
         return hash('%s:%s' % (self.value, self.argsstr()) if self.nargs() else self.value)
@@ -86,6 +97,7 @@ class rawstoken(rawsqueryable):
         
     @staticmethod
     def tokensequal(atokens, btokens):
+        '''Determine whether two iterables containing tokens contain equivalent tokens.'''
         for atoken, btoken in itertools.izip(atokens, btokens):
             if not atoken.equals(btoken): return False
         return True
@@ -93,7 +105,6 @@ class rawstoken(rawsqueryable):
     @staticmethod
     def copy(auto=None, token=None, tokens=None):
         '''Copies some token or iterable collection of tokens.'''
-        
         pretty, token, tokens = rawstoken.auto(auto, None, token, tokens)
         if token:
             return rawstoken(token=token)
