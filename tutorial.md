@@ -24,16 +24,18 @@ The scripts specified in a config object's scripts attribute (or in the scripts 
     * `func`: Works only in Python, not in the json file: Specify a particular function to run via its reference.
     * `args`: The script or function will be run using these arguments, passed via Python's `**kwargs` functionality.
     * `match`: Urist metadata must match every attribute here. For example, `"match": {"version": "1.0"}` would match only a script which includes `version = "1.0"` in its metadata.
-    * `ignore_df_version`: Normally, if the current Dwarf Fortress version given in config isn't covered by a function's `compatibility` metadata (if specified), PyDwarf will refuse to run that function. If this flag is set to `true`, e.g. `"ignore_df_version": true`, then the script(s) specified will be run regardless of their compatibility. Note that the syntax differs between Python and json. In Python, as opposed to the previous example, it should look like `"ignore_df_version": True".
+    * `ignore_df_version`: Normally, if the current Dwarf Fortress version given in config isn't covered by a function's `compatibility` metadata (if specified), PyDwarf will refuse to run that function. If this flag is set to `true`, e.g. `"ignore_df_version": true`, then the script(s) specified will be run regardless of their compatibility. Note that the syntax differs between Python and json. In Python, as opposed to the previous example, it should look like `"ignore_df_version": True`.
 
 For convenient reference, this is an example config.json file:
 
 ``` json
 {
-    "input":    "E:/Sophie/Desktop/Files/Games/Dwarf Fortress/Dwarf Fortress/df_40_24_win/vanillaraw/objects",
-    "output":   "E:/Sophie/Desktop/Files/Games/Dwarf Fortress/Dwarf Fortress/df_40_24_win/raw/objects",
-    "backup":   "E:/Sophie/Desktop/Files/Games/Dwarf Fortress/Dwarf Fortress/df_40_24_win/rawbak/",
+    "input":    "E:/Sophie/Desktop/Files/Games/Dwarf Fortress/df_40_24_win/rawvanillao/objects",
+    "output":   "E:/Sophie/Desktop/Files/Games/Dwarf Fortress/df_40_24_win/raw/objects",
+    "backup":   "E:/Sophie/Desktop/Files/Games/Dwarf Fortress/df_40_24_win/rawbak/",
+    
     "version":  "0.40.24",
+    
     "scripts": [
         {"name": "pineapple.deerappear", "args": {"tile": "'d'", "color": [6, 0, 1]}},
         {"name": "pineapple.noexotic", "match": {"version": "alpha"}},
