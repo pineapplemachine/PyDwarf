@@ -4,9 +4,9 @@ Mods created for PyDwarf by Sophie Kirschner. (http://www.pineapplemachine.com)
 
 # List of mods
 
-## deepappear
+## deerappear
 
-Useful for changing the tile and color of single creatures. The default arguments change the appearance of deer from a brown D to a yellow D.
+Useful for changing the tile and color of single creatures. The default arguments change the appearance of deer from a brown D to a yellow d.
 
 ## diff
 
