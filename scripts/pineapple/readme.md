@@ -1,8 +1,6 @@
-# Introduction
+# List of mods
 
 Mods created for PyDwarf by Sophie Kirschner. (http://www.pineapplemachine.com)
-
-# List of mods
 
 ## deerappear
 
