@@ -4,7 +4,7 @@ class response:
         self.status = status
         
     def __str__(self):
-        return self.status if self.status else ('Ran %ssuccessfully' % ('' if self.success else 'un'))
+        return self.status if self.status else ('Ran %ssuccessfully.' % ('' if self.success else 'un'))
         
     @staticmethod
     def success(status=None):
