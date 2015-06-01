@@ -14,6 +14,10 @@ Can be used to merge and apply changes made to modified raws. Attempting to appl
 
 A simple example script which adds a `[FLIER]` tag to all female vanilla bears.
 
+## metalitems
+
+Allows forging items of types using metals normally disallowed by Dwarf Fortress. For example, with the default arguments, this script will allow the forging of golden weapons and armor. (How useful that equipment would actually be is questionable, but as we all know !!fun!! doesn't ask those sorts of questions.)
+
 ## noexotic
 
 Replaces all `[PET_EXOTIC]` and `[MOUNT_EXOTIC]` tokens with `[PET]` and `[MOUNT]` tokens, respectively. This will make it possible to train many animals that otherwise could not be.
