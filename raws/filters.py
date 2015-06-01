@@ -91,7 +91,7 @@ class rawstokenfilter(rawsbasefilter):
         if pretty:
             token = rawstoken().parseone(pretty)
             exact_value = token.value
-            exact_args = token.args
+            if token.nargs(): exact_args = token.args
         if match_token:
             exact_value = match_token.value
             exact_args = match_token.args
