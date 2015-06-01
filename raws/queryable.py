@@ -133,6 +133,56 @@ class rawsqueryable:
         )
         return self.query(filters, tokeniter, **tokens_args)[1].result
     
+    def getprop(self, pretty=None, **kwargs):
+        '''Gets the first token matching the arguments, but stops at the next
+        token with the same value as this one. Should be sufficient in almost
+        all cases to get a token representing a property of an object, when
+        this method is called for a token representing an object.'''
+        
+        until_exact_value, until_re_value, until_value_in = self.argsprops()
+        return self.getuntil(pretty=pretty, until_exact_value=until_exact_value, until_re_value=until_re_value, until_value_in=until_value_in, **kwargs)
+        
+    def getlastprop(self, pretty=None, **kwargs):
+        '''Gets the last token matching the arguments, but stops at the next
+        token with the same value as this one. Should be sufficient in almost
+        all cases to get a token representing a property of an object, when
+        this method is called for a token representing an object.'''
+        
+        until_exact_value, until_re_value, until_value_in = self.argsprops()
+        return self.getlastuntil(pretty=pretty, until_exact_value=until_exact_value, until_re_value=until_re_value, until_value_in=until_value_in, **kwargs)
+            
+    def allprop(self, pretty=None, **kwargs):
+        '''Gets the all tokens matching the arguments, but stops at the next
+        token with the same value as this one. Should be sufficient in almost
+        all cases to get a token representing a property of an object, when
+        this method is called for a token representing an object.'''
+        
+        until_exact_value, until_re_value, until_value_in = self.argsprops()
+        return self.alluntil(pretty=pretty, until_exact_value=until_exact_value, until_re_value=until_re_value, until_value_in=until_value_in, **kwargs)
+            
+    def propdict(self, always_list = True):
+        '''Returns a dictionary with token values mapped as keys to the tokens
+        themselves. If always_list is True then every item in the dict will be
+        a list. If it's False then items in the dict where only one token was
+        found will be given as individual rawstoken instances rather than as
+        lists.'''
+        
+        until_exact_value, until_re_value, until_value_in = self.argsprops()
+        props = self.until(pretty=pretty, until_exact_value=until_exact_value, until_re_value=until_re_value, until_value_in=until_value_in)
+        pdict = {}
+        for prop in props:
+            if prop.value not in pdict:
+                if always_list:
+                    pdict[prop.value] = [prop]
+                else:
+                    pdict[prop.value] = prop
+            else:
+                if isinstance(pdict[prop.value], rawstoken):
+                    pdict[prop.value] = [prop, pdict[prop.value]]
+                else:
+                    pdict[prop.value].append(prop)
+        return pdict
+        
     def argsuntil(self, kwargs):
         # Utility function for handling arguments of getuntil and alluntil methods
         until_args, condition_args = {}, {}
@@ -153,6 +203,19 @@ class rawsqueryable:
             return filter_args, tokens_args
         else:
             return kwargs, {}
+            
+    def argsprops(self):
+        # Utility function for handling arguments of getprop, allprop, and propdict methods
+        until_exact_value = None
+        until_re_value = None
+        until_value_in = None
+        if self.value.startswith('ITEM_'):
+            until_re_value = 'ITEM_.+'
+        elif self.value == 'WORD' or self.value == 'SYMBOL':
+            until_value_in = ('WORD', 'SYMBOL')
+        else:
+            until_exact_value = self.value
+        return until_exact_value, until_re_value, until_value_in
 
 
 
