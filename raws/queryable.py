@@ -168,7 +168,7 @@ class rawsqueryable:
         lists.'''
         
         until_exact_value, until_re_value, until_value_in = self.argsprops()
-        props = self.until(pretty=pretty, until_exact_value=until_exact_value, until_re_value=until_re_value, until_value_in=until_value_in)
+        props = self.until(exact_value=until_exact_value, re_value=until_re_value, value_in=until_value_in)
         pdict = {}
         for prop in props:
             if prop.value not in pdict:
@@ -177,10 +177,10 @@ class rawsqueryable:
                 else:
                     pdict[prop.value] = prop
             else:
-                if isinstance(pdict[prop.value], rawstoken):
-                    pdict[prop.value] = [prop, pdict[prop.value]]
-                else:
+                if isinstance(pdict[prop.value], list):
                     pdict[prop.value].append(prop)
+                else:
+                    pdict[prop.value] = [prop, pdict[prop.value]]
         return pdict
         
     def argsuntil(self, kwargs):
