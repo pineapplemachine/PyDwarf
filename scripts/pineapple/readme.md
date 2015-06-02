@@ -26,6 +26,10 @@ A simple example script which adds a `[FLIER]` tag to all female vanilla bears.
 
 Adds a new alloy of pig iron and adamantine, green steel, which is superior to steel but weaker than adamantine. It can also be smelted as an alloy of pig iron and a new adamant ore, which is very similar to adamantine but occurs normally (though rarely) in clusters and veins and cannot be used to create items such as weapons and armor.
 
+## maxage
+
+Gives MAXAGE tokens to many creatures that don't have one in the vanilla raws, but probably should.
+
 ## metalitems
 
 Allows forging items of types using metals normally disallowed by Dwarf Fortress. For example, with the default arguments, this script will allow the forging of golden weapons and armor. (How useful that equipment would actually be is questionable, but as we all know !!fun!! doesn't ask those sorts of questions.)
@@ -37,6 +41,10 @@ Replaces all `[PET_EXOTIC]` and `[MOUNT_EXOTIC]` tokens with `[PET]` and `[MOUNT
 ## nograzers
 
 Removes all `[GRAZER]` and `[STANDARD_GRAZER]` tokens. With this script applied animals will no longer need to be pastured where vegetation is present.
+
+## nomaxage
+
+Removes MAXAGE tokens from creatures. With default arguments, removes the tag from all intelligent creatures.
 
 ## stoneclarity
 
