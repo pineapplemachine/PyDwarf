@@ -56,9 +56,11 @@ class rawstoken(rawsqueryable):
         self.file = None            # parent rawsfile object
         if not self.args: self.args = []
     
-    def nargs(self):
-        '''Returns the number of arguments the token has. (Length of arguments list.)'''
-        return len(self.args)
+    def nargs(self, count=None):
+        '''When count is None, returns the number of arguments the token has. (Length of
+        arguments list.) Otherwise, returns True if the number of arguments is equal to the
+        given count and False if not.'''
+        return len(self.args) if (count is None) else (len(self.args) == count)
     def getarg(self, index):
         '''Gets argument at index, returns None if the index is out of bounds.'''
         return self.args[index] if index >= 0 and index < len(self.args) else None
@@ -159,6 +161,16 @@ class rawstoken(rawsqueryable):
             return self.addone(token, reverse)
         else:
             raise ValueError
+            
+    def addprop(self, auto=None, **kwargs):
+        '''When this token is an object token like CREATURE:X or INORGANIC:X, a
+        new token is usually added immediately afterwards. However, if a token like
+        COPY_TAGS_FROM or USE_MATERIAL_TEMPLATE exists underneath the object, then
+        the specified tag is only added after that.'''
+        
+        addafter = self.getlastprop(value_in=('COPY_TAGS_FROM', 'USE_MATERIAL_TEMPLATE'))
+        if not addafter: addafter = self
+        addafter.add(auto=auto, **kwargs)
     
     @staticmethod
     def firstandlast(tokens):
