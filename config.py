@@ -55,6 +55,15 @@ class config:
         self.output = None  # Raws are written to this output directory
         self.backup = None  # Raws are backed up to this directory before any changes are made
         self.scripts = []   # These scripts are run in the order that they appear
+        
+    def __str__(self):
+        return '''input: %s
+        output: %s
+        backup: %s
+        scripts: %s
+        version: %s''' % (self.input, self.output, self.backup, self.scripts, self.version)
+    def __repr__(self):
+        return self.__str__()
 
 
 
