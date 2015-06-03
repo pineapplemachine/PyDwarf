@@ -52,4 +52,8 @@ Can be used to set the appearance of stones, ores, and gems based on customizabl
 
 ## subplants
 
-Makes all subterranean plants grow year-round, regardless of season.
+Makes all subterranean plants grow year-round, regardless of season, by ensuring that each has all of `[SPRING]`, `[SUMMER]`, `[AUTUMN]`, and `[WINTER]` tokens.
+
+## usablemats
+
+With default settings it becomes possible to craft items using the normally uncooperative scale, feathers, and chitin.
