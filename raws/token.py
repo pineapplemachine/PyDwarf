@@ -9,6 +9,12 @@ class rawstoken(rawsqueryable):
             detected automatically. If a rawstoken is specified it will be treated
             as a token argument. If a string, pretty. If anything else, tokens.'''
     
+    # Don't allow these characters in values or arguments
+    illegal_internal_chars = '[]:'
+    
+    # Don't allow these characters in a token's prefix or suffix
+    illegal_external_chars = '['
+    
     @staticmethod
     def auto(auto, pretty, token, tokens):
         # Convenience function for handling method arguments
@@ -66,11 +72,32 @@ class rawstoken(rawsqueryable):
         return self.args[index] if index >= 0 and index < len(self.args) else None
     def setarg(self, index, value):
         '''Sets argument at index, also verifies that the input contains no illegal characters.'''
-        if any([char in str(value) for char in '[]:\'']): raise ValueError
-        self.args[index] = value
+        valuestr = str(value)
+        if any([char in valuestr for char in rawstoken.illegal_internal_chars]): raise ValueError
+        self.args[index] = valuestr
     def argsstr(self):
         '''Return arguments joined by ':'.'''
         return ':'.join([str(a) for a in self.args])
+        
+    def getvalue(self):
+        return self.value
+    def setvalue(self, value):
+        valuestr = str(value)
+        if any([char in valuestr for char in rawstoken.illegal_internal_chars]): raise ValueError
+        self.value = value
+        
+    def getprefix(self):
+        return self.prefix
+    def setprefix(self, value):
+        valuestr = str(value)
+        if any([char in valuestr for char in rawstoken.illegal_external_chars]): raise ValueError
+        self.prefix = value
+    def getsuffix(self):
+        return self.prefix
+    def setsuffix(self, value):
+        valuestr = str(value)
+        if any([char in valuestr for char in rawstoken.illegal_external_chars]): raise ValueError
+        self.suffix = value
         
     def arg(self):
         '''When a token is expected to have only one argument, this method can be used
@@ -262,7 +289,7 @@ class rawstoken(rawsqueryable):
                 token = None
                 open = data.find('[', pos)
                 if open >= 0 and open < len(data):
-                    close = data.find(']', pos)
+                    close = data.find(']', open)
                     if close >= 0 and close < len(data):
                         prefix = data[pos:open]
                         tokentext = data[open+1:close]

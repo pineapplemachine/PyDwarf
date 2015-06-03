@@ -224,6 +224,7 @@ class rawsqueryable_obj(rawsqueryable):
         self.files = None
     
     def getobjheadername(self, type):
+        # Utility function fit for handling objects as of 0.40.24
         if type == 'WORD' or type == 'SYMBOL':
             return 'LANGUAGE'
         elif type.startswith('ITEM_'):
@@ -238,6 +239,7 @@ class rawsqueryable_obj(rawsqueryable):
     def getobjheaders(self, type):
         '''Gets OBJECT:X tokens where X is type. Is also prepared for special cases
         like type=ITEM_PANTS matching OBJECT:ITEM. Current as of DF version 0.40.24.'''
+        
         match_type = self.getobjheadername(type)
         results = []
         for rfile in self.files.itervalues():
@@ -251,18 +253,25 @@ class rawsqueryable_obj(rawsqueryable):
             than one result for any given query then I'm afraid you've done something
             silly with your raws.) This method should work properly with things like
             CREATURE:X tokens showing up in entity_default.'''
+            
         type, exact_id = rawsqueryable_obj.objpretty(pretty, type, exact_id)
         for objecttoken in self.getobjheaders(type):
             obj = objecttoken.get(exact_value=type, exact_args=(exact_id,))
             if obj: return obj
         return None
         
-    def allobj(self, pretty=None, type=None, exact_id=None, re_id=None):
+    def allobj(self, pretty=None, type=None, exact_id=None, re_id=None, id_in=None):
         '''Gets all objects matching a given type and optional id or id regex.'''
+        
+        if re_id and id_in: raise ValueError
         type, exact_id = rawsqueryable_obj.objpretty(pretty, type, exact_id)
         results = []
         for objecttoken in self.getobjheaders(type):
-            for result in objecttoken.all(exact_value=type, exact_args=(exact_id,) if exact_id else None, re_args=(re_id,) if re_id else None):
+            for result in objecttoken.all(
+                exact_value=type, exact_args=(exact_id,) if exact_id else None,
+                re_args=(re_id,) if re_id else (('|'.join(id_in),) if id_in else None),
+                args_count=1
+            ):
                 results.append(result)
         return results
         
