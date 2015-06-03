@@ -48,9 +48,14 @@ For convenient reference, this is an example config.json file:
 ```
 
 
+
 # Applying Mods
 
 Once PyDwarf has been configured, applying the mods specified in its configuration is as simple as running `manager.py`. With Python 2.7 installed, the most straightforward way to do this for many users will be to open a terminal or command prompt in PyDwarf's root directory and run `python manager.py`.
+
+PyDwarf's configuration can also be passed as command line arguments when running manager.py. The arguments include `-i` or `--input`, `-o` or `--output`, `-b` or `--backup`, `-ver` or `--version`, which behave identically to their `config.json` or `config.py` counterparts. Additional arguments are `-s` or `--scripts`, which is a list of scripts just the same except with support only for strings (not for dicts), and `-c` or `--config`, which can be used to specify a json file to read as configuration.
+
+![Example gif of running PyDwarf from the command line](http://www.pineapplemachine.com/pydwarf/terminal_example.gif)
 
 
 
