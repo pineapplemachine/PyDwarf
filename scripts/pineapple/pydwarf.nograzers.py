@@ -7,9 +7,9 @@ import pydwarf
     description = 'Removes all [GRAZER] and [STANDARD_GRAZER] tokens.',
     compatibility = (pydwarf.df_0_34, pydwarf.df_0_40)
 )
-def nograzers(raws):
-    grazers = raws.all(exact_value='GRAZER')
-    standardgrazers = raws.all('STANDARD_GRAZER')
+def nograzers(df):
+    grazers = df.all(exact_value='GRAZER')
+    standardgrazers = df.all('STANDARD_GRAZER')
     for grazer in grazers: grazer.remove()
     for grazer in standardgrazers: grazer.remove()
     if len(grazers) or len(standardgrazers):

@@ -12,9 +12,9 @@ import pydwarf
     },
     compatibility = (pydwarf.df_0_40, pydwarf.df_0_3x, pydwarf.df_0_2x)
 )
-def deerappear(raws, creature='DEER', tile="'d'", color=['6','0','1']):
+def deerappear(df, creature='DEER', tile="'d'", color=['6','0','1']):
     # Find the first token that looks like [CREATURE:DEER]
-    deertoken = raws.getobj('CREATURE', creature)
+    deertoken = df.getobj('CREATURE', creature)
     if deertoken:
         # Find the first token, following [CREATURE:DEER], that looks like [CREATURE_TILE:'D']
         deertile = deertoken.getuntil(exact_value='CREATURE_TILE', args_count=1, until_exact_value='CREATURE')

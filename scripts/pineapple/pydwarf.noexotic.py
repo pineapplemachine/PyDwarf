@@ -7,9 +7,9 @@ import pydwarf
     description = 'Replaces all [PET_EXOTIC] and [MOUNT_EXOTIC] tags with their non-exotic counterparts.',
     compatibility = (pydwarf.df_0_34, pydwarf.df_0_40)
 )
-def noexotic(raws):
-    pets = raws.all('PET_EXOTIC')
-    mounts = raws.all('MOUNT_EXOTIC')
+def noexotic(df):
+    pets = df.all('PET_EXOTIC')
+    mounts = df.all('MOUNT_EXOTIC')
     for token in pets: token.value = 'PET'
     for token in mounts: token.value = 'MOUNT'
     if len(pets) or len(mounts):

@@ -7,9 +7,9 @@ import pydwarf
     description = 'Example script which causes all female bears to fly.',
     compatibility = (pydwarf.df_0_3x, pydwarf.df_0_40)
 )
-def flybears(raws):
+def flybears(df):
     # Get all bear creature tokens
-    bears = raws.allobj('CREATURE', re_id='BEAR_.+')
+    bears = df.allobj('CREATURE', re_id='BEAR_.+')
     
     # Add [FLIER] to each of them, immediately after the first CASTE:FEMALE token
     for bear in bears:
