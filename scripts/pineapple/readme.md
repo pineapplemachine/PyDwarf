@@ -6,6 +6,10 @@ Mods created for PyDwarf by Sophie Kirschner. (http://www.pineapplemachine.com)
 
 Adds a reaction to get aluminum bars from bauxite and cryolite and reduces the value of aluminum to account for the increased availability.
 
+## butcherinorganic
+
+Butchering creatures of inorganic composition will (often) yield the corresponding raw materials, such as logs or boulders or metal bars.
+
 ## deerappear
 
 Useful for changing the tile and color of single creatures. The default arguments change the appearance of deer from a brown D to a yellow d.
