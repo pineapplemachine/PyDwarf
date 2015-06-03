@@ -32,7 +32,7 @@ Adds a new alloy of pig iron and adamantine, green steel, which is superior to s
 
 ## maxage
 
-Gives MAXAGE tokens to many creatures that don't have one in the vanilla raws, but probably should.
+Gives `[MAXAGE]` tokens to many creatures that don't have one in the vanilla raws, but probably should.
 
 ## metalitems
 
@@ -48,7 +48,11 @@ Removes all `[GRAZER]` and `[STANDARD_GRAZER]` tokens. With this script applied 
 
 ## nomaxage
 
-Removes MAXAGE tokens from creatures. With default arguments, removes the tag from all intelligent creatures.
+Removes `[MAXAGE]` tokens from creatures. With default arguments, removes the tag from all intelligent creatures.
+
+## orientation
+
+For setting the orientations of some creatures to some predefined setting. Running with default settings will make all dwarves, humans, elves, and goblins exclusively heterosexual and committed to marriage.
 
 ## stoneclarity
 
