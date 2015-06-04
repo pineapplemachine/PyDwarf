@@ -1,34 +1,81 @@
 import re
 import os
 import argparse
+import importlib
 import pydwarf
 import raws
-import config
+from config import config
 from utils import copytree
+
+
+
+__version__ = 'alpha'
+
+
+
+jsonconfigpath = 'config.json'
+
+
+
+def getconf(args=None):
+    # Load initial config from json file
+    conf = config().json(jsonconfigpath)
+    
+    # Default name of configuration override package
+    overridename = 'config_override'
+    
+    # Override settings from command line arguments, first check for --config argument
+    if args.config:
+        if args.config.endswith('.json'):
+            conf.json(args.config)
+        else:
+            overridename = args.config
+    
+    # Apply other command line arguments   
+    conf.apply(args.__dict__)
+    
+    # Apply settings in override package
+    overrideexception = None
+    if overridename and (os.path.isfile(overridename + '.py') or os.path.isfile(os.path.join(overridename, '__init__.py'))):
+        try:
+            package = importlib.import_module(overridename)
+            conf.apply(package.export)
+        except Exception, e:
+            overrideexception = e
+    
+    # Setup logger
+    conf.setuplogger()
+    
+    # If there was an exception when reading the overridename package, report it now
+    # Don't report it earlier because the logger wasn't set up yet
+    if overrideexception:
+        pydwarf.log.error('Failed to apply configuration from %s package.\n%s' % (overridename, overrideexception))
+        
+    # Setup version (Handle 'auto')
+    conf.setupversion()
+        
+    # Import packages
+    conf.setuppackages()
+    
+    # All done!
+    return conf
+
+
 
 # Actually run the program
 def __main__(args=None):
-    
-    # Get configuration
-    if args and args.config:
-        conf = config.exportjson(args.config)
-    else:
-        conf = config.export
-    if args:
-        for attr in ('input', 'output', 'backup', 'version', 'scripts'):
-            if args.__dict__[attr]: conf.__dict__[attr] = args.__dict__[attr]
-    if not conf:
-        pydwarf.log.error('Failed to retrieve configuration.')
-        exit(1)
+    conf = getconf(args)
     pydwarf.log.debug('Proceeding with configuration: %s.' % conf)
     
-    # Things to do with versions
-    pydwarf.log.info('Running PyDwarf %s.' % pydwarf.__version__)
-    if conf.version is not None:
-        pydwarf.log.info('Managing Dwarf Fortress version %s.' % conf.version)
-        pydwarf.urist.session.dfversion = conf.version
-    else:
-        pydwarf.log.error('No Dwarf Fortress version was specified in conf. Scripts will be run regardless of their indicated compatibility.')
+    # Report versions
+    pydwarf.log.info('Running PyDwarf manager version %s.' % __version__)
+    pydwarf.log.debug('With PyDwarf version %s.' % pydwarf.__version__)
+    pydwarf.log.debug('With raws version %s.' % raws.__version__)
+    
+    # Handle --list flag
+    if args.list:
+        pydwarf.urist.list()
+        exit(0)
     
     # Verify that input directory exists
     if not os.path.exists(conf.input):
@@ -77,12 +124,16 @@ def __main__(args=None):
 if __name__ == "__main__":
     
     parser = argparse.ArgumentParser()
-    parser.add_argument('-ver', '--version', help='indicate Dwarf Fortress version', nargs='?', type=str)
+    parser.add_argument('-ver', '--version', help='indicate Dwarf Fortress version', type=str)
     parser.add_argument('-i', '--input', help='raws input directory', type=str)
     parser.add_argument('-o', '--output', help='raws output directory', type=str)
     parser.add_argument('-b', '--backup', help='raws backup directory', type=str)
-    parser.add_argument('-s', '--scripts', help='run script by name or namespace', nargs='+', type=str)
-    parser.add_argument('-c', '--config', help='run with json config file', nargs='?', type=str)
+    parser.add_argument('-s', '--scripts', help='run scripts by name or namespace', nargs='+', type=str)
+    parser.add_argument('-p', '--packages', help='import packages containing PyDwarf scripts', nargs='+', type=str)
+    parser.add_argument('-c', '--config', help='run with json config file if the extension is json, otherwise treat as a Python package, import, and override settings using export dict', type=str)
+    parser.add_argument('-v', '--verbose', help='set stdout logging level to DEBUG', action='store_true')
+    parser.add_argument('--log', help='output log file to path', type=str)
+    parser.add_argument('--list', help='list available scripts', action='store_true')
     args = parser.parse_args()
     
     __main__(args)

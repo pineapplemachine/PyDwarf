@@ -2,11 +2,11 @@
     
     "comment":  "This is an example file! Before running the manager you will need to change the provided paths to better suit your particular setup.",
     
-    "input":    "E:/Sophie/Desktop/Files/Games/Dwarf Fortress/df_40_24_win/rawvanillao/objects",
+    "input":    "E:/Sophie/Desktop/Files/Games/Dwarf Fortress/df_40_24_win/rawvanilla/objects",
     "output":   "E:/Sophie/Desktop/Files/Games/Dwarf Fortress/df_40_24_win/raw/objects",
     "backup":   "E:/Sophie/Desktop/Files/Games/Dwarf Fortress/df_40_24_win/rawbak/",
     
-    "version":  "0.40.24",
+    "version":  "auto",
     
     "scripts": [
         {
@@ -21,6 +21,10 @@
         "putnam.materialsplus",
         "smeeprocket.transgender",
         "witty.restrictednobles"
+    ],
+    
+    "packages": [
+        "scripts"
     ]
     
 }

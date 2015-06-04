@@ -1,3 +1,4 @@
+import os
 import re
 
 # Can be expected to match all past and future 0.40.* releases. (Time of writing is 21 May 15, the most recent version is 0.40.24.)
@@ -40,3 +41,27 @@ def compatible(compatibility, version):
         return re.match(compatibility, version) is not None
     else:
         return any([re.match(item, version) for item in compatibility])
+
+def detectversion(paths, recursion=8, log=None):
+    # Given a list of directories that may be inside a DF directory, e.g. raws input or output, look for release notes.txt and get the version from that
+    if log: log.debug('Attempting to detect Dwarf Fortress version given paths %s.' % [str(p) for p in paths])
+    for path in paths:
+        if path is not None:
+            currentpath = path
+            for i in xrange(0, recursion):
+                if os.path.isdir(currentpath):
+                    if log: log.debug('Checking path %s for release notes.' % currentpath)
+                    if 'release notes.txt' in os.listdir(currentpath):
+                        version = versionfromreleasenotes(os.path.join(currentpath, 'release notes.txt'), log)
+                        if version: return version
+                    else:
+                        currentpath = os.path.dirname(currentpath)
+                else:
+                    break
+    return None
+
+def versionfromreleasenotes(path, log=None):
+    with open(path, 'rb') as releasenotes:
+        for line in releasenotes.readlines():
+            if line.startswith('Release notes for'): return line.split()[3]
+    return None

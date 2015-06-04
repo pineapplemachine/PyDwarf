@@ -59,7 +59,14 @@ class session:
     def funcs(self, info):
         uristinstance, scriptname, scriptfunc, scriptargs, scriptmatch, checkversion = urist.info(info, self.dfversion)
         if uristinstance is None and scriptfunc is None and scriptname is not None:
-            return urist.get(scriptname, version=checkversion, match=scriptmatch, session=self)
+            candidates, original, culled = urist.get(scriptname, version=checkversion, match=scriptmatch, session=self)
+            if len(candidates):
+                return candidates
+            elif len(original):
+                log.info('All of candidates %s were culled.' % [c.getname() for c in original])
+                for reason, culled in culled.iteritems():
+                    if len(culled): log.info('Candidates %s were culled for reason: %s' % ([c.getname() for c in culled], reason))
+                return None
         elif uristinstance is not None:
             return (uristinstance,)
         elif scriptfunc is not None:
@@ -136,10 +143,7 @@ class urist:
         return hash(';'.join((self.getname(), str(self.meta('version')), str(self.meta('author')))))
         
     def getname(self):
-        return '.'.join((self.meta('namespace'), self.name)) if 'namespace' in self.metadata else self.name
-    
-    def namespace(self):
-        return self.meta('namespace')
+        return '.'.join((self.namespace, self.name)) if self.namespace else self.name
     
     def meta(self, key):
         return self.metadata.get(key)
@@ -221,35 +225,46 @@ class urist:
         
     @staticmethod
     def cullcandidates(version, match, session, candidates):
+        original_candidates = list(candidates)
+        culled_match = 0
+        culled_compatibility = 0
+        culled_dependency = 0
         if candidates and len(candidates):
-            candidates = urist.cullcandidates_match(match, candidates)
-            candidates = urist.cullcandidates_compatibility(version, candidates)
-            candidates = urist.cullcandidates_dependency(session, candidates)
+            candidates, culled_match = urist.cullcandidates_match(match, candidates)
+            candidates, culled_compatibility = urist.cullcandidates_compatibility(version, candidates)
+            candidates, culled_dependency = urist.cullcandidates_dependency(session, candidates)
             candidates = urist.cullcandidates_duplicates(candidates)
-        return candidates
+            
+        return candidates, original_candidates, {
+            'Unmatched metadata': culled_match,
+            'Incompatible with Dwarf Fortress version %s' % version: culled_compatibility,
+            'Unfulfilled dependencies': culled_dependency
+        }
     
     @staticmethod
     def cullcandidates_match(match, candidates):
-        return [c for c in candidates if c.matches(match)] if match else candidates
+        newcand, culled = [], []
+        for cand in candidates: (newcand if cand.matches(match) else culled).append(cand)
+        return newcand, culled
     
     @staticmethod
     def cullcandidates_compatibility(version, candidates):
         if version:
+            culled = []
             comp = []
             nocomp = []
             for candidate in candidates:
                 compatibility = candidate.meta('compatibility')
-                if compatibility:
-                    if versionutils.compatible(compatibility, version): comp.append(candidate)
-                else:
-                    nocomp.append(candidate)
-            return comp + nocomp
+                ((comp if versionutils.compatible(compatibility, version) else culled) if compatibility else nocomp).append(candidate)
+            return comp + nocomp, culled
         else:
-            return candidates
+            return candidates, []
     
     @staticmethod
     def cullcandidates_dependency(session, candidates):
-        return [c for c in candidates if c.depsatisfied(session)]
+        newcand, culled = [], []
+        for cand in candidates: (newcand if cand.depsatisfied(session) else culled).append(cand)
+        return newcand, culled
     
     @staticmethod
     def cullcandidates_duplicates(candidates):
@@ -259,7 +274,7 @@ class urist:
             dupe = names.get(candname)
             if dupe is None:
                 names[candname] = candidate
-            elif candidate.meta('namespace') == dupe.meta('namespace'):
+            elif candidate.namespace == dupe.namespace:
                 if ((dupe.meta('version') is None) or ((candidate.meta('version') is not None) and candidate.meta('version') > dupe.meta('version'))):
                     names[candname] = candidate
             else:
@@ -282,3 +297,18 @@ class urist:
             return name, namespace
         else:
             return name, None
+            
+    @staticmethod
+    def list():
+        log.info('Listing registered scripts.')
+        names = {}
+        total = 0
+        for uristlist in urist.registered.itervalues():
+            for uristinstance in uristlist:
+                uname = uristinstance.getname()
+                if uname not in names: names[uname] = []
+                names[uname].append(uristinstance)
+                total += 1
+        log.info('Found %d registered scripts in total.' % total)
+        for name, uristlist in sorted(names.items()):
+            log.info('Found %d script%s named %s.' % (len(uristlist), 's' if len(uristlist) > 1 else '', name))
