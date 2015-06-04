@@ -10,21 +10,21 @@ Feature requests, bugs, and generally incomprehensible behavior should be report
 
 # Configuring PyDwarf
 
-PyDwarf's manager needs to be told things where to find input raws, where to output new raws to, and which scripts to run. By default, these varaiables are set using the information in the `config.json` file located in PyDwarf's root directory. You can exert more power over the configuration by modifying `config.py`, which contains settings dictating whether it should load the json file or run some configuration function that returns a config object.
+PyDwarf's manager needs to be told things like where to find input raws, where to output new raws to, and which scripts to run. By default, these varaiables are set only using the information in the `config.json` file located in PyDwarf's root directory and using any command line arguments passed to the script upon execution. You can exert more power over the configuration by modifying the configuration override script `override_config.py`, which should assign some dictionary to an `export` attribute. The settings assigned there will override those defined in `config.json`.
 
-For the typical user, what this means is essentially limited to setting the paths in their `config.json` file and adding to the list the scripts they want to run. For the advanced user, this may mean writing their own configuration function that dynamically sets config variables. For example, my configuration file is shared between two operating systems. So in my config function it describes where my Dwarf Fortress directory is located based on which OS the script is being run on.
+For the typical user, what this all means is essentially limited to setting the paths in their `config.json` file and adding to the list the scripts they want to run. For the advanced user, this may mean writing their own config override script that dynamically sets configuration variables. For example, my own configuration file is shared between two operating systems. So in my script I describe where my Dwarf Fortress directory is located based on which OS the script is being run for.
 
 The scripts specified in a config object's scripts attribute (or in the scripts array of a json config file) are very flexible. There are several ways that a script can be added to this list:
 
 * Describe the name of a specific script. For example, `flybears`. If there could be other scripts by the same name, it's important to differentiate between them by including the namespace, e.g. `pineapple.flybears`. These scripts must be within files located in the scripts/ directory in order to be made available in this way.
 * Describe a namespace. For example, `pineapple.*`. This will run every script in the pineapple namespace. Namespaces can have a hierarchy: `pineapple.a.*` would run the scripts named `pineapple.a.script` and `pineapple.a.x.script` but not the scripts `pineapple.script` or `pineapple.b.script`.
-* Provide a direct reference to a function or an urist object. (This only works in `config.py`, not in `config.json`.)
+* Provide a direct reference to a function or an urist object. (This only works in Python override scripts, not in `config.json`.)
 * A dictionary containing various attributes to describe functionality. Attributes which will receive special handling are these:
     * `name`: The name of a script or a namespace. Understood the same way that a lone string would be.
-    * `func`: Works only in Python, not in the json file: Specify a particular function to run via its reference.
+    * `func`: Works only in Python override scripts, not in the json file: Specify a particular function to run via its reference.
     * `args`: The script or function will be run using these arguments, passed via Python's `**kwargs` functionality.
     * `match`: Urist metadata must match every attribute here. For example, `"match": {"version": "1.0"}` would match only a script which includes `version = "1.0"` in its metadata.
-    * `ignore_df_version`: Normally, if the current Dwarf Fortress version given in config isn't covered by a function's `compatibility` metadata (if specified), PyDwarf will refuse to run that function. If this flag is set to `true`, e.g. `"ignore_df_version": true`, then the script(s) specified will be run regardless of their compatibility. Note that the syntax differs between Python and json. In Python, as opposed to the previous example, it should look like `"ignore_df_version": True`.
+    * `ignore_df_version`: Normally, if the current Dwarf Fortress version given in config isn't covered by a function's `compatibility` metadata (if specified), PyDwarf will refuse to run that function. If this flag is set to `true`, e.g. `"ignore_df_version": true`, then the script(s) specified will be run regardless of their compatibility.
 
 For convenient reference, this is an example config.json file:
 
@@ -34,7 +34,7 @@ For convenient reference, this is an example config.json file:
     "output":   "E:/Sophie/Desktop/Files/Games/Dwarf Fortress/df_40_24_win/raw/objects",
     "backup":   "E:/Sophie/Desktop/Files/Games/Dwarf Fortress/df_40_24_win/rawbak/",
     
-    "version":  "0.40.24",
+    "version":  "auto",
     
     "scripts": [
         {"name": "pineapple.deerappear", "args": {"tile": "'d'", "color": [6, 0, 1]}},
@@ -43,9 +43,22 @@ For convenient reference, this is an example config.json file:
         "putnam.materialsplus",
         "smeeprocket.transgender",
         "witty.restrictednobles"
+    ],
+    
+    "packages": [
+        "scripts"
     ]
 }
 ```
+
+Here is the purpose of each of those attributes:
+
+* `input`: The directory containing inputted raws.
+* `output`: Which directory to output the raws to after the scripts have run and modified them. If set to `null` (in json) or `None` (in Python) then the output directory will be the same as the input.
+* `backup`: Before anything else is done, if it's not `null` or `None`, the input raws will be copied and saved to this directory.
+* `version`: Specifies the Dwarf Fortress version. For example, `"version": "0.40.24"`. If set to `auto` then PyDwarf will attempt to detect the Dwarf Fortress version automatically. This should succeed as long as either the `input` or `output` directory is somewhere inside Dwarf Fortress's directory.
+* `scripts`: Lists the scripts that should be run.
+* `packages`: Lists the Python packages that should be imported. In essence, it specifies for PyDwarf that it should look for scripts inside the `scripts` package, in this case a directory containing an `__init__.py` file. This is an advanced feature and the typical user won't need to worry about this.
 
 
 
@@ -53,7 +66,21 @@ For convenient reference, this is an example config.json file:
 
 Once PyDwarf has been configured, applying the mods specified in its configuration is as simple as running `manager.py`. With Python 2.7 installed, the most straightforward way to do this for many users will be to open a terminal or command prompt in PyDwarf's root directory and run `python manager.py`.
 
-PyDwarf's configuration can also be passed as command line arguments when running manager.py. The arguments include `-i` or `--input`, `-o` or `--output`, `-b` or `--backup`, `-ver` or `--version`, which behave identically to their `config.json` or `config.py` counterparts. Additional arguments are `-s` or `--scripts`, which is a list of scripts just the same except with support only for strings (not for dicts), and `-c` or `--config`, which can be used to specify a json file to read as configuration.
+PyDwarf's configuration can also be passed as command line arguments when running manager.py. These are the arguments it accepts, all of which supersede any identically-named options set in `config.json` or `config.py` when specified.
+
+* `-i` or `--input`: Specifies input directory.
+* `-o` or `--output`: Specifies output directory.
+* `-b` or `--backup`: Specifies backup directory.
+* `-ver` or `--version`: Specifies Dwarf Fortress version.
+* `-s` or `--scripts`: The list of scripts to run. (Only names and namespaces may be specified in this way, not dictionaries.)
+* `-p` or `--packages`: The list of Python packages to import.
+* `-c` or `--config`: Imports configuration from the json file given by the path.
+* `-v` or `--verbose`: Sets the logging level for standard output to `DEBUG`. (By default, fully verbose logs are written to the `logs/` directory regardless of this flag.)
+* `--log`: Specifies the log file path.
+* `--list`: Lists registered scripts in alphabetical order.
+* `-h` or `--help`: Shows a summary of each argument's purpose.
+
+The arguments include `-i` or `--input`, `-o` or `--output`, `-b` or `--backup`, `-ver` or `--version`, which behave identically to their `config.json` or `config.py` counterparts. Additional arguments are `-s` or `--scripts`, which is a list of scripts just the same except with support only for strings (not for dicts), and `-c` or `--config`, which can be used to specify a json file to read as configuration.
 
 ![Example gif of running PyDwarf from the command line](http://www.pineapplemachine.com/pydwarf/terminal_example.gif)
 
@@ -81,8 +108,38 @@ def examplefunction(df):
     pass
 ```
 
-
 For more complete documentation regarding what metadata gets special consideration, refer to documentation in `pydwarf/urist.py`.
+
+
+
+# Experimenting with PyDwarf
+
+It's easy to start playing around with PyDwarf's raws querying and modification functionality! Navigate a terminal to PyDwarf's directory and run `python`, then `import raws` and set `df = raws.dir(path='...')` where `...` refers to a directory like `path/to/dwarf/fortress/raw/objects`. All of PyDwarf's raws functionality will be exposed to you. Here's an example of what you can do from here:
+
+``` bash
+client-170:PyDwarf pineapple$ python
+Python 2.7.8 (v2.7.8:ee879c0ffa11, Jun 29 2014, 21:07:35)
+[GCC 4.2.1 (Apple Inc. build 5666) (dot 3)] on darwin
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import raws
+>>> df = raws.dir(path='raw/objects')
+>>> elf = df.getobj('CREATURE:ELF')
+>>> description = elf.get('DESCRIPTION')
+>>> print description
+[DESCRIPTION:A medium-sized creature dedicated to the ruthless protection of nature.]
+>>> description.setarg(0, 'A medium-sized creature undeserving of life.')
+>>> print description
+[DESCRIPTION:A medium-sized creature undeserving of life.]
+>>> df.write(path='raw/objects')
+<raws.dir.rawsdir instance at 0x10239b758>
+>>> quit()
+client-170:PyDwarf pineapple$ grep 'CREATURE:ELF' raw/objects/creature_standard.txt -A 4
+[CREATURE:ELF]
+    [DESCRIPTION:A medium-sized creature undeserving of life.]
+    [NAME:elf:elves:elven]
+    [CASTE_NAME:elf:elves:elven]
+    [CREATURE_TILE:'e'][COLOR:3:0:0]
+```
 
 
 
@@ -90,7 +147,7 @@ For more complete documentation regarding what metadata gets special considerati
 
 There are three very important classes provided by PyDwarf's `raws` package. They are `raws.dir`, which contains instances of `raws.file`, which itself contains instances of `raws.token`. `raws.dir` describes an entire directory of raws. `raws.file` describes a single raws file. And `raws.token` describes a single token within a raws file. (Those tokens are alternatively called "tags": They're contained within Dwarf Fortress raws and they look like, for example, `[TOKEN:ARGUMENTS]`. Each one of these possesses a number of methods that can be used to find specific tokens, and some methods used to add or remove tokens or files.
 
-These are the methods you'll probably be using most often. For others, or for more information regarding the ones listed, look at `raws/queryable.py`. It defines significantly more, more specialized, methods than these in addition to a generalized ```query``` method upon which all other queries are built. This is where the various methods are defined and most thoroughly documented.
+These are the methods you'll probably be using most often. For others, or for more information regarding the ones listed, look at `raws/queryable.py`. It defines significantly more, more specialized, methods than these in addition to a generalized ```query``` method upon which all other queries are built. This is where the various methods are defined and most thoroughly documented. To start getting a more comprehensive idea of the available methods and their usefulness I strongly recommend looking at the many scripts already located within the `scripts/` directory.
 
 * `df.get`: Returns the first token matching the query. For example, `df.get('ENTITY:MOUNTAIN')` would return the `[ENTITY:MOUNTAIN]` token.
 * `df.all`: Returns all tokens matching the query. For example, `df.all('PET_EXOTIC')` would return all `[PET_EXOTIC]` tokens.
