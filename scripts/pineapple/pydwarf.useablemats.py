@@ -11,7 +11,7 @@ default_options = {
 
 
 @pydwarf.urist(
-    name = 'pineapple.usablemats',
+    name = 'pineapple.useablemats',
     version = 'alpha',
     author = 'Sophie Kirschner',
     description = '''Causes scales, feathers, and chitin to become useful for crafting.
