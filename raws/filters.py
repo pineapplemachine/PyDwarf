@@ -115,6 +115,13 @@ class rawstokenfilter(rawsbasefilter):
         self.limit = limit
         self.limit_terminates = limit_terminates
         
+        # Anchor regular expressions
+        if self.re_value: self.re_value += '$'
+        if self.re_prefix: self.re_prefix += '$'
+        if self.re_suffix: self.re_suffix += '$'
+        if self.re_args: self.re_args = [a + '$' for a in self.re_args]
+        if self.re_arg: self.re_arg = [(a[0], a[1]+'$') for a in self.re_arg]
+        
     def basematch(self, token):
         if (
             (self.exact_token is not None and self.exact_token is not token) or
