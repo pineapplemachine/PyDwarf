@@ -5,10 +5,10 @@ from file import rawsfile
 class rawsdir(rawsqueryable_obj):
     '''Represents as a whole all the raws contained within a directory.'''
     
-    def __init__(self, **kwargs):
+    def __init__(self, *args, **kwargs):
         '''Constructor for rawsdir object.'''
         self.files = {}
-        if len(kwargs): self.read(**kwargs)
+        if len(args) or len(kwargs): self.read(*args, **kwargs)
         
     def getfile(self, filename):
         return self.files.get(filename)
