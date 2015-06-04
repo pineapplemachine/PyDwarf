@@ -1,5 +1,5 @@
 import itertools
-from queryable import rawsqueryable
+from queryable import rawsqueryable, rawstokenlist
 from filters import rawstokenfilter
 
 class rawstoken(rawsqueryable):
@@ -40,6 +40,18 @@ class rawstoken(rawsqueryable):
         suffix: Comment or formatting text following a token.
         prev: The previous token.
         next: The following token.
+        
+        Example usage:
+            >>> token_a = raws.token('DISPLAY_COLOR:6:0:1')
+            >>> print token_a
+            [DISPLAY_COLOR:6:0:1]
+            >>> token_b = token = raws.token(value='DISPLAY_COLOR', args=['6', '0', '1'])
+            >>> print token_b
+            [DISPLAY_COLOR:6:0:1]
+            >>> print token_a == token_b
+            True
+            >>> print token_a is token_b
+            False
         ''' % rawstoken.auto_arg_docstring
         
         pretty, token, tokens = rawstoken.auto(auto, pretty, token, None)
@@ -65,36 +77,149 @@ class rawstoken(rawsqueryable):
     def nargs(self, count=None):
         '''When count is None, returns the number of arguments the token has. (Length of
         arguments list.) Otherwise, returns True if the number of arguments is equal to the
-        given count and False if not.'''
+        given count and False if not.
+        
+        Example usage:
+            >>> token = raws.token('EXAMPLE:0:1:2:3:4')
+            >>> print 'Token has %d arguments.' % token.nargs()
+            Token has 5 arguments.
+            >>> print token.nargs(2)
+            False
+            >>> print token.nargs(5)
+            True
+        '''
         return len(self.args) if (count is None) else (len(self.args) == count)
+        
     def getarg(self, index):
-        '''Gets argument at index, returns None if the index is out of bounds.'''
-        return self.args[index] if index >= 0 and index < len(self.args) else None
+        '''Gets argument at index, returns None if the index is out of bounds.
+        
+        Example usage:
+            >>> token = raws.token('EXAMPLE:argument 0:argument 1')
+            >>> print token.getarg(0)
+            argument 0
+            >>> print token.getarg(1)
+            argument 1
+            >>> print token.getarg(2)
+            None
+            >>> print token.getarg(-1)
+            argument 1
+            >>> print token.getarg(-2)
+            argument 0
+            >>> print token.getarg(-3)
+            None
+        '''
+        return self.args[index] if index >= -len(self.args) and index < len(self.args) else None
     def setarg(self, index, value):
-        '''Sets argument at index, also verifies that the input contains no illegal characters.'''
+        '''Sets argument at index, also verifies that the input contains no illegal characters.
+        
+        Example usage:
+            >>> token = raws.token('EXAMPLE:a:b:c')
+            >>> print token
+            [EXAMPLE:a:b:c]
+            >>> token.setarg(2, 500)
+            >>> print token
+            [EXAMPLE:a:b:500]'''
         valuestr = str(value)
         if any([char in valuestr for char in rawstoken.illegal_internal_chars]): raise ValueError
         self.args[index] = valuestr
+    def addarg(self, value):
+        '''Appends an argument to the end of the argument list.
+        
+        Example usage:
+            >>> token = raws.token('EXAMPLE')
+            >>> print token
+            [EXAMPLE]
+            >>> token.addarg('hi!')
+            >>> print token
+            [EXAMPLE:hi!]
+        '''
+        valuestr = str(value)
+        if any([char in valuestr for char in rawstoken.illegal_internal_chars]): raise ValueError
+        self.args.append(valuestr)
     def argsstr(self):
-        '''Return arguments joined by ':'.'''
+        '''Return arguments joined by ':'.
+        
+        Example usage:
+            >>> token = raws.token('EXAMPLE:a:b:c')
+            >>> print token.argsstr()
+            a:b:c
+        '''
         return ':'.join([str(a) for a in self.args])
         
     def getvalue(self):
+        '''Get the token's value.
+        
+        Example usage:
+            >>> token = raws.token('EXAMPLE:a:b:c')
+            >>> print token.getvalue()
+            EXAMPLE
+        '''
         return self.value
     def setvalue(self, value):
+        '''Set the token's value.
+        
+        Example usage:
+            >>> token = raws.token('EXAMPLE:a:b:c')
+            >>> token.setvalue('JUST KIDDING')
+            >>> print token
+            [JUST KIDDING:a:b:c]
+        '''
         valuestr = str(value)
         if any([char in valuestr for char in rawstoken.illegal_internal_chars]): raise ValueError
         self.value = value
         
     def getprefix(self):
+        '''Get the comment text preceding a token.
+        
+        Example usage:
+            >>> token = raws.token('This is a comment [EXAMPLE] so is this')
+            >>> print token
+            [EXAMPLE]
+            >>> print token.getprefix()
+            This is a comment
+            >>> print token.getsuffix()
+             so is this
+        '''
         return self.prefix
     def setprefix(self, value):
+        '''Set the comment text preceding a token.
+        
+        Example usage:
+            >>> token = raws.token('EXAMPLE')
+            >>> print token
+            [EXAMPLE]
+            >>> token.setprefix('hello ')
+            >>> print repr(token)
+            hello [EXAMPLE]
+        '''
         valuestr = str(value)
         if any([char in valuestr for char in rawstoken.illegal_external_chars]): raise ValueError
         self.prefix = value
+        
     def getsuffix(self):
-        return self.prefix
+        '''Get the comment text following a token.
+        
+        Example usage:
+            >>> token = raws.token('This is a comment [EXAMPLE] so is this')
+            >>> print token
+            [EXAMPLE]
+            >>> print token.getsuffix()
+             so is this
+            >>> print token.getprefix()
+            This is a comment
+        '''
+        return self.suffix
     def setsuffix(self, value):
+        '''Set the comment text following a token.
+        
+        Example usage:
+            >>> token = raws.token('EXAMPLE')
+            >>> print token
+            [EXAMPLE]
+            >>> token.setsuffix(' world')
+            >>> print repr(token)
+            [EXAMPLE] world
+        '''
         valuestr = str(value)
         if any([char in valuestr for char in rawstoken.illegal_external_chars]): raise ValueError
         self.suffix = value
@@ -102,7 +227,20 @@ class rawstoken(rawsqueryable):
     def arg(self):
         '''When a token is expected to have only one argument, this method can be used
         to access it. It there's one argument it will be returned, otherwise an
-        exception will be raised.'''
+        exception will be raised.
+        
+        Example usage:
+            >>> token_a = raws.token('EXAMPLE:x')
+            >>> token_b = raws.token('EXAMPLE:x:y:z')
+            >>> print token_a.arg()
+            x
+            >>> print token_b.arg()
+            >>> try:
+            ...     print token_b.arg()
+            ... except:
+            ...     print 'token_b doesn\'t have the correct number of arguments!'
+            ...
+            token_b doesn't have the correct number of arguments!'''
         if len(self.args) == 1:
             return self.args[0]
         else:
@@ -121,7 +259,22 @@ class rawstoken(rawsqueryable):
         return not self.equals(other)
         
     def equals(self, other):
-        '''Returns True if two tokens have identical values and arguments, False otherwise.'''
+        '''Returns True if two tokens have identical values and arguments, False otherwise.
+        
+        Example usage:
+            >>> token_a = raws.token('EXAMPLE:hi!')
+            >>> token_b = raws.token('EXAMPLE:hello there')
+            >>> token_c = raws.token('EXAMPLE:hi!')
+            >>> print token_a, token_b, token_c
+            [EXAMPLE:hi!] [EXAMPLE:hello there] [EXAMPLE:hi!]
+            >>> print token_a == token_b
+            False
+            >>> print token_b == token_c
+            False
+            >>> print token_c == token_a
+            True
+            >>> print token_c is token_a
+            False'''
         return other is not None and self.value == other.value and self.nargs() == other.nargs() and all([str(self.args[i]) == str(other.args[i]) for i in xrange(0, self.nargs())])
         
     @staticmethod
@@ -133,12 +286,33 @@ class rawstoken(rawsqueryable):
     
     @staticmethod
     def copy(auto=None, token=None, tokens=None):
-        '''Copies some token or iterable collection of tokens.'''
+        '''Copies some token or iterable collection of tokens.
+        
+        Example usage:
+            >>> token = raws.token('EXAMPLE:a:b:c')
+            >>> print token
+            [EXAMPLE:a:b:c]
+            >>> copied_token = raws.token.copy(token)
+            >>> print copied_token
+            [EXAMPLE:a:b:c]
+            >>> print token is copied_token
+            False
+            >>> tokens = raws.token.parse('[HELLO][WORLD]')
+            >>> print tokens
+            [[HELLO], [WORLD]]
+            >>> copied_tokens = raws.token.copy(tokens)
+            >>> print copied_tokens
+            [[HELLO], [WORLD]]
+            >>> print tokens == copied_tokens
+            True
+            >>> print tokens is copied_tokens
+            False
+        '''
         pretty, token, tokens = rawstoken.auto(auto, None, token, tokens)
         if token:
             return rawstoken(token=token)
         elif tokens:
-            copied = []
+            copied = rawstokenlist()
             prevtoken = None
             for token in tokens:
                 newtoken = rawstoken(token=token)
@@ -151,24 +325,75 @@ class rawstoken(rawsqueryable):
             raise ValueError
         
     def tokens(self, range=None, include_self=False, reverse=False, until_token=None):
+        '''Iterate through successive tokens starting with this one.
+        
+        range: If defined as an integer, then iteration stops when this many tokens
+            have been iterated over.
+        include_self: If True, iteration includes this token. Otherwise, iteration
+            starts with the immediately following or preceding token.
+        reverse: If False, iteration goes forward through the sequence of tokens. If
+            True, it goes backwards.
+        until_token: Iteration stops if/when the current token matches this exact
+            object.
+            
+        Example usage:
+            >>> tokens = raws.token.parse('[HI][HOW][ARE][YOU][?]')
+            >>> first_token = tokens[0]
+            >>> last_token = tokens[-1]
+            >>> print first_token
+            [HI]
+            >>> print last_token
+            [?]
+            >>> print list(first_token.tokens())
+            [[HOW], [ARE], [YOU], [?]]
+            >>> print list(first_token.tokens(include_self=True))
+            [[HI], [HOW], [ARE], [YOU], [?]]
+            >>> print list(first_token.tokens(range=1))
+            [[HOW]]
+            >>> print list(first_token.tokens(until_token=tokens[3]))
+            [[HOW], [ARE]]
+            >>> print list(last_token.tokens(reverse=True))
+            [[YOU], [ARE], [HOW], [HI]]
+        '''
         count = 0
         itertoken = self if include_self else (self.prev if reverse else self.next)
-        while itertoken and (range is None or range > count) and (itertoken != until_token):
+        while itertoken and (range is None or range > count) and (itertoken is not until_token):
             yield itertoken
             itertoken = itertoken.prev if reverse else itertoken.next
             count += 1
             
     @staticmethod   
     def iter(root, tail):
-        '''Iterate through tokens starting with root and ending at tail.'''
+        '''Iterate through tokens starting with root and ending at tail.
+        
+        Example usage:
+            >>> tokens = raws.token.parse('[HI][HOW][ARE][YOU][?]')
+            >>> print list(raws.token.iter(tokens[1], tokens[3]))
+            [[HOW], [ARE], [YOU]]
+        '''
         itertoken = root
-        while itertoken is not None and itertoken != tail:
+        while itertoken is not None and itertoken.next is not tail:
             yield itertoken
             itertoken = itertoken.next
             
-    def match(self, pretty=None, **kwargs):
-        '''Returns True if this method matches some rawstokenfilter, false otherwise.'''
-        return rawstokenfilter(pretty=pretty, **kwargs).match(self)
+    def match(self, filter=None, **kwargs):
+        '''Returns True if this method matches some rawstokenfilter, false otherwise.
+        
+        Example usage:
+            >>> filter = raws.tokenfilter(exact_value='EXAMPLE')
+            >>> token_a = raws.token('HELLO:THERE')
+            >>> token_b = raws.token('EXAMPLE')
+            >>> token_c = raws.token('EXAMPLE:NUMBER:TWO')
+            >>> print token_a.match(filter)
+            False
+            >>> print token_b.match(filter)
+            True
+            >>> print token_c.match(filter)
+            True
+            >>> print token_a.match(exact_value='HELLO')
+            True
+        '''
+        return (filter if filter else rawstokenfilter(**kwargs)).match(self)
         
     def add(self, auto=None, pretty=None, token=None, tokens=None, reverse=False):
         '''Adds a token or tokens nearby this one. If reverse is False the token 
@@ -178,6 +403,19 @@ class rawstoken(rawsqueryable):
         pretty: Parses the string and adds the tokens within it.
         token: Adds this one token.
         tokens: Adds all of these tokens.
+        reverse: If True, the tokens are added before instead of after.
+        
+        Example usage:
+            >>> two = raws.token('TWO')
+            >>> two.add('THREE')
+            [[THREE]]
+            >>> print list(two.tokens(include_self=True))
+            [[TWO], [THREE]]
+            >>> three = two.next
+            >>> three.add('TWO AND A HALF', reverse=True)
+            [[TWO AND A HALF]]
+            >>> print list(two.tokens(include_self=True))
+            [[TWO], [TWO AND A HALF], [THREE]]
         ''' % rawstoken.auto_arg_docstring
         pretty, token, tokens = rawstoken.auto(auto, pretty, token, tokens)
         if pretty:
@@ -193,7 +431,25 @@ class rawstoken(rawsqueryable):
         '''When this token is an object token like CREATURE:X or INORGANIC:X, a
         new token is usually added immediately afterwards. However, if a token like
         COPY_TAGS_FROM or USE_MATERIAL_TEMPLATE exists underneath the object, then
-        the specified tag is only added after that.'''
+        the specified tag is only added after that. **kwargs are passed on to the
+        add method.
+        
+        Example usage:
+            >>> panda = df.getobj('CREATURE:PANDA, GIGANTIC')
+            >>> print panda.tokens(range=4, include_self=True)
+            <generator object tokens at 0x10c28f3c0>
+            >>> print raws.tokenlist(panda.tokens(range=4, include_self=True))
+            [CREATURE:PANDA, GIGANTIC]
+                [COPY_TAGS_FROM:PANDA]
+                [APPLY_CREATURE_VARIATION:GIANT]
+                [CV_REMOVE_TAG:CHANGE_BODY_SIZE_PERC]
+            >>> panda.addprop('FLIER')
+            >>> print raws.tokenlist(panda.tokens(range=5, include_self=True))
+            [CREATURE:PANDA, GIGANTIC]
+                [COPY_TAGS_FROM:PANDA][FLIER]
+                [APPLY_CREATURE_VARIATION:GIANT]
+                [CV_REMOVE_TAG:CHANGE_BODY_SIZE_PERC]
+        '''
         
         addafter = self.getlastprop(value_in=('COPY_TAGS_FROM', 'USE_MATERIAL_TEMPLATE'))
         if not addafter: addafter = self
@@ -201,13 +457,19 @@ class rawstoken(rawsqueryable):
     
     @staticmethod
     def firstandlast(tokens):
-        # Utility method for getting the first and last items of some iterable
+        '''Utility method for getting the first and last items of some iterable
+        
+        Example usage:
+            >>> tokens = raws.token.parse('[ONE][TWO][THREE][FOUR]')
+            >>> print raws.token.firstandlast(tokens)
+            ([ONE], [FOUR])
+        '''
         try:
             return tokens[0], tokens[-1]
         except:
             first, last = None, None
             for token in tokens:
-                if first is not None: first = token
+                if first is None: first = token
                 last = token
             return first, last            
         
@@ -240,7 +502,25 @@ class rawstoken(rawsqueryable):
         return tokens
     
     def remove(self, count=0, reverse=False):
-        '''Removes this token and the next count tokens in the direction indicated by reverse.'''
+        '''Removes this token and the next count tokens in the direction indicated by reverse.
+        
+        Example usage:
+            >>> forest = df.getobj('ENTITY:FOREST')
+            >>> print raws.tokenlist(forest.tokens(range=5, include_self=True))
+            [ENTITY:FOREST]
+                [CREATURE:ELF]
+                [TRANSLATION:ELF]
+                [WEAPON:ITEM_WEAPON_SWORD_SHORT]
+                [WEAPON:ITEM_WEAPON_SPEAR]
+            >>> sword = forest.get('WEAPON:ITEM_WEAPON_SWORD_SHORT')
+            >>> sword.remove()
+            >>> print raws.tokenlist(forest.tokens(range=5, include_self=True))
+            [ENTITY:FOREST]
+                [CREATURE:ELF]
+                [TRANSLATION:ELF]
+                [WEAPON:ITEM_WEAPON_SPEAR]
+                [WEAPON:ITEM_WEAPON_BOW]
+        '''
         if not self.removed:
             left = self.prev
             right = self.next
@@ -257,7 +537,6 @@ class rawstoken(rawsqueryable):
             if left: left.next = right
             if right: right.prev = left
             self.removed = True
-        return self
     
     @staticmethod
     def parse(data, implicit_braces=True, **kwargs):
@@ -269,10 +548,20 @@ class rawstoken(rawsqueryable):
             If False, an exception is raised.
         **kwargs: Extra named arguments are passed to the constructor each time a new
             rawstoken is distinguished and created.
+            
+        Example usage:
+           >>> token = raws.token.parse('HELLO:THERE')
+            >>> print token
+            [HELLO:THERE]
+            >>> tokens = raws.token.parse('[WHAT] a [BEAUTIFUL][DAY]')
+            >>> print tokens
+            [WHAT] a [BEAUTIFUL][DAY]
+            >>> print tokens[1]
+            [BEAUTIFUL] 
         '''
 
-        tokens = [] # maintain a sequential list of tokens
-        pos = 0     # byte position in data
+        tokens = rawstokenlist()    # maintain a sequential list of tokens
+        pos = 0                     # byte position in data
         if data.find('[') == -1 and data.find(']') == -1:
             if implicit_braces:
                 tokenparts = data.split(':')
@@ -281,7 +570,8 @@ class rawstoken(rawsqueryable):
                     args=tokenparts[1:],
                     **kwargs
                 )
-                return [token]
+                tokens.append(token)
+                return tokens
             else:
                 raise ValueError
         else:
@@ -313,6 +603,18 @@ class rawstoken(rawsqueryable):
             
     @staticmethod
     def parseone(*args, **kwargs):
+        '''Parses a string containing exactly one token. **kwargs are passed on to the parse static method.
+        
+        Example usage:
+            >>> raws.token.parseone('[EXAMPLE]')
+            [EXAMPLE]
+            >>> try:
+            ...     raws.token.parseone('[MORE][THAN][ONE][TOKEN]')
+            ... except:
+            ...     print 'There was more than one token!'
+            ...
+            There was more than one token!
+        '''
         tokens = rawstoken.parse(*args, **kwargs)
         if len(tokens) != 1: raise ValueError
         return tokens[0]
