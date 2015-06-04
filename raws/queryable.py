@@ -1,3 +1,5 @@
+# vim:fileencoding=UTF-8
+
 import inspect
 from filters import *
 
@@ -34,10 +36,10 @@ class rawsqueryable:
     def query(self, filters, tokeniter=None, **kwargs):
         '''Executes a query on some iterable containing tokens.
         
-        %s
         filters: A dict or other iterable containing rawstokenfilter-like objects.
         **kwargs: If tokeniter is not given, then the object's token method will be
             called with these arguments and used instead.
+        %s
         ''' % rawsqueryable.query_tokeniter_docstring
         
         if tokeniter is None: tokeniter = self.tokens(**kwargs)
@@ -54,7 +56,22 @@ class rawsqueryable:
         
     def get(self, pretty=None, tokeniter=None, **kwargs):
         '''Get the first matching token.
-        %s''' % rawsqueryable.quick_query_args_docstring
+        
+        %s
+        
+        Example usage:
+            >>> print df.get(exact_value='TRANSLATION')
+            [TRANSLATION:HUMAN]
+            >>> print df.get(exact_args=['6', '0', '1'])
+            [PICKED_COLOR:6:0:1]
+            >>> bear = df.get(match_token=raws.token('CREATURE:BEAR_GRIZZLY'))
+            >>> print bear
+            [CREATURE:BEAR_GRIZZLY]
+            >>> print bear.get(exact_value='DESCRIPTION')
+            [DESCRIPTION:A huge brown creature found in temperate woodland.  It is known for its ferocious attack, usually when it or its young are threatened.]
+            >>> print bear.get(exact_value='CREATURE')
+            [CREATURE:BEAR_BLACK]
+        ''' % rawsqueryable.quick_query_args_docstring
         
         filter_args, tokens_args = self.argstokens(tokeniter, kwargs)
         filters = (
@@ -65,7 +82,14 @@ class rawsqueryable:
     
     def getlast(self, pretty=None, tokeniter=None, **kwargs):
         '''Get the last matching token.
-        %s''' % rawsqueryable.quick_query_args_docstring
+        
+        %s
+        
+        Example usage:
+            >>> dwarven = df['language_DWARF'].get('TRANSLATION:DWARF')
+            >>> print dwarven.getlast('T_WORD')
+            [T_WORD:PRACTICE:mubun]
+        ''' % rawsqueryable.quick_query_args_docstring
         
         filter_args, tokens_args = self.argstokens(tokeniter, kwargs)
         filters = (
@@ -76,7 +100,24 @@ class rawsqueryable:
     
     def all(self, pretty=None, tokeniter=None, **kwargs):
         '''Get a list of all matching tokens.
-        %s''' % rawsqueryable.quick_query_args_docstring
+        
+        %s
+        
+        Example usage:
+            >>> dwarven = df['language_DWARF'].get('TRANSLATION:DWARF')
+            >>> print dwarven.all(exact_value='T_WORD', re_args=['CR.*Y', None])
+            [T_WORD:CRAZY:d�besh]
+                [T_WORD:CREEPY:innok]
+                [T_WORD:CRUCIFY:memrut]
+                [T_WORD:CRY:cagith]
+                [T_WORD:CRYPT:momuz]
+                [T_WORD:CRYSTAL:zas]
+            >>> intelligence = df.all('INTELLIGENT')
+            >>> print len(intelligence)
+            6
+            >>> print [str(token.get('CREATURE', reverse=True)) for token in intelligence]
+            ['[CREATURE:DWARF]', '[CREATURE:HUMAN]', '[CREATURE:ELF]', '[CREATURE:GOBLIN]', '[CREATURE:FAIRY]', '[CREATURE:PIXIE]']
+        ''' % rawsqueryable.quick_query_args_docstring
         
         filter_args, tokens_args = self.argstokens(tokeniter, kwargs)
         filters = (
@@ -86,7 +127,26 @@ class rawsqueryable:
     
     def until(self, pretty=None, tokeniter=None, **kwargs):
         '''Get a list of all tokens up to a match.
-        %s''' % rawsqueryable.quick_query_args_docstring
+        
+        %s
+        
+        Example usage:
+            >>> hematite = df.getobj('INORGANIC:HEMATITE')
+            >>> print hematite.until('INORGANIC')
+            [USE_MATERIAL_TEMPLATE:STONE_TEMPLATE]
+            [STATE_NAME_ADJ:ALL_SOLID:hematite][DISPLAY_COLOR:4:7:0][TILE:156]
+            [ENVIRONMENT:SEDIMENTARY:VEIN:100]
+            [ENVIRONMENT:IGNEOUS_EXTRUSIVE:VEIN:100]
+            [ITEM_SYMBOL:'*']
+            [METAL_ORE:IRON:100]
+            [SOLID_DENSITY:5260]
+            [MATERIAL_VALUE:8]
+            [IS_STONE]
+            [MELTING_POINT:12736]
+            >>> print hematite.until('ENVIRONMENT')
+            [USE_MATERIAL_TEMPLATE:STONE_TEMPLATE]
+            [STATE_NAME_ADJ:ALL_SOLID:hematite][DISPLAY_COLOR:4:7:0][TILE:156]
+        ''' % rawsqueryable.quick_query_args_docstring
         
         filter_args, tokens_args = self.argstokens(tokeniter, kwargs)
         filters = (
@@ -95,40 +155,70 @@ class rawsqueryable:
         )
         return self.query(filters, tokeniter, **tokens_args)[1].result
         
-    def getuntil(self, pretty=None, until_pretty=None, tokeniter=None, **kwargs):
+    def getuntil(self, pretty=None, until=None, tokeniter=None, **kwargs):
         '''Get the first matching token, but abort when a token matching arguments prepended with 'until_' is encountered.
-        %s''' % rawsqueryable.quick_query_args_docstring
+        
+        %s
+        
+        Example usage:
+            >>> hematite = df.getobj('INORGANIC:HEMATITE')
+            >>> print hematite.get('METAL_ORE:GOLD:100')
+            [METAL_ORE:GOLD:100]
+            >>> print hematite.getuntil('METAL_ORE:GOLD:100', 'INORGANIC')
+            None
+        ''' % rawsqueryable.quick_query_args_docstring
         
         filter_args, tokens_args = self.argstokens(tokeniter, kwargs)
         until_args, condition_args = self.argsuntil(filter_args)
         filters = (
-            rawstokenfilter(pretty=until_pretty, limit=1, **until_args),
+            rawstokenfilter(pretty=until, limit=1, **until_args),
             rawstokenfilter(pretty=pretty, limit=1, **condition_args)
         )
         result = self.query(filters, tokeniter, **tokens_args)[1].result
         return result[0] if result and len(result) else None
     
-    def getlastuntil(self, pretty=None, until_pretty=None, tokeniter=None, **kwargs):
+    def getlastuntil(self, pretty=None, until=None, tokeniter=None, **kwargs):
         '''Get the last matching token, up until a token matching arguments prepended with 'until_' is encountered.
-        %s''' % rawsqueryable.quick_query_args_docstring
+        
+        %s
+        
+        Example usage:
+            >>> hematite = df.getobj('INORGANIC:HEMATITE')
+            >>> print hematite.getlast('STATE_NAME_ADJ')
+            [STATE_NAME_ADJ:ALL_SOLID:slade]
+            >>> print hematite.getlastuntil('STATE_NAME_ADJ', 'INORGANIC')
+            [STATE_NAME_ADJ:ALL_SOLID:hematite]
+        ''' % rawsqueryable.quick_query_args_docstring
         
         filter_args, tokens_args = self.argstokens(tokeniter, kwargs)
         until_args, condition_args = self.argsuntil(filter_args)
         filters = (
-            rawstokenfilter(pretty=until_pretty, limit=1, **until_args),
+            rawstokenfilter(pretty=until, limit=1, **until_args),
             rawstokenfilter(pretty=pretty, **condition_args)
         )
         result = self.query(filters, tokeniter, **tokens_args)[1].result
         return result[-1] if result and len(result) else None
      
-    def alluntil(self, pretty=None, until_pretty=None, tokeniter=None, **kwargs):
-        '''Get a list of all matching tokens, but abort when a token matching arguments prepended with 'until_' is encountered.
-        %s''' % rawsqueryable.quick_query_args_docstring
+    def alluntil(self, pretty=None, until=None, tokeniter=None, **kwargs):
+        '''Get a list of all matching tokens, but abort when a token matching
+        arguments prepended with 'until_' is encountered.
+        
+        %s
+        
+        Example usage:
+            >>> dwarf = df.getobj('CREATURE:DWARF')
+            >>> print [str(token) for token in dwarf.all('INTELLIGENT')] # Gets all INTELLIGENT tokens following CREATURE:DWARF, including those belonging to other creatures
+            ['[INTELLIGENT]', '[INTELLIGENT]', '[INTELLIGENT]', '[INTELLIGENT]', '[INTELLIGENT]', '[INTELLIGENT]']
+            >>> print [str(token) for token in dwarf.alluntil('INTELLIGENT', 'CREATURE')] # Gets only the dwarf's INTELLIGENT token
+            ['[INTELLIGENT]']
+            >>> print [str(token) for token in dwarf.alluntil('INTELLIGENT', 'CREATURE:GOBLIN')]
+            ['[INTELLIGENT]', '[INTELLIGENT]', '[INTELLIGENT]']
+        ''' % rawsqueryable.quick_query_args_docstring
         
         filter_args, tokens_args = self.argstokens(tokeniter, kwargs)
         until_args, condition_args = self.argsuntil(filter_args)
         filters = (
-            rawstokenfilter(pretty=until_pretty, limit=1, **until_args),
+            rawstokenfilter(pretty=until, limit=1, **until_args),
             rawstokenfilter(pretty=pretty, **condition_args)
         )
         return self.query(filters, tokeniter, **tokens_args)[1].result
@@ -137,7 +227,16 @@ class rawsqueryable:
         '''Gets the first token matching the arguments, but stops at the next
         token with the same value as this one. Should be sufficient in almost
         all cases to get a token representing a property of an object, when
-        this method is called for a token representing an object.'''
+        this method is called for a token representing an object. **kwargs
+        are passed to the getuntil method.
+        
+        Example usage:
+            >>> iron = df.getobj('INORGANIC:IRON')
+            >>> print iron.get('WAFERS') # Gets the WAFERS token that's a property of adamantite
+            [WAFERS]
+            >>> print iron.getprop('WAFERS') # Stops at the next INORGANIC token, doesn't pick up adamantine's WAFERS token
+            None
+        '''
         
         until_exact_value, until_re_value, until_value_in = self.argsprops()
         return self.getuntil(pretty=pretty, until_exact_value=until_exact_value, until_re_value=until_re_value, until_value_in=until_value_in, **kwargs)
@@ -146,7 +245,16 @@ class rawsqueryable:
         '''Gets the last token matching the arguments, but stops at the next
         token with the same value as this one. Should be sufficient in almost
         all cases to get a token representing a property of an object, when
-        this method is called for a token representing an object.'''
+        this method is called for a token representing an object. **kwargs
+        are passed to the getlastuntil method.
+        
+        Example usage:
+            >>> iron = df.getobj('INORGANIC:IRON')
+            >>> print iron.getlast(re_value='ITEMS_.+') # Gets the property of adamantite, the last ITEMS_ token in the file
+            [ITEMS_SOFT]
+            >>> print iron.getlastprop(re_value='ITEMS_.+') # Gets the last ITEMS_ token which belongs to iron
+            [ITEMS_SCALED]
+        '''
         
         until_exact_value, until_re_value, until_value_in = self.argsprops()
         return self.getlastuntil(pretty=pretty, until_exact_value=until_exact_value, until_re_value=until_re_value, until_value_in=until_value_in, **kwargs)
@@ -155,32 +263,58 @@ class rawsqueryable:
         '''Gets the all tokens matching the arguments, but stops at the next
         token with the same value as this one. Should be sufficient in almost
         all cases to get a token representing a property of an object, when
-        this method is called for a token representing an object.'''
+        this method is called for a token representing an object. **kwargs are
+        passed to the alluntil method.
+        
+        Example usage:
+            >>> hematite = df.getobj('INORGANIC:HEMATITE')
+            >>> print len(hematite.all('ENVIRONMENT')) # Gets all ENVIRONMENT tokens following hematite
+            38
+            >>> print hematite.allprop('ENVIRONMENT') # Gets only the ENVIRONMENT tokens belonging to hematite
+            [ENVIRONMENT:SEDIMENTARY:VEIN:100]
+            [ENVIRONMENT:IGNEOUS_EXTRUSIVE:VEIN:100]
+        '''
         
         until_exact_value, until_re_value, until_value_in = self.argsprops()
         return self.alluntil(pretty=pretty, until_exact_value=until_exact_value, until_re_value=until_re_value, until_value_in=until_value_in, **kwargs)
             
-    def propdict(self, always_list = True):
+    def propdict(self, always_list=True, value_keys=True, full_keys=True, **kwargs):
         '''Returns a dictionary with token values mapped as keys to the tokens
         themselves. If always_list is True then every item in the dict will be
         a list. If it's False then items in the dict where only one token was
         found will be given as individual rawstoken instances rather than as
-        lists.'''
+        lists. **kwargs are passed to the alluntil method.
+        
+        Example usage:
+            >>> hematite = df.getobj('INORGANIC:HEMATITE')
+            >>> props = hematite.propdict()
+            >>> print props.get('ENVIRONMENT')
+            [
+            [ENVIRONMENT:SEDIMENTARY:VEIN:100],
+            [ENVIRONMENT:IGNEOUS_EXTRUSIVE:VEIN:100]]
+            >>> print props.get('IS_STONE')
+            [
+            [IS_STONE]]
+            >>> print props.get('TILE:156')
+            [[TILE:156]]
+        '''
         
         until_exact_value, until_re_value, until_value_in = self.argsprops()
-        props = self.until(exact_value=until_exact_value, re_value=until_re_value, value_in=until_value_in)
+        props = self.alluntil(until_exact_value=until_exact_value, until_re_value=until_re_value, until_value_in=until_value_in, **kwargs)
         pdict = {}
         for prop in props:
-            if prop.value not in pdict:
-                if always_list:
-                    pdict[prop.value] = [prop]
-                else:
-                    pdict[prop.value] = prop
-            else:
-                if isinstance(pdict[prop.value], list):
-                    pdict[prop.value].append(prop)
-                else:
-                    pdict[prop.value] = [prop, pdict[prop.value]]
+            for key in (prop.value if value_keys else None, str(prop)[1:-1] if full_keys else None):
+                if key is not None:
+                    if key not in pdict:
+                        if always_list:
+                            pdict[key] = [prop]
+                        else:
+                            pdict[key] = prop
+                    elif prop not in pdict[key]:
+                        if isinstance(pdict[key], list):
+                            pdict[key].append(prop)
+                        else:
+                            pdict[key] = [prop, pdict[key]]
         return pdict
         
     def argsuntil(self, kwargs):
@@ -199,7 +333,7 @@ class rawsqueryable:
             filter_args, tokens_args = {}, {}
             args = inspect.getargspec(self.tokens)[0]
             for argname, argvalue in kwargs.iteritems():
-                (token_args if argname in args else filter_args)[argname] = argvalue
+                (tokens_args if argname in args else filter_args)[argname] = argvalue
             return filter_args, tokens_args
         else:
             return kwargs, {}
@@ -303,5 +437,8 @@ class rawstokenlist(list, rawsqueryable):
         for i in xrange(self.__len__()-1, -1, -1) if reverse else xrange(0, self.__len__()):
             if range is not None and range <= count: break
             yield self.__getitem__(i)
+            
+    def __str__(self):
+        return ''.join([repr(token) for token in self]).strip()
 
 
