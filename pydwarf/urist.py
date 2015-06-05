@@ -44,7 +44,7 @@ class session:
             response = func(self.dfraws, **args) if args else func(self.dfraws)
             if response:
                 # Handle success/failure response
-                log.info('%s: %s' % ('SUCCESS' if response.success else 'FAILURE', str(response)))
+                log.info(str(response))
                 (self.successes if response.success else self.failures).append(uristinstance if uristinstance else func)
             else:
                 log.error('Received no response from script %s.' % name)
@@ -224,22 +224,34 @@ class urist:
         )
         
     @staticmethod
+    def getfn(name, **kwargs):
+        candidates, original, culled = urist.get(name, **kwargs)
+        if len(candidates):
+            return candidates[0].fn
+        else:
+            return None
+        
+    @staticmethod
     def cullcandidates(version, match, session, candidates):
-        original_candidates = list(candidates)
-        culled_match = 0
-        culled_compatibility = 0
-        culled_dependency = 0
         if candidates and len(candidates):
+            original_candidates = list(candidates)
+            culled_match = 0
+            culled_compatibility = 0
+            culled_dependency = 0
+            
             candidates, culled_match = urist.cullcandidates_match(match, candidates)
             candidates, culled_compatibility = urist.cullcandidates_compatibility(version, candidates)
             candidates, culled_dependency = urist.cullcandidates_dependency(session, candidates)
             candidates = urist.cullcandidates_duplicates(candidates)
             
-        return candidates, original_candidates, {
-            'Unmatched metadata': culled_match,
-            'Incompatible with Dwarf Fortress version %s' % version: culled_compatibility,
-            'Unfulfilled dependencies': culled_dependency
-        }
+            return candidates, original_candidates, {
+                'Unmatched metadata': culled_match,
+                'Incompatible with Dwarf Fortress version %s' % version: culled_compatibility,
+                'Unfulfilled dependencies': culled_dependency
+            }
+            
+        else:
+            return [], [], {}
     
     @staticmethod
     def cullcandidates_match(match, candidates):
