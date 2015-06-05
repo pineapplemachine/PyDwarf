@@ -54,6 +54,10 @@ Removes `[MAXAGE]` tokens from creatures. With default arguments, removes the ta
 
 For setting the orientations of some creatures to some predefined setting. Running with default settings will make all dwarves, humans, elves, and goblins exclusively heterosexual and committed to marriage.
 
+## skillrust
+
+Sets the skill rust rates of creatures. By default skill rust is entirely disabled for dwarves, humans, and elves.
+
 ## stoneclarity
 
 Can be used to set the appearance of stones, ores, and gems based on customizable rules. Can be useful to make it easier to recognize the purpose of some unmined tile at a glance.
