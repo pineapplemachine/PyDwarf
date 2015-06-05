@@ -451,7 +451,11 @@ class rawstoken(rawsqueryable):
                 [CV_REMOVE_TAG:CHANGE_BODY_SIZE_PERC]
         '''
         
-        addafter = self.getlastprop(value_in=('COPY_TAGS_FROM', 'USE_MATERIAL_TEMPLATE'))
+        if self.value == 'INORGANIC':
+            aftervalues = ('COPY_TAGS_FROM', 'USE_MATERIAL_TEMPLATE')
+        else:
+            aftervalues = ('COPY_TAGS_FROM',)
+        addafter = self.getlastprop(value_in=aftervalues)
         if not addafter: addafter = self
         addafter.add(auto=auto, **kwargs)
     
