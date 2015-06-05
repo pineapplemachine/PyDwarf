@@ -10,8 +10,12 @@ class rawsdir(rawsqueryable_obj):
         self.files = {}
         if len(args) or len(kwargs): self.read(*args, **kwargs)
         
-    def getfile(self, filename):
-        return self.files.get(filename)
+    def getfile(self, filename, create=False):
+        rfile = self.files.get(filename)
+        if create and rfile is None:
+            return self.addfile(filename)
+        else:
+            return rfile
     def addfile(self, filename=None, rfile=None, path=None):
         if path is not None:
             return self.addpath(path)
