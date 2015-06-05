@@ -47,6 +47,7 @@ Green steel is an alloy much better than steel but lesser than adamantine: It oc
 Adamant is adamantine in a less divine form and it's ideal for use in the creation of green steel. While its qualities are nearly as remarkable as those of adamantine and it can be used to make metal crafts and clothing, it's unsuitable for other metal items such as weapons or armor.
     
 [INORGANIC:ADAMANT_PINEAPPLE]
+    [WAFERS]
     [USE_MATERIAL_TEMPLATE:METAL_TEMPLATE]
     [STATE_NAME_ADJ:ALL_SOLID:adamant]
     [STATE_NAME_ADJ:LIQUID:molten adamant]
