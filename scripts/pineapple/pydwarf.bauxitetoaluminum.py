@@ -1,7 +1,8 @@
 import pydwarf
 
-reaction = '''
-    [REACTION:SMELT_BAUXITE_ALUMINUM]
+
+
+alumtobaux_reaction = '''
     [NAME:smelt aluminum from bauxite]
     [SMELTER]
     [REAGENT:1:STONE:NO_SUBTYPE:STONE:BAUXITE]
@@ -9,6 +10,10 @@ reaction = '''
     [PRODUCT:100:1:BAR:NO_SUBTYPE:METAL:ALUMINUM]
     [FUEL]
 '''
+
+default_entities = ['MOUNTAIN']
+
+
 
 @pydwarf.urist(
     name = 'pineapple.bauxitetoaluminum',
@@ -21,13 +26,15 @@ reaction = '''
     arguments = {
         'aluminum_value': '''Multiplies the MATERIAL_VALUE of aluminum by this much.
             Defaults to 0.75 to account for the increased availability of aluminum as a
-            consequence of the new reaction.'''
+            consequence of the new reaction.''',
+        'entities': 'Adds the reaction to these entities. Defaults to only MOUNTAIN.',
+        'add_to_file': 'Adds the reaction to this file.'
     },
     compatibility = (pydwarf.df_0_3x, pydwarf.df_0_40)
 )
-def bauxtoalum(df, aluminum_value=0.75):
+def bauxtoalum(df, aluminum_value=0.75, entities=default_entities, add_to_file='reaction_smelter_bauxtoalum_pineapple'):
     # Affect value of aluminum
-    pydwarf.log.debug('Multiplying value of aluminum by %f...' % aluminum_value)
+    pydwarf.log.debug('Multiplying value of aluminum by %f.' % aluminum_value)
     try:
         matvaluetoken = df.getobj('INORGANIC:ALUMINUM').getprop('MATERIAL_VALUE')
         matvaluetoken.args[0] = str( float(matvaluetoken.args[0]) * aluminum_value )
@@ -36,12 +43,10 @@ def bauxtoalum(df, aluminum_value=0.75):
         return pydwarf.failure()
         
     # Add the reaction
-    pydwarf.log.debug('Adding reaction...')
-    try:
-        df['reaction_smelter'].add(reaction)
-    except:
-        pydwarf.log.exception('Failed to add reaction to reaction_smelter.')
-        return pydwarf.failure()
-    
-    # All done!
-    return pydwarf.success()
+    return pydwarf.urist.getfn('pineapple.utils.addreaction')(
+        df,
+        id = 'SMELT_BAUXITE_ALUMINUM_PINEAPPLE',
+        tokens = alumtobaux_reaction,
+        add_to_file = add_to_file,
+        permit_entities = entities
+    )
