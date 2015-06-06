@@ -359,14 +359,18 @@ class rawsqueryable_obj(rawsqueryable):
     
     def getobjheadername(self, type):
         # Utility function fit for handling objects as of 0.40.24
-        if type == 'WORD' or type == 'SYMBOL':
-            return 'LANGUAGE'
+        if type in ('WORD', 'SYMBOL', 'TRANSLATION'):
+            return ('LANGUAGE',)
         elif type.startswith('ITEM_'):
-            return 'ITEM'
+            return ('ITEM',)
         elif type == 'COLOR' or type == 'SHAPE':
-            return 'DESCRIPTOR_%s' % type
+            return ('DESCRIPTOR', 'DESCRIPTOR_%s' % type)
         elif type == 'COLOR_PATTERN':
-            return 'DESCRIPTOR_PATTERN'
+            return ('DESCRIPTOR_PATTERN',)
+        elif type.startswith('MATGLOSS_'):
+            return ('MATGLOSS',)
+        elif type in ('TILE_PAGE', 'CREATURE_GRAPHICS'):
+            type = ('GRAPHICS',)
         else:
             return type
     
@@ -374,11 +378,11 @@ class rawsqueryable_obj(rawsqueryable):
         '''Gets OBJECT:X tokens where X is type. Is also prepared for special cases
         like type=ITEM_PANTS matching OBJECT:ITEM. Current as of DF version 0.40.24.'''
         
-        match_type = self.getobjheadername(type)
+        match_types = self.getobjheadername(type)
         results = []
         for rfile in self.files.itervalues():
             root = rfile.root()
-            if root and root.value == 'OBJECT' and root.nargs() == 1 and root.args[0] == match_type:
+            if root and root.value == 'OBJECT' and root.nargs() == 1 and root.args[0] in match_types:
                 results.append(root)
         return results
     
