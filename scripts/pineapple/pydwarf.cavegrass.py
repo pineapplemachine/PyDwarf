@@ -4,14 +4,10 @@ import raws
 
 
 default_grasses = {
-    'CAVE MOSS': {
-        # Arguments for GRASS_COLORS token
-        'colors': raws.color.lgreen() + raws.color.green() + raws.color.lgray() + raws.color.dgray(),
-        # Arguments for UNDERGROUND_DEPTH
-        'depth': (1, 2)
-    },
     'FLOOR FUNGI': {
+        # Arguments for GRASS_COLORS token
         'colors': raws.color.yellow() + raws.color.brown() + raws.color.lgray() + raws.color.dgray(),
+        # Arguments for UNDERGROUND_DEPTH
         'depth': (1, 1)
     },
     'PALE FERN PINEAPPLE': {
@@ -24,31 +20,58 @@ default_grasses = {
         'colors': raws.color.lgreen() + raws.color.lgray() + raws.color.brown() + raws.color.dgray(),
         'depth': (1, 1)
     },
+    'THORN GRASS PINEAPPLE': {
+        'template': 'CAVE MOSS',
+        'add_tokens': '[ALL_NAMES:thorn grass]',
+        'remove_tokens': '[WET]', # Removes these tokens after applying the template
+        'colors': raws.color.lgreen() + raws.color.green() + raws.color.lgray() + raws.color.dgray(),
+        'depth': (1, 1)
+    },
     'ANGEL WEED PINEAPPLE': {
         'template': 'CAVE MOSS',
         'add_tokens': '[ALL_NAMES:angel weed]',
         'colors': raws.color.yellow() + raws.color.lgray() + raws.color.lgray() + raws.color.dgray(),
         'depth': (1, 1)
     },
-    'BLUE CREEPER PINEAPPLE': {
-        'template': 'CAVE MOSS',
-        'add_tokens': '[ALL_NAMES:blue creeper]',
-        'remove_tokens': '[DRY]', # Removes these tokens after applying the template
-        'colors': raws.color.blue() + raws.color.lblue() + raws.color.lgray() + raws.color.dgray(),
-        'depth': (2, 2)
+    
+    'CAVE MOSS': {
+        'colors': raws.color.lgreen() + raws.color.green() + raws.color.lgray() + raws.color.dgray(),
+        'depth': (1, 2)
     },
     'GLOWMOSS PINEAPPLE': {
         'template': 'CAVE MOSS',
         'add_tokens': '[ALL_NAMES:glowmoss]',
         'colors': raws.color.cyan() + raws.color.lcyan() + raws.color.blue() + raws.color.dgray(),
+        'depth': (1, 2)
+    },
+    
+    'BLUE CREEPER PINEAPPLE': {
+        'template': 'CAVE MOSS',
+        'add_tokens': '[ALL_NAMES:blue creeper]',
+        'remove_tokens': '[DRY]',
+        'colors': raws.color.blue() + raws.color.lblue() + raws.color.lgray() + raws.color.dgray(),
         'depth': (2, 2)
     },
+    'SILVERBLADE PINEAPPLE': {
+        'template': 'CAVE MOSS',
+        'add_tokens': '[NAME:silverblade][NAME_PLURAL:silverblades][ADJ:silverblade]',
+        'colors': raws.color.lcyan() + raws.color.lgray() + raws.color.cyan() + raws.color.dgray(),
+        'depth': (2, 2)
+    },
+    
     'ROYAL MOLD PINEAPPLE': {
         'template': 'CAVE MOSS',
         'add_tokens': '[ALL_NAMES:royal mold]',
-        'colors': raws.color.magenta() + raws.color.lmagenta() + raws.color.dgray() + raws.color.dgray(),
+        'colors': raws.color.lmagenta() + raws.color.magenta() + raws.color.dgray() + raws.color.dgray(),
         'depth': (2, 3)
     },
+    'IRONWEED PINEAPPLE': {
+        'template': 'CAVE MOSS',
+        'add_tokens': '[ALL_NAMES:ironweed]',
+        'colors': raws.color.lgray() + raws.color.dgray() + raws.color.dgray() + raws.color.dgray(),
+        'depth': (2, 3)
+    },
+    
     'SCORCHED FUNGI PINEAPPLE': {
         'template': 'FLOOR FUNGI',
         'add_tokens': '[NAME:scorched fungus][NAME_PLURAL:scorched fungi][ADJ:scorched fungus]',
@@ -66,6 +89,12 @@ default_grasses = {
         'template': 'CAVE MOSS',
         'add_tokens': '[ALL_NAMES:goreweed]',
         'colors': raws.color.lred() + raws.color.brown() + raws.color.dgray() + raws.color.dgray(),
+        'depth': (3, 3)
+    },
+    'GHOST MOSS': {
+        'template': 'CAVE MOSS',
+        'add_tokens': '[ALL_NAMES:ghost moss]',
+        'colors': raws.color.lred() + raws.color.magenta() + raws.color.lgray() + raws.color.dgray(),
         'depth': (3, 3)
     }
 }
