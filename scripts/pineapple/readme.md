@@ -2,6 +2,10 @@
 
 Mods created for PyDwarf by Sophie Kirschner. (http://www.pineapplemachine.com)
 
+## adoptsowner
+
+For adding or removing a single token to creatures. By default, all `ADOPTS_OWNER` tokens are removed.
+
 ## bauxitetoaluminum
 
 Adds a reaction to get aluminum bars from bauxite and cryolite and reduces the value of aluminum to account for the increased availability.
