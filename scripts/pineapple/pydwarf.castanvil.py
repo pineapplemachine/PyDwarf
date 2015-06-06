@@ -15,6 +15,8 @@ default_entities = ['MOUNTAIN']
 
 default_anvil_cost = 5 # Cost in iron bars
 
+default_file = 'reaction_smelter_castanvil_pineapple'
+
 
 
 @pydwarf.urist(
@@ -31,7 +33,7 @@ default_anvil_cost = 5 # Cost in iron bars
     },
     compatibility = (pydwarf.df_0_3x, pydwarf.df_0_40)
 )
-def castanvil(df, anvil_cost=default_anvil_cost, entities=default_entities, add_to_file='reaction_smelter_castanvil_pineapple'):
+def castanvil(df, anvil_cost=default_anvil_cost, entities=default_entities, add_to_file=default_file):
     # Super easy using pineapple.utils
     return pydwarf.urist.getfn('pineapple.utils.addreaction')(
         df,

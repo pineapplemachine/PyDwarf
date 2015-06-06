@@ -13,6 +13,8 @@ alumtobaux_reaction = '''
 
 default_entities = ['MOUNTAIN']
 
+default_file = 'reaction_smelter_bauxtoalum_pineapple'
+
 
 
 @pydwarf.urist(
@@ -32,7 +34,7 @@ default_entities = ['MOUNTAIN']
     },
     compatibility = (pydwarf.df_0_3x, pydwarf.df_0_40)
 )
-def bauxtoalum(df, aluminum_value=0.75, entities=default_entities, add_to_file='reaction_smelter_bauxtoalum_pineapple'):
+def bauxtoalum(df, aluminum_value=0.75, entities=default_entities, add_to_file=default_file):
     # Affect value of aluminum
     pydwarf.log.debug('Multiplying value of aluminum by %f.' % aluminum_value)
     try:

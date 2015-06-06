@@ -59,5 +59,5 @@ def addreaction(df, id, tokens, add_to_file='reaction_custom', permit_entities=N
         else:
             rfile = df.getfile(add_to_file, create=True)
             rfile.add(raws.token(value='REACTION', args=[id], prefix='\n\n')).add(tokens)
-            return pydwarf.success('Added reaction %s to file %s.' % (id, add_to_file))
+            return pydwarf.success('Added reaction %s to file %s and entities %s.' % (id, add_to_file, permit_entities))
     
