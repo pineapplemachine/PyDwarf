@@ -4,7 +4,7 @@ Mods created for PyDwarf by Sophie Kirschner. (http://www.pineapplemachine.com)
 
 ## adoptsowner
 
-With default arguments `ADOPTS_OWNER` tokens are removed from all creatures. The script can also be used to remove the tokens from specific creatures, or to add them instead.
+With default arguments `[ADOPTS_OWNER]` tokens are removed from all creatures. The script can also be used to remove the tokens from specific creatures, or to add them instead.
 
 ## bauxitetoaluminum
 
@@ -16,7 +16,7 @@ Adds a reaction to the kiln which consumes bones and produces flux stone.
 
 ## butcherinorganic
 
-Butchering creatures of inorganic composition will (often) yield the corresponding raw materials, such as logs or boulders or metal bars.
+Butchering creatures of inorganic composition will often yield the corresponding raw materials, such as logs or boulders or metal bars.
 
 ## castanvil
 

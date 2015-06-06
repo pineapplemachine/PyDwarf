@@ -17,6 +17,8 @@ default_product_id = 'CALCITE'
 
 default_reaction_name = 'make calcite from bones'
 
+default_bone_count = 2
+
 default_entities = ['MOUNTAIN', 'PLAINS']
 
 default_file = 'reaction_kiln_boneflux_pineapple'
@@ -38,7 +40,7 @@ default_file = 'reaction_kiln_boneflux_pineapple'
     },
     compatibility = (pydwarf.df_0_2x, pydwarf.df_0_3x, pydwarf.df_0_40)
 )
-def boneflux(df, product_id=default_product_id, reaction_name=default_reaction_name, bone_count=2, entities=default_entities, add_to_file=default_file):
+def boneflux(df, product_id=default_product_id, reaction_name=default_reaction_name, bone_count=default_bone_count, entities=default_entities, add_to_file=default_file):
     return pydwarf.urist.getfn('pineapple.utils.addreaction')(
         df,
         id = 'BONE_TO_FLUX_PINEAPPLE',
