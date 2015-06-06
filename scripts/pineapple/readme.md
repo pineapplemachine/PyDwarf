@@ -4,7 +4,7 @@ Mods created for PyDwarf by Sophie Kirschner. (http://www.pineapplemachine.com)
 
 ## adoptsowner
 
-For adding or removing a single token to creatures. By default, all `ADOPTS_OWNER` tokens are removed.
+With default arguments `ADOPTS_OWNER` tokens are removed from all creatures. The script can also be used to remove the tokens from specific creatures, or to add them instead.
 
 ## bauxitetoaluminum
 
@@ -85,3 +85,17 @@ Makes all subterranean plants grow year-round, regardless of season, by ensuring
 ## usablemats
 
 With default settings it becomes possible to craft items using the normally uncooperative scale, feathers, and chitin.
+
+## utils
+
+### addtoentity
+
+A utility script intended for adding things like PERMITTED_REACTION to entities.
+
+### addreaction
+
+A utility script which adds a reaction as well as PERMITTED_REACTION tokens to entities.
+
+### objecttokens
+
+A utility script which abstracts adding tokens to or removing them from objects, either all at once or given an iterable containing object IDs.

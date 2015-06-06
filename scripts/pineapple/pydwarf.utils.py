@@ -61,3 +61,47 @@ def addreaction(df, id, tokens, add_to_file='reaction_custom', permit_entities=N
             rfile.add(raws.token(value='REACTION', args=[id], prefix='\n\n')).add(tokens)
             return pydwarf.success('Added reaction %s to file %s and entities %s.' % (id, add_to_file, permit_entities))
     
+
+
+@pydwarf.urist(
+    name = 'pineapple.utils.objecttokens',
+    version = 'alpha',
+    author = 'Sophie Kirschner',
+    description = '''Utility script for adding or removing tokens from
+        objects.''',
+    arguments = {
+        'object_type': '''The type of object which should be affected.''',
+        'token': '''The token to be added or removed.''',
+        'remove_from': '''If set to None, no matching tokens are removed. If
+            set to '*', all matching tokens are removed. If set to an
+            iterable containing IDs of objects, matching tokens will be
+            removed from each of those objects.''',
+        'add_to': '''If set to None, no tokens tokens are added. If set to
+            '*', tokens are added to all objects. If set to an iterable
+            containing IDs of objects, tokens will be added to each of
+            those objects.'''
+    },
+    compatibility = '.*'
+)
+def objecttokens(df, object_type, token, add_to=None, remove_from=None):
+    added, removed = 0, 0
+    
+    # Remove tokens
+    if remove_from:
+        for objtoken in df.allobj(type=object_type, id_in=(None if remove_from == '*' else remove_from)):
+            for removetoken in objtoken.allprop(token): 
+                removetoken.remove()
+                removed += 1
+        
+    # Add tokens
+    if add_to:
+        for objtoken in df.allobj(type=object_type, id_in=(None if add_to == '*' else add_to)):
+            if not objtoken.getprop(token):
+                objtoken.addprop(token)
+                added += 1
+        
+    # All done!
+    if removed or added:
+        return pydwarf.success('Added %d %s tokens and removed %d from object type %s.' % (added, token, removed, object_type))
+    else:
+        return pydwarf.failure('Didn\'t add or remove any %s tokens.' % token)  
