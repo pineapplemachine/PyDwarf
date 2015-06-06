@@ -54,6 +54,10 @@ Gives `[MAXAGE]` tokens to many creatures that don't have one in the vanilla raw
 
 Allows forging items of types using metals normally disallowed by Dwarf Fortress. For example, with the default arguments, this script will allow the forging of golden weapons and armor. (How useful that equipment would actually be is questionable, but as we all know !!fun!! doesn't ask those sorts of questions.)
 
+## noaquifers
+
+Removes all `[AQUIFER]` tokens.
+
 ## noexotic
 
 Replaces all `[PET_EXOTIC]` and `[MOUNT_EXOTIC]` tokens with `[PET]` and `[MOUNT]` tokens, respectively. This will make it possible to train many animals that otherwise could not be.
@@ -99,3 +103,7 @@ A utility script which adds a reaction as well as PERMITTED_REACTION tokens to e
 ### objecttokens
 
 A utility script which abstracts adding tokens to or removing them from objects, either all at once or given an iterable containing object IDs.
+
+## woodmechanisms
+
+Makes it possible to craft mechanisms from wood at a craftdwarf's workshop.
