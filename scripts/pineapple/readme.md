@@ -10,9 +10,13 @@ Adds a reaction to get aluminum bars from bauxite and cryolite and reduces the v
 
 Butchering creatures of inorganic composition will (often) yield the corresponding raw materials, such as logs or boulders or metal bars.
 
+## castanvil
+
+Adds a reaction which allows creating an iron anvil from bars at a smelter.
+
 ## cavegrass
 
-Intended for adding or changing grasses in caverns. By default eight additional grasses are added, and cave grasses are colored such that each level can be more easily distinguished by the colors of its grasses. The default additions are angel weed, blood tendril, blue creeper, goreweed, glowmoss, pale ferns, royal mold, and scorched fungi.
+Intended for adding or changing grasses in caverns. By default numberous additional grasses are added, and cave grasses are colored such that each level can be more easily distinguished by the colors of its grasses.
 
 ## deerappear
 
