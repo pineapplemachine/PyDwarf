@@ -6,6 +6,10 @@ Mods created for PyDwarf by Sophie Kirschner. (http://www.pineapplemachine.com)
 
 Adds a reaction to get aluminum bars from bauxite and cryolite and reduces the value of aluminum to account for the increased availability.
 
+## boneflux
+
+Adds a reaction to the kiln which consumes bones and produces flux stone.
+
 ## butcherinorganic
 
 Butchering creatures of inorganic composition will (often) yield the corresponding raw materials, such as logs or boulders or metal bars.
