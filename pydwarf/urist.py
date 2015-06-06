@@ -1,4 +1,5 @@
 import logging
+import textwrap
 import version as versionutils
 
 
@@ -324,3 +325,66 @@ class urist:
         log.info('Found %d registered scripts in total.' % total)
         for name, uristlist in sorted(names.items()):
             log.info('Found %d script%s named %s.' % (len(uristlist), 's' if len(uristlist) > 1 else '', name))
+
+    def doc(self):
+        '''Make a pretty metadata string.'''
+        
+        doc = ''
+        
+        # Utility function
+        def normalize(string): return ' '.join([l.strip() for l in str(string).split('\n')])
+        
+        # Title
+        author = self.meta('author')
+        version = self.meta('version')
+        if author and not isinstance(author, basestring): author = ', '.join(author)
+        versionstr = (' %s' % version) if version else ''
+        authorstr = (' by %s' % author) if author else ''
+        doc += 'Script:\n  %s%s%s.' % (self.getname(), versionstr, authorstr)
+        
+        # Description
+        desc = self.meta('description')
+        if desc:
+            doc += '\n\nDescription:\n%s' % textwrap.fill('  %s' % normalize(desc))
+            
+        # Arguments
+        args = self.meta('arguments')
+        if args:
+            doc += '\n\nArguments:'
+            for argname, arginfo in args.iteritems():
+                doc += '\n%s' % textwrap.fill('  %s: %s' % (argname, normalize(arginfo)))
+        
+        # Dependencies
+        deps = self.meta('dependency')
+        if deps:
+            if not isinstance(deps, basestring): deps = ', '.join(deps)
+            doc += '\nDepends on:\n%s' % textwrap.fill('  %s' % deps)
+        
+        # Compatibility
+        compat = self.meta('compatibility')
+        if compat:
+            doc += '\n\nDF version compatibility regex:\n  %s' % str(compat)
+            
+        # Everything else
+        othermeta = []
+        for key, value in self.metadata.iteritems():
+            if key not in ('name', 'namespace', 'author', 'version', 'description', 'arguments', 'dependency', 'compatibility'): othermeta.append((key, value))
+        if len(othermeta):
+            doc += '\n\nOther metadata:'
+            for key, value in othermeta:
+                doc += '\n%s' % textwrap.fill('  %s: %s' % (key, normalize(value)))
+        
+        # All done!
+        return doc
+        
+    @staticmethod
+    def doclist(names=[]):
+        log.info('Showing metadata for scripts.')
+        urists = []
+        if len(names):
+            for name in names: urists += urist.getregistered(*urist.splitname(name))
+        else:
+            urists = urist.allregistered()
+        for uristinstance in urists:
+            log.info('\n\n%s\n' % uristinstance.doc())
+        

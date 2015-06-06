@@ -31,11 +31,11 @@ def restrictnobles(raws, onlydwarves=False):
     return restrictnobles_custom(raws, (['DWARF'] if onlydwarves else None), (None if onlydwarves else ['GOBLIN']))
 
 @pydwarf.urist(
-    name = 'witty.restrictednobles_custom',
+    name = 'witty.restrictednobles.custom',
     version = 'alpha',
     author = ('Witty', 'Sophie Kirschner'),
     description = 'Allows allowing and preventing various species from becoming dwarven nobles.',
-    args = {
+    arguments = {
         'inclusions': '''An iterable containing each species that should be specified as allowed.
             If any is allowed in this way, any species not specifically allowed will be disallowed.''',
         'exclusions': '''An iterable containing each species that should be disallowed. All

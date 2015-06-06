@@ -72,9 +72,12 @@ def __main__(args=None):
     pydwarf.log.debug('With PyDwarf version %s.' % pydwarf.__version__)
     pydwarf.log.debug('With raws version %s.' % raws.__version__)
     
-    # Handle --list flag
+    # Handle flags that completely change behavior
     if args.list:
         pydwarf.urist.list()
+        exit(0)
+    elif args.meta is not None:
+        pydwarf.urist.doclist(args.meta)
         exit(0)
     
     # Verify that input directory exists
@@ -134,6 +137,7 @@ if __name__ == "__main__":
     parser.add_argument('-v', '--verbose', help='set stdout logging level to DEBUG', action='store_true')
     parser.add_argument('--log', help='output log file to path', type=str)
     parser.add_argument('--list', help='list available scripts', action='store_true')
+    parser.add_argument('--meta', help='show metadata for scripts', nargs='*', type=str)
     args = parser.parse_args()
     
     __main__(args)
