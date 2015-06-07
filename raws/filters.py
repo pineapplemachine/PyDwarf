@@ -33,7 +33,9 @@ class rawstokenfilter(rawsbasefilter):
         re_value=None, re_args=None, re_arg=None, 
         re_prefix=None, re_suffix=None,
         except_value=None,
-        value_in=None, value_not_in=None, args_contains=None, args_count=None,
+        value_in=None, value_not_in=None, arg_in=None,
+        args_contains=None, args_count=None,
+        args_count_at_least=None, args_count_no_more=None,
         invert=None,
         limit=None, limit_terminates=True
     ):
@@ -73,9 +75,15 @@ class rawstokenfilter(rawsbasefilter):
         except_value: If a token has this exact value, then it doesn't match.
         value_in: If a token's value is not contained within this iterable, then it doesn't match.
         value_not_in: If a token's value is contained within this iterable, then it doesn't match.
+        arg_in: Handled like exact_arg or re_args, except checks for being contained by a list or
+            similar object rather than matching a single string or a regex.
         args_contains: If at least one of a token's arguments is not exactly this string, then it
             doesn't match.
         args_count: If a token's number of arguments is not exactly this, then it doesn't match.
+        args_count_at_least: If a token's number of arguments is not at least this many then it
+            doesn't match.
+        args_count_no_more: If a token's number of arguments exceeds this many then it doesn't
+            match.
         
         These arguments regard how the filter is treated in queries.
         
@@ -109,8 +117,11 @@ class rawstokenfilter(rawsbasefilter):
         self.re_suffix = re_suffix
         self.value_in = value_in
         self.value_not_in = value_not_in
+        self.arg_in = arg_in
         self.args_contains = args_contains
         self.args_count = args_count
+        self.args_count_at_least = args_count_at_least
+        self.args_count_no_more = args_count_no_more
         self.invert = invert
         self.limit = limit
         self.limit_terminates = limit_terminates
@@ -119,8 +130,8 @@ class rawstokenfilter(rawsbasefilter):
         if self.re_value: self.re_value += '$'
         if self.re_prefix: self.re_prefix += '$'
         if self.re_suffix: self.re_suffix += '$'
-        if self.re_args: self.re_args = [a + '$' for a in self.re_args]
-        if self.re_arg: self.re_arg = [(a[0], a[1]+'$') for a in self.re_arg]
+        if self.re_args: self.re_args = [(None if a is None else (a + '$')) for a in self.re_args]
+        if self.re_arg: self.re_arg = [(None if a is None else (a[0], a[1]+'$')) for a in self.re_arg]
         
     def basematch(self, token):
         if (
@@ -128,6 +139,8 @@ class rawstokenfilter(rawsbasefilter):
             (self.except_value is not None and self.except_value == token.value) or
             (self.exact_value is not None and self.exact_value != token.value) or
             (self.args_count is not None and self.args_count != token.nargs()) or
+            (self.args_count_at_least is not None and token.nargs() < self.args_count_at_least) or
+            (self.args_count_no_more is not None and token.nargs() > self.args_count_no_more) or
             (self.value_in is not None and token.value not in self.value_in) or
             (self.value_not_in is not None and token.value in self.value_not_in) or
             (self.re_value is not None and re.match(self.re_value, token.value) == None) or
@@ -138,13 +151,16 @@ class rawstokenfilter(rawsbasefilter):
             if not (len(self.exact_args) == token.nargs() and all([self.exact_args[i] == None or str(self.exact_args[i]) == token.args[i] for i in xrange(0, token.nargs())])):
                 return False
         if self.exact_arg is not None:
-            if not all([a[0]>=0 and a[0]<token.nargs() and token.args[a[0]] == str(a[1]) for a in self.exact_arg]):
+            if not all([token.args[a[0]] == str(a[1]) for a in self.exact_arg]):
+                return False
+        if self.arg_in is not None:
+            if not all([token.args[a[0]] in a[1] for a in self.arg_in]):
                 return False
         if self.re_args is not None:
             if not (len(self.re_args) == token.nargs() and all([self.re_args[i] == None or re.match(self.re_args[i], token.args[i]) for i in xrange(0, token.nargs())])):
                 return False
         if self.re_arg is not None:
-            if not all([a[0]>=0 and a[0]<token.nargs() and re.match(a[1], token.args[a[0]]) for a in self.re_arg]):
+            if not all([re.match(a[1], token.args[a[0]]) for a in self.re_arg]):
                 return False
         if self.exact_prefix is not None or self.re_prefix is not None:
             match_prefix = (self.prev.suffix + self.prefix) if self.prev else self.prefix
