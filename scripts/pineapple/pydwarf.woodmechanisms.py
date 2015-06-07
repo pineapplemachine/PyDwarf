@@ -20,7 +20,7 @@ default_file = 'reaction_woodmechanisms_pineapple'
 
 @pydwarf.urist(
     name = 'pineapple.woodmechanisms',
-    version = 'alpha',
+    version = '1.0.0',
     author = 'Sophie Kirschner',
     description = '''Allows construction of wooden mechanisms at the craftdwarf's workshop.
         Inspired by/stolen from Rubble's Wooden Mechanisms mod.''',

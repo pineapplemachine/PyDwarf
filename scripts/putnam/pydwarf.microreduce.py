@@ -4,7 +4,7 @@ import raws
 
 @pydwarf.urist(
     name = 'putnam.microreduce',
-    version = 'alpha',
+    version = '1.0.0',
     author = ('Putnam', 'Sophie Kirschner'),
     description = 'A mod to reduce the amount of micromanagement in Dwarf Fortress. One-step soap making and clothesmaking!',
     compatibility = pydwarf.df_0_40

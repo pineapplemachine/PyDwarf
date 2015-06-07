@@ -5,7 +5,7 @@ def addwm(token, pretty): token.add('\n\t[%s] - WM ' % pretty)
 
 @pydwarf.urist(
     name = 'witty.restrictednobles',
-    version = 'alpha',
+    version = '1.0.0',
     author = ('Witty', 'Sophie Kirschner'),
     description = '''Witty: This is a pretty simple mod I've been meaning to make for a
     while. This should restrict all nobles of a given dwarven civ to dwarves and only
@@ -32,7 +32,7 @@ def restrictnobles(raws, onlydwarves=False):
 
 @pydwarf.urist(
     name = 'witty.restrictednobles.custom',
-    version = 'alpha',
+    version = '1.0.0',
     author = ('Witty', 'Sophie Kirschner'),
     description = 'Allows allowing and preventing various species from becoming dwarven nobles.',
     arguments = {

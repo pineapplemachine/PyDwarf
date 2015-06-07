@@ -9,7 +9,7 @@ default_templates = {
 
 @pydwarf.urist(
     name = 'pineapple.butcherinorganic',
-    version = 'alpha',
+    version = '1.0.0',
     author = 'Sophie Kirschner',
     description = '''Allows butchering of some inorganics, get things like wood or stone from some corpses.
         Inspired by/stolen from Igfig's Modest Mod.''',

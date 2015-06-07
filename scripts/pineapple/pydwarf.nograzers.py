@@ -2,7 +2,7 @@ import pydwarf
 
 @pydwarf.urist(
     name = 'pineapple.nograzers',
-    version = 'alpha',
+    version = '1.0.0',
     author = 'Sophie Kirschner',
     description = 'Removes all [GRAZER] and [STANDARD_GRAZER] tokens.',
     compatibility = (pydwarf.df_0_34, pydwarf.df_0_40)

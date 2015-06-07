@@ -199,7 +199,7 @@ def applyrules(rules, groups, ids, log=None):
 
 @pydwarf.urist(
     name = 'pineapple.stoneclarity',
-    version = 'alpha',
+    version = '1.0.0',
     author = 'Sophie Kirschner',
     description = 'Allows powerful editing of the appearances of stone, ore, and gems.',
     arguments = {

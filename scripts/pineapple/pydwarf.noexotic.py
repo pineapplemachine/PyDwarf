@@ -2,7 +2,7 @@ import pydwarf
 
 @pydwarf.urist(
     name = 'pineapple.noexotic',
-    version = 'alpha',
+    version = '1.0.0',
     author = 'Sophie Kirschner',
     description = 'Replaces all [PET_EXOTIC] and [MOUNT_EXOTIC] tags with their non-exotic counterparts.',
     compatibility = (pydwarf.df_0_34, pydwarf.df_0_40)

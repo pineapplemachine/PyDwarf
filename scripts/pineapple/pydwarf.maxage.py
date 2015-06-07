@@ -29,7 +29,7 @@ default_ages = {
 
 @pydwarf.urist(
     name = 'pineapple.maxage',
-    version = 'alpha',
+    version = '1.0.0',
     author = 'Sophie Kirschner',
     description = '''Applies a MAXAGE to most vanilla creatures which don't already have one.''',
     arguments = {

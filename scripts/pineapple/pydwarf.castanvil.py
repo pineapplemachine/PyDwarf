@@ -21,7 +21,7 @@ default_file = 'reaction_smelter_castanvil_pineapple'
 
 @pydwarf.urist(
     name = 'pineapple.castanvil',
-    version = 'alpha',
+    version = '1.0.0',
     author = 'Sophie Kirschner',
     description = '''Adds a reaction to the smelter which makes it possible to
     create an iron anvil without already having a forge.

@@ -11,7 +11,7 @@ def addaftertemplate(inorganic, addition):
 
 @pydwarf.urist(
     name = 'putnam.materialsplus',
-    version = 'alpha',
+    version = '1.0.0',
     author = ('Putnam', 'Sophie Kirschner'),
     description = 'Adds a bunch of materials to the game.',
     compatibility = (pydwarf.df_0_34, pydwarf.df_0_40)

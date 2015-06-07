@@ -38,7 +38,7 @@ default_lover_chance = (0, 0)
 
 @pydwarf.urist(
     name = 'pineapple.orientation',
-    version = 'alpha',
+    version = '1.0.0',
     author = 'Sophie Kirschner',
     description = '''Causes all creatures of some type to have a single sexuality,
         heterosexual being the default. (You boring snob!)''',

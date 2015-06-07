@@ -45,7 +45,7 @@ add_sterile_interaction = '''
 
 @pydwarf.urist(
     name = 'smeeprocket.transgender',
-    version = 'alpha',
+    version = '1.0.0',
     author = ('SmeepRocket', 'Sophie Kirschner'),
     description = 'Adds transgender and intersex castes to creatures.',
     arguments = {

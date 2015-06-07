@@ -37,7 +37,7 @@ shapenamedict = {
 
 @pydwarf.urist(
     name = 'umiman.smallthings.prefstring',
-    version = 'alpha',
+    version = '1.0.0',
     author = ('Umiman', 'Fieari', 'Sophie Kirschner'),
     description = '''This mod simply just adds to the number of prefstrings for
         everything in the game to a minimum of five each. Prefstrings are the stuff
@@ -79,7 +79,7 @@ def prefstring(dfraws):
 
 @pydwarf.urist(
     name = 'umiman.smallthings.engraving',
-    version = 'alpha',
+    version = '1.0.0',
     author = ('Umiman', 'Fieari', 'Sophie Kirschner'),
     description = '''Has this been done before? While I think it's impossible to change
         any of the inbuilt engraving stuff like, "this is a picture of a dwarf and a

@@ -170,7 +170,7 @@ def removeattacks(dfraws, remove_attacks, remove_attacks_from):
 
 @pydwarf.urist(
     name = 'stal.armoury',
-    version = 'alpha',
+    version = '1.0.0',
     author = ('Stalhansch', 'Sophie Kirschner'),
     description = 'Attempts to improve the balance and realism of combat.',
     arguments = {

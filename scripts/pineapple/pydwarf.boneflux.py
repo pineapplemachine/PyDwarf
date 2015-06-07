@@ -27,7 +27,7 @@ default_file = 'reaction_kiln_boneflux_pineapple'
 
 @pydwarf.urist(
     name = 'pineapple.boneflux',
-    version = 'alpha',
+    version = '1.0.0',
     author = 'Sophie Kirschner',
     description = '''Adds a reaction to the kiln which consumes bones and produces flux.
         Inspired by/stolen from Rubble's Bone Flux mod.''',

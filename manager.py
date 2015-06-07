@@ -9,7 +9,7 @@ from utils import copytree
 
 
 
-__version__ = 'alpha'
+__version__ = '1.0.0'
 
 
 

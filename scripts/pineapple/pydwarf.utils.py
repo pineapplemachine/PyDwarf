@@ -5,7 +5,7 @@ import raws
 
 @pydwarf.urist(
     name = 'pineapple.utils.addtoentity',
-    version = 'alpha',
+    version = '1.0.0',
     author = 'Sophie Kirschner',
     description = '''A simple utility script which adds tokens to entities.''',
     arguments = {
@@ -38,7 +38,7 @@ def addtoentity(df, entities, **kwargs):
 
 @pydwarf.urist(
     name = 'pineapple.utils.addreaction',
-    version = 'alpha',
+    version = '1.0.0',
     author = 'Sophie Kirschner',
     description = '''A simple utility script which adds a single reaction.''',
     arguments = {
@@ -65,7 +65,7 @@ def addreaction(df, id, tokens, add_to_file='reaction_custom', permit_entities=N
 
 @pydwarf.urist(
     name = 'pineapple.utils.objecttokens',
-    version = 'alpha',
+    version = '1.0.0',
     author = 'Sophie Kirschner',
     description = '''Utility script for adding or removing tokens from
         objects.''',

@@ -2,7 +2,7 @@ import pydwarf
 
 @pydwarf.urist(
     name = 'pineapple.noaquifers',
-    version = 'alpha',
+    version = '1.0.0',
     author = 'Sophie Kirschner',
     description = 'Removes all AQUIFER tokens.',
     compatibility = (pydwarf.df_0_27, pydwarf.df_0_28, pydwarf.df_0_3x, pydwarf.df_0_40)

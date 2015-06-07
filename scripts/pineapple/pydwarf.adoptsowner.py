@@ -2,7 +2,7 @@ import pydwarf
 
 @pydwarf.urist(
     name = 'pineapple.adoptsowner',
-    version = 'alpha',
+    version = '1.0.0',
     author = 'Sophie Kirschner',
     description = '''todo''',
     arguments = {

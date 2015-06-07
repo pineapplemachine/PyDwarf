@@ -10,7 +10,7 @@ default_rates = ('NONE', 'NONE', 'NONE')
 
 @pydwarf.urist(
     name = 'pineapple.skillrust',
-    version = 'alpha',
+    version = '1.0.0',
     author = 'Sophie Kirschner',
     description = '''Modifies skill rust for given creatures. Disables it entirely by
         default.''',

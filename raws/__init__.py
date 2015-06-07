@@ -7,4 +7,4 @@ from file import rawsfile as file
 from dir import rawsdir as dir
 import color
 
-__version__ = 'alpha'
+__version__ = '1.0.0'
