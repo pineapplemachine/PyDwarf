@@ -31,9 +31,6 @@ def getconf(args=None):
         else:
             overridename = args.config
     
-    # Apply other command line arguments   
-    conf.apply(args.__dict__)
-    
     # Apply settings in override package
     overrideexception = None
     if overridename and (os.path.isfile(overridename + '.py') or os.path.isfile(os.path.join(overridename, '__init__.py'))):
@@ -42,6 +39,9 @@ def getconf(args=None):
             conf.apply(package.export)
         except Exception, e:
             overrideexception = e
+            
+    # Apply other command line arguments   
+    conf.apply(args.__dict__)
     
     # Setup logger
     conf.setuplogger()
