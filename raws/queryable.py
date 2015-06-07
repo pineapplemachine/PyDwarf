@@ -406,9 +406,11 @@ class rawsqueryable_obj(rawsqueryable):
         results = []
         for objecttoken in self.getobjheaders(type):
             for result in objecttoken.all(
-                exact_value=type, exact_args=(exact_id,) if exact_id else None,
-                re_args=(re_id,) if re_id else (('|'.join(id_in),) if id_in else None),
-                args_count=1
+                exact_value = type,
+                exact_args = (exact_id,) if exact_id else None,
+                re_args = (re_id,) if re_id else None,
+                arg_in = ((0, id_in),) if id_in else None,
+                args_count = 1
             ):
                 results.append(result)
         return results

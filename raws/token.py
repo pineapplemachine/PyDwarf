@@ -90,7 +90,7 @@ class rawstoken(rawsqueryable):
         '''
         return len(self.args) if (count is None) else (len(self.args) == count)
         
-    def getarg(self, index):
+    def getarg(self, index=0):
         '''Gets argument at index, returns None if the index is out of bounds.
         
         Example usage:
@@ -109,7 +109,7 @@ class rawstoken(rawsqueryable):
             None
         '''
         return self.args[index] if index >= -len(self.args) and index < len(self.args) else None
-    def setarg(self, index, value):
+    def setarg(self, index, value=None):
         '''Sets argument at index, also verifies that the input contains no illegal characters.
         
         Example usage:
@@ -118,7 +118,11 @@ class rawstoken(rawsqueryable):
             [EXAMPLE:a:b:c]
             >>> token.setarg(2, 500)
             >>> print token
-            [EXAMPLE:a:b:500]'''
+            [EXAMPLE:a:b:500]
+            >>> token.setarg('hi!')
+            >>> print token
+            [EXAMPLE:hi!:b:500]'''
+        if value is None and index is not None: value = index; index = 0
         valuestr = str(value)
         if any([char in valuestr for char in rawstoken.illegal_internal_chars]): raise ValueError
         self.args[index] = valuestr

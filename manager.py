@@ -1,5 +1,6 @@
 import re
 import os
+import json
 import argparse
 import importlib
 import pydwarf
@@ -31,9 +32,6 @@ def getconf(args=None):
         else:
             overridename = args.config
     
-    # Apply other command line arguments   
-    conf.apply(args.__dict__)
-    
     # Apply settings in override package
     overrideexception = None
     if overridename and (os.path.isfile(overridename + '.py') or os.path.isfile(os.path.join(overridename, '__init__.py'))):
@@ -42,6 +40,9 @@ def getconf(args=None):
             conf.apply(package.export)
         except Exception, e:
             overrideexception = e
+            
+    # Apply other command line arguments   
+    conf.apply(args.__dict__)
     
     # Setup logger
     conf.setuplogger()
@@ -124,8 +125,7 @@ def __main__(args=None):
 
 
 
-if __name__ == "__main__":
-    
+def parseargs():
     parser = argparse.ArgumentParser()
     parser.add_argument('-ver', '--version', help='indicate Dwarf Fortress version', type=str)
     parser.add_argument('-i', '--input', help='raws input directory', type=str)
@@ -137,7 +137,15 @@ if __name__ == "__main__":
     parser.add_argument('-v', '--verbose', help='set stdout logging level to DEBUG', action='store_true')
     parser.add_argument('--log', help='output log file to path', type=str)
     parser.add_argument('--list', help='list available scripts', action='store_true')
+    parser.add_argument('--jscripts', help='specify scripts given a json array', type=str)
     parser.add_argument('--meta', help='show metadata for scripts', nargs='*', type=str)
     args = parser.parse_args()
     
-    __main__(args)
+    if args.jscripts is not None: args.scripts = json.loads(args.jscripts) if args.scripts is None else (args.scripts + json.loads(args.jscripts))
+    
+    return args
+
+
+
+if __name__ == "__main__":
+    __main__(parseargs())

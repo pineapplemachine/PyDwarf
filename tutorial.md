@@ -2,7 +2,7 @@
 
 Welcome to PyDwarf! This tool is currently quite early in development and so please don't be surprised if there are bugs, missing features, or if this tutorial simply lags behind.
 
-There's a lot of stuff that PyDwarf automates and most of it is highly customizeable. The scope of this tutorial is in showing how to configure PyDwarf, how to create and register a new mod with it, to describe the tools available to you in writing that mod, and how to apply it to Dwarf Fortress's raws. If there are questions this tutorial fails to answer, answers can be found within PyDwarf's source code.
+There's a lot of stuff that PyDwarf automates and most of it is highly customizeable. The scope of this tutorial is in showing how to configure PyDwarf, how to create and register a new mod with it, to describe the tools available to you in writing that mod, and how to apply it to Dwarf Fortress's raws. If there are questions this tutorial fails to answer, answers can be found within PyDwarf's source code and documentation.
 
 Feature requests, bugs, and generally incomprehensible behavior should be reported using the PyDwarf repository's issues page, found [here](https://github.com/pineapplemachine/PyDwarf/issues).
 
@@ -30,7 +30,7 @@ For convenient reference, this is an example config.json file:
 
 ``` json
 {
-    "input":    "E:/Sophie/Desktop/Files/Games/Dwarf Fortress/df_40_24_win/rawvanillao/objects",
+    "input":    "E:/Sophie/Desktop/Files/Games/Dwarf Fortress/df_40_24_win/rawvanilla/objects",
     "output":   "E:/Sophie/Desktop/Files/Games/Dwarf Fortress/df_40_24_win/raw/objects",
     "backup":   "E:/Sophie/Desktop/Files/Games/Dwarf Fortress/df_40_24_win/rawbak/",
     
@@ -79,6 +79,7 @@ PyDwarf's configuration can also be passed as command line arguments when runnin
 * `--log`: Specifies the log file path.
 * `--list`: Lists registered scripts in alphabetical order.
 * `--meta`: When given names of scripts as arguments, shows each script's metadata in a readable format. When given no arguments, metadata for all registered scripts is displayed.
+* `--jscripts`: Alternative to `--scripts` which accepts a json array just like the `scripts` attribute in `config.json`.
 * `-h` or `--help`: Shows a summary of each argument's purpose.
 
 The arguments include `-i` or `--input`, `-o` or `--output`, `-b` or `--backup`, `-ver` or `--version`, which behave identically to their `config.json` or `config.py` counterparts. Additional arguments are `-s` or `--scripts`, which is a list of scripts just the same except with support only for strings (not for dicts), and `-c` or `--config`, which can be used to specify a json file to read as configuration.
@@ -128,7 +129,7 @@ Type "help", "copyright", "credits" or "license" for more information.
 >>> description = elf.get('DESCRIPTION')
 >>> print description
 [DESCRIPTION:A medium-sized creature dedicated to the ruthless protection of nature.]
->>> description.setarg(0, 'A medium-sized creature undeserving of life.')
+>>> description.setarg('A medium-sized creature undeserving of life.')
 >>> print description
 [DESCRIPTION:A medium-sized creature undeserving of life.]
 >>> df.write(path='raw/objects')
