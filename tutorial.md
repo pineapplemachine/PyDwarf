@@ -2,7 +2,7 @@
 
 Welcome to PyDwarf! This tool is currently quite early in development and so please don't be surprised if there are bugs, missing features, or if this tutorial simply lags behind.
 
-There's a lot of stuff that PyDwarf automates and most of it is highly customizeable. The scope of this tutorial is in showing how to configure PyDwarf, how to create and register a new mod with it, to describe the tools available to you in writing that mod, and how to apply it to Dwarf Fortress's raws. If there are questions this tutorial fails to answer, answers can be found within PyDwarf's source code.
+There's a lot of stuff that PyDwarf automates and most of it is highly customizeable. The scope of this tutorial is in showing how to configure PyDwarf, how to create and register a new mod with it, to describe the tools available to you in writing that mod, and how to apply it to Dwarf Fortress's raws. If there are questions this tutorial fails to answer, answers can be found within PyDwarf's source code and documentation.
 
 Feature requests, bugs, and generally incomprehensible behavior should be reported using the PyDwarf repository's issues page, found [here](https://github.com/pineapplemachine/PyDwarf/issues).
 
@@ -30,7 +30,7 @@ For convenient reference, this is an example config.json file:
 
 ``` json
 {
-    "input":    "E:/Sophie/Desktop/Files/Games/Dwarf Fortress/df_40_24_win/rawvanillao/objects",
+    "input":    "E:/Sophie/Desktop/Files/Games/Dwarf Fortress/df_40_24_win/rawvanilla/objects",
     "output":   "E:/Sophie/Desktop/Files/Games/Dwarf Fortress/df_40_24_win/raw/objects",
     "backup":   "E:/Sophie/Desktop/Files/Games/Dwarf Fortress/df_40_24_win/rawbak/",
     
