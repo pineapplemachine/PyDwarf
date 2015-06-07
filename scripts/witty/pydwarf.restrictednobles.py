@@ -4,7 +4,7 @@ import pydwarf
 def addwm(token, pretty): token.add('\n\t[%s] - WM ' % pretty)
 
 @pydwarf.urist(
-    name = 'witty.restrictednobles',
+    name = 'witty.restrictednobles.standard',
     version = '1.0.0',
     author = ('Witty', 'Sophie Kirschner'),
     description = '''Witty: This is a pretty simple mod I've been meaning to make for a
