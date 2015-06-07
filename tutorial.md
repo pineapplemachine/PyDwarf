@@ -128,7 +128,7 @@ Type "help", "copyright", "credits" or "license" for more information.
 >>> description = elf.get('DESCRIPTION')
 >>> print description
 [DESCRIPTION:A medium-sized creature dedicated to the ruthless protection of nature.]
->>> description.setarg(0, 'A medium-sized creature undeserving of life.')
+>>> description.setarg('A medium-sized creature undeserving of life.')
 >>> print description
 [DESCRIPTION:A medium-sized creature undeserving of life.]
 >>> df.write(path='raw/objects')
