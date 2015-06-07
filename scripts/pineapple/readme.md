@@ -94,11 +94,11 @@ With default settings it becomes possible to craft items using the normally unco
 
 ### addtoentity
 
-A utility script intended for adding things like PERMITTED_REACTION to entities.
+A utility script intended for adding things like `[PERMITTED_REACTION]` to entities.
 
 ### addreaction
 
-A utility script which adds a reaction as well as PERMITTED_REACTION tokens to entities.
+A utility script which adds a reaction as well as `[PERMITTED_REACTION]` tokens to entities.
 
 ### objecttokens
 
