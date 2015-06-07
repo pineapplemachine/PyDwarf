@@ -79,6 +79,7 @@ PyDwarf's configuration can also be passed as command line arguments when runnin
 * `--log`: Specifies the log file path.
 * `--list`: Lists registered scripts in alphabetical order.
 * `--meta`: When given names of scripts as arguments, shows each script's metadata in a readable format. When given no arguments, metadata for all registered scripts is displayed.
+* `--jscripts`: Alternative to `--scripts` which accepts a json array just like the `scripts` attribute in `config.json`.
 * `-h` or `--help`: Shows a summary of each argument's purpose.
 
 The arguments include `-i` or `--input`, `-o` or `--output`, `-b` or `--backup`, `-ver` or `--version`, which behave identically to their `config.json` or `config.py` counterparts. Additional arguments are `-s` or `--scripts`, which is a list of scripts just the same except with support only for strings (not for dicts), and `-c` or `--config`, which can be used to specify a json file to read as configuration.
