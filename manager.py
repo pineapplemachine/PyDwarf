@@ -141,9 +141,7 @@ def parseargs():
     parser.add_argument('--meta', help='show metadata for scripts', nargs='*', type=str)
     args = parser.parse_args()
     
-    print args.jscripts
     if args.jscripts is not None: args.scripts = json.loads(args.jscripts) if args.scripts is None else (args.scripts + json.loads(args.jscripts))
-    print args.scripts
     
     return args
 
