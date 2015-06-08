@@ -19,7 +19,8 @@ jsonconfigpath = 'config.json'
 
 def getconf(args=None):
     # Load initial config from json file
-    conf = config().json(jsonconfigpath)
+    conf = config()
+    if os.path.isfile(jsonconfigpath): conf.json(jsonconfigpath)
     
     # Default name of configuration override package
     overridename = 'config_override'

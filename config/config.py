@@ -59,10 +59,13 @@ class config:
         stdouthandler.setFormatter(logging.Formatter('%(asctime)s: %(levelname)s: %(message)s', datetimeformat))
         pydwarf.log.addHandler(stdouthandler)
         # Handler for log file output
-        logfilehandler = logging.FileHandler(self.log)
-        logfilehandler.setLevel(logging.DEBUG)
-        logfilehandler.setFormatter(logging.Formatter('%(asctime)s: %(filename)s[%(lineno)s]: %(levelname)s: %(message)s', datetimeformat))
-        pydwarf.log.addHandler(logfilehandler)
+        if self.log:
+            logdir = os.path.dirname(self.log)
+            if not os.path.exists(logdir): os.makedirs(logdir)
+            logfilehandler = logging.FileHandler(self.log)
+            logfilehandler.setLevel(logging.DEBUG)
+            logfilehandler.setFormatter(logging.Formatter('%(asctime)s: %(filename)s[%(lineno)s]: %(levelname)s: %(message)s', datetimeformat))
+            pydwarf.log.addHandler(logfilehandler)
         
     def setuppackages(self):
         self.importedpackages = [importlib.import_module(package) for package in self.packages]
@@ -76,7 +79,7 @@ class config:
                 pydwarf.log.info('Unable to detect Dwarf Fortress version.')
             else:
                 pydwarf.log.info('Detected Dwarf Fortress version %s.' % self.version)
-        elif conf.version is None:
+        elif self.version is None:
             pydwarf.log.warning('No Dwarf Fortress version was specified. Scripts will be run regardless of their indicated compatibility.')
         else:
             pydwarf.log.info('Managing Dwarf Fortress version %s.' % self.version)
