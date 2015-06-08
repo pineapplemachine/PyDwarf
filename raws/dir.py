@@ -10,12 +10,18 @@ class rawsdir(rawsqueryable_obj):
         self.files = {}
         if len(args) or len(kwargs): self.read(*args, **kwargs)
         
-    def getfile(self, filename, create=False):
+    def getfile(self, filename, create=None):
+        '''Gets the file with a given name. If no file by that name is found,
+        None is returned instead. If creature is set to something other than
+        None, the behavior when no file by some name exists is altered: A new
+        file is created and associated with that name, and then its add
+        method is called using the value for create as its argument.'''
+        
         rfile = self.files.get(filename)
-        if create and rfile is None:
-            return self.addfile(filename)
-        else:
-            return rfile
+        if create is not None and rfile is None:
+            rfile = self.addfile(filename)
+            rfile.add(create)
+        return rfile
     def addfile(self, filename=None, rfile=None, path=None):
         if path is not None:
             return self.addpath(path)
