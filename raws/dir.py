@@ -1,13 +1,18 @@
 import os
+import shutil
 from queryable import rawsqueryable_obj
 from file import rawsfile
+
+
 
 class rawsdir(rawsqueryable_obj):
     '''Represents as a whole all the raws contained within a directory.'''
     
     def __init__(self, *args, **kwargs):
         '''Constructor for rawsdir object.'''
+        
         self.files = {}
+        self.otherfiles = []
         if len(args) or len(kwargs): self.read(*args, **kwargs)
         
     def getfile(self, filename, create=None):
@@ -22,6 +27,7 @@ class rawsdir(rawsqueryable_obj):
             rfile = self.addfile(filename)
             rfile.add(create)
         return rfile
+        
     def addfile(self, filename=None, rfile=None, path=None):
         if path is not None:
             return self.addpath(path)
@@ -32,10 +38,12 @@ class rawsdir(rawsqueryable_obj):
             self.files[filename] = rfile
             rfile.dir = self
             return rfile
+            
     def setfile(self, filename=None, rfile=None):
         if rfile and not filename: filename = rfile.header
         rfile.dir = self
         self.files[filename] = rfile
+        
     def removefile(self, filename=None, rfile=None):
         if not rfile.dir == self: raise ValueError
         if rfile and not filename: filename = rfile.header
@@ -51,31 +59,61 @@ class rawsdir(rawsqueryable_obj):
         
     def __getitem__(self, name): return self.getfile(name)
     def __setitem__(self, name, value): return self.setfile(name, value)
+    def __contains__(self, name): return name in self.files
     
     def read(self, path, log=None):
         '''Reads raws from all text files in the specified directory.'''
         for filename in os.listdir(path):
             filepath = os.path.join(path, filename)
-            if filename.endswith('.txt') and os.path.isfile(filepath
-                ):
-                if log: log.debug('Reading file %s...' % filepath)
+            if filename.endswith('.txt') and os.path.isfile(filepath):
+                if log: log.debug('Reading raws file %s.' % filepath)
                 with open(filepath, 'rb') as rfile:
                     filenamekey = os.path.splitext(os.path.basename(filename))[0]
                     self.files[filenamekey] = rawsfile(path=filepath, rfile=rfile, dir=self)
-        return self
+            else:
+                if log: log.debug('Found non-raws file %s.' % filepath)
+                self.otherfiles.append((path, filename))
         
     def write(self, path, log=None):
         '''Writes raws to the specified directory.'''
+        
+        # Write raws files
         for filename in self.files:
             filepath = os.path.join(path, filename)
             if not filepath.endswith('.txt'): filepath += '.txt'
             with open(filepath, 'wb') as rfile:
-                if log: log.debug('Writing file %s...' % filepath)
+                if log: log.debug('Writing raws file %s.' % filepath)
                 self.files[filename].write(rfile)
-        return self
+        # Copy other files
+        for filepath, filename in self.otherfiles:
+            if filepath != path:
+                originalpath = os.path.join(filepath, filename)
+                writepath = os.path.join(path, filename)
+                if log: log.debug('Writing non-raws file %s.' % writepath)
+                if os.path.isfile(originalpath):
+                    shutil.copy2(originalpath, writepath)
+                elif os.path.isdir(originalpath):
+                    copytree(originalpath, writepath)
+                elif log:
+                    log.error('Failed to write non-raws file %s: it\'s neither a file nor a directory.' % writepath)
     
     def tokens(self):
         '''Iterate through all tokens.'''
         for filename in self.files:
             for token in self.files[filename].tokens():
                 yield token
+
+
+
+# credit belongs to http://stackoverflow.com/a/13814557/3478907
+def copytree(src, dst, symlinks=False, ignore=None):
+    if not os.path.exists(dst):
+        os.makedirs(dst)
+    for item in os.listdir(src):
+        s = os.path.join(src, item)
+        d = os.path.join(dst, item)
+        if os.path.isdir(s):
+            copytree(s, d, symlinks, ignore)
+        else:
+            if not os.path.exists(d) or os.stat(src).st_mtime - os.stat(dst).st_mtime > 1:
+                shutil.copy2(s, d)

@@ -6,7 +6,6 @@ import importlib
 import pydwarf
 import raws
 from config import config
-from utils import copytree
 
 
 
@@ -90,7 +89,7 @@ def __main__(args=None):
     if conf.backup is not None:
         pydwarf.log.info('Backing up raws to %s.' % conf.backup)
         try:
-            copytree(conf.input, conf.backup)
+            raws.copytree(conf.input, conf.backup)
         except:
             pydwarf.log.error('Failed to create backup.')
             exit(1)

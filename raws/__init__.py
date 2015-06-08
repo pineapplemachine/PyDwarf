@@ -5,6 +5,7 @@ from queryable import rawstokenlist as tokenlist
 from token import rawstoken as token
 from file import rawsfile as file
 from dir import rawsdir as dir
+from dir import copytree
 import color
 
 __version__ = '1.0.0'
