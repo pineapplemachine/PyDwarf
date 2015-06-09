@@ -3,12 +3,12 @@ import pydwarf
 
 
 boneflux_reaction = '''
-    [NAME:{name}]
+    [NAME:%(name)s]
     [BUILDING:KILN:NONE]
-    [REAGENT:bone:{bones}:NONE:NONE:NONE:NONE]
+    [REAGENT:bone:%(bones)s:NONE:NONE:NONE:NONE]
         [USE_BODY_COMPONENT]
         [ANY_BONE_MATERIAL]
-    [PRODUCT:100:1:BOULDER:NONE:INORGANIC:{product}]
+    [PRODUCT:100:1:BOULDER:NONE:INORGANIC:%(product)s]
     [FUEL]
     [SKILL:SMELT]
 '''
