@@ -1,0 +1,509 @@
+<html><head><title>PyDwarf docs</title><style>pre { background-color: #ddd; color: #113 }</style></head><body><h1 style="font-size: 50; color: #800">Warning: This is a shitty WIP.</h1><h1>pydwarf.session</h1><p><b>__init__</b><br><pre>None</pre></p><p><b>eval</b><br><pre>None</pre></p><p><b>failed</b><br><pre>None</pre></p><p><b>funcs</b><br><pre>None</pre></p><p><b>handle</b><br><pre>None</pre></p><p><b>handleall</b><br><pre>None</pre></p><p><b>inlist</b><br><pre>None</pre></p><p><b>successful</b><br><pre>None</pre></p><h1>pydwarf.urist</h1><p><b>__call__</b><br><pre>None</pre></p><p><b>__hash__</b><br><pre>None</pre></p><p><b>__init__</b><br><pre>None</pre></p><p><b>allregistered</b><br><pre>None</pre></p><p><b>cullcandidates</b><br><pre>None</pre></p><p><b>cullcandidates_compatibility</b><br><pre>None</pre></p><p><b>cullcandidates_dependency</b><br><pre>None</pre></p><p><b>cullcandidates_duplicates</b><br><pre>None</pre></p><p><b>cullcandidates_match</b><br><pre>None</pre></p><p><b>depsatisfied</b><br><pre>None</pre></p><p><b>doc</b><br><pre>Make a pretty metadata string.</pre></p><p><b>doclist</b><br><pre>None</pre></p><p><b>forfunc</b><br><pre>None</pre></p><p><b>get</b><br><pre>None</pre></p><p><b>getfn</b><br><pre>None</pre></p><p><b>getname</b><br><pre>None</pre></p><p><b>getregistered</b><br><pre>None</pre></p><p><b>info</b><br><pre>None</pre></p><p><b>list</b><br><pre>None</pre></p><p><b>matches</b><br><pre>None</pre></p><p><b>meta</b><br><pre>None</pre></p><p><b>splitname</b><br><pre>None</pre></p><h1>raws.boolfilter</h1><p><b>__init__</b><br><pre>None</pre></p><p><b>all</b><br><pre>None</pre></p><p><b>any</b><br><pre>None</pre></p><p><b>basematch</b><br><pre>None</pre></p><p><b>invert</b><br><pre>None</pre></p><p><b>match</b><br><pre>None</pre></p><p><b>none</b><br><pre>None</pre></p><p><b>one</b><br><pre>None</pre></p><h1>raws.color</h1><p><b>black</b><br><pre>None</pre></p><p><b>blue</b><br><pre>None</pre></p><p><b>brown</b><br><pre>None</pre></p><p><b>color</b><br><pre>None</pre></p><p><b>cyan</b><br><pre>None</pre></p><p><b>dgray</b><br><pre>None</pre></p><p><b>green</b><br><pre>None</pre></p><p><b>lblue</b><br><pre>None</pre></p><p><b>lcyan</b><br><pre>None</pre></p><p><b>lgray</b><br><pre>None</pre></p><p><b>lgreen</b><br><pre>None</pre></p><p><b>lmagenta</b><br><pre>None</pre></p><p><b>lred</b><br><pre>None</pre></p><p><b>magenta</b><br><pre>None</pre></p><p><b>red</b><br><pre>None</pre></p><p><b>white</b><br><pre>None</pre></p><p><b>yellow</b><br><pre>None</pre></p><h1>raws.dir</h1><p><b>__contains__</b><br><pre>None</pre></p><p><b>__getitem__</b><br><pre>None</pre></p><p><b>__init__</b><br><pre>Constructor for rawsdir object.</pre></p><p><b>__iter__</b><br><pre>None</pre></p><p><b>__setitem__</b><br><pre>None</pre></p><p><b>addfile</b><br><pre>None</pre></p><p><b>addpath</b><br><pre>None</pre></p><p><b>all</b><br><pre>None</pre></p><p><b>allobj</b><br><pre>Gets all objects matching a given type and optional id or id regex.</pre></p><p><b>allprop</b><br><pre>Gets the all tokens matching the arguments, but stops at the next
+        token with the same value as this one. Should be sufficient in almost
+        all cases to get a token representing a property of an object, when
+        this method is called for a token representing an object. **kwargs are
+        passed to the alluntil method.
+        
+        Example usage:
+            >>> hematite = df.getobj('INORGANIC:HEMATITE')
+            >>> print len(hematite.all('ENVIRONMENT')) # Gets all ENVIRONMENT tokens following hematite
+            38
+            >>> print hematite.allprop('ENVIRONMENT') # Gets only the ENVIRONMENT tokens belonging to hematite
+            [ENVIRONMENT:SEDIMENTARY:VEIN:100]
+            [ENVIRONMENT:IGNEOUS_EXTRUSIVE:VEIN:100]
+        </pre></p><p><b>alluntil</b><br><pre>None</pre></p><p><b>argsprops</b><br><pre>None</pre></p><p><b>argstokens</b><br><pre>None</pre></p><p><b>argsuntil</b><br><pre>None</pre></p><p><b>get</b><br><pre>None</pre></p><p><b>getfile</b><br><pre>Gets the file with a given name. If no file by that name is found,
+        None is returned instead. If creature is set to something other than
+        None, the behavior when no file by some name exists is altered: A new
+        file is created and associated with that name, and then its add
+        method is called using the value for create as its argument.</pre></p><p><b>getlast</b><br><pre>None</pre></p><p><b>getlastprop</b><br><pre>Gets the last token matching the arguments, but stops at the next
+        token with the same value as this one. Should be sufficient in almost
+        all cases to get a token representing a property of an object, when
+        this method is called for a token representing an object. **kwargs
+        are passed to the getlastuntil method.
+        
+        Example usage:
+            >>> iron = df.getobj('INORGANIC:IRON')
+            >>> print iron.getlast(re_value='ITEMS_.+') # Gets the property of adamantite, the last ITEMS_ token in the file
+            [ITEMS_SOFT]
+            >>> print iron.getlastprop(re_value='ITEMS_.+') # Gets the last ITEMS_ token which belongs to iron
+            [ITEMS_SCALED]
+        </pre></p><p><b>getlastuntil</b><br><pre>None</pre></p><p><b>getobj</b><br><pre>Get the first object token matching a given type and id. (If there's more 
+            than one result for any given query then I'm afraid you've done something
+            silly with your raws.) This method should work properly with things like
+            CREATURE:X tokens showing up in entity_default.</pre></p><p><b>getobjheadername</b><br><pre>None</pre></p><p><b>getobjheaders</b><br><pre>Gets OBJECT:X tokens where X is type. Is also prepared for special cases
+        like type=ITEM_PANTS matching OBJECT:ITEM. Current as of DF version 0.40.24.</pre></p><p><b>getprop</b><br><pre>Gets the first token matching the arguments, but stops at the next
+        token with the same value as this one. Should be sufficient in almost
+        all cases to get a token representing a property of an object, when
+        this method is called for a token representing an object. **kwargs
+        are passed to the getuntil method.
+        
+        Example usage:
+            >>> iron = df.getobj('INORGANIC:IRON')
+            >>> print iron.get('WAFERS') # Gets the WAFERS token that's a property of adamantite
+            [WAFERS]
+            >>> print iron.getprop('WAFERS') # Stops at the next INORGANIC token, doesn't pick up adamantine's WAFERS token
+            None
+        </pre></p><p><b>getuntil</b><br><pre>None</pre></p><p><b>objdict</b><br><pre>None</pre></p><p><b>objpretty</b><br><pre>None</pre></p><p><b>propdict</b><br><pre>Returns a dictionary with token values mapped as keys to the tokens
+        themselves. If always_list is True then every item in the dict will be
+        a list. If it's False then items in the dict where only one token was
+        found will be given as individual rawstoken instances rather than as
+        lists. **kwargs are passed to the alluntil method.
+        
+        Example usage:
+            >>> hematite = df.getobj('INORGANIC:HEMATITE')
+            >>> props = hematite.propdict()
+            >>> print props.get('ENVIRONMENT')
+            [
+            [ENVIRONMENT:SEDIMENTARY:VEIN:100],
+            [ENVIRONMENT:IGNEOUS_EXTRUSIVE:VEIN:100]]
+            >>> print props.get('IS_STONE')
+            [
+            [IS_STONE]]
+            >>> print props.get('TILE:156')
+            [[TILE:156]]
+        </pre></p><p><b>query</b><br><pre>None</pre></p><p><b>read</b><br><pre>Reads raws from all text files in the specified directory.</pre></p><p><b>removefile</b><br><pre>None</pre></p><p><b>setfile</b><br><pre>None</pre></p><p><b>tokens</b><br><pre>Iterate through all tokens.</pre></p><p><b>until</b><br><pre>None</pre></p><p><b>write</b><br><pre>Writes raws to the specified directory.</pre></p><h1>raws.file</h1><p><b>__contains__</b><br><pre>None</pre></p><p><b>__getitem__</b><br><pre>None</pre></p><p><b>__init__</b><br><pre>None</pre></p><p><b>__iter__</b><br><pre>None</pre></p><p><b>add</b><br><pre>None</pre></p><p><b>all</b><br><pre>None</pre></p><p><b>allprop</b><br><pre>Gets the all tokens matching the arguments, but stops at the next
+        token with the same value as this one. Should be sufficient in almost
+        all cases to get a token representing a property of an object, when
+        this method is called for a token representing an object. **kwargs are
+        passed to the alluntil method.
+        
+        Example usage:
+            >>> hematite = df.getobj('INORGANIC:HEMATITE')
+            >>> print len(hematite.all('ENVIRONMENT')) # Gets all ENVIRONMENT tokens following hematite
+            38
+            >>> print hematite.allprop('ENVIRONMENT') # Gets only the ENVIRONMENT tokens belonging to hematite
+            [ENVIRONMENT:SEDIMENTARY:VEIN:100]
+            [ENVIRONMENT:IGNEOUS_EXTRUSIVE:VEIN:100]
+        </pre></p><p><b>alluntil</b><br><pre>None</pre></p><p><b>argsprops</b><br><pre>None</pre></p><p><b>argstokens</b><br><pre>None</pre></p><p><b>argsuntil</b><br><pre>None</pre></p><p><b>copy</b><br><pre>None</pre></p><p><b>get</b><br><pre>None</pre></p><p><b>getlast</b><br><pre>None</pre></p><p><b>getlastprop</b><br><pre>Gets the last token matching the arguments, but stops at the next
+        token with the same value as this one. Should be sufficient in almost
+        all cases to get a token representing a property of an object, when
+        this method is called for a token representing an object. **kwargs
+        are passed to the getlastuntil method.
+        
+        Example usage:
+            >>> iron = df.getobj('INORGANIC:IRON')
+            >>> print iron.getlast(re_value='ITEMS_.+') # Gets the property of adamantite, the last ITEMS_ token in the file
+            [ITEMS_SOFT]
+            >>> print iron.getlastprop(re_value='ITEMS_.+') # Gets the last ITEMS_ token which belongs to iron
+            [ITEMS_SCALED]
+        </pre></p><p><b>getlastuntil</b><br><pre>None</pre></p><p><b>getprop</b><br><pre>Gets the first token matching the arguments, but stops at the next
+        token with the same value as this one. Should be sufficient in almost
+        all cases to get a token representing a property of an object, when
+        this method is called for a token representing an object. **kwargs
+        are passed to the getuntil method.
+        
+        Example usage:
+            >>> iron = df.getobj('INORGANIC:IRON')
+            >>> print iron.get('WAFERS') # Gets the WAFERS token that's a property of adamantite
+            [WAFERS]
+            >>> print iron.getprop('WAFERS') # Stops at the next INORGANIC token, doesn't pick up adamantine's WAFERS token
+            None
+        </pre></p><p><b>getuntil</b><br><pre>None</pre></p><p><b>propdict</b><br><pre>Returns a dictionary with token values mapped as keys to the tokens
+        themselves. If always_list is True then every item in the dict will be
+        a list. If it's False then items in the dict where only one token was
+        found will be given as individual rawstoken instances rather than as
+        lists. **kwargs are passed to the alluntil method.
+        
+        Example usage:
+            >>> hematite = df.getobj('INORGANIC:HEMATITE')
+            >>> props = hematite.propdict()
+            >>> print props.get('ENVIRONMENT')
+            [
+            [ENVIRONMENT:SEDIMENTARY:VEIN:100],
+            [ENVIRONMENT:IGNEOUS_EXTRUSIVE:VEIN:100]]
+            >>> print props.get('IS_STONE')
+            [
+            [IS_STONE]]
+            >>> print props.get('TILE:156')
+            [[TILE:156]]
+        </pre></p><p><b>query</b><br><pre>None</pre></p><p><b>read</b><br><pre>None</pre></p><p><b>remove</b><br><pre>None</pre></p><p><b>root</b><br><pre>Gets the first token in the file.</pre></p><p><b>settokens</b><br><pre>None</pre></p><p><b>tail</b><br><pre>Gets the last token in the file.</pre></p><p><b>tokens</b><br><pre>Iterate through all tokens.</pre></p><p><b>until</b><br><pre>None</pre></p><p><b>write</b><br><pre>None</pre></p><h1>raws.token</h1><p><b>__contains__</b><br><pre>None</pre></p><p><b>__eq__</b><br><pre>None</pre></p><p><b>__getitem__</b><br><pre>None</pre></p><p><b>__hash__</b><br><pre>None</pre></p><p><b>__init__</b><br><pre>None</pre></p><p><b>__iter__</b><br><pre>None</pre></p><p><b>__ne__</b><br><pre>None</pre></p><p><b>add</b><br><pre>None</pre></p><p><b>addall</b><br><pre>None</pre></p><p><b>addarg</b><br><pre>Appends an argument to the end of the argument list.
+        
+        Example usage:
+            >>> token = raws.token('EXAMPLE')
+            >>> print token
+            [EXAMPLE]
+            >>> token.addarg('hi!')
+            >>> print token
+            [EXAMPLE:hi!]
+        </pre></p><p><b>addone</b><br><pre>None</pre></p><p><b>addprop</b><br><pre>When this token is an object token like CREATURE:X or INORGANIC:X, a
+        new token is usually added immediately afterwards. However, if a token like
+        COPY_TAGS_FROM or USE_MATERIAL_TEMPLATE exists underneath the object, then
+        the specified tag is only added after that. **kwargs are passed on to the
+        add method.
+        
+        Example usage:
+            >>> panda = df.getobj('CREATURE:PANDA, GIGANTIC')
+            >>> print panda.tokens(range=4, include_self=True)
+            <generator object tokens at 0x10c28f3c0>
+            >>> print raws.tokenlist(panda.tokens(range=4, include_self=True))
+            [CREATURE:PANDA, GIGANTIC]
+                [COPY_TAGS_FROM:PANDA]
+                [APPLY_CREATURE_VARIATION:GIANT]
+                [CV_REMOVE_TAG:CHANGE_BODY_SIZE_PERC]
+            >>> panda.addprop('FLIER')
+            >>> print raws.tokenlist(panda.tokens(range=5, include_self=True))
+            [CREATURE:PANDA, GIGANTIC]
+                [COPY_TAGS_FROM:PANDA][FLIER]
+                [APPLY_CREATURE_VARIATION:GIANT]
+                [CV_REMOVE_TAG:CHANGE_BODY_SIZE_PERC]
+        </pre></p><p><b>all</b><br><pre>None</pre></p><p><b>allprop</b><br><pre>Gets the all tokens matching the arguments, but stops at the next
+        token with the same value as this one. Should be sufficient in almost
+        all cases to get a token representing a property of an object, when
+        this method is called for a token representing an object. **kwargs are
+        passed to the alluntil method.
+        
+        Example usage:
+            >>> hematite = df.getobj('INORGANIC:HEMATITE')
+            >>> print len(hematite.all('ENVIRONMENT')) # Gets all ENVIRONMENT tokens following hematite
+            38
+            >>> print hematite.allprop('ENVIRONMENT') # Gets only the ENVIRONMENT tokens belonging to hematite
+            [ENVIRONMENT:SEDIMENTARY:VEIN:100]
+            [ENVIRONMENT:IGNEOUS_EXTRUSIVE:VEIN:100]
+        </pre></p><p><b>alluntil</b><br><pre>None</pre></p><p><b>arg</b><br><pre>When a token is expected to have only one argument, this method can be used
+        to access it. It there's one argument it will be returned, otherwise an
+        exception will be raised.
+        
+        Example usage:
+            >>> token_a = raws.token('EXAMPLE:x')
+            >>> token_b = raws.token('EXAMPLE:x:y:z')
+            >>> print token_a.arg()
+            x
+            >>> print token_b.arg()
+            >>> try:
+            ...     print token_b.arg()
+            ... except:
+            ...     print 'token_b doesn't have the correct number of arguments!'
+            ...
+            token_b doesn't have the correct number of arguments!</pre></p><p><b>argsprops</b><br><pre>None</pre></p><p><b>argsstr</b><br><pre>Return arguments joined by ':'.
+        
+        Example usage:
+            >>> token = raws.token('EXAMPLE:a:b:c')
+            >>> print token.argsstr()
+            a:b:c
+        </pre></p><p><b>argstokens</b><br><pre>None</pre></p><p><b>argsuntil</b><br><pre>None</pre></p><p><b>auto</b><br><pre>None</pre></p><p><b>copy</b><br><pre>Copies some token or iterable collection of tokens.
+        
+        Example usage:
+            >>> token = raws.token('EXAMPLE:a:b:c')
+            >>> print token
+            [EXAMPLE:a:b:c]
+            >>> copied_token = raws.token.copy(token)
+            >>> print copied_token
+            [EXAMPLE:a:b:c]
+            >>> print token is copied_token
+            False
+            >>> tokens = raws.token.parse('[HELLO][WORLD]')
+            >>> print tokens
+            [[HELLO], [WORLD]]
+            >>> copied_tokens = raws.token.copy(tokens)
+            >>> print copied_tokens
+            [[HELLO], [WORLD]]
+            >>> print tokens == copied_tokens
+            True
+            >>> print tokens is copied_tokens
+            False
+        </pre></p><p><b>equals</b><br><pre>Returns True if two tokens have identical values and arguments, False otherwise.
+        
+        Example usage:
+            >>> token_a = raws.token('EXAMPLE:hi!')
+            >>> token_b = raws.token('EXAMPLE:hello there')
+            >>> token_c = raws.token('EXAMPLE:hi!')
+            >>> print token_a, token_b, token_c
+            [EXAMPLE:hi!] [EXAMPLE:hello there] [EXAMPLE:hi!]
+            >>> print token_a == token_b
+            False
+            >>> print token_b == token_c
+            False
+            >>> print token_c == token_a
+            True
+            >>> print token_c is token_a
+            False</pre></p><p><b>firstandlast</b><br><pre>Utility method for getting the first and last items of some iterable
+        
+        Example usage:
+            >>> tokens = raws.token.parse('[ONE][TWO][THREE][FOUR]')
+            >>> print raws.token.firstandlast(tokens)
+            ([ONE], [FOUR])
+        </pre></p><p><b>get</b><br><pre>None</pre></p><p><b>getarg</b><br><pre>Gets argument at index, returns None if the index is out of bounds.
+        
+        Example usage:
+            >>> token = raws.token('EXAMPLE:argument 0:argument 1')
+            >>> print token.getarg(0)
+            argument 0
+            >>> print token.getarg(1)
+            argument 1
+            >>> print token.getarg(2)
+            None
+            >>> print token.getarg(-1)
+            argument 1
+            >>> print token.getarg(-2)
+            argument 0
+            >>> print token.getarg(-3)
+            None
+        </pre></p><p><b>getlast</b><br><pre>None</pre></p><p><b>getlastprop</b><br><pre>Gets the last token matching the arguments, but stops at the next
+        token with the same value as this one. Should be sufficient in almost
+        all cases to get a token representing a property of an object, when
+        this method is called for a token representing an object. **kwargs
+        are passed to the getlastuntil method.
+        
+        Example usage:
+            >>> iron = df.getobj('INORGANIC:IRON')
+            >>> print iron.getlast(re_value='ITEMS_.+') # Gets the property of adamantite, the last ITEMS_ token in the file
+            [ITEMS_SOFT]
+            >>> print iron.getlastprop(re_value='ITEMS_.+') # Gets the last ITEMS_ token which belongs to iron
+            [ITEMS_SCALED]
+        </pre></p><p><b>getlastuntil</b><br><pre>None</pre></p><p><b>getprefix</b><br><pre>Get the comment text preceding a token.
+        
+        Example usage:
+            >>> token = raws.token('This is a comment [EXAMPLE] so is this')
+            >>> print token
+            [EXAMPLE]
+            >>> print token.getprefix()
+            This is a comment
+            >>> print token.getsuffix()
+             so is this
+        </pre></p><p><b>getprop</b><br><pre>Gets the first token matching the arguments, but stops at the next
+        token with the same value as this one. Should be sufficient in almost
+        all cases to get a token representing a property of an object, when
+        this method is called for a token representing an object. **kwargs
+        are passed to the getuntil method.
+        
+        Example usage:
+            >>> iron = df.getobj('INORGANIC:IRON')
+            >>> print iron.get('WAFERS') # Gets the WAFERS token that's a property of adamantite
+            [WAFERS]
+            >>> print iron.getprop('WAFERS') # Stops at the next INORGANIC token, doesn't pick up adamantine's WAFERS token
+            None
+        </pre></p><p><b>getsuffix</b><br><pre>Get the comment text following a token.
+        
+        Example usage:
+            >>> token = raws.token('This is a comment [EXAMPLE] so is this')
+            >>> print token
+            [EXAMPLE]
+            >>> print token.getsuffix()
+             so is this
+            >>> print token.getprefix()
+            This is a comment
+        </pre></p><p><b>getuntil</b><br><pre>None</pre></p><p><b>getvalue</b><br><pre>Get the token's value.
+        
+        Example usage:
+            >>> token = raws.token('EXAMPLE:a:b:c')
+            >>> print token.getvalue()
+            EXAMPLE
+        </pre></p><p><b>iter</b><br><pre>Iterate through tokens starting with root and ending at tail.
+        
+        Example usage:
+            >>> tokens = raws.token.parse('[HI][HOW][ARE][YOU][?]')
+            >>> print list(raws.token.iter(tokens[1], tokens[3]))
+            [[HOW], [ARE], [YOU]]
+        </pre></p><p><b>match</b><br><pre>Returns True if this method matches some rawstokenfilter, false otherwise.
+        
+        Example usage:
+            >>> filter = raws.tokenfilter(exact_value='EXAMPLE')
+            >>> token_a = raws.token('HELLO:THERE')
+            >>> token_b = raws.token('EXAMPLE')
+            >>> token_c = raws.token('EXAMPLE:NUMBER:TWO')
+            >>> print token_a.match(filter)
+            False
+            >>> print token_b.match(filter)
+            True
+            >>> print token_c.match(filter)
+            True
+            >>> print token_a.match(exact_value='HELLO')
+            True
+        </pre></p><p><b>nargs</b><br><pre>When count is None, returns the number of arguments the token has. (Length of
+        arguments list.) Otherwise, returns True if the number of arguments is equal to the
+        given count and False if not.
+        
+        Example usage:
+            >>> token = raws.token('EXAMPLE:0:1:2:3:4')
+            >>> print 'Token has %d arguments.' % token.nargs()
+            Token has 5 arguments.
+            >>> print token.nargs(2)
+            False
+            >>> print token.nargs(5)
+            True
+        </pre></p><p><b>parse</b><br><pre>Parses a string, turns it into a list of tokens.
+
+        data: The string to be parsed.
+        implicit_braces: Determines behavior when there are no opening or closing braces.
+            If True, then the input is assumed to be the contents of a token, e.g. [input].
+            If False, an exception is raised.
+        **kwargs: Extra named arguments are passed to the constructor each time a new
+            rawstoken is distinguished and created.
+            
+        Example usage:
+           >>> token = raws.token.parse('HELLO:THERE')
+            >>> print token
+            [HELLO:THERE]
+            >>> tokens = raws.token.parse('[WHAT] a [BEAUTIFUL][DAY]')
+            >>> print tokens
+            [WHAT] a [BEAUTIFUL][DAY]
+            >>> print tokens[1]
+            [BEAUTIFUL] 
+        </pre></p><p><b>parseone</b><br><pre>Parses a string containing exactly one token. **kwargs are passed on to the parse static method.
+        
+        Example usage:
+            >>> raws.token.parseone('[EXAMPLE]')
+            [EXAMPLE]
+            >>> try:
+            ...     raws.token.parseone('[MORE][THAN][ONE][TOKEN]')
+            ... except:
+            ...     print 'There was more than one token!'
+            ...
+            There was more than one token!
+        </pre></p><p><b>propdict</b><br><pre>Returns a dictionary with token values mapped as keys to the tokens
+        themselves. If always_list is True then every item in the dict will be
+        a list. If it's False then items in the dict where only one token was
+        found will be given as individual rawstoken instances rather than as
+        lists. **kwargs are passed to the alluntil method.
+        
+        Example usage:
+            >>> hematite = df.getobj('INORGANIC:HEMATITE')
+            >>> props = hematite.propdict()
+            >>> print props.get('ENVIRONMENT')
+            [
+            [ENVIRONMENT:SEDIMENTARY:VEIN:100],
+            [ENVIRONMENT:IGNEOUS_EXTRUSIVE:VEIN:100]]
+            >>> print props.get('IS_STONE')
+            [
+            [IS_STONE]]
+            >>> print props.get('TILE:156')
+            [[TILE:156]]
+        </pre></p><p><b>query</b><br><pre>None</pre></p><p><b>remove</b><br><pre>Removes this token and the next count tokens in the direction indicated by reverse.
+        
+        Example usage:
+            >>> forest = df.getobj('ENTITY:FOREST')
+            >>> print raws.tokenlist(forest.tokens(range=5, include_self=True))
+            [ENTITY:FOREST]
+                [CREATURE:ELF]
+                [TRANSLATION:ELF]
+                [WEAPON:ITEM_WEAPON_SWORD_SHORT]
+                [WEAPON:ITEM_WEAPON_SPEAR]
+            >>> sword = forest.get('WEAPON:ITEM_WEAPON_SWORD_SHORT')
+            >>> sword.remove()
+            >>> print raws.tokenlist(forest.tokens(range=5, include_self=True))
+            [ENTITY:FOREST]
+                [CREATURE:ELF]
+                [TRANSLATION:ELF]
+                [WEAPON:ITEM_WEAPON_SPEAR]
+                [WEAPON:ITEM_WEAPON_BOW]
+        </pre></p><p><b>setarg</b><br><pre>Sets argument at index, also verifies that the input contains no illegal characters.
+        
+        Example usage:
+            >>> token = raws.token('EXAMPLE:a:b:c')
+            >>> print token
+            [EXAMPLE:a:b:c]
+            >>> token.setarg(2, 500)
+            >>> print token
+            [EXAMPLE:a:b:500]
+            >>> token.setarg('hi!')
+            >>> print token
+            [EXAMPLE:hi!:b:500]</pre></p><p><b>setprefix</b><br><pre>Set the comment text preceding a token.
+        
+        Example usage:
+            >>> token = raws.token('EXAMPLE')
+            >>> print token
+            [EXAMPLE]
+            >>> token.setprefix('hello ')
+            >>> print repr(token)
+            hello [EXAMPLE]
+        </pre></p><p><b>setsuffix</b><br><pre>Set the comment text following a token.
+        
+        Example usage:
+            >>> token = raws.token('EXAMPLE')
+            >>> print token
+            [EXAMPLE]
+            >>> token.setsuffix(' world')
+            >>> print repr(token)
+            [EXAMPLE] world
+        </pre></p><p><b>setvalue</b><br><pre>Set the token's value.
+        
+        Example usage:
+            >>> token = raws.token('EXAMPLE:a:b:c')
+            >>> token.setvalue('JUST KIDDING')
+            >>> print token
+            [JUST KIDDING:a:b:c]
+        </pre></p><p><b>tokens</b><br><pre>Iterate through successive tokens starting with this one.
+        
+        range: If defined as an integer, then iteration stops when this many tokens
+            have been iterated over.
+        include_self: If True, iteration includes this token. Otherwise, iteration
+            starts with the immediately following or preceding token.
+        reverse: If False, iteration goes forward through the sequence of tokens. If
+            True, it goes backwards.
+        until_token: Iteration stops if/when the current token matches this exact
+            object.
+            
+        Example usage:
+            >>> tokens = raws.token.parse('[HI][HOW][ARE][YOU][?]')
+            >>> first_token = tokens[0]
+            >>> last_token = tokens[-1]
+            >>> print first_token
+            [HI]
+            >>> print last_token
+            [?]
+            >>> print list(first_token.tokens())
+            [[HOW], [ARE], [YOU], [?]]
+            >>> print list(first_token.tokens(include_self=True))
+            [[HI], [HOW], [ARE], [YOU], [?]]
+            >>> print list(first_token.tokens(range=1))
+            [[HOW]]
+            >>> print list(first_token.tokens(until_token=tokens[3]))
+            [[HOW], [ARE]]
+            >>> print list(last_token.tokens(reverse=True))
+            [[YOU], [ARE], [HOW], [HI]]
+        </pre></p><p><b>tokensequal</b><br><pre>Determine whether two iterables containing tokens contain equivalent tokens.</pre></p><p><b>until</b><br><pre>None</pre></p><h1>raws.tokenfilter</h1><p><b>__init__</b><br><pre>Constructs an element of a query which either matches or doesn't match a given rawstoken.
+        Most arguments default to None. If some argument is None then that argument is not matched 
+        on.
+        
+        These arguments regard which tokens match and don't match the filter:
+        
+        pretty: If specified, the string is parsed as a token and its value and arguments are used
+            as exact_value and exact_args.
+        match_token: If specified, its value and arguments are used as exact_value and exact_args.
+        exact_token: If a token is not this exact object, then it doesn't match.
+        exact_value: If a token does not have this exact value, then it doesn't match.
+        exact_args: If every one of a token's arguments do not exactly match these arguments, then
+            it doesn't match. None values within this tuple- or list-like object are treated as
+            wildcards. (These None arguments match everything.)
+        exact_arg: An iterable containing tuple- or list-like objects where the first element is
+            an index and the second element is a string. If for any index/string pair a token's
+            argument at the index does not exactly match the string, then the token doesn't match.
+        exact_prefix: If a token does not have this exact prefix - meaning the previous token's
+            suffix and its own prefix concatenated - then it doesn't match.
+        exact_suffix: If a token does not have this exact suffix - meaning its own suffix and the
+            next token's prefix concatenated - then it doesn't match.
+        re_value: If a token's value does not match this regular expression, then it doesn't match.
+        re_args: If every one of a token's arguments do not match these regular expressions, then
+            it doesn't match. None values within this tuple- or list-like object are treated as
+            wildcards. (These None arguments match everything.)
+        re_arg: An iterable containing tuple- or list-like objects where the first element is an
+            index and the second element is a regular expression string. If for any index/regex
+            pair a token's argument at the index does not match the regular expression, then the
+            token doesn't match.
+        re_prefix: If a token's prefix - meaning the previous token's suffix and its own prefix 
+            concatenated - does not match this regular expression string then it doesn't match.
+        re_suffix: If a token's suffix - meaning its own suffix and the next token's prefix
+            concatenated - does not match this regular expression string then it doesn't match.
+        except_value: If a token has this exact value, then it doesn't match.
+        value_in: If a token's value is not contained within this iterable, then it doesn't match.
+        value_not_in: If a token's value is contained within this iterable, then it doesn't match.
+        arg_in: Handled like exact_arg or re_args, except checks for being contained by a list or
+            similar object rather than matching a single string or a regex.
+        args_contains: If at least one of a token's arguments is not exactly this string, then it
+            doesn't match.
+        args_count: If a token's number of arguments is not exactly this, then it doesn't match.
+        args_count_at_least: If a token's number of arguments is not at least this many then it
+            doesn't match.
+        args_count_no_more: If a token's number of arguments exceeds this many then it doesn't
+            match.
+        
+        These arguments regard how the filter is treated in queries.
+        
+        invert: Acts like 'not': Inverts what this filter does and doesn't match.
+        limit: After matching this many tokens, the filter will cease to accumulate results. If
+            limit is None, then the filter will never cease as long as the query continues.
+        limit_terminates: After matching the number of tokens indicated by limit, if this is set
+            to True then the query of which this filter is a member is made to terminated. If
+            set to False, then this filter will only cease to accumulate results. Defaults to
+            True.
+        </pre></p><p><b>basematch</b><br><pre>None</pre></p><p><b>invert</b><br><pre>None</pre></p><p><b>match</b><br><pre>None</pre></p></body></html>
