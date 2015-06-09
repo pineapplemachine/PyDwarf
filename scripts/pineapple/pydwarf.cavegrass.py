@@ -30,7 +30,7 @@ default_grasses = {
     'ANGEL WEED PINEAPPLE': {
         'template': 'CAVE MOSS',
         'add_tokens': '[ALL_NAMES:angel weed]',
-        'colors': raws.color.yellow() + raws.color.lgray() + raws.color.lgray() + raws.color.dgray(),
+        'colors': raws.color.brown() + raws.color.yellow() + raws.color.lgray() + raws.color.dgray(),
         'depth': (1, 1)
     },
     
