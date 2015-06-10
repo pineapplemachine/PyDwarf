@@ -307,14 +307,17 @@ class rawsqueryable:
                 if key is not None:
                     if key not in pdict:
                         if always_list:
-                            pdict[key] = [prop]
+                            pdict[key] = rawstokenlist()
+                            pdict[key].append(prop)
                         else:
                             pdict[key] = prop
                     elif prop not in pdict[key]:
                         if isinstance(pdict[key], list):
                             pdict[key].append(prop)
                         else:
-                            pdict[key] = [prop, pdict[key]]
+                            pdict[key] = rawstokenlist()
+                            pdict[key].append(prop)
+                            pdict[key].append(pdict[key], prop)
         return pdict
         
     def tokenlist(self, *args, **kwargs):
