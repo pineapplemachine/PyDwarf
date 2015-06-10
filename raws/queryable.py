@@ -317,6 +317,23 @@ class rawsqueryable:
                             pdict[key] = [prop, pdict[key]]
         return pdict
         
+    def tokenlist(self, *args, **kwargs):
+        '''Convenience method acts as a shortcut for obj.tokenlist(*args, **kwargs).
+        
+        Example usage:
+            >>> elf = df.getobj('CREATURE:ELF')
+            >>> print elf
+            [CREATURE:ELF]
+            >>> print elf.tokenlist(range=6, include_self=True)
+            [CREATURE:ELF]
+                [DESCRIPTION:A medium-sized creature dedicated to the ruthless protection of nature.]
+                [NAME:elf:elves:elven]
+                [CASTE_NAME:elf:elves:elven]
+                [CREATURE_TILE:'e'][COLOR:3:0:0]
+        '''
+        
+        return rawstokenlist(self.tokens(*args, **kwargs))
+        
     def argsuntil(self, kwargs):
         # Utility function for handling arguments of getuntil and alluntil methods
         until_args, condition_args = {}, {}
