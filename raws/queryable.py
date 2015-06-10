@@ -445,6 +445,16 @@ class rawstokenlist(list, rawsqueryable):
             yield self.__getitem__(i)
             
     def __str__(self):
-        return ''.join([repr(token) for token in self]).strip()
-
-
+        if len(self) == 0:
+            return ''
+        elif len(self) == 1:
+            return str(self[0])
+        else:
+            parts = []
+            for token in self:
+                if token is not self[0] and ((token.prefix and '\n' in token.prefix)): parts += '\n'
+                if token.prefix: parts += token.prefix.split('\n')[-1]
+                parts += str(token)
+                if token.suffix: parts += token.suffix.split('\n')[0]
+                if token is not self[-1] and ((token.suffix and '\n' in token.suffix)): parts += '\n'
+            return ''.join(parts)
