@@ -106,7 +106,7 @@ class rawsqueryable:
         Example usage:
             >>> dwarven = df['language_DWARF'].get('TRANSLATION:DWARF')
             >>> print dwarven.all(exact_value='T_WORD', re_args=['CR.*Y', None])
-            [T_WORD:CRAZY:d�besh]
+                [T_WORD:CRAZY:d�besh]
                 [T_WORD:CREEPY:innok]
                 [T_WORD:CRUCIFY:memrut]
                 [T_WORD:CRY:cagith]
@@ -289,14 +289,14 @@ class rawsqueryable:
             >>> hematite = df.getobj('INORGANIC:HEMATITE')
             >>> props = hematite.propdict()
             >>> print props.get('ENVIRONMENT')
-            [
-            [ENVIRONMENT:SEDIMENTARY:VEIN:100],
-            [ENVIRONMENT:IGNEOUS_EXTRUSIVE:VEIN:100]]
+            [ENVIRONMENT:SEDIMENTARY:VEIN:100]
+            [ENVIRONMENT:IGNEOUS_EXTRUSIVE:VEIN:100]
             >>> print props.get('IS_STONE')
-            [
-            [IS_STONE]]
+            [IS_STONE]
             >>> print props.get('TILE:156')
-            [[TILE:156]]
+            [TILE:156]
+            >>> print props.get('NOT_A_TOKEN')
+            None
         '''
         
         until_exact_value, until_re_value, until_value_in = self.argsprops()
@@ -396,10 +396,28 @@ class rawsqueryable_obj(rawsqueryable):
     
     def getobjheaders(self, type):
         '''Gets OBJECT:X tokens where X is type. Is also prepared for special cases
-        like type=ITEM_PANTS matching OBJECT:ITEM. Current as of DF version 0.40.24.'''
+        like type=ITEM_PANTS matching OBJECT:ITEM.
+        
+        Example usage:
+            >>> objheaders = df.getobjheaders('INORGANIC')
+            >>> for token in objheaders: print token; print token.next
+            ...
+            [OBJECT:INORGANIC]
+            [INORGANIC:PLASTER]
+            [OBJECT:INORGANIC]
+            [INORGANIC:SANDSTONE]
+            [OBJECT:INORGANIC]
+            [INORGANIC:IRON]
+            [OBJECT:INORGANIC]
+            [INORGANIC:CLAY]
+            [OBJECT:INORGANIC]
+            [INORGANIC:ONYX]
+            [OBJECT:INORGANIC]
+            [INORGANIC:HEMATITE]
+        '''
         
         match_types = self.getobjheadername(type)
-        results = []
+        results = rawstokenlist()
         for rfile in self.files.itervalues():
             root = rfile.root()
             if root and root.value == 'OBJECT' and root.nargs() == 1 and root.args[0] in match_types:
@@ -410,7 +428,23 @@ class rawsqueryable_obj(rawsqueryable):
         '''Get the first object token matching a given type and id. (If there's more 
             than one result for any given query then I'm afraid you've done something
             silly with your raws.) This method should work properly with things like
-            CREATURE:X tokens showing up in entity_default.'''
+            CREATURE:X tokens showing up in entity_default. Should almost always be
+            faster than an equivalent call to get, also.
+        
+        Example usage:
+            >>> dwarf = df.getobj('CREATURE:DWARF')
+            >>> print dwarf.tokenlist(include_self=True, range=4)
+                [CREATURE:DWARF]
+                [DESCRIPTION:A short, sturdy creature fond of drink and industry.]
+                [NAME:dwarf:dwarves:dwarven]
+                [CASTE_NAME:dwarf:dwarves:dwarven]
+            >>> not_dwarf = df.getlast('CREATURE:DWARF') # gets the CREATURE:DWARF token underneath ENTITY:MOUNTAIN instead
+            >>> print not_dwarf.tokenlist(include_self=True, range=4)
+                [CREATURE:DWARF]
+                [TRANSLATION:DWARF]
+                [DIGGER:ITEM_WEAPON_PICK]
+                [WEAPON:ITEM_WEAPON_AXE_BATTLE]
+        '''
             
         type, exact_id = rawsqueryable_obj.objpretty(pretty, type, exact_id)
         for objecttoken in self.getobjheaders(type):
@@ -419,11 +453,31 @@ class rawsqueryable_obj(rawsqueryable):
         return None
         
     def allobj(self, pretty=None, type=None, exact_id=None, re_id=None, id_in=None):
-        '''Gets all objects matching a given type and optional id or id regex.'''
+        '''Gets all objects matching a given type and optional id or id regex.
+        
+        Example usage:
+            >>> pants = df.allobj('ITEM_PANTS')
+            >>> print pants
+            [ITEM_PANTS:ITEM_PANTS_PANTS]
+            [ITEM_PANTS:ITEM_PANTS_GREAVES]
+            [ITEM_PANTS:ITEM_PANTS_LEGGINGS]
+            [ITEM_PANTS:ITEM_PANTS_LOINCLOTH]
+            [ITEM_PANTS:ITEM_PANTS_THONG]
+            [ITEM_PANTS:ITEM_PANTS_SKIRT]
+            [ITEM_PANTS:ITEM_PANTS_SKIRT_SHORT]
+            [ITEM_PANTS:ITEM_PANTS_SKIRT_LONG]
+            [ITEM_PANTS:ITEM_PANTS_BRAIES]
+            >>> bears = df.allobj(type='CREATURE', re_id='BEAR_.+')
+            >>> print bears
+            [CREATURE:BEAR_GRIZZLY]
+            [CREATURE:BEAR_BLACK]
+            [CREATURE:BEAR_POLAR]
+            [CREATURE:BEAR_SLOTH]
+        '''
         
         if re_id and id_in: raise ValueError
         type, exact_id = rawsqueryable_obj.objpretty(pretty, type, exact_id)
-        results = []
+        results = rawstokenlist()
         for objecttoken in self.getobjheaders(type):
             for result in objecttoken.all(
                 exact_value = type,
@@ -436,10 +490,29 @@ class rawsqueryable_obj(rawsqueryable):
         return results
         
     def objdict(self, *args, **kwargs):
+        '''Calls allobj with the same arguments then adds each result to a dictionary
+        associating object IDs with the tokens where they're declared.
+        
+        Example usage:
+            >>> inorganics = df.objdict('INORGANIC')
+            >>> print len(inorganics)
+            263
+            >>> print 'NOT_A_ROCK' in inorganics
+            False
+            >>> obsidian = inorganics.get('OBSIDIAN')
+            >>> print obsidian.tokenlist(range=6, include_self=True)
+            [INORGANIC:OBSIDIAN]
+            [USE_MATERIAL_TEMPLATE:STONE_TEMPLATE]
+                [MELTING_POINT:13600]
+                [BOILING_POINT:16000]
+                [IMPACT_YIELD:1000000]
+                [IMPACT_FRACTURE:1000000]
+        '''
         return {token.args[0]: token for token in self.allobj(*args, **kwargs)}
         
     @staticmethod
     def objpretty(pretty, type, id):
+        '''Internal'''
         # Utility method for handling getobj/allobj arguments.
         if pretty is not None:
             if ':' in pretty:

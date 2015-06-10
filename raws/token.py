@@ -238,7 +238,6 @@ class rawstoken(rawsqueryable):
             >>> token_b = raws.token('EXAMPLE:x:y:z')
             >>> print token_a.arg()
             x
-            >>> print token_b.arg()
             >>> try:
             ...     print token_b.arg()
             ... except:
@@ -303,10 +302,14 @@ class rawstoken(rawsqueryable):
             False
             >>> tokens = raws.token.parse('[HELLO][WORLD]')
             >>> print tokens
-            [[HELLO], [WORLD]]
+            [HELLO][WORLD]
+            >>> print tokens[0]
+            [HELLO]
+            >>> print tokens[1]
+            [WORLD]
             >>> copied_tokens = raws.token.copy(tokens)
             >>> print copied_tokens
-            [[HELLO], [WORLD]]
+            [HELLO][WORLD]
             >>> print tokens == copied_tokens
             True
             >>> print tokens is copied_tokens
@@ -348,16 +351,16 @@ class rawstoken(rawsqueryable):
             [HI]
             >>> print last_token
             [?]
-            >>> print list(first_token.tokens())
-            [[HOW], [ARE], [YOU], [?]]
-            >>> print list(first_token.tokens(include_self=True))
-            [[HI], [HOW], [ARE], [YOU], [?]]
-            >>> print list(first_token.tokens(range=1))
-            [[HOW]]
-            >>> print list(first_token.tokens(until_token=tokens[3]))
-            [[HOW], [ARE]]
-            >>> print list(last_token.tokens(reverse=True))
-            [[YOU], [ARE], [HOW], [HI]]
+            >>> print raws.tokenlist(first_token.tokens()) # Construct a raws.tokenlist object using the generator returned by the tokens method
+            [HOW][ARE][YOU][?]
+            >>> print raws.tokenlist(first_token.tokens(include_self=True))
+            [HI][HOW][ARE][YOU][?]
+            >>> print raws.tokenlist(first_token.tokens(range=1))
+            [HOW]
+            >>> print raws.tokenlist(first_token.tokens(until_token=tokens[3]))
+            [HOW][ARE]
+            >>> print raws.tokenlist(last_token.tokens(reverse=True))
+            [YOU][ARE][HOW][HI]
         '''
         count = 0
         itertoken = self if include_self else (self.prev if reverse else self.next)
@@ -372,8 +375,8 @@ class rawstoken(rawsqueryable):
         
         Example usage:
             >>> tokens = raws.token.parse('[HI][HOW][ARE][YOU][?]')
-            >>> print list(raws.token.iter(tokens[1], tokens[3]))
-            [[HOW], [ARE], [YOU]]
+            >>> print raws.tokenlist(raws.token.iter(tokens[1], tokens[3]))
+            [HOW][ARE][YOU]
         '''
         itertoken = root
         while itertoken is not None and itertoken.next is not tail:
@@ -412,22 +415,23 @@ class rawstoken(rawsqueryable):
         Example usage:
             >>> two = raws.token('TWO')
             >>> two.add('THREE')
-            [[THREE]]
-            >>> print list(two.tokens(include_self=True))
-            [[TWO], [THREE]]
+            [THREE]
+            >>> print two.tokenlist(include_self=True)
+            [TWO][THREE]
             >>> three = two.next
-            >>> three.add('TWO AND A HALF', reverse=True)
-            [[TWO AND A HALF]]
-            >>> print list(two.tokens(include_self=True))
-            [[TWO], [TWO AND A HALF], [THREE]]
+            >>> three.add('[TWO AND A HALF][TWO AND THREE QUARTERS]', reverse=True)
+            [[TWO AND A HALF], [TWO AND THREE QUARTERS]]
+            >>> print two.tokenlist(include_self=True)
+            [TWO][TWO AND A HALF][TWO AND THREE QUARTERS][THREE]
         ''' % rawstoken.auto_arg_docstring
         pretty, token, tokens = rawstoken.auto(auto, pretty, token, tokens)
         if pretty:
-            return self.addall(rawstoken.parse(pretty), reverse)
+            tokens = rawstoken.parse(pretty)
+            if len(tokens) == 1: token = tokens[0]
+        if token:
+            return self.addone(token, reverse)
         elif tokens:
             return self.addall(tokens, reverse)
-        elif token:
-            return self.addone(token, reverse)
         else:
             raise ValueError
             
@@ -442,13 +446,13 @@ class rawstoken(rawsqueryable):
             >>> panda = df.getobj('CREATURE:PANDA, GIGANTIC')
             >>> print panda.tokens(range=4, include_self=True)
             <generator object tokens at 0x10c28f3c0>
-            >>> print raws.tokenlist(panda.tokens(range=4, include_self=True))
+            >>> print panda.tokenlist(range=4, include_self=True)
             [CREATURE:PANDA, GIGANTIC]
                 [COPY_TAGS_FROM:PANDA]
                 [APPLY_CREATURE_VARIATION:GIANT]
                 [CV_REMOVE_TAG:CHANGE_BODY_SIZE_PERC]
             >>> panda.addprop('FLIER')
-            >>> print raws.tokenlist(panda.tokens(range=5, include_self=True))
+            >>> print panda.tokenlist(range=5, include_self=True)
             [CREATURE:PANDA, GIGANTIC]
                 [COPY_TAGS_FROM:PANDA][FLIER]
                 [APPLY_CREATURE_VARIATION:GIANT]
@@ -514,7 +518,7 @@ class rawstoken(rawsqueryable):
         
         Example usage:
             >>> forest = df.getobj('ENTITY:FOREST')
-            >>> print raws.tokenlist(forest.tokens(range=5, include_self=True))
+            >>> print forest.tokenlist(range=5, include_self=True)
             [ENTITY:FOREST]
                 [CREATURE:ELF]
                 [TRANSLATION:ELF]
@@ -522,7 +526,7 @@ class rawstoken(rawsqueryable):
                 [WEAPON:ITEM_WEAPON_SPEAR]
             >>> sword = forest.get('WEAPON:ITEM_WEAPON_SWORD_SHORT')
             >>> sword.remove()
-            >>> print raws.tokenlist(forest.tokens(range=5, include_self=True))
+            >>> print forest.tokenlist(range=5, include_self=True)
             [ENTITY:FOREST]
                 [CREATURE:ELF]
                 [TRANSLATION:ELF]
@@ -564,6 +568,8 @@ class rawstoken(rawsqueryable):
             >>> tokens = raws.token.parse('[WHAT] a [BEAUTIFUL][DAY]')
             >>> print tokens
             [WHAT] a [BEAUTIFUL][DAY]
+            >>> print tokens[0]
+            [WHAT]
             >>> print tokens[1]
             [BEAUTIFUL] 
         '''
