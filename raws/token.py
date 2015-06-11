@@ -17,7 +17,7 @@ class rawstoken(rawsqueryable):
     
     @staticmethod
     def auto(auto, pretty, token, tokens):
-        # Convenience function for handling method arguments
+        '''Internal: Convenience function for handling method arguments'''
         if auto is not None:
             if isinstance(auto, basestring): pretty = auto
             elif isinstance(auto, rawstoken): token = auto
@@ -40,6 +40,7 @@ class rawstoken(rawsqueryable):
         suffix: Comment or formatting text following a token.
         prev: The previous token.
         next: The following token.
+        file: Indicates the raws.file object to which this token belongs, if any.
         
         Example usage:
             >>> token_a = raws.token('DISPLAY_COLOR:6:0:1')
@@ -63,6 +64,7 @@ class rawstoken(rawsqueryable):
             args = list(token.args) if token.args else []
             prefix = token.prefix
             suffix = token.suffix
+            file = token.file
         # tokens look like this: [value:arg1:arg2:...:argn]
         self.prev = prev            # previous token sequentially
         self.next = next            # next token sequentially
@@ -71,7 +73,7 @@ class rawstoken(rawsqueryable):
         self.prefix = prefix        # non-token text between the preceding token and this one
         self.suffix = suffix        # between this token and the next/eof (should typically apply to eof)
         self.removed = False        # keeps track of whether this token has been removed yet
-        self.file = None            # parent rawsfile object
+        self.file = file            # parent rawsfile object
         if not self.args: self.args = []
     
     def nargs(self, count=None):
@@ -270,11 +272,11 @@ class rawstoken(rawsqueryable):
             >>> token_c = raws.token('EXAMPLE:hi!')
             >>> print token_a, token_b, token_c
             [EXAMPLE:hi!] [EXAMPLE:hello there] [EXAMPLE:hi!]
-            >>> print token_a == token_b
+            >>> print token_a.equals(token_b) # Same as token_a == token_b
             False
-            >>> print token_b == token_c
+            >>> print token_b.equals(token_c)
             False
-            >>> print token_c == token_a
+            >>> print token_c.equals(token_a)
             True
             >>> print token_c is token_a
             False'''
@@ -468,7 +470,7 @@ class rawstoken(rawsqueryable):
         addafter.add(auto=auto, **kwargs)
     
     @staticmethod
-    def firstandlast(tokens):
+    def firstandlast(tokens, setfile=None):
         '''Utility method for getting the first and last items of some iterable
         
         Example usage:
@@ -477,16 +479,20 @@ class rawstoken(rawsqueryable):
             ([ONE], [FOUR])
         '''
         try:
+            if setfile is not None: raise ValueError
             return tokens[0], tokens[-1]
         except:
             first, last = None, None
             for token in tokens:
                 if first is None: first = token
                 last = token
+                if setfile is not None: token.file = setfile
             return first, last            
         
     def addone(self, token, reverse=False):
-        # Utility method called by add when adding a single token
+        '''Internal: Utility method called by add when adding a single token'''
+        
+        token.file = self.file
         if reverse:
             token.next = self
             token.prev = self.prev
@@ -499,8 +505,9 @@ class rawstoken(rawsqueryable):
             self.next = token
         return token
     def addall(self, tokens, reverse=False):
-        # Utility method called by add when adding multiple tokens
-        first, last = rawstoken.firstandlast(tokens)
+        '''Internal: Utility method called by add when adding multiple tokens'''
+        
+        first, last = rawstoken.firstandlast(tokens, setfile=self.file)
         if reverse:
             last.next = self
             first.prev = self.prev
