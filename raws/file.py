@@ -1,10 +1,19 @@
-from queryable import rawsqueryable
+from queryable import rawsqueryable, rawstokenlist
 from token import rawstoken
 
 class rawsfile(rawsqueryable):
     '''Represents a single file within a raws directory.'''
     
     def __init__(self, header=None, data=None, path=None, tokens=None, rfile=None, dir=None):
+        '''Constructs a new raws file object.
+        
+        header: The header string to appear at the top of the file. Also used to determine filename.
+        data: A string to be parsed into token data.
+        path: A path to the file from which this object is being parsed, if any exists.
+        tokens: An iterable of tokens from which to construct the object; these tokens will be its initial contents.
+        rfile: A file-like object from which to automatically read the header and data attributes.
+        dir: Which raws.dir object this file belongs to.
+        '''
         if rfile:
             self.read(rfile)
             if header is not None: self.header = header
@@ -21,25 +30,103 @@ class rawsfile(rawsqueryable):
         if tokens:
             self.settokens(tokens)
             
-    def settokens(self, tokens):
-        self.roottoken, self.tailtoken = rawstoken.firstandlast(tokens)
+    def getpath(self):
+        return self.path
+    def setpath(self, path):
+        self.path = path
         
+    def getheader(self):
+        '''Get the file header.
+        
+        Example usage:
+            >>> dwarf = df.getobj('CREATURE:DWARF')
+            >>> creature_standard = dwarf.file
+            >>> print creature_standard.getheader()
+            creature_standard
+            >>> creature_standard.setheader('example_header')
+            >>> print creature_standard.getheader()
+            example_header
+        '''
+        return self.header
+    def setheader(self, header):
+        '''Set the file header.
+        
+        Example usage:
+            >>> dwarf = df.getobj('CREATURE:DWARF')
+            >>> creature_standard = dwarf.file
+            >>> print creature_standard.getheader()
+            creature_standard
+            >>> creature_standard.setheader('example_header')
+            >>> print creature_standard.getheader()
+            example_header
+        '''
+        self.header = header
+            
+    def settokens(self, tokens):
+        '''Internal: Utility method for setting the root and tail tokens given an iterable.'''
+        self.roottoken, self.tailtoken = rawstoken.firstandlast(tokens, setfile=self)
+    
     def copy(self):
+        '''Makes a copy of a file and its contents.
+        
+        Example usage:
+            >>> item_food = df.getfile('item_food')
+            >>> food_copy = item_food.copy()
+            >>> print item_food is food_copy
+            False
+            >>> print item_food == food_copy
+            True
+            >>> food_copy.add('EXAMPLE:TOKEN')
+            [EXAMPLE:TOKEN]
+            >>> print food_copy.tokenlist()
+            [OBJECT:ITEM]
+            [ITEM_FOOD:ITEM_FOOD_BISCUITS]
+            [NAME:biscuits]
+            [LEVEL:2]
+            [ITEM_FOOD:ITEM_FOOD_STEW]
+            [NAME:stew]
+            [LEVEL:3]
+            [ITEM_FOOD:ITEM_FOOD_ROAST]
+            [NAME:roast]
+            [LEVEL:4][EXAMPLE:TOKEN]
+            >>> print item_food == food_copy
+            False
+        '''
         rfile = rawsfile(header=self.header, path=self.path, dir=self.dir)
         rfile.settokens(rawstoken.copy(self.tokens()))
         return rfile
         
+    def equals(self, other):
+        return self.header == other.header and rawstokenlist(self.tokens()) == rawstokenlist(other.tokens())
+        
+    def __eq__(self, other):
+        return self.equals(other)
+    def __ne__(self, other):
+        return not self.equals(other)
+        
     def __str__(self):
-        return '%s\n%s' %(self.header, ''.join([str(o) for o in self.tokens()]))
+        return self.header
     def __repr__(self):
         return '%s\n%s' %(self.header, ''.join([repr(o) for o in self.tokens()]))
         
     def root(self):
-        '''Gets the first token in the file.'''
+        '''Gets the first token in the file.
+        
+        Example usage:
+            >>> creature_standard = df.getfile('creature_standard')
+            >>> print creature_standard.root()
+            [OBJECT:CREATURE]
+        '''
         while self.roottoken and self.roottoken.prev: self.roottoken = self.roottoken.prev
         return self.roottoken
     def tail(self):
-        '''Gets the last token in the file.'''
+        '''Gets the last token in the file.
+        
+        Example usage:
+            >>> creature_standard = df.getfile('creature_standard')
+            >>> print creature_standard.tail()
+            [MULTIPLY_VALUE:15]
+        '''
         while self.tailtoken and self.tailtoken.next: self.tailtoken = self.tailtoken.next
         return self.tailtoken
         
@@ -70,6 +157,7 @@ class rawsfile(rawsqueryable):
             if token:
                 self.roottoken = token
                 self.tailtoken = token
+                token.file = self
                 return token
             elif tokens:
                 self.settokens(tokens)
