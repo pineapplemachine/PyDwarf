@@ -30,6 +30,9 @@ class rawsfile(rawsqueryable):
         if tokens:
             self.settokens(tokens)
             
+    def __iter__(self):
+        return self.tokens()
+            
     def getpath(self):
         return self.path
     def setpath(self, path):
@@ -97,12 +100,15 @@ class rawsfile(rawsqueryable):
         return rfile
         
     def equals(self, other):
-        return self.header == other.header and rawstokenlist(self.tokens()) == rawstokenlist(other.tokens())
+        return self.header == other.header and rawstoken.tokensequal(self.tokens(), other.tokens())
         
     def __eq__(self, other):
         return self.equals(other)
     def __ne__(self, other):
         return not self.equals(other)
+        
+    def __len__(self):
+        return self.length()
         
     def __str__(self):
         return self.header
@@ -141,11 +147,44 @@ class rawsfile(rawsqueryable):
             count += 1
             
     def read(self, rfile):
+        '''Internal: Given a file-like object, reads header and data from it.'''
         self.header, self.data = rfile.readline().strip(), rfile.read()
     def write(self, rfile):
+        '''Internal: Given a file-like object, writes the file's contents to that file.'''
         rfile.write(self.__repr__())
     
     def add(self, auto=None, pretty=None, token=None, tokens=None, **kwargs):
+        '''Adds tokens to the end of a file.
+        
+        Example usage:
+            >>> item_food = df.getfile('item_food')
+            >>> print item_food.tokenlist()
+            [OBJECT:ITEM]
+            [ITEM_FOOD:ITEM_FOOD_BISCUITS]
+            [NAME:biscuits]
+            [LEVEL:2]
+            [ITEM_FOOD:ITEM_FOOD_STEW]
+            [NAME:stew]
+            [LEVEL:3]
+            [ITEM_FOOD:ITEM_FOOD_ROAST]
+            [NAME:roast]
+            [LEVEL:4]
+            >>> tokens = item_food.add('\nhi! [THIS][IS][AN][EXAMPLE]')
+            >>> print tokens
+            hi! [THIS][IS][AN][EXAMPLE]
+            >>> print item_food.tokenlist()
+            [OBJECT:ITEM]
+            [ITEM_FOOD:ITEM_FOOD_BISCUITS]
+            [NAME:biscuits]
+            [LEVEL:2]
+            [ITEM_FOOD:ITEM_FOOD_STEW]
+            [NAME:stew]
+            [LEVEL:3]
+            [ITEM_FOOD:ITEM_FOOD_ROAST]
+            [NAME:roast]
+            [LEVEL:4]
+            hi! [THIS][IS][AN][EXAMPLE]
+        '''
         tail = self.tail()
         if tail:
             return tail.add(auto=auto, pretty=pretty, token=token, tokens=tokens, **kwargs)
@@ -164,4 +203,35 @@ class rawsfile(rawsqueryable):
                 return tokens
                 
     def remove(self):
+        '''Remove this file from the raws.dir object to which it belongs.
+        
+        Example usage:
+            >>> dwarf = df.getobj('CREATURE:DWARF')
+            >>> print dwarf
+            [CREATURE:DWARF]
+            >>> print dwarf.file
+            creature_standard
+            >>> dwarf.file.remove()
+            >>> print df.getobj('CREATURE:DWARF')
+            None
+            >>> print df.getfile('creature_standard')
+            None
+        '''
         self.dir.removefile(rfile=self)
+        
+    def length(self):
+        '''Get the number of tokens in this file.
+        
+        Example usage:
+        '''
+        return len(self.tokens())
+        
+    def clear(self):
+        '''Remove all tokens from this file.
+        
+        Example usage:
+        '''
+        for token in self.tokens():
+            token.file = None
+        self.roottoken = None
+        self.tailtoken = None
