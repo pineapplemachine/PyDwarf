@@ -8,4 +8,6 @@ from dir import rawsdir as dir
 from dir import copytree
 import color
 
+filter = tokenfilter
+
 __version__ = '1.0.0'
