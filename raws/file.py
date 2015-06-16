@@ -25,10 +25,10 @@ class rawsfile(rawsqueryable):
         self.roottoken = None
         self.tailtoken = None
         self.dir = dir
-        if self.data:
+        if self.data is not None:
             tokens = rawstoken.parse(self.data, implicit_braces=False, file=self)
             self.settokens(tokens, setfile=False)
-        elif tokens:
+        elif tokens is not None:
             self.settokens(tokens, setfile=True)
             
     def __getitem__(self, item):

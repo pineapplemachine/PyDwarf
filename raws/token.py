@@ -55,9 +55,9 @@ class rawstoken(rawsqueryable):
         
         pretty, token, tokens = rawstoken.auto(auto, pretty, token, None)
         if tokens is not None: raise ValueError
-        if pretty:
+        if pretty is not None:
             token = rawstoken.parseone(pretty, implicit_braces=True)
-        if token:
+        if token is not None:
             value = token.value
             args = list(token.args) if token.args else []
             prefix = token.prefix
