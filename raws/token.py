@@ -420,9 +420,9 @@ class rawstoken(rawsqueryable):
             False
         '''
         pretty, token, tokens = rawstoken.auto(auto, None, token, tokens)
-        if token:
+        if token is not None:
             return rawstoken(token=token)
-        elif tokens:
+        elif tokens is not None:
             copied = rawstokenlist()
             prevtoken = None
             for token in tokens:
@@ -536,12 +536,12 @@ class rawstoken(rawsqueryable):
             [TWO][TWO AND A HALF][TWO AND THREE QUARTERS][THREE]
         ''' % rawstoken.auto_arg_docstring
         pretty, token, tokens = rawstoken.auto(auto, pretty, token, tokens)
-        if pretty:
+        if pretty is not None:
             tokens = rawstoken.parse(pretty)
             if len(tokens) == 1: token = tokens[0]
-        if token:
+        if token is not None:
             return self.addone(token, reverse)
-        elif tokens:
+        elif tokens is not None:
             return self.addall(tokens, reverse)
         else:
             raise ValueError

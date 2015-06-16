@@ -201,15 +201,15 @@ class rawsfile(rawsqueryable):
             return tail.add(auto=auto, pretty=pretty, token=token, tokens=tokens, **kwargs)
         else:
             pretty, token, tokens = rawstoken.auto(auto, pretty, token, tokens)
-            if pretty:
+            if pretty is not None:
                 tokens = rawstoken.parse(pretty)
                 if len(tokens) == 1: token = tokens[0]
-            if token:
+            if token is not None:
                 self.roottoken = token
                 self.tailtoken = token
                 token.file = self
                 return token
-            elif tokens:
+            elif tokens is not None:
                 self.settokens(tokens)
                 return tokens
                 
