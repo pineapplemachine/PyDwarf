@@ -26,12 +26,23 @@ class rawsfile(rawsqueryable):
         self.tailtoken = None
         self.dir = dir
         if self.data:
-            tokens = rawstoken.parse(self.data, implicit_braces=False)
-        if tokens:
-            self.settokens(tokens)
+            tokens = rawstoken.parse(self.data, implicit_braces=False, file=self)
+            self.settokens(tokens, setfile=False)
+        elif tokens:
+            self.settokens(tokens, setfile=True)
             
-    def __iter__(self):
-        return self.tokens()
+    def __getitem__(self, item):
+        if isinstance(item, basestring):
+            return self.get(pretty=item)
+        elif isinstance(item, int):
+            itrtoken = self.root() if item > 0 else self.tail()
+            item += (item < 0)
+            for i in xrange(0, abs(item)):
+                itrtoken = itrtoken.next if item > 0 else itrtoken.prev
+                if itrtoken is None: return None
+            return itrtoken
+        else:
+            raise ValueError
             
     def getpath(self):
         return self.path
@@ -65,9 +76,9 @@ class rawsfile(rawsqueryable):
         '''
         self.header = header
             
-    def settokens(self, tokens):
+    def settokens(self, tokens, setfile=True):
         '''Internal: Utility method for setting the root and tail tokens given an iterable.'''
-        self.roottoken, self.tailtoken = rawstoken.firstandlast(tokens, setfile=self)
+        self.roottoken, self.tailtoken = rawstoken.firstandlast(tokens, self if setfile else None)
     
     def copy(self):
         '''Makes a copy of a file and its contents.
@@ -141,7 +152,7 @@ class rawsfile(rawsqueryable):
         if include_self: raise ValueError
         count = 0
         itrtoken = self.tail() if reverse else self.root()
-        while itrtoken and (range is None or range > count):
+        while itrtoken is not None and (range is None or range > count):
             yield itrtoken
             itrtoken = itrtoken.prev if reverse else itrtoken.next
             count += 1
@@ -224,7 +235,9 @@ class rawsfile(rawsqueryable):
         
         Example usage:
         '''
-        return len(self.tokens())
+        count = 0
+        for token in self.tokens(): count += 1
+        return count
         
     def clear(self):
         '''Remove all tokens from this file.

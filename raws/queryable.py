@@ -28,8 +28,7 @@ class rawsqueryable:
             getlastuntil, and alluntil. The arguments for the until method should be
             named normally.)
     ''' % query_tokeniter_docstring
-    
-    def __getitem__(self, pretty): return self.get(pretty=pretty)
+            
     def __iter__(self): return self.tokens()
     def __contains__(self, pretty): return self.get(pretty=pretty) is not None
     

@@ -97,9 +97,13 @@ class rawstoken(rawsqueryable):
             tokens.append(self)
             for token in other.tokens(): tokens.append(token)
             return tokens
-        else isinstance(other, basestring):
+        elif isinstance(other, basestring):
             token = self.copy()
             token.addarg(other)
+            return token
+        else:
+            token = self.copy()
+            for arg in other: token.addarg(other)
             return token
             
     def __mul__(self, value):
@@ -114,6 +118,18 @@ class rawstoken(rawsqueryable):
     def __contains__(self, value):
         return self.containsarg(value)
         
+    def __getitem__(self, item):
+        if isinstance(item, basestring):
+            return self.get(pretty=item)
+        elif isinstance(item, int):
+            itrtoken = self
+            for i in xrange(0, abs(item)):
+                itrtoken = itrtoken.next if item > 0 else itrtoken.prev
+                if itrtoken is None: return None
+            return itrtoken
+        else:
+            raise ValueError
+        
     @staticmethod
     def auto(auto, pretty, token, tokens):
         '''Internal: Convenience function for handling method arguments'''
@@ -123,7 +139,17 @@ class rawstoken(rawsqueryable):
             elif isinstance(auto, rawsqueryable): tokens = auto.tokens()
             else: tokens = auto
         return pretty, token, tokens
-    
+       
+    @staticmethod
+    def sanitizeargstring(value):
+        '''Internal: Utility method for sanitizing a string intended to be evaluated as an arugment for a token.'''
+        valuestr = str(value)
+        if valuestr in rawstoken.argument_replacements:
+            valuestr = rawstoken.argument_replacements[valuestr]
+        else:
+            if any([char in valuestr for char in rawstoken.illegal_internal_chars]): raise ValueError
+        return valuestr
+        
     def nargs(self, count=None):
         '''When count is None, returns the number of arguments the token has. (Length of
         arguments list.) Otherwise, returns True if the number of arguments is equal to the
@@ -212,16 +238,6 @@ class rawstoken(rawsqueryable):
             a:b:c
         '''
         return ':'.join([str(a) for a in self.args])
-        
-    @staticmethod
-    def sanitizeargstring(value):
-        '''Internal: Utility method for sanitizing a string intended to be evaluated as an arugment for a token.'''
-        valuestr = str(value)
-        if valuestr in rawstoken.argument_replacements:
-            valuestr = rawstoken.argument_replacements[valuestr]
-        else:
-            if any([char in valuestr for char in rawstoken.illegal_internal_chars]): raise ValueError
-        return valuestr
         
     def getvalue(self):
         '''Get the token's value.
@@ -452,7 +468,7 @@ class rawstoken(rawsqueryable):
         '''
         count = 0
         itertoken = self if include_self else (self.prev if reverse else self.next)
-        while itertoken and (range is None or range > count) and (itertoken is not until_token):
+        while itertoken is not None and (range is None or range > count) and (itertoken is not until_token):
             yield itertoken
             itertoken = itertoken.prev if reverse else itertoken.next
             count += 1
@@ -705,7 +721,7 @@ class rawstoken(rawsqueryable):
                             **kwargs
                         )
                         pos = close+1
-                if token:
+                if token is not None:
                     if len(tokens): tokens[-1].next = token
                     tokens.append(token)
                 else:
