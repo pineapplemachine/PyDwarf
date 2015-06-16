@@ -140,7 +140,7 @@ def cavegrass(df, grasses=default_grasses, add_file='plant_grasses_cavegrass_pin
             if 'template' in grassdict:
                 templatetoken = grasstokens.get(grassdict['template'])
                 if not templatetoken:
-                    pydwarf.log.error('Couldn\'t find template %s to apply to grass %s.' % (templatetoken, grassname))
+                    pydwarf.log.error('Couldn\'t find template %s to apply to grass %s.' % (grassdict['template'], grassname))
                     failures += 1
                 else:
                     props = templatetoken.allprop(value_not_in=('ALL_NAMES', 'NAME', 'NAME_PLURAL', 'ADJ'))
