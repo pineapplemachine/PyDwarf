@@ -134,7 +134,7 @@ class rawsfile(rawsqueryable):
             >>> print creature_standard.root()
             [OBJECT:CREATURE]
         '''
-        while self.roottoken and self.roottoken.prev: self.roottoken = self.roottoken.prev
+        while self.roottoken is not None and self.roottoken.prev is not None: self.roottoken = self.roottoken.prev
         return self.roottoken
     def tail(self):
         '''Gets the last token in the file.
@@ -144,7 +144,7 @@ class rawsfile(rawsqueryable):
             >>> print creature_standard.tail()
             [MULTIPLY_VALUE:15]
         '''
-        while self.tailtoken and self.tailtoken.next: self.tailtoken = self.tailtoken.next
+        while self.tailtoken is not None and self.tailtoken.next is not None: self.tailtoken = self.tailtoken.next
         return self.tailtoken
         
     def tokens(self, range=None, include_self=False, reverse=False):
