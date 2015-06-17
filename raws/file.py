@@ -147,15 +147,23 @@ class rawsfile(rawsqueryable):
         while self.tailtoken is not None and self.tailtoken.next is not None: self.tailtoken = self.tailtoken.next
         return self.tailtoken
         
-    def tokens(self, range=None, include_self=False, reverse=False):
-        '''Iterate through all tokens.'''
-        if include_self: raise ValueError
-        count = 0
-        itrtoken = self.tail() if reverse else self.root()
-        while itrtoken is not None and (range is None or range > count):
-            yield itrtoken
-            itrtoken = itrtoken.prev if reverse else itrtoken.next
-            count += 1
+    def tokens(self, reverse=False, **kwargs):
+        '''Iterate through all tokens.
+        
+        reverse: If False, starts from the first token and iterates forwards. If True,
+            starts from the last token and iterates backwards. Defaults to False.
+        **kwargs: Other named arguments are passed on to the raws.token.tokens method.
+        '''
+        if reverse:
+            tail = self.tail()
+            if tail is None: return
+            generator = tail.tokens(include_self=True, reverse=True, **kwargs)
+        else:
+            root = self.root()
+            if root is None: return
+            generator = root.tokens(include_self=True, **kwargs)
+        for token in generator:
+            yield token
             
     def read(self, rfile):
         '''Internal: Given a file-like object, reads header and data from it.'''
