@@ -5,7 +5,7 @@ from filters import *
 
 
 
-class rawsqueryable:
+class rawsqueryable(object):
     '''Classes which contain raws tokens should inherit from this in order to provide querying functionality.'''
     
     query_tokeniter_docstring = '''
@@ -31,6 +31,16 @@ class rawsqueryable:
             
     def __iter__(self): return self.tokens()
     def __contains__(self, pretty): return self.get(pretty=pretty) is not None
+    
+    def __getitem__(self, item):
+        if isinstance(item, basestring):
+            return self.get(pretty=item)
+        elif isinstance(item, int):
+            return self.index(item)
+        elif isinstance(item, slice):
+            return self.slice(item)
+        else:
+            raise ValueError
     
     def query(self, filters, tokeniter=None, **kwargs):
         '''Executes a query on some iterable containing tokens.

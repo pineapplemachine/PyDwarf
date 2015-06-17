@@ -36,6 +36,9 @@ class rawsbasefilter:
     def __xor__(self, other):
         return rawsboolfilter.one(self, other)
     
+    def __invert__(self):
+        return self.inverted()
+    
     def __contains__(self, token):
         return self.match(token)
 
