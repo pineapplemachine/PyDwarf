@@ -1,6 +1,6 @@
 import os
 import shutil
-from queryable import rawsqueryable_obj
+from queryable import rawsqueryable_obj, rawstokenlist
 from file import rawsfile
 
 
@@ -102,6 +102,36 @@ class rawsdir(rawsqueryable_obj):
         for filename in self.files:
             for token in self.files[filename].tokens():
                 yield token
+                
+    def getobjheaders(self, type):
+        '''Gets OBJECT:X tokens where X is type. Is also prepared for special cases
+        like type=ITEM_PANTS matching OBJECT:ITEM.
+        
+        Example usage:
+            >>> objheaders = df.getobjheaders('INORGANIC')
+            >>> for token in objheaders: print token; print token.next
+            ...
+            [OBJECT:INORGANIC]
+            [INORGANIC:PLASTER]
+            [OBJECT:INORGANIC]
+            [INORGANIC:SANDSTONE]
+            [OBJECT:INORGANIC]
+            [INORGANIC:IRON]
+            [OBJECT:INORGANIC]
+            [INORGANIC:CLAY]
+            [OBJECT:INORGANIC]
+            [INORGANIC:ONYX]
+            [OBJECT:INORGANIC]
+            [INORGANIC:HEMATITE]
+        '''
+        
+        match_types = self.getobjheadername(type)
+        results = rawstokenlist()
+        for rfile in self.files.itervalues():
+            root = rfile.root()
+            if root is not None and root.value == 'OBJECT' and root.nargs() == 1 and root.args[0] in match_types:
+                results.append(root)
+        return results
 
 
 

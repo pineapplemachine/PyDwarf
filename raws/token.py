@@ -77,16 +77,139 @@ class rawstoken(rawsqueryable):
         return hash('%s:%s' % (self.value, self.argsstr()) if self.nargs() else self.value)
     
     def __str__(self):
+        '''Get a string representation.
+        
+        Example usage:
+            >>> dwarf = df.getobj('CREATURE:DWARF')
+            >>> caste = dwarf.get('CASTE')
+            >>> print '"%s"' % str(caste) # show only the value and arguments
+            "[CASTE:FEMALE]"
+            >>> print '"%s"' % repr(caste) # show everything, including preceding and following text
+            "
+
+                Now we'll declare the specific castes.
+
+                [CASTE:FEMALE]"
+        '''
         return '[%s%s]' %(self.value, (':%s' % self.argsstr()) if self.args and len(self.args) else '')
     def __repr__(self):
+        '''Get a string representation.
+        
+        Example usage:
+            >>> dwarf = df.getobj('CREATURE:DWARF')
+            >>> caste = dwarf.get('CASTE')
+            >>> print '"%s"' % str(caste) # show only the value and arguments
+            "[CASTE:FEMALE]"
+            >>> print '"%s"' % repr(caste) # show everything, including preceding and following text
+            "
+
+                Now we'll declare the specific castes.
+
+                [CASTE:FEMALE]"
+        '''
         return '%s%s%s' % (self.prefix if self.prefix else '', str(self), self.suffix if self.suffix else '')
         
     def __eq__(self, other):
+        '''Returns True if this and the other token have the same value and arguments.
+        
+        Example usage:
+            >>> example_a = raws.token('EXAMPLE')
+            >>> example_b = raws.token('EXAMPLE')
+            >>> example_c = raws.token('ANOTHER_EXAMPLE')
+            >>> example_d = raws.token('ANOTHER_EXAMPLE')
+            >>> example_a == example_a
+            True
+            >>> example_a == example_b
+            True
+            >>> example_a == example_c
+            False
+            >>> example_c == example_d
+            True
+        '''
         return self.equals(other)
     def __ne__(self, other):
+        '''Returns True if this and the other token have a different value and arguments.
+        
+        Example usage:
+            >>> example_a = raws.token('EXAMPLE')
+            >>> example_b = raws.token('EXAMPLE')
+            >>> example_c = raws.token('ANOTHER_EXAMPLE')
+            >>> print example_a == example_b
+            True
+            >>> print example_a == example_c
+            False
+            >>> print example_a != example_b
+            False
+            >>> print example_a != example_c
+            True
+        '''
         return not self.equals(other)
+    
+    def __lt__(self, other):
+        '''Returns True if this token appears before the other token in a file.
+        
+        Example usage:
+            >>> creature_standard = df.getfile('creature_standard')
+            >>> elf = creature_standard.get('CREATURE:ELF')
+            >>> goblin = creature_standard.get('CREATURE:GOBLIN') # goblins are defined immediately after elves in creature_standard
+            >>> print elf > goblin
+            False
+            >>> print elf < goblin
+            True
+        '''
+        return other.follows(self)
+    def __gt__(self, other):
+        '''Returns True if this token appears after the other token in a file.
+        
+        Example usage:
+            >>> creature_standard = df.getfile('creature_standard')
+            >>> elf = creature_standard.get('CREATURE:ELF')
+            >>> goblin = creature_standard.get('CREATURE:GOBLIN') # goblins are defined immediately after elves in creature_standard
+            >>> print elf > goblin
+            False
+            >>> print elf < goblin
+            True
+        '''
+        return self.follows(other)
+    def __le__(self, other):
+        '''Returns True if this token appears before the other token in a file, or if this and the other refer to the same token.
+        
+        Example usage:
+            >>> creature_standard = df.getfile('creature_standard')
+            >>> elf = creature_standard.get('CREATURE:ELF')
+            >>> print elf < elf
+            False
+            >>> print elf <= elf
+            True
+        '''
+        return self is other or self.__lt__(other)
+    def __ge__(self, other):
+        '''Returns True if this token appears after the other token in a file, or if this and the other refer to the same token.
+        
+        Example usage:
+            >>> creature_standard = df.getfile('creature_standard')
+            >>> elf = creature_standard.get('CREATURE:ELF')
+            >>> print elf > elf
+            False
+            >>> print elf >= elf
+            True
+        '''
+        return self is other or self.__gt__(other)
         
     def __add__(self, other):
+        '''Concatenates and returns a raws.tokenlist object.
+        
+        Example usage:
+            >>> one = raws.token('NUMBER:ONE')
+            >>> two = raws.token('NUMBER:TWO')
+            >>> three = raws.token('NUMBER:THREE')
+            >>> tokens =  one + two + three
+            >>> print tokens
+            [NUMBER:ONE][NUMBER:TWO][NUMBER:THREE]
+            >>> zero = raws.token('NUMBER:ZERO')
+            >>> print zero + tokens
+            [NUMBER:ZERO][NUMBER:ONE][NUMBER:TWO][NUMBER:THREE]
+        '''
         if isinstance(other, rawstoken):
             tokens = rawstokenlist()
             tokens.append(self)
@@ -95,18 +218,36 @@ class rawstoken(rawsqueryable):
         elif isinstance(other, rawsqueryable):
             tokens = rawstokenlist()
             tokens.append(self)
-            for token in other.tokens(): tokens.append(token)
+            tokens.extend(other)
             return tokens
-        elif isinstance(other, basestring):
-            token = self.copy()
-            token.addarg(other)
-            return token
         else:
-            token = self.copy()
-            for arg in other: token.addarg(other)
-            return token
+            raise ValueError
+            
+    def __radd__(self, other):
+        '''Internal: Same as __add__ except reversed.'''
+        if isinstance(other, rawstoken):
+            tokens = rawstokenlist()
+            tokens.append(other)
+            tokens.append(self)
+            return tokens
+        elif isinstance(other, rawsqueryable):
+            tokens = rawstokenlist()
+            tokens.extend(other)
+            tokens.append(self)
+            return tokens
+        else:
+            raise ValueError
             
     def __mul__(self, value):
+        '''Concatenates copies of this token the number of times specified.
+        
+        Example usage:
+            >>> token = raws.token('EXAMPLE')
+            >>> print token * 2
+            [EXAMPLE][EXAMPLE]
+            >>> print token * 6
+            [EXAMPLE][EXAMPLE][EXAMPLE][EXAMPLE][EXAMPLE][EXAMPLE]
+        '''
         tokens = rawstokenlist()
         for i in xrange(0, int(value)):
             tokens.append(rawstoken.copy(self))
@@ -114,21 +255,11 @@ class rawstoken(rawsqueryable):
     
     def __len__(self):
         return self.nargs()
-        
     def __contains__(self, value):
         return self.containsarg(value)
-        
-    def __getitem__(self, item):
-        if isinstance(item, basestring):
-            return self.get(pretty=item)
-        elif isinstance(item, int):
-            itrtoken = self
-            for i in xrange(0, abs(item)):
-                itrtoken = itrtoken.next if item > 0 else itrtoken.prev
-                if itrtoken is None: return None
-            return itrtoken
-        else:
-            raise ValueError
+            
+    def __nonzero__(self):
+        return True
         
     @staticmethod
     def auto(auto, pretty, token, tokens):
@@ -147,8 +278,26 @@ class rawstoken(rawsqueryable):
         if valuestr in rawstoken.argument_replacements:
             valuestr = rawstoken.argument_replacements[valuestr]
         else:
-            if any([char in valuestr for char in rawstoken.illegal_internal_chars]): raise ValueError
+            if any([char in valuestr for char in rawstoken.illegal_internal_chars]): raise ValueError('Illegal character in argument: %s.' % valuestr)
         return valuestr
+        
+    def index(self, index):
+        itrtoken = self
+        for i in xrange(0, abs(index)):
+            itrtoken = itrtoken.next if index > 0 else itrtoken.prev
+            if itrtoken is None: return None
+        return itrtoken
+        
+    def follows(self, other):
+        if other is not None:
+            for token in other.tokens():
+                if token is self:
+                    return True
+        return False
+        
+    def strip(self):
+        self.prefix = None
+        self.suffix = None
         
     def nargs(self, count=None):
         '''When count is None, returns the number of arguments the token has. (Length of
@@ -435,7 +584,7 @@ class rawstoken(rawsqueryable):
         else:
             raise ValueError
         
-    def tokens(self, range=None, include_self=False, reverse=False, until_token=None):
+    def tokens(self, range=None, include_self=False, reverse=False, until_token=None, step=None):
         '''Iterate through successive tokens starting with this one.
         
         range: If defined as an integer, then iteration stops when this many tokens
@@ -446,6 +595,8 @@ class rawstoken(rawsqueryable):
             True, it goes backwards.
         until_token: Iteration stops if/when the current token matches this exact
             object.
+        step: Increment by this many tokens each step. Defaults to None, which means
+            that every token is yielded.
             
         Example usage:
             >>> tokens = raws.token.parse('[HI][HOW][ARE][YOU][?]')
@@ -462,33 +613,16 @@ class rawstoken(rawsqueryable):
             >>> print raws.tokenlist(first_token.tokens(range=1))
             [HOW]
             >>> print raws.tokenlist(first_token.tokens(until_token=tokens[3]))
-            [HOW][ARE]
+            [HOW][ARE][YOU]
             >>> print raws.tokenlist(last_token.tokens(reverse=True))
             [YOU][ARE][HOW][HI]
         '''
         count = 0
         itertoken = self if include_self else (self.prev if reverse else self.next)
-        while itertoken is not None and (range is None or range > count) and (itertoken is not until_token):
-            yield itertoken
+        while itertoken is not None and (range is None or range > count) and (until_token is None or itertoken is not until_token.next):
+            if (step is None) or (count % step == 0): yield itertoken
             itertoken = itertoken.prev if reverse else itertoken.next
             count += 1
-            
-    @staticmethod   
-    def iter(root, tail):
-        '''Iterate through tokens starting with root and ending at tail.
-        
-        root: The first token.
-        tail: The last token.
-        
-        Example usage:
-            >>> tokens = raws.token.parse('[HI][HOW][ARE][YOU][?]')
-            >>> print raws.tokenlist(raws.token.iter(tokens[1], tokens[3]))
-            [HOW][ARE][YOU]
-        '''
-        itertoken = root
-        while itertoken is not None and itertoken.next is not tail:
-            yield itertoken
-            itertoken = itertoken.next
             
     def match(self, filter=None, **kwargs):
         '''Returns True if this method matches some filter, false otherwise.
@@ -527,12 +661,12 @@ class rawstoken(rawsqueryable):
             >>> two = raws.token('TWO')
             >>> two.add('THREE')
             [THREE]
-            >>> print two.tokenlist(include_self=True)
+            >>> print two.list(include_self=True)
             [TWO][THREE]
             >>> three = two.next
             >>> three.add('[TWO AND A HALF][TWO AND THREE QUARTERS]', reverse=True)
             [[TWO AND A HALF], [TWO AND THREE QUARTERS]]
-            >>> print two.tokenlist(include_self=True)
+            >>> print two.list(include_self=True)
             [TWO][TWO AND A HALF][TWO AND THREE QUARTERS][THREE]
         ''' % rawstoken.auto_arg_docstring
         pretty, token, tokens = rawstoken.auto(auto, pretty, token, tokens)
@@ -557,13 +691,13 @@ class rawstoken(rawsqueryable):
             >>> panda = df.getobj('CREATURE:PANDA, GIGANTIC')
             >>> print panda.tokens(range=4, include_self=True)
             <generator object tokens at 0x10c28f3c0>
-            >>> print panda.tokenlist(range=4, include_self=True)
+            >>> print panda.list(range=4, include_self=True)
             [CREATURE:PANDA, GIGANTIC]
                 [COPY_TAGS_FROM:PANDA]
                 [APPLY_CREATURE_VARIATION:GIANT]
                 [CV_REMOVE_TAG:CHANGE_BODY_SIZE_PERC]
             >>> panda.addprop('FLIER')
-            >>> print panda.tokenlist(range=5, include_self=True)
+            >>> print panda.list(range=5, include_self=True)
             [CREATURE:PANDA, GIGANTIC]
                 [COPY_TAGS_FROM:PANDA][FLIER]
                 [APPLY_CREATURE_VARIATION:GIANT]
@@ -634,7 +768,7 @@ class rawstoken(rawsqueryable):
         
         Example usage:
             >>> forest = df.getobj('ENTITY:FOREST')
-            >>> print forest.tokenlist(range=5, include_self=True)
+            >>> print forest.list(range=5, include_self=True)
             [ENTITY:FOREST]
                 [CREATURE:ELF]
                 [TRANSLATION:ELF]
@@ -642,7 +776,7 @@ class rawstoken(rawsqueryable):
                 [WEAPON:ITEM_WEAPON_SPEAR]
             >>> sword = forest.get('WEAPON:ITEM_WEAPON_SWORD_SHORT')
             >>> sword.remove()
-            >>> print forest.tokenlist(range=5, include_self=True)
+            >>> print forest.list(range=5, include_self=True)
             [ENTITY:FOREST]
                 [CREATURE:ELF]
                 [TRANSLATION:ELF]

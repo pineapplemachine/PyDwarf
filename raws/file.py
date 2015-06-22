@@ -1,7 +1,7 @@
-from queryable import rawsqueryable, rawstokenlist
+from queryable import rawsqueryable_obj, rawstokenlist
 from token import rawstoken
 
-class rawsfile(rawsqueryable):
+class rawsfile(rawsqueryable_obj):
     '''Represents a single file within a raws directory.'''
     
     def __init__(self, header=None, data=None, path=None, tokens=None, rfile=None, dir=None):
@@ -30,20 +30,15 @@ class rawsfile(rawsqueryable):
             self.settokens(tokens, setfile=False)
         elif tokens is not None:
             self.settokens(tokens, setfile=True)
-            
-    def __getitem__(self, item):
-        if isinstance(item, basestring):
-            return self.get(pretty=item)
-        elif isinstance(item, int):
-            itrtoken = self.root() if item > 0 else self.tail()
-            item += (item < 0)
-            for i in xrange(0, abs(item)):
-                itrtoken = itrtoken.next if item > 0 else itrtoken.prev
-                if itrtoken is None: return None
-            return itrtoken
-        else:
-            raise ValueError
-            
+    
+    def index(self, index):
+        itrtoken = self.root() if index >= 0 else self.tail()
+        index += (index < 0)
+        for i in xrange(0, abs(index)):
+            itrtoken = itrtoken.next if index > 0 else itrtoken.prev
+            if itrtoken is None: return None
+        return itrtoken
+        
     def getpath(self):
         return self.path
     def setpath(self, path):
@@ -92,7 +87,7 @@ class rawsfile(rawsqueryable):
             True
             >>> food_copy.add('EXAMPLE:TOKEN')
             [EXAMPLE:TOKEN]
-            >>> print food_copy.tokenlist()
+            >>> print food_copy.list()
             [OBJECT:ITEM]
             [ITEM_FOOD:ITEM_FOOD_BISCUITS]
             [NAME:biscuits]
@@ -111,7 +106,7 @@ class rawsfile(rawsqueryable):
         return rfile
         
     def equals(self, other):
-        return self.header == other.header and rawstoken.tokensequal(self.tokens(), other.tokens())
+        return rawstoken.tokensequal(self.tokens(), other.tokens())
         
     def __eq__(self, other):
         return self.equals(other)
@@ -177,7 +172,7 @@ class rawsfile(rawsqueryable):
         
         Example usage:
             >>> item_food = df.getfile('item_food')
-            >>> print item_food.tokenlist()
+            >>> print item_food.list()
             [OBJECT:ITEM]
             [ITEM_FOOD:ITEM_FOOD_BISCUITS]
             [NAME:biscuits]
@@ -191,7 +186,7 @@ class rawsfile(rawsqueryable):
             >>> tokens = item_food.add('\nhi! [THIS][IS][AN][EXAMPLE]')
             >>> print tokens
             hi! [THIS][IS][AN][EXAMPLE]
-            >>> print item_food.tokenlist()
+            >>> print item_food.list()
             [OBJECT:ITEM]
             [ITEM_FOOD:ITEM_FOOD_BISCUITS]
             [NAME:biscuits]
@@ -242,6 +237,12 @@ class rawsfile(rawsqueryable):
         '''Get the number of tokens in this file.
         
         Example usage:
+            >>> print df.getfile('creature_standard').length()
+            5516
+            >>> print df.getfile('inorganic_metal').length()
+            1022
+            >>> print df.getfile('item_pants').length()
+            109
         '''
         count = 0
         for token in self.tokens(): count += 1
@@ -251,8 +252,20 @@ class rawsfile(rawsqueryable):
         '''Remove all tokens from this file.
         
         Example usage:
+            >>> item_pants = df.getfile('item_pants')
+            >>> print item_pants.length()
+            109
+            >>> item_pants.clear()
+            >>> print item_pants.length()
+            0
         '''
         for token in self.tokens():
             token.file = None
         self.roottoken = None
         self.tailtoken = None
+        
+    def getobjheaders(self, type):
+        root = self.root()
+        if root is not None and root.value == 'OBJECT' and root.nargs() == 1 and root.args[0] in match_types:
+            return (root,)
+        return tuple()

@@ -30,7 +30,12 @@ class rawsqueryable(object):
     ''' % query_tokeniter_docstring
             
     def __iter__(self): return self.tokens()
-    def __contains__(self, pretty): return self.get(pretty=pretty) is not None
+    
+    def __contains__(self, item):
+        if isinstance(item, basestring):
+            return self.get(pretty=pretty) is not None
+        elif isinstance(item, rawsqueryable):
+            return item in self.tokens()
     
     def __getitem__(self, item):
         if isinstance(item, basestring):
@@ -41,6 +46,18 @@ class rawsqueryable(object):
             return self.slice(item)
         else:
             raise ValueError
+    
+    def slice(self, slice):
+        return rawstokenlist(self.islice(slice))
+        
+    def islice(self, slice):
+        root = self.index(slice.start)
+        tail = self.index(slice.stop)
+        if root is not None and tail is not None:
+            for token in root.tokens(include_self=True, step=slice.step, until_token=tail, reverse=root.follows(tail)):
+                yield token
+        else:
+            return
     
     def query(self, filters, tokeniter=None, **kwargs):
         '''Executes a query on some iterable containing tokens.
@@ -329,14 +346,14 @@ class rawsqueryable(object):
                             pdict[key].append(pdict[key], prop)
         return pdict
         
-    def tokenlist(self, *args, **kwargs):
-        '''Convenience method acts as a shortcut for obj.tokenlist(*args, **kwargs).
+    def list(self, *args, **kwargs):
+        '''Convenience method acts as a shortcut for raws.tokenlist(obj.tokens(*args, **kwargs)).
         
         Example usage:
             >>> elf = df.getobj('CREATURE:ELF')
             >>> print elf
             [CREATURE:ELF]
-            >>> print elf.tokenlist(range=6, include_self=True)
+            >>> print elf.list(range=6, include_self=True)
             [CREATURE:ELF]
                 [DESCRIPTION:A medium-sized creature dedicated to the ruthless protection of nature.]
                 [NAME:elf:elves:elven]
@@ -403,36 +420,6 @@ class rawsqueryable_obj(rawsqueryable):
         else:
             return type
     
-    def getobjheaders(self, type):
-        '''Gets OBJECT:X tokens where X is type. Is also prepared for special cases
-        like type=ITEM_PANTS matching OBJECT:ITEM.
-        
-        Example usage:
-            >>> objheaders = df.getobjheaders('INORGANIC')
-            >>> for token in objheaders: print token; print token.next
-            ...
-            [OBJECT:INORGANIC]
-            [INORGANIC:PLASTER]
-            [OBJECT:INORGANIC]
-            [INORGANIC:SANDSTONE]
-            [OBJECT:INORGANIC]
-            [INORGANIC:IRON]
-            [OBJECT:INORGANIC]
-            [INORGANIC:CLAY]
-            [OBJECT:INORGANIC]
-            [INORGANIC:ONYX]
-            [OBJECT:INORGANIC]
-            [INORGANIC:HEMATITE]
-        '''
-        
-        match_types = self.getobjheadername(type)
-        results = rawstokenlist()
-        for rfile in self.files.itervalues():
-            root = rfile.root()
-            if root and root.value == 'OBJECT' and root.nargs() == 1 and root.args[0] in match_types:
-                results.append(root)
-        return results
-    
     def getobj(self, pretty=None, type=None, exact_id=None):
         '''Get the first object token matching a given type and id. (If there's more 
             than one result for any given query then I'm afraid you've done something
@@ -442,13 +429,13 @@ class rawsqueryable_obj(rawsqueryable):
         
         Example usage:
             >>> dwarf = df.getobj('CREATURE:DWARF')
-            >>> print dwarf.tokenlist(include_self=True, range=4)
+            >>> print dwarf.list(include_self=True, range=4)
                 [CREATURE:DWARF]
                 [DESCRIPTION:A short, sturdy creature fond of drink and industry.]
                 [NAME:dwarf:dwarves:dwarven]
                 [CASTE_NAME:dwarf:dwarves:dwarven]
             >>> not_dwarf = df.getlast('CREATURE:DWARF') # gets the CREATURE:DWARF token underneath ENTITY:MOUNTAIN instead
-            >>> print not_dwarf.tokenlist(include_self=True, range=4)
+            >>> print not_dwarf.list(include_self=True, range=4)
                 [CREATURE:DWARF]
                 [TRANSLATION:DWARF]
                 [DIGGER:ITEM_WEAPON_PICK]
@@ -509,7 +496,7 @@ class rawsqueryable_obj(rawsqueryable):
             >>> print 'NOT_A_ROCK' in inorganics
             False
             >>> obsidian = inorganics.get('OBSIDIAN')
-            >>> print obsidian.tokenlist(range=6, include_self=True)
+            >>> print obsidian.list(range=6, include_self=True)
             [INORGANIC:OBSIDIAN]
             [USE_MATERIAL_TEMPLATE:STONE_TEMPLATE]
                 [MELTING_POINT:13600]
