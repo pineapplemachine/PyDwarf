@@ -1,0 +1,28 @@
+v1.0.1: Strange Mood
+
+Fixed pineapple.boneflux reaction by being less bad at string formatting
+Fixed pineapple.utils.addreaction not adding an OBJECT:REACTION token to created files
+Fixed new grasses in pineapple.cavegrass not being recognized by DF
+Fixed a small issue with logging in pineapple.cavegrass
+Fixed non-raws file from input directory not being written to output
+Fixed pydwarf.response casting to string always returning a string starting with "SUCCESS" even when unsuccessful
+Added a lot more documentation
+Added a shitty WIP tool for outputting docstrings as more readable html
+Added a list method to queryable raws objects which acts as a shortcut for raw.tokenlist(something.tokens())
+Added a file attribute to raws.token objects for tracking which file they belong to, if any
+Added a bunch of helpful operator overloads
+Added length and clear methods to raws.file
+Added some convenience things to the raws package: raws.parse and raws.parseone refer to the raws.token static methods, raws.filter refers to raws.tokenfilter
+Added index and slice functionality to raws.token and raws.file, most easily accessible via conventional notations like token[1] or token[-8:0:2]
+Added step argument to tokens method for raws.token and raws.file
+Improved error handling for bad config settings
+Improved raws.tokenlist casting to string
+Improved objdict method to return a dictionary of raws.tokenlist objects where previously they were regular lists
+Improved handling of assignment of illegal strings to token text, now automatically resolves some common pitfalls
+Improved argument handling for raws.boolfilter static methods all, any, one, and none
+Tweaked grass colors in pineapple.cavegrass
+Tweaked names, craftable items, and material values in pineapple.greensteel
+
+v1.0.0: A New Hope
+
+First Release
