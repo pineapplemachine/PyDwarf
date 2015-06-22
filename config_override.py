@@ -14,6 +14,8 @@ if False:
         'output': 'output',
         'backup': 'backup',
         'version': 'auto',
+        'dfhackdir': 'auto',
+        'dfhackver': 'auto',
         'scripts': [
             {
                 'name': 'pineapple.deerappear',
@@ -36,3 +38,4 @@ if False:
 else:
     
     export = {}
+

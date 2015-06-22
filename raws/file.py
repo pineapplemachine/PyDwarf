@@ -1,7 +1,7 @@
-from queryable import rawsqueryable_obj, rawstokenlist
+from queryable import rawsqueryableobj, rawstokenlist
 from token import rawstoken
 
-class rawsfile(rawsqueryable_obj):
+class rawsfile(rawsqueryableobj):
     '''Represents a single file within a raws directory.'''
     
     def __init__(self, header=None, data=None, path=None, tokens=None, rfile=None, dir=None):

@@ -5,7 +5,6 @@ import argparse
 import importlib
 import pydwarf
 import raws
-from config import config
 
 
 
@@ -19,7 +18,7 @@ jsonconfigpath = 'config.json'
 
 def getconf(args=None):
     # Load initial config from json file
-    conf = config()
+    conf = pydwarf.config()
     if os.path.isfile(jsonconfigpath): conf.json(jsonconfigpath)
     
     # Default name of configuration override package
@@ -52,11 +51,8 @@ def getconf(args=None):
     if overrideexception:
         pydwarf.log.error('Failed to apply configuration from %s package.\n%s' % (overridename, overrideexception))
         
-    # Setup version (Handle 'auto')
-    conf.setupversion()
-        
-    # Import packages
-    conf.setuppackages()
+    # Handle things like automatic version detection, package importing
+    conf.setup()
     
     # All done!
     return conf
@@ -70,8 +66,10 @@ def __main__(args=None):
     
     # Report versions
     pydwarf.log.info('Running PyDwarf manager version %s.' % __version__)
-    pydwarf.log.debug('With PyDwarf version %s.' % pydwarf.__version__)
+    pydwarf.log.debug('With pydwarf version %s.' % pydwarf.__version__)
     pydwarf.log.debug('With raws version %s.' % raws.__version__)
+    pydwarf.log.debug('With Dwarf Fortress version %s.' % conf.version)
+    pydwarf.log.debug('With DFHack version %s.' % conf.dfhackver)
     
     # Handle flags that completely change behavior
     if args.list:
@@ -92,18 +90,18 @@ def __main__(args=None):
         try:
             raws.copytree(conf.input, conf.backup)
         except:
-            pydwarf.log.error('Failed to create backup.')
+            pydwarf.log.exception('Failed to create backup.')
             exit(1)
     else:
         pydwarf.log.warning('Proceeding without backing up raws.')
     
     # Read input raws
-    pydwarf.log.info('Reading raws from input directory %s.' % conf.input)
-    pydwarf.urist.session.dfraws = raws.dir(path=conf.input, log=pydwarf.log)
+    pydwarf.log.info('Configuring raws with input directory %s.' % conf.input)
+    pydwarf.urist.session.configure(raws, conf)
     
     # Run each script
     pydwarf.log.info('Running scripts.')
-    pydwarf.urist.session.handleall(conf.scripts)
+    pydwarf.urist.session.handleall()
     
     # Get the output directory, remove old raws if present
     outputdir = conf.output if conf.output else conf.input
@@ -135,6 +133,8 @@ def parseargs():
     parser.add_argument('-p', '--packages', help='import packages containing PyDwarf scripts', nargs='+', type=str)
     parser.add_argument('-c', '--config', help='run with json config file if the extension is json, otherwise treat as a Python package, import, and override settings using export dict', type=str)
     parser.add_argument('-v', '--verbose', help='set stdout logging level to DEBUG', action='store_true')
+    parser.add_argument('-hdir', '--dfhackdir', help='indicate DFHack directory', type=str)
+    parser.add_argument('-hver', '--dfhackver', help='indicate DFHack version', type=str)
     parser.add_argument('--log', help='output log file to path', type=str)
     parser.add_argument('--list', help='list available scripts', action='store_true')
     parser.add_argument('--jscripts', help='specify scripts given a json array', type=str)

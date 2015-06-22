@@ -1,16 +1,12 @@
-import logging
 import textwrap
 import version as versionutils
-
-
-
-# Make a default logger object
-log = logging.getLogger()
+from log import log
 
 
 
 class session:
-    def __init__(self, dfraws=None, dfversion=None):
+    def __init__(self, conf=None, dfraws=None, dfversion=None):
+        self.conf = conf
         self.dfraws = dfraws
         self.dfversion = dfversion
         self.successes = []
@@ -21,6 +17,12 @@ class session:
         return self.inlist(info, self.successes)
     def failed(self, info):
         return self.inlist(info, self.failures)
+        
+    def configure(self, raws, conf):
+        self.conf = conf
+        self.dfraws = raws.dir(path=conf.input, log=log)
+        self.dfraws.hack = raws.dfhack(path=conf.dfhackdir, version=conf.dfhackver)
+        self.dfversion = conf.version
         
     def inlist(self, info, flist):
         funcs = self.funcs(info)
@@ -82,7 +84,8 @@ class session:
         else:
             log.error('Found no scripts matching %s.' % info)
             
-    def handleall(self, infos):
+    def handleall(self, infos=None):
+        if infos is None and self.conf is not None: infos = self.conf.scripts
         if infos and len(infos):
             for info in infos: self.handle(info)
         else:

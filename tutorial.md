@@ -35,6 +35,8 @@ For convenient reference, this is an example config.json file:
     "backup":   "E:/Sophie/Desktop/Files/Games/Dwarf Fortress/df_40_24_win/rawbak/",
     
     "version":  "auto",
+    "dfhackdir": "auto",
+    "dfhackver": "auto",
     
     "scripts": [
         {"name": "pineapple.deerappear", "args": {"tile": "'d'", "color": [6, 0, 1]}},
@@ -57,6 +59,8 @@ Here is the purpose of each of those attributes:
 * `output`: Which directory to output the raws to after the scripts have run and modified them. If set to `null` (in json) or `None` (in Python) then the output directory will be the same as the input.
 * `backup`: Before anything else is done, if it's not `null` or `None`, the input raws will be copied and saved to this directory.
 * `version`: Specifies the Dwarf Fortress version. For example, `"version": "0.40.24"`. If set to `auto` then PyDwarf will attempt to detect the Dwarf Fortress version automatically. This should succeed as long as either the `input` or `output` directory is somewhere inside Dwarf Fortress's directory.
+* `dfhackdir`: The location of a hack/ directory, if any, within the Dwarf Fortress directory
+* `dfhackver`: The version of DFHack contained within a hack/ directory, if any, within the Dwarf Fortress directory
 * `scripts`: Lists the scripts that should be run.
 * `packages`: Lists the Python packages that should be imported. In essence, it specifies for PyDwarf that it should look for scripts inside the `scripts` package, in this case a directory containing an `__init__.py` file. This is an advanced feature and the typical user won't need to worry about this.
 
@@ -68,10 +72,12 @@ Once PyDwarf has been configured, applying the mods specified in its configurati
 
 PyDwarf's configuration can also be passed as command line arguments when running manager.py. These are the arguments it accepts, all of which supersede any identically-named options set in `config.json` or `config.py` when specified.
 
-* `-i` or `--input`: Specifies input directory.
-* `-o` or `--output`: Specifies output directory.
-* `-b` or `--backup`: Specifies backup directory.
+* `-i` or `--input`: Specifies raws input directory.
+* `-o` or `--output`: Specifies raws output directory.
+* `-b` or `--backup`: Specifies raws backup directory.
 * `-ver` or `--version`: Specifies Dwarf Fortress version.
+* `-hdir` or `--dfhackdir`: Specifies DFHack directory.
+* `-hver` or `--dfhackver`: Specifies DFHack version.
 * `-s` or `--scripts`: The list of scripts to run. (Only names and namespaces may be specified in this way, not dictionaries.)
 * `-p` or `--packages`: The list of Python packages to import.
 * `-c` or `--config`: Imports configuration from the json file given by the path.
@@ -79,10 +85,8 @@ PyDwarf's configuration can also be passed as command line arguments when runnin
 * `--log`: Specifies the log file path.
 * `--list`: Lists registered scripts in alphabetical order.
 * `--meta`: When given names of scripts as arguments, shows each script's metadata in a readable format. When given no arguments, metadata for all registered scripts is displayed.
-* `--jscripts`: Alternative to `--scripts` which accepts a json array just like the `scripts` attribute in `config.json`.
+* `--jscripts`: More complicated alternative to `--scripts` which accepts a json array just like the `scripts` attribute in `config.json`.
 * `-h` or `--help`: Shows a summary of each argument's purpose.
-
-The arguments include `-i` or `--input`, `-o` or `--output`, `-b` or `--backup`, `-ver` or `--version`, which behave identically to their `config.json` or `config.py` counterparts. Additional arguments are `-s` or `--scripts`, which is a list of scripts just the same except with support only for strings (not for dicts), and `-c` or `--config`, which can be used to specify a json file to read as configuration.
 
 ![Example gif of running PyDwarf from the command line](http://www.pineapplemachine.com/pydwarf/terminal_example.gif)
 

@@ -1,11 +1,11 @@
 import os
-import shutil
-from queryable import rawsqueryable_obj, rawstokenlist
+from copytree import copytree
+from queryable import rawsqueryableobj, rawstokenlist
 from file import rawsfile
 
 
 
-class rawsdir(rawsqueryable_obj):
+class rawsdir(rawsqueryableobj):
     '''Represents as a whole all the raws contained within a directory.'''
     
     def __init__(self, *args, **kwargs):
@@ -13,6 +13,7 @@ class rawsdir(rawsqueryable_obj):
         
         self.files = {}
         self.otherfiles = []
+        self.hack = None
         if len(args) or len(kwargs): self.read(*args, **kwargs)
         
     def getfile(self, filename, create=None):
@@ -132,18 +133,3 @@ class rawsdir(rawsqueryable_obj):
             if root is not None and root.value == 'OBJECT' and root.nargs() == 1 and root.args[0] in match_types:
                 results.append(root)
         return results
-
-
-
-# credit belongs to http://stackoverflow.com/a/13814557/3478907
-def copytree(src, dst, symlinks=False, ignore=None):
-    if not os.path.exists(dst):
-        os.makedirs(dst)
-    for item in os.listdir(src):
-        s = os.path.join(src, item)
-        d = os.path.join(dst, item)
-        if os.path.isdir(s):
-            copytree(s, d, symlinks, ignore)
-        else:
-            if not os.path.exists(d) or os.stat(src).st_mtime - os.stat(dst).st_mtime > 1:
-                shutil.copy2(s, d)

@@ -399,7 +399,7 @@ class rawsqueryable(object):
 
 
 
-class rawsqueryable_obj(rawsqueryable):
+class rawsqueryableobj(rawsqueryable):
     def __init__(self):
         self.files = None
     
@@ -442,7 +442,7 @@ class rawsqueryable_obj(rawsqueryable):
                 [WEAPON:ITEM_WEAPON_AXE_BATTLE]
         '''
             
-        type, exact_id = rawsqueryable_obj.objpretty(pretty, type, exact_id)
+        type, exact_id = rawsqueryableobj.objpretty(pretty, type, exact_id)
         for objecttoken in self.getobjheaders(type):
             obj = objecttoken.get(exact_value=type, exact_args=(exact_id,))
             if obj: return obj
@@ -472,7 +472,7 @@ class rawsqueryable_obj(rawsqueryable):
         '''
         
         if re_id and id_in: raise ValueError
-        type, exact_id = rawsqueryable_obj.objpretty(pretty, type, exact_id)
+        type, exact_id = rawsqueryableobj.objpretty(pretty, type, exact_id)
         results = rawstokenlist()
         for objecttoken in self.getobjheaders(type):
             for result in objecttoken.all(
