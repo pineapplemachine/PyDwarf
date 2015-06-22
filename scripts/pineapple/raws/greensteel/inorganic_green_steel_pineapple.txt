@@ -11,7 +11,7 @@ Green steel is an alloy much better than steel but lesser than adamantine: It oc
     [STATE_NAME_ADJ:GAS:boiling green steel]
     [DISPLAY_COLOR:2:0:1]
     [BUILD_COLOR:2:0:1]
-    [MATERIAL_VALUE:140] 30
+    [MATERIAL_VALUE:110] 30
     [SPEC_HEAT:1800] 500
     [MELTING_POINT:18000] 12718
     [BOILING_POINT:20000] 14968
@@ -54,7 +54,7 @@ Adamant is adamantine in a less divine form and it's ideal for use in the creati
     [STATE_NAME_ADJ:GAS:boiling adamant]
     [DISPLAY_COLOR:7:2:1]
     [BUILD_COLOR:7:2:1]
-    [MATERIAL_VALUE:80]
+    [MATERIAL_VALUE:60]
     [SPEC_HEAT:7000]
     [MELTING_POINT:20000]
     [BOILING_POINT:44000]
@@ -97,7 +97,7 @@ Adamant is adamantine in a less divine form and it's ideal for use in the creati
     [ENVIRONMENT:ALLUVIAL:CLUSTER_SMALL:70]
     [DISPLAY_COLOR:2:7:1]
     [TILE:'*']
-    [MATERIAL_VALUE:75]
+    [MATERIAL_VALUE:45]
     [SPEC_HEAT:7000]
     [MELTING_POINT:20000]
     [BOILING_POINT:44000]
