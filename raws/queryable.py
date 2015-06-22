@@ -5,7 +5,7 @@ from filters import *
 
 
 
-class rawsqueryable:
+class rawsqueryable(object):
     '''Classes which contain raws tokens should inherit from this in order to provide querying functionality.'''
     
     query_tokeniter_docstring = '''
@@ -28,10 +28,36 @@ class rawsqueryable:
             getlastuntil, and alluntil. The arguments for the until method should be
             named normally.)
     ''' % query_tokeniter_docstring
-    
-    def __getitem__(self, pretty): return self.get(pretty=pretty)
+            
     def __iter__(self): return self.tokens()
-    def __contains__(self, pretty): return self.get(pretty=pretty) is not None
+    
+    def __contains__(self, item):
+        if isinstance(item, basestring):
+            return self.get(pretty=pretty) is not None
+        elif isinstance(item, rawsqueryable):
+            return item in self.tokens()
+    
+    def __getitem__(self, item):
+        if isinstance(item, basestring):
+            return self.get(pretty=item)
+        elif isinstance(item, int):
+            return self.index(item)
+        elif isinstance(item, slice):
+            return self.slice(item)
+        else:
+            raise ValueError
+    
+    def slice(self, slice):
+        return rawstokenlist(self.islice(slice))
+        
+    def islice(self, slice):
+        root = self.index(slice.start)
+        tail = self.index(slice.stop)
+        if root is not None and tail is not None:
+            for token in root.tokens(include_self=True, step=slice.step, until_token=tail, reverse=root.follows(tail)):
+                yield token
+        else:
+            return
     
     def query(self, filters, tokeniter=None, **kwargs):
         '''Executes a query on some iterable containing tokens.
@@ -106,7 +132,7 @@ class rawsqueryable:
         Example usage:
             >>> dwarven = df['language_DWARF'].get('TRANSLATION:DWARF')
             >>> print dwarven.all(exact_value='T_WORD', re_args=['CR.*Y', None])
-            [T_WORD:CRAZY:d�besh]
+                [T_WORD:CRAZY:d�besh]
                 [T_WORD:CREEPY:innok]
                 [T_WORD:CRUCIFY:memrut]
                 [T_WORD:CRY:cagith]
@@ -289,14 +315,14 @@ class rawsqueryable:
             >>> hematite = df.getobj('INORGANIC:HEMATITE')
             >>> props = hematite.propdict()
             >>> print props.get('ENVIRONMENT')
-            [
-            [ENVIRONMENT:SEDIMENTARY:VEIN:100],
-            [ENVIRONMENT:IGNEOUS_EXTRUSIVE:VEIN:100]]
+            [ENVIRONMENT:SEDIMENTARY:VEIN:100]
+            [ENVIRONMENT:IGNEOUS_EXTRUSIVE:VEIN:100]
             >>> print props.get('IS_STONE')
-            [
-            [IS_STONE]]
+            [IS_STONE]
             >>> print props.get('TILE:156')
-            [[TILE:156]]
+            [TILE:156]
+            >>> print props.get('NOT_A_TOKEN')
+            None
         '''
         
         until_exact_value, until_re_value, until_value_in = self.argsprops()
@@ -307,15 +333,35 @@ class rawsqueryable:
                 if key is not None:
                     if key not in pdict:
                         if always_list:
-                            pdict[key] = [prop]
+                            pdict[key] = rawstokenlist()
+                            pdict[key].append(prop)
                         else:
                             pdict[key] = prop
                     elif prop not in pdict[key]:
                         if isinstance(pdict[key], list):
                             pdict[key].append(prop)
                         else:
-                            pdict[key] = [prop, pdict[key]]
+                            pdict[key] = rawstokenlist()
+                            pdict[key].append(prop)
+                            pdict[key].append(pdict[key], prop)
         return pdict
+        
+    def list(self, *args, **kwargs):
+        '''Convenience method acts as a shortcut for raws.tokenlist(obj.tokens(*args, **kwargs)).
+        
+        Example usage:
+            >>> elf = df.getobj('CREATURE:ELF')
+            >>> print elf
+            [CREATURE:ELF]
+            >>> print elf.list(range=6, include_self=True)
+            [CREATURE:ELF]
+                [DESCRIPTION:A medium-sized creature dedicated to the ruthless protection of nature.]
+                [NAME:elf:elves:elven]
+                [CASTE_NAME:elf:elves:elven]
+                [CREATURE_TILE:'e'][COLOR:3:0:0]
+        '''
+        
+        return rawstokenlist(self.tokens(*args, **kwargs))
         
     def argsuntil(self, kwargs):
         # Utility function for handling arguments of getuntil and alluntil methods
@@ -374,23 +420,27 @@ class rawsqueryable_obj(rawsqueryable):
         else:
             return type
     
-    def getobjheaders(self, type):
-        '''Gets OBJECT:X tokens where X is type. Is also prepared for special cases
-        like type=ITEM_PANTS matching OBJECT:ITEM. Current as of DF version 0.40.24.'''
-        
-        match_types = self.getobjheadername(type)
-        results = []
-        for rfile in self.files.itervalues():
-            root = rfile.root()
-            if root and root.value == 'OBJECT' and root.nargs() == 1 and root.args[0] in match_types:
-                results.append(root)
-        return results
-    
     def getobj(self, pretty=None, type=None, exact_id=None):
         '''Get the first object token matching a given type and id. (If there's more 
             than one result for any given query then I'm afraid you've done something
             silly with your raws.) This method should work properly with things like
-            CREATURE:X tokens showing up in entity_default.'''
+            CREATURE:X tokens showing up in entity_default. Should almost always be
+            faster than an equivalent call to get, also.
+        
+        Example usage:
+            >>> dwarf = df.getobj('CREATURE:DWARF')
+            >>> print dwarf.list(include_self=True, range=4)
+                [CREATURE:DWARF]
+                [DESCRIPTION:A short, sturdy creature fond of drink and industry.]
+                [NAME:dwarf:dwarves:dwarven]
+                [CASTE_NAME:dwarf:dwarves:dwarven]
+            >>> not_dwarf = df.getlast('CREATURE:DWARF') # gets the CREATURE:DWARF token underneath ENTITY:MOUNTAIN instead
+            >>> print not_dwarf.list(include_self=True, range=4)
+                [CREATURE:DWARF]
+                [TRANSLATION:DWARF]
+                [DIGGER:ITEM_WEAPON_PICK]
+                [WEAPON:ITEM_WEAPON_AXE_BATTLE]
+        '''
             
         type, exact_id = rawsqueryable_obj.objpretty(pretty, type, exact_id)
         for objecttoken in self.getobjheaders(type):
@@ -399,11 +449,31 @@ class rawsqueryable_obj(rawsqueryable):
         return None
         
     def allobj(self, pretty=None, type=None, exact_id=None, re_id=None, id_in=None):
-        '''Gets all objects matching a given type and optional id or id regex.'''
+        '''Gets all objects matching a given type and optional id or id regex.
+        
+        Example usage:
+            >>> pants = df.allobj('ITEM_PANTS')
+            >>> print pants
+            [ITEM_PANTS:ITEM_PANTS_PANTS]
+            [ITEM_PANTS:ITEM_PANTS_GREAVES]
+            [ITEM_PANTS:ITEM_PANTS_LEGGINGS]
+            [ITEM_PANTS:ITEM_PANTS_LOINCLOTH]
+            [ITEM_PANTS:ITEM_PANTS_THONG]
+            [ITEM_PANTS:ITEM_PANTS_SKIRT]
+            [ITEM_PANTS:ITEM_PANTS_SKIRT_SHORT]
+            [ITEM_PANTS:ITEM_PANTS_SKIRT_LONG]
+            [ITEM_PANTS:ITEM_PANTS_BRAIES]
+            >>> bears = df.allobj(type='CREATURE', re_id='BEAR_.+')
+            >>> print bears
+            [CREATURE:BEAR_GRIZZLY]
+            [CREATURE:BEAR_BLACK]
+            [CREATURE:BEAR_POLAR]
+            [CREATURE:BEAR_SLOTH]
+        '''
         
         if re_id and id_in: raise ValueError
         type, exact_id = rawsqueryable_obj.objpretty(pretty, type, exact_id)
-        results = []
+        results = rawstokenlist()
         for objecttoken in self.getobjheaders(type):
             for result in objecttoken.all(
                 exact_value = type,
@@ -416,10 +486,29 @@ class rawsqueryable_obj(rawsqueryable):
         return results
         
     def objdict(self, *args, **kwargs):
+        '''Calls allobj with the same arguments then adds each result to a dictionary
+        associating object IDs with the tokens where they're declared.
+        
+        Example usage:
+            >>> inorganics = df.objdict('INORGANIC')
+            >>> print len(inorganics)
+            263
+            >>> print 'NOT_A_ROCK' in inorganics
+            False
+            >>> obsidian = inorganics.get('OBSIDIAN')
+            >>> print obsidian.list(range=6, include_self=True)
+            [INORGANIC:OBSIDIAN]
+            [USE_MATERIAL_TEMPLATE:STONE_TEMPLATE]
+                [MELTING_POINT:13600]
+                [BOILING_POINT:16000]
+                [IMPACT_YIELD:1000000]
+                [IMPACT_FRACTURE:1000000]
+        '''
         return {token.args[0]: token for token in self.allobj(*args, **kwargs)}
         
     @staticmethod
     def objpretty(pretty, type, id):
+        '''Internal'''
         # Utility method for handling getobj/allobj arguments.
         if pretty is not None:
             if ':' in pretty:
@@ -445,6 +534,16 @@ class rawstokenlist(list, rawsqueryable):
             yield self.__getitem__(i)
             
     def __str__(self):
-        return ''.join([repr(token) for token in self]).strip()
-
-
+        if len(self) == 0:
+            return ''
+        elif len(self) == 1:
+            return str(self[0])
+        else:
+            parts = []
+            for token in self:
+                if token is not self[0] and ((token.prefix and '\n' in token.prefix)): parts += '\n'
+                if token.prefix: parts += token.prefix.split('\n')[-1]
+                parts += str(token)
+                if token.suffix: parts += token.suffix.split('\n')[0]
+                if token is not self[-1] and ((token.suffix and '\n' in token.suffix)): parts += '\n'
+            return ''.join(parts)

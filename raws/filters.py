@@ -1,4 +1,5 @@
 import re
+import copy
 
 
 
@@ -11,14 +12,35 @@ def rawstoken():
 
 class rawsbasefilter:
     def __init__(self, invert=False):
-        self.invert = invert
+        self.inv = invert
     def invert(self):
-        self.invert = not self.invert
+        self.inv = not self.inv
     def match(self, token):
         result = self.basematch(token)
-        return not result if self.invert else result
+        return not result if self.inv else result
     def basematch(self, token):
         return False
+        
+    def copy(self):
+        return copy.deepcopy(self)
+        
+    def inverted(self):
+        inv = self.copy()
+        inv.invert()
+        return inv
+        
+    def __and__(self, other):
+        return rawsboolfilter.all(self, other)
+    def __or__(self, other):
+        return rawsboolfilter.any(self, other)
+    def __xor__(self, other):
+        return rawsboolfilter.one(self, other)
+    
+    def __invert__(self):
+        return self.inverted()
+    
+    def __contains__(self, token):
+        return self.match(token)
 
 
 
@@ -122,7 +144,7 @@ class rawstokenfilter(rawsbasefilter):
         self.args_count = args_count
         self.args_count_at_least = args_count_at_least
         self.args_count_no_more = args_count_no_more
-        self.invert = invert
+        self.inv = invert
         self.limit = limit
         self.limit_terminates = limit_terminates
         
@@ -172,6 +194,14 @@ class rawstokenfilter(rawsbasefilter):
                 return False
         return True
         
+    def __str__(self):
+        parts = []
+        for key, value in self.__dict__.iteritems():
+            if value is not None and key != 'pretty' and key != 'match_token':
+                parts.append('%s %s' % (key, value))
+        parts.sort()
+        return ', '.join(parts)
+        
 
 
 class rawsboolfilter(rawsbasefilter):
@@ -180,7 +210,7 @@ class rawsboolfilter(rawsbasefilter):
     def __init__(self, subs, operand=None, invert=None):
         self.subs = subs
         self.operand = operand
-        self.invert = invert
+        self.inv = invert
         self.args = args
         
     def basematch(self, token):
@@ -199,11 +229,14 @@ class rawsboolfilter(rawsbasefilter):
             return True
             
     @staticmethod
-    def one(subs): return rawsboolfilter(subs, 'one')
+    def one(*subs): return rawsboolfilter(subs, 'one')
     @staticmethod
-    def any(subs): return rawsboolfilter(subs, 'any')
+    def any(*subs): return rawsboolfilter(subs, 'any')
     @staticmethod
-    def all(subs): return rawsboolfilter(subs, 'all')
+    def all(*subs): return rawsboolfilter(subs, 'all')
     @staticmethod
-    def none(subs): return rawsboolfilter(subs, 'all', invert=True)
+    def none(*subs): return rawsboolfilter(subs, 'all', invert=True)
+    
+    def __str__(self):
+        return '%s of (%s)' % (self.operand, ', '.join(self.subs))
     

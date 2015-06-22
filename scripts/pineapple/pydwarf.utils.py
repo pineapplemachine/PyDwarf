@@ -38,7 +38,7 @@ def addtoentity(df, entities, **kwargs):
 
 @pydwarf.urist(
     name = 'pineapple.utils.addreaction',
-    version = '1.0.0',
+    version = '1.0.1',
     author = 'Sophie Kirschner',
     description = '''A simple utility script which adds a single reaction.''',
     arguments = {
@@ -57,7 +57,7 @@ def addreaction(df, id, tokens, add_to_file='reaction_custom', permit_entities=N
         if df.getobj(type='REACTION', exact_id=id):
             return pydwarf.failure('Reaction %s already exists.' % id)
         else:
-            rfile = df.getfile(add_to_file, create=True)
+            rfile = df.getfile(add_to_file, create='OBJECT:REACTION')
             rfile.add(raws.token(value='REACTION', args=[id], prefix='\n\n')).add(tokens)
             return pydwarf.success('Added reaction %s to file %s and entities %s.' % (id, add_to_file, permit_entities))
     

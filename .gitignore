@@ -1,5 +1,17 @@
 *.DS_Store
 *.pyc
+*.xcf
+*test.py
 
+# Manager logs go here
 logs/*
+
+# Outputted raws go here (for my personal testing and stuff anyway)
 output/*
+backup/*
+
+# Older DF versions go here (for my help figuring version compatibility)
+refs/*
+
+# Stuff that's just not meant to be committed right now
+build/*

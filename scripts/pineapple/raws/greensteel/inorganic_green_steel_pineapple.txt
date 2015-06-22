@@ -11,7 +11,7 @@ Green steel is an alloy much better than steel but lesser than adamantine: It oc
     [STATE_NAME_ADJ:GAS:boiling green steel]
     [DISPLAY_COLOR:2:0:1]
     [BUILD_COLOR:2:0:1]
-    [MATERIAL_VALUE:140] 30
+    [MATERIAL_VALUE:110] 30
     [SPEC_HEAT:1800] 500
     [MELTING_POINT:18000] 12718
     [BOILING_POINT:20000] 14968
@@ -54,12 +54,12 @@ Adamant is adamantine in a less divine form and it's ideal for use in the creati
     [STATE_NAME_ADJ:GAS:boiling adamant]
     [DISPLAY_COLOR:7:2:1]
     [BUILD_COLOR:7:2:1]
-    [MATERIAL_VALUE:80]
+    [MATERIAL_VALUE:60]
     [SPEC_HEAT:7000]
     [MELTING_POINT:20000]
     [BOILING_POINT:44000]
     [ITEMS_METAL]
-    [ITEMS_SOFT]
+    [ITEMS_HARD]
     [SOLID_DENSITY:225]
     [LIQUID_DENSITY:2800]
     [MOLAR_MASS:55845]
@@ -90,14 +90,14 @@ Adamant is adamantine in a less divine form and it's ideal for use in the creati
 [INORGANIC:ADAMANT_ORE_PINEAPPLE]
     [ITEM_SYMBOL:'*']
     [METAL_ORE:ADAMANT_PINEAPPLE:100]
-    [STATE_NAME_ADJ:ALL_SOLID:adamant ore]
-    [STATE_NAME_ADJ:LIQUID:molten adamant ore]
-    [STATE_NAME_ADJ:GAS:boiling adamant ore]
+    [STATE_NAME_ADJ:ALL_SOLID:adamant]
+    [STATE_NAME_ADJ:LIQUID:molten adamant]
+    [STATE_NAME_ADJ:GAS:boiling adamant]
     [ENVIRONMENT:IGNEOUS_ALL:VEIN:70]
     [ENVIRONMENT:ALLUVIAL:CLUSTER_SMALL:70]
     [DISPLAY_COLOR:2:7:1]
     [TILE:'*']
-    [MATERIAL_VALUE:75]
+    [MATERIAL_VALUE:45]
     [SPEC_HEAT:7000]
     [MELTING_POINT:20000]
     [BOILING_POINT:44000]

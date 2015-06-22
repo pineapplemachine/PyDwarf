@@ -6,6 +6,8 @@ I have an enormous love for Dwarf Fortress and for its mods. In the years I've b
 
 PyDwarf is easy to configure! Open `config.json` with your favorite text editor and tell it where to find your Dwarf Fortress raws, edit the list of scripts to reflect the mods you want to run and in what order you'd like them to run. Once the configuration is to your liking simply run `manager.py`, with Python 2.7 installed this can be done by opening a command line in the PyDwarf directory and running `python manager.py`.
 
-If you're interested in writing your own mods for PyDwarf, or in understanding its more advanced features, take a look at [the tutorial](https://github.com/pineapplemachine/PyDwarf/blob/master/tutorial.md)!
+If you're interested in writing your own mods for PyDwarf or in understanding its more advanced features, take a look at [the tutorial](https://github.com/pineapplemachine/PyDwarf/blob/master/tutorial.md)!
+
+You can see a list of your installed mods by running `python manager.py --list` and you can view some documentation for a particular script by running, for example, `python manager.py --meta "pineapple.flybears"`.
 
 ![Image of a flying female bear](https://github.com/pineapplemachine/PyDwarf/blob/master/images/logo_transparent.png?raw=true)
