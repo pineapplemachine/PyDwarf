@@ -4,7 +4,7 @@ Fixed pineapple.boneflux reaction by being less bad at string formatting
 Fixed pineapple.utils.addreaction not adding an OBJECT:REACTION token to created files
 Fixed new grasses in pineapple.cavegrass not being recognized by DF
 Fixed a small issue with logging in pineapple.cavegrass
-Fixed non-raws file from input directory not being written to output
+Fixed non-raws files from input directory not being written to output
 Fixed pydwarf.response casting to string always returning a string starting with "SUCCESS" even when unsuccessful
 Added a lot more documentation
 Added a shitty WIP tool for outputting docstrings as more readable html
