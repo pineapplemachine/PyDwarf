@@ -80,7 +80,7 @@ PyDwarf's configuration can also be passed as command line arguments when runnin
 * `-hver` or `--dfhackver`: Specifies DFHack version.
 * `-s` or `--scripts`: The list of scripts to run. (Only names and namespaces may be specified in this way, not dictionaries.)
 * `-p` or `--packages`: The list of Python packages to import.
-* `-c` or `--config`: Imports configuration from the json file given by the path.
+* `-c` or `--config`: Imports configuration from the json file given by the path. Can also refer to a Python file or package, which will be imported and used for configuration. Se the config_override.py file in the root directory for an example.
 * `-v` or `--verbose`: Sets the logging level for standard output to `DEBUG`. (By default, fully verbose logs are written to the `logs/` directory regardless of this flag.)
 * `--log`: Specifies the log file path.
 * `--list`: Lists registered scripts in alphabetical order.
