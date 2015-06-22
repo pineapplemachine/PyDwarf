@@ -38,7 +38,7 @@ def addtoentity(df, entities, **kwargs):
 
 @pydwarf.urist(
     name = 'pineapple.utils.addreaction',
-    version = '1.0.0',
+    version = '1.0.1',
     author = 'Sophie Kirschner',
     description = '''A simple utility script which adds a single reaction.''',
     arguments = {
