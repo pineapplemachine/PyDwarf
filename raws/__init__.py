@@ -13,4 +13,4 @@ filter = tokenfilter
 parse = token.parse
 parseone = token.parseone
 
-__version__ = '1.0.0'
+__version__ = '1.0.1'
