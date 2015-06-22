@@ -30,7 +30,7 @@ default_grasses = {
     'ANGEL WEED PINEAPPLE': {
         'template': 'CAVE MOSS',
         'add_tokens': '[ALL_NAMES:angel weed]',
-        'colors': raws.color.yellow() + raws.color.lgray() + raws.color.lgray() + raws.color.dgray(),
+        'colors': raws.color.brown() + raws.color.yellow() + raws.color.lgray() + raws.color.dgray(),
         'depth': (1, 1)
     },
     
@@ -103,7 +103,7 @@ default_grasses = {
 
 @pydwarf.urist(
     name = 'pineapple.cavegrass',
-    version = '1.0.0',
+    version = '1.0.1',
     author = 'Sophie Kirschner',
     description = '''Changes the grasses in each cavern level to make the different
         levels more visually distinct, as well as adding a much greater variety.
@@ -122,6 +122,7 @@ def cavegrass(df, grasses=default_grasses, add_file='plant_grasses_cavegrass_pin
     if add_file:
         if add_file in df.files: return pydwarf.failure('File %s already exists.' % add_file)
         grassfile = df.addfile(filename=add_file)
+        grassfile.add('OBJECT:PLANT')
     
     # Handle each grass
     failures = 0
@@ -139,7 +140,7 @@ def cavegrass(df, grasses=default_grasses, add_file='plant_grasses_cavegrass_pin
             if 'template' in grassdict:
                 templatetoken = grasstokens.get(grassdict['template'])
                 if not templatetoken:
-                    pydwarf.log.error('Couldn\'t find template %s to apply to grass %s.' % (templatetoken, grassname))
+                    pydwarf.log.error('Couldn\'t find template %s to apply to grass %s.' % (grassdict['template'], grassname))
                     failures += 1
                 else:
                     props = templatetoken.allprop(value_not_in=('ALL_NAMES', 'NAME', 'NAME_PLURAL', 'ADJ'))

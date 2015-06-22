@@ -83,7 +83,10 @@ class session:
             log.error('Found no scripts matching %s.' % info)
             
     def handleall(self, infos):
-        for info in infos: self.handle(info)
+        if infos and len(infos):
+            for info in infos: self.handle(info)
+        else:
+            log.error('No scripts to run.')
         
         
 

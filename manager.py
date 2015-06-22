@@ -6,11 +6,10 @@ import importlib
 import pydwarf
 import raws
 from config import config
-from utils import copytree
 
 
 
-__version__ = '1.0.0'
+__version__ = '1.0.1'
 
 
 
@@ -20,7 +19,8 @@ jsonconfigpath = 'config.json'
 
 def getconf(args=None):
     # Load initial config from json file
-    conf = config().json(jsonconfigpath)
+    conf = config()
+    if os.path.isfile(jsonconfigpath): conf.json(jsonconfigpath)
     
     # Default name of configuration override package
     overridename = 'config_override'
@@ -90,7 +90,7 @@ def __main__(args=None):
     if conf.backup is not None:
         pydwarf.log.info('Backing up raws to %s.' % conf.backup)
         try:
-            copytree(conf.input, conf.backup)
+            raws.copytree(conf.input, conf.backup)
         except:
             pydwarf.log.error('Failed to create backup.')
             exit(1)
