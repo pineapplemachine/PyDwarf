@@ -31,6 +31,32 @@ class config:
         self.verbose = verbose      # Log DEBUG messages to stdout if True, otherwise only INFO and above
         self.log = log              # Log file goes here
         
+    def __str__(self):
+        return str(self.__dict__)
+    def __repr__(self):
+        return self.__str__()
+        
+    def __getitem__(self, attr):
+        return self.__dict__[attr]
+    def __setitem__(self, attr, value):
+        self.__dict__[attr] = value
+        
+    def __iter__(self):
+        return iter(self.__dict__)
+    def iteritems(self):
+        return self.__dict__.iteritems()
+        
+    def __add__(self, other):
+        return config.concat(self, other)
+    def __radd__(self, other):
+        return config.concat(other, self)
+    def __iadd__(self, item):
+        self.apply(item)
+        return self
+    
+    def __and__(self, other):
+        return config.intersect(self, other)
+        
     def json(self, path, *args, **kwargs):
         with open(path, 'rb') as jsonfile: return self.apply(json.load(jsonfile), *args, **kwargs)
     
@@ -40,10 +66,27 @@ class config:
                 if applynone or value is not None: self.__dict__[key] = value
         return self
         
-    def __str__(self):
-        return str(self.__dict__)
-    def __repr__(self):
-        return self.__str__()
+    def copy(self):
+        copy = config()
+        for key, value in self: copy[key] = value
+        return copy
+        
+    @staticmethod
+    def concat(*configs):
+        result = config()
+        for conf in configs: result.apply(conf)
+        return result
+        
+    @staticmethod
+    def intersect(*configs):
+        result = config()
+        first = configs[0]
+        for attr, value in first.iteritems():
+            for conf in configs:
+                if (conf is not first) and (attr not in conf or conf[attr] != value): break
+            else:
+                result[attr] = value
+        return result
         
     def setup(self, logger=False):
         # Set up the pydwarf logger
