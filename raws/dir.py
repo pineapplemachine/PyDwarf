@@ -17,7 +17,7 @@ class rawsdir(rawsqueryableobj):
         self.version = version
         self.log = log
         self.hack = None
-        if len(args) or len(kwargs): self.read(path=path, *args, **kwargs)
+        if path: self.read(path=path, *args, **kwargs)
         
     def __enter__(self):
         return self
@@ -44,7 +44,7 @@ class rawsdir(rawsqueryableobj):
         
         file = self.files.get(name)
         if create is not None and file is None:
-            file = self.addfile(name)
+            file = self.add(name)
             file.add(create)
         return file
         

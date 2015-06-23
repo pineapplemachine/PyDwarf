@@ -1,5 +1,6 @@
 import re
 import os
+import shutil
 import json
 import argparse
 import importlib
@@ -63,13 +64,11 @@ def __main__(args=None):
     # Get the output directory, remove old raws if present
     outputdir = conf.output if conf.output else conf.input
     if os.path.exists(outputdir):
-        pydwarf.log.info('Removing obsolete raws from %s.' % outputdir)
-        for removefile in [os.path.join(outputdir, f) for f in os.listdir(outputdir)]:
-            pydwarf.log.debug('Removing file %s.' % removefile)
-            if removefile.endswith('.txt'): os.remove(removefile)
-    else:
-        pydwarf.log.info('Creating raws output directory %s.' % outputdir)
-        os.makedirs(outputdir)
+        pydwarf.log.info('Removing obsolete output directory %s.' % outputdir)
+        shutil.rmtree(outputdir)
+        
+    pydwarf.log.info('Creating raws output directory %s.' % outputdir)
+    os.makedirs(outputdir)
     
     # Write the output
     pydwarf.log.info('Writing changes to raws to %s.' % outputdir)

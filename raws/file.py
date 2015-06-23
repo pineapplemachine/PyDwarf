@@ -39,7 +39,7 @@ class rawsbasefile(object):
     def setpath(self, path, root=None):
         self.path = path
         self.rootpath = root
-        self.loc = os.path.relpath(path, root) if root and path else None
+        self.loc = os.path.relpath(path, root) if (root and path and os.path.abspath(path).startswith(os.path.abspath(root))) else None
         self.name, self.ext = (os.path.splitext(os.path.basename(path)) if os.path.isfile(path) else (os.path.basename(path), None)) if path else (None, None)
         
     def dest(self, path, makedir=False):
@@ -61,7 +61,7 @@ class rawsotherfile(rawsbasefile):
             if os.path.isfile(self.path):
                 shutil.copy2(path, dest)
             elif os.path.isdir(self.path):
-                copytree(originalpath, writepath)
+                copytree(path, dest)
             else:
                 raise ValueError
 
@@ -83,7 +83,7 @@ class rawsfile(rawsbasefile, rawsqueryableobj):
         '''
         
         self.dir = dir
-        self.setpath(path, dir.path if (dir.path and not root) else root)
+        self.setpath(path, dir.path if (dir and dir.path and not root) else root)
         
         self.roottoken = None
         self.tailtoken = None
@@ -189,9 +189,12 @@ class rawsfile(rawsbasefile, rawsqueryableobj):
             >>> print item_food == food_copy
             False
         '''
-        file = rawsfile(name=self.name, path=self.path, dir=self.dir)
-        file.settokens(rawstoken.copy(self.tokens()))
-        return file
+        copy = rawsfile(name=self.name)
+        copy.path = self.path
+        copy.loc = self.loc
+        copy.ext = self.ext
+        copy.settokens(rawstoken.copy(self.tokens()))
+        return copy
         
     def equals(self, other):
         return rawstoken.tokensequal(self.tokens(), other.tokens())

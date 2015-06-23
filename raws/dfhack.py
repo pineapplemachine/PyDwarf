@@ -11,7 +11,7 @@ class dfhack:
     def __init__(self, path=None, version=None):
         '''Constructor for dfhack object.'''
         self.path = path
-        self.version = version
+        self.version = version # TODO: automatic detection in pydwarf.config isn't reliable (why am I putting it here? who the fuck knows)
     
     def open(path, *args, **kwargs):
         '''Open a file within the DFHack directory. Acts as a shortcut for open('dfhack/path', mode).'''
