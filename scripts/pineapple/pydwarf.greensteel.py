@@ -23,7 +23,7 @@ default_entities = ['MOUNTAIN']
 def greensteel(df, entities=default_entities):
     # Add greensteel raws
     try:
-        df.read(path=greendir, log=pydwarf.log)
+        df.read(path=greendir)
         return pydwarf.urist.getfn('pineapple.utils.addtoentity')(
             df,
             entities = entities,

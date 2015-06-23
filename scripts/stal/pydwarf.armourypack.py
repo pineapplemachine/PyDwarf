@@ -88,7 +88,7 @@ def additemstoraws(dfraws, armouryraws):
                 # Add new item
                 elif armourytokens:
                     pydwarf.log.debug('Adding new item %s...' % armouryitem)
-                    if filename not in dfraws.files: dfraws.addfile(filename)
+                    if filename not in dfraws.files: dfraws.add(filename)
                     armouryitem.prefix = '\n\n' # Makes outputted raws a bit neater
                     dfraws[filename].add(token=armouryitem)
                     dfraws[filename].add(tokens=raws.token.copy(armourytokens))

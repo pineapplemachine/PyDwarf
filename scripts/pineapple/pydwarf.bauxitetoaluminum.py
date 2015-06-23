@@ -34,11 +34,13 @@ default_file = 'reaction_smelter_bauxtoalum_pineapple'
     },
     compatibility = (pydwarf.df_0_3x, pydwarf.df_0_40)
 )
-def bauxtoalum(df, aluminum_value=0.75, entities=default_entities, add_to_file=default_file):
+def bauxitetoaluminum(df, aluminum_value=0.75, entities=default_entities, add_to_file=default_file):
     # Affect value of aluminum
     pydwarf.log.debug('Multiplying value of aluminum by %f.' % aluminum_value)
     try:
-        matvaluetoken = df.getobj('INORGANIC:ALUMINUM').getprop('MATERIAL_VALUE')
+        aluminum = df.getobj('INORGANIC:ALUMINUM')
+        if aluminum is None: return pydwarf.failure('Couldn\'t find aluminum token to affect its value.')
+        matvaluetoken = aluminum.getprop('MATERIAL_VALUE')
         matvaluetoken.args[0] = str( float(matvaluetoken.args[0]) * aluminum_value )
     except:
         pydwarf.log.exception('Failed to affect value of aluminum.')

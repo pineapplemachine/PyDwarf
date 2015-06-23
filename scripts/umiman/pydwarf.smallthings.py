@@ -73,7 +73,10 @@ def prefstring(dfraws):
             pydwarf.log.debug('Added %d prefstrings to %s.' % (len(prefs), dfcreature))
             
     # All done!
-    return pydwarf.success('Added prefstrings to %d creatures.' % (len(smallcreatures) - failedcreatures))
+    if (len(smallcreatures) - failedcreatures):
+        return pydwarf.success('Added prefstrings to %d creatures.' % (len(smallcreatures) - failedcreatures))
+    else:
+        return pydwarf.failure('Added prefstrings to no creatures.')
 
 
 
@@ -94,6 +97,8 @@ def prefstring(dfraws):
     compatibility = (pydwarf.df_0_2x, pydwarf.df_0_3x, pydwarf.df_0_40)
 )
 def engraving(dfraws):
+    if 'descriptor_shape_umiman' in dfraws: return pydwarf.failure('File descriptor_shape_umiman already exists.')
+        
     # Get the smallthings ModBase raws, which is where this data will be coming from
     smallraws = getsmallraws()
     if not smallraws: return pydwarf.failure('Failed to read smallthings raws.')
@@ -103,12 +108,14 @@ def engraving(dfraws):
     dfshapesdict = dfraws.objdict('SHAPE')
     
     # Add a new file for the new shapes
-    dfshapesfile = dfraws.addfile(filename='descriptor_shape_umiman')
+    dfshapesfile = dfraws.add('descriptor_shape_umiman')
     dfshapesfile.add('OBJECT:DESCRIPTOR_SHAPE')
     shapesadded = 0
     
     # Add each shape
-    for smallshape in smallraws['descriptor_shape_standard'].all(exact_value='SHAPE'):
+    smallshapes = smallraws['descriptor_shape_standard']
+    if smallshapes is None: return pydwarf.failure('Failed to find smallthings raws file named descriptor_shape_standard.')
+    for smallshape in smallshapes.all(exact_value='SHAPE'):
         if smallshape.args[0] not in dfshapesdict: # Verify that the shape isn't already in the raws
             pydwarf.log.debug('Adding shape %s...' % smallshape)
             

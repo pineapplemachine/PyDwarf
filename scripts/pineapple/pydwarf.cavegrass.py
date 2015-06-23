@@ -120,9 +120,12 @@ def cavegrass(df, grasses=default_grasses, add_file='plant_grasses_cavegrass_pin
     # Add the new file for new grasses
     grassfile = None
     if add_file:
-        if add_file in df.files: return pydwarf.failure('File %s already exists.' % add_file)
-        grassfile = df.addfile(filename=add_file)
-        grassfile.add('OBJECT:PLANT')
+        try:
+            grassfile = df.add(add_file)
+            grassfile.add('OBJECT:PLANT')
+        except:
+            pydwarf.log.exception('Failed to add file %s.' % add_file)
+            return pydwarf.failure('Failed to add file %s.' % add_file)
     
     # Handle each grass
     failures = 0

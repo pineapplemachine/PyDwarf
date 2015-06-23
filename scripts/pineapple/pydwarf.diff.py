@@ -87,7 +87,7 @@ def diff(dfraws, paths):
             # File doesn't exist yet, don't bother with a diff
             else:
                 pydwarf.log.debug('File didn\'t exist yet, adding...')
-                dfraws.addfile(rfile=newfile)
+                dfraws.add(newfile)
                 
     for fileheader, fileops in operations.iteritems():
         # Do some handling for potentially conflicting replacements

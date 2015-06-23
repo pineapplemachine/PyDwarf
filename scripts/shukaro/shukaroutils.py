@@ -34,7 +34,7 @@ def addraws(pydwarf, dfraws, rawsdir, entities, extratokens=None):
     
     # Add new files
     for filename, rfile in shukaroraws.files.iteritems():
-        if filename not in dfraws: dfraws.addfile(rfile=rfile)
+        if filename not in dfraws: dfraws.add(rfile.copy())
         
     # All done!
     return pydwarf.success()
