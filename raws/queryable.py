@@ -13,11 +13,11 @@ class rawsqueryable(object):
             its limit or the tokens have run out.'''
     
     quick_query_args_docstring = '''
-        %s
         pretty: Convenience argument which acts as a substitute for directly
             assigning a filter's exact_value and exact_args arguments. Some methods
             also accept an until_pretty argument which acts as a substitute for
             until_exact_value and until_exact_args.
+        %s
         **kwargs: If no tokeniter is specified, then arguments which correspond to
             named arguments of the object's tokens method will be passed to that
             method. All other arguments will be passed to the appropriate filters,
@@ -38,15 +38,41 @@ class rawsqueryable(object):
             return item in self.tokens()
     
     def __getitem__(self, item):
-        if isinstance(item, basestring):
+        '''Overrides object[...] behavior. Accepts a number of different types for the item argument, each resulting in different behavior.
+        
+        object[...]
+            Returns the same as object.list().
+        object[str]
+            Returns the same as object.get(str).
+        object[int]
+            Returns the same as object.index(int).
+        object[slice]
+            Returns the same as object.slice(slice).
+        object[iterable]
+            Returns a flattened list containing object[member] in order for each member of iterable.
+        object[anything else]
+            Raises an exception.
+        '''
+        if item is Ellipsis:
+            return self.list()
+        elif isinstance(item, basestring):
             return self.get(pretty=item)
         elif isinstance(item, int):
             return self.index(item)
         elif isinstance(item, slice):
             return self.slice(item)
+        elif hasattr(item, '__iter__') or hasattr(item, '__getitem__'):
+            return self.getitems(items)
         else:
             raise ValueError
-    
+            
+    def getitems(self, items):
+        result = []
+        for item in items:
+            ext = self.__getitem__(item)
+            (result.extend if isinstance(ext, list) else result.append)(ext)
+        return result
+        
     def slice(self, slice):
         return rawstokenlist(self.islice(slice))
         
@@ -63,9 +89,9 @@ class rawsqueryable(object):
         '''Executes a query on some iterable containing tokens.
         
         filters: A dict or other iterable containing rawstokenfilter-like objects.
+        %s
         **kwargs: If tokeniter is not given, then the object's token method will be
             called with these arguments and used instead.
-        %s
         ''' % rawsqueryable.query_tokeniter_docstring
         
         if tokeniter is None: tokeniter = self.tokens(**kwargs)

@@ -1,35 +1,125 @@
+import os
+import shutil
+
+from copytree import copytree
 from queryable import rawsqueryableobj, rawstokenlist
 from token import rawstoken
 
-class rawsfile(rawsqueryableobj):
+
+
+class rawsbasefile(object):
+    def __init__(self):
+        self.path = None
+        self.loc = None
+        self.name = None
+        self.ext = None
+        
+    def __str__(self):
+        return os.path.join(self.loc, ('.'.join((self.name, self.ext)) if self.ext else self.name)) if self.loc else self.name
+    def __repr__(self):
+        return str(self)
+        
+    def __hash__(self):
+        return hash(str(self))
+        
+    def __eq__(self, other):
+        return str(self) == str(other)
+    def __ne__(self, other):
+        return str(self) != str(other)
+    
+    def __gt__(self, other):
+        return str(self) > str(other)
+    def __ge__(self, other):
+        return str(self) >= str(other)
+    def __lt__(self, other):
+        return str(self) < str(other)
+    def __le__(self, other):
+        return str(self) <= str(other)
+        
+    def setpath(self, path, root=None):
+        self.path = path
+        self.rootpath = root
+        self.loc = os.path.relpath(path, root) if root and path else None
+        self.name, self.ext = (os.path.splitext(os.path.basename(path)) if os.path.isfile(path) else (os.path.basename(path), None)) if path else (None, None)
+        
+    def dest(self, path, makedir=False):
+        '''Internal: Given a root directory that this file would be written to, get the full path of where this file belongs.'''
+        dir = os.path.join(path, self.loc) if self.loc else path
+        dest = os.path.join(dir, '.'.join((self.name, self.ext)) if self.ext else self.name)
+        if makedir and not os.path.isdir(dir): os.makedirs(dir)
+        return dest
+        
+
+
+class rawsotherfile(rawsbasefile):
+    def __init__(self, path, root=None):
+        self.setpath(path, root)
+    
+    def write(self, path):
+        dest = self.dest(path, makedir=True)
+        if path != dest:
+            if os.path.isfile(self.path):
+                shutil.copy2(path, dest)
+            elif os.path.isdir(self.path):
+                copytree(originalpath, writepath)
+            else:
+                raise ValueError
+
+
+
+class rawsfile(rawsbasefile, rawsqueryableobj):
     '''Represents a single file within a raws directory.'''
     
-    def __init__(self, header=None, data=None, path=None, tokens=None, rfile=None, dir=None):
+    def __init__(self, name=None, data=None, path=None, tokens=None, file=None, dir=None, root=None):
         '''Constructs a new raws file object.
         
-        header: The header string to appear at the top of the file. Also used to determine filename.
+        name: The name string to appear at the top of the file. Also used to determine filename.
         data: A string to be parsed into token data.
         path: A path to the file from which this object is being parsed, if any exists.
         tokens: An iterable of tokens from which to construct the object; these tokens will be its initial contents.
-        rfile: A file-like object from which to automatically read the header and data attributes.
+        file: A file-like object from which to automatically read the name and data attributes.
         dir: Which raws.dir object this file belongs to.
+        root: Root directory for raws files. If left as None, dir.path will be used instead.
         '''
-        if rfile:
-            self.read(rfile)
-            if header is not None: self.header = header
-            if data is not None: self.data = data
-        else:
-            self.header = header
-            self.data = data
-        self.path = path
+        
+        self.dir = dir
+        self.setpath(path, dir.path if (dir.path and not root) else root)
+        
         self.roottoken = None
         self.tailtoken = None
-        self.dir = dir
+        
+        if file:
+            self.read(file)
+            if name is not None: self.name = name
+            if data is not None: self.data = data
+        else:
+            self.name = name
+            self.data = data
+        
         if self.data is not None:
             tokens = rawstoken.parse(self.data, implicit_braces=False, file=self)
             self.settokens(tokens, setfile=False)
         elif tokens is not None:
             self.settokens(tokens, setfile=True)
+            
+    def __enter__(self):
+        return self
+    def __exit__(self):
+        if self.path: self.write(self.path)
+            
+    def __eq__(self, other):
+        return self.equals(other)
+    def __ne__(self, other):
+        return not self.equals(other)
+        
+    def __len__(self):
+        return self.length()
+        
+    def __nonzero__(self):
+        return True
+        
+    def __repr__(self):
+        return '%s\n%s' %(self.name, ''.join([repr(o) for o in self.tokens()]))
     
     def index(self, index):
         itrtoken = self.root() if index >= 0 else self.tail()
@@ -41,35 +131,33 @@ class rawsfile(rawsqueryableobj):
         
     def getpath(self):
         return self.path
-    def setpath(self, path):
-        self.path = path
         
-    def getheader(self):
-        '''Get the file header.
+    def getname(self):
+        '''Get the file name.
         
         Example usage:
             >>> dwarf = df.getobj('CREATURE:DWARF')
             >>> creature_standard = dwarf.file
-            >>> print creature_standard.getheader()
+            >>> print creature_standard.getname()
             creature_standard
             >>> creature_standard.setheader('example_header')
-            >>> print creature_standard.getheader()
+            >>> print creature_standard.getname()
             example_header
         '''
-        return self.header
-    def setheader(self, header):
-        '''Set the file header.
+        return self.name
+    def setname(self, name):
+        '''Set the file name.
         
         Example usage:
             >>> dwarf = df.getobj('CREATURE:DWARF')
             >>> creature_standard = dwarf.file
-            >>> print creature_standard.getheader()
+            >>> print creature_standard.getname()
             creature_standard
             >>> creature_standard.setheader('example_header')
-            >>> print creature_standard.getheader()
+            >>> print creature_standard.getname()
             example_header
         '''
-        self.header = header
+        self.name = name
             
     def settokens(self, tokens, setfile=True):
         '''Internal: Utility method for setting the root and tail tokens given an iterable.'''
@@ -101,25 +189,12 @@ class rawsfile(rawsqueryableobj):
             >>> print item_food == food_copy
             False
         '''
-        rfile = rawsfile(header=self.header, path=self.path, dir=self.dir)
-        rfile.settokens(rawstoken.copy(self.tokens()))
-        return rfile
+        file = rawsfile(name=self.name, path=self.path, dir=self.dir)
+        file.settokens(rawstoken.copy(self.tokens()))
+        return file
         
     def equals(self, other):
         return rawstoken.tokensequal(self.tokens(), other.tokens())
-        
-    def __eq__(self, other):
-        return self.equals(other)
-    def __ne__(self, other):
-        return not self.equals(other)
-        
-    def __len__(self):
-        return self.length()
-        
-    def __str__(self):
-        return self.header
-    def __repr__(self):
-        return '%s\n%s' %(self.header, ''.join([repr(o) for o in self.tokens()]))
         
     def root(self):
         '''Gets the first token in the file.
@@ -160,12 +235,23 @@ class rawsfile(rawsqueryableobj):
         for token in generator:
             yield token
             
-    def read(self, rfile):
-        '''Internal: Given a file-like object, reads header and data from it.'''
-        self.header, self.data = rfile.readline().strip(), rfile.read()
-    def write(self, rfile):
-        '''Internal: Given a file-like object, writes the file's contents to that file.'''
-        rfile.write(self.__repr__())
+    def read(self, file):
+        '''Given a path or file-like object, reads name and data.'''
+        if isinstance(file, basestring):
+            self.path = file
+            self.ext = os.path.splitext(file)[1]
+            with open(file, 'rb') as src:
+                self.name, self.data = src.readline().strip(), src.read()
+        else:
+            self.name, self.data = file.readline().strip(), file.read()
+            
+    def write(self, file):
+        '''Given a path to a directory or a file-like object, writes the file's contents to that file.'''
+        if isinstance(file, basestring):
+            with open(self.dest(file, makedir=True), 'wb') as dest:
+                dest.write(repr(self))
+        else:
+            file.write(repr(self))
     
     def add(self, auto=None, pretty=None, token=None, tokens=None, **kwargs):
         '''Adds tokens to the end of a file.
@@ -183,7 +269,7 @@ class rawsfile(rawsqueryableobj):
             [ITEM_FOOD:ITEM_FOOD_ROAST]
             [NAME:roast]
             [LEVEL:4]
-            >>> tokens = item_food.add('\nhi! [THIS][IS][AN][EXAMPLE]')
+            >>> tokens = item_food.add('hi! [THIS][IS][AN][EXAMPLE]')
             >>> print tokens
             hi! [THIS][IS][AN][EXAMPLE]
             >>> print item_food.list()
@@ -196,8 +282,7 @@ class rawsfile(rawsqueryableobj):
             [LEVEL:3]
             [ITEM_FOOD:ITEM_FOOD_ROAST]
             [NAME:roast]
-            [LEVEL:4]
-            hi! [THIS][IS][AN][EXAMPLE]
+            [LEVEL:4]hi! [THIS][IS][AN][EXAMPLE]
         '''
         tail = self.tail()
         if tail:

@@ -16,49 +16,6 @@ jsonconfigpath = 'config.json'
 
 
 
-def getconf(args=None):
-    # Load initial config from json file
-    conf = pydwarf.config()
-    if os.path.isfile(jsonconfigpath): conf.json(jsonconfigpath)
-    
-    # Default name of configuration override package
-    overridename = 'config_override'
-    
-    # Override settings from command line arguments, first check for --config argument
-    if args.config:
-        if args.config.endswith('.json'):
-            conf.json(args.config)
-        else:
-            overridename = args.config
-    
-    # Apply settings in override package
-    overrideexception = None
-    if overridename and (os.path.isfile(overridename + '.py') or os.path.isfile(os.path.join(overridename, '__init__.py'))):
-        try:
-            package = importlib.import_module(overridename)
-            conf.apply(package.export)
-        except Exception, e:
-            overrideexception = e
-            
-    # Apply other command line arguments   
-    conf.apply(args.__dict__)
-    
-    # Setup logger
-    conf.setuplogger()
-    
-    # If there was an exception when reading the overridename package, report it now
-    # Don't report it earlier because the logger wasn't set up yet
-    if overrideexception:
-        pydwarf.log.error('Failed to apply configuration from %s package.\n%s' % (overridename, overrideexception))
-        
-    # Handle things like automatic version detection, package importing
-    conf.setup()
-    
-    # All done!
-    return conf
-
-
-
 # Actually run the program
 def __main__(args=None):
     conf = getconf(args)
@@ -116,10 +73,53 @@ def __main__(args=None):
     
     # Write the output
     pydwarf.log.info('Writing changes to raws to %s.' % outputdir)
-    pydwarf.urist.session.dfraws.write(outputdir, pydwarf.log)
+    pydwarf.urist.session.dfraws.write(outputdir)
     
     # All done!
     pydwarf.log.info('All done!')
+
+
+
+def getconf(args=None):
+    # Load initial config from json file
+    conf = pydwarf.config()
+    if os.path.isfile(jsonconfigpath): conf.json(jsonconfigpath)
+    
+    # Default name of configuration override package
+    overridename = 'config_override'
+    
+    # Override settings from command line arguments, first check for --config argument
+    if args.config:
+        if args.config.endswith('.json'):
+            conf.json(args.config)
+        else:
+            overridename = args.config
+    
+    # Apply settings in override package
+    overrideexception = None
+    if overridename and (os.path.isfile(overridename + '.py') or os.path.isfile(os.path.join(overridename, '__init__.py'))):
+        try:
+            package = importlib.import_module(overridename)
+            conf.apply(package.export)
+        except Exception, e:
+            overrideexception = e
+            
+    # Apply other command line arguments   
+    conf.apply(args.__dict__)
+    
+    # Setup logger
+    conf.setuplogger()
+    
+    # If there was an exception when reading the overridename package, report it now
+    # Don't report it earlier because the logger wasn't set up yet
+    if overrideexception:
+        pydwarf.log.error('Failed to apply configuration from %s package.\n%s' % (overridename, overrideexception))
+        
+    # Handle things like automatic version detection, package importing
+    conf.setup()
+    
+    # All done!
+    return conf
 
 
 

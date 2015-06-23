@@ -20,7 +20,7 @@ class session:
         
     def configure(self, raws, conf):
         self.conf = conf
-        self.dfraws = raws.dir(path=conf.input, log=log)
+        self.dfraws = raws.dir(path=conf.input, version=conf.version, log=log)
         self.dfraws.hack = raws.dfhack(path=conf.dfhackdir, version=conf.dfhackver)
         self.dfversion = conf.version
         
