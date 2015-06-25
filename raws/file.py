@@ -1,4 +1,5 @@
 import os
+import re
 import shutil
 
 from copytree import copytree
@@ -9,13 +10,27 @@ from token import rawstoken
 
 class rawsbasefile(object):
     def __init__(self):
+        self.dir = None
         self.path = None
+        self.rootpath = None
         self.loc = None
         self.name = None
         self.ext = None
+        self.kind = None
+    
+    @staticmethod
+    def factory(path, **kwargs):
+        if path.endswith('.txt'):
+            with open(path, 'rb') as txt:
+                if txt.readline().strip() == os.path.splitext(os.path.basename(path))[0]:
+                    txt.seek(0)
+                    return rawsfile(path=path, file=txt, **kwargs)
+        return rawsotherfile(path=path, **kwargs)
         
     def __str__(self):
-        return os.path.join(self.loc, ('.'.join((self.name, self.ext)) if self.ext else self.name)) if self.loc else self.name
+        name = ''.join((self.name, self.ext)) if self.ext else self.name
+        path = os.path.join(self.loc, name) if self.loc else name
+        return path
     def __repr__(self):
         return str(self)
         
@@ -36,32 +51,70 @@ class rawsbasefile(object):
     def __le__(self, other):
         return str(self) <= str(other)
         
-    def setpath(self, path, root=None):
+    def setpath(self, path, root=None, loc=None, name=None, ext=None):
         self.path = path
         self.rootpath = root
-        self.loc = os.path.relpath(path, root) if (root and path and os.path.abspath(path).startswith(os.path.abspath(root))) else None
         self.name, self.ext = (os.path.splitext(os.path.basename(path)) if os.path.isfile(path) else (os.path.basename(path), None)) if path else (None, None)
+        if root and path and (not os.path.samefile(root, os.path.dirname(path))) and os.path.abspath(path).startswith(os.path.abspath(root)):
+            self.loc = os.path.dirname(os.path.relpath(path, root))
+        else:
+            self.loc = None
+        if loc: self.loc = loc
+        if name: self.name = name
+        if ext: self.ext = ext
         
     def dest(self, path, makedir=False):
         '''Internal: Given a root directory that this file would be written to, get the full path of where this file belongs.'''
-        dir = os.path.join(path, self.loc) if self.loc else path
-        dest = os.path.join(dir, '.'.join((self.name, self.ext)) if self.ext else self.name)
+        dest = os.path.join(path, str(self))
+        dir = os.path.dirname(dest)
         if makedir and not os.path.isdir(dir): os.makedirs(dir)
         return dest
+                
+    def remove(self):
+        '''Remove this file from the raws.dir object to which it belongs.
+        
+        Example usage:
+            >>> dwarf = df.getobj('CREATURE:DWARF')
+            >>> print dwarf
+            [CREATURE:DWARF]
+            >>> print dwarf.file
+            creature_standard
+            >>> dwarf.file.remove()
+            >>> print df.getobj('CREATURE:DWARF')
+            None
+            >>> print df.getfile('creature_standard')
+            None
+        '''
+        if self.dir is not None:
+            self.dir.remove(self)
+        else:
+            raise ValueError('Failed to remove file because it doesn\'t belong to any dir.')
         
 
 
 class rawsotherfile(rawsbasefile):
-    def __init__(self, path, root=None):
+    def __init__(self, path, dir=None, root=None):
+        self.dir = dir
         self.setpath(path, root)
+        self.kind = self.ext[1:] if self.ext else 'dir'
+    
+    def copy(self):
+        copy = rawsotherfile()
+        copy.path = self.path
+        copy.dir = self.dir
+        copy.rootpath = self.rootpath
+        copy.name = self.name
+        copy.ext = self.ext
+        copy.loc = self.loc
+        return copy
     
     def write(self, path):
         dest = self.dest(path, makedir=True)
-        if path != dest:
+        if self.path != dest:
             if os.path.isfile(self.path):
-                shutil.copy2(path, dest)
+                shutil.copy2(self.path, dest)
             elif os.path.isdir(self.path):
-                copytree(path, dest)
+                copytree(self.path, dest)
             else:
                 raise ValueError
 
@@ -70,7 +123,7 @@ class rawsotherfile(rawsbasefile):
 class rawsfile(rawsbasefile, rawsqueryableobj):
     '''Represents a single file within a raws directory.'''
     
-    def __init__(self, name=None, data=None, path=None, tokens=None, file=None, dir=None, root=None):
+    def __init__(self, name=None, file=None, path=None, root=None, data=None, tokens=None, dir=None, **kwargs):
         '''Constructs a new raws file object.
         
         name: The name string to appear at the top of the file. Also used to determine filename.
@@ -79,11 +132,10 @@ class rawsfile(rawsbasefile, rawsqueryableobj):
         tokens: An iterable of tokens from which to construct the object; these tokens will be its initial contents.
         file: A file-like object from which to automatically read the name and data attributes.
         dir: Which raws.dir object this file belongs to.
-        root: Root directory for raws files. If left as None, dir.path will be used instead.
         '''
         
         self.dir = dir
-        self.setpath(path, dir.path if (dir and dir.path and not root) else root)
+        self.setpath(path=path, root=dir.path if (dir and dir.path and not root) else root, **kwargs)
         
         self.roottoken = None
         self.tailtoken = None
@@ -102,6 +154,9 @@ class rawsfile(rawsbasefile, rawsqueryableobj):
         elif tokens is not None:
             self.settokens(tokens, setfile=True)
             
+        if (not self.path) and (not self.ext): self.ext = '.txt'
+        self.kind = 'raw'
+            
     def __enter__(self):
         return self
     def __exit__(self):
@@ -119,6 +174,9 @@ class rawsfile(rawsbasefile, rawsqueryableobj):
         return True
         
     def __repr__(self):
+        return self.content()
+        
+    def content(self):
         return '%s\n%s' %(self.name, ''.join([repr(o) for o in self.tokens()]))
     
     def index(self, index):
@@ -189,10 +247,12 @@ class rawsfile(rawsbasefile, rawsqueryableobj):
             >>> print item_food == food_copy
             False
         '''
-        copy = rawsfile(name=self.name)
+        copy = rawsfile()
         copy.path = self.path
-        copy.loc = self.loc
+        copy.rootpath = self.rootpath
+        copy.name = self.name
         copy.ext = self.ext
+        copy.loc = self.loc
         copy.settokens(rawstoken.copy(self.tokens()))
         return copy
         
@@ -252,9 +312,9 @@ class rawsfile(rawsbasefile, rawsqueryableobj):
         '''Given a path to a directory or a file-like object, writes the file's contents to that file.'''
         if isinstance(file, basestring):
             with open(self.dest(file, makedir=True), 'wb') as dest:
-                dest.write(repr(self))
+                dest.write(self.content())
         else:
-            file.write(repr(self))
+            file.write(self.content())
     
     def add(self, auto=None, pretty=None, token=None, tokens=None, **kwargs):
         '''Adds tokens to the end of a file.
@@ -303,23 +363,6 @@ class rawsfile(rawsbasefile, rawsqueryableobj):
             elif tokens is not None:
                 self.settokens(tokens)
                 return tokens
-                
-    def remove(self):
-        '''Remove this file from the raws.dir object to which it belongs.
-        
-        Example usage:
-            >>> dwarf = df.getobj('CREATURE:DWARF')
-            >>> print dwarf
-            [CREATURE:DWARF]
-            >>> print dwarf.file
-            creature_standard
-            >>> dwarf.file.remove()
-            >>> print df.getobj('CREATURE:DWARF')
-            None
-            >>> print df.getfile('creature_standard')
-            None
-        '''
-        self.dir.removefile(rfile=self)
         
     def length(self):
         '''Get the number of tokens in this file.
