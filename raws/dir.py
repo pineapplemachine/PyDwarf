@@ -29,9 +29,19 @@ class rawsdir(rawsqueryableobj):
         if traceback is None and self.path is not None: self.write(path=self.path)
         
     def __getitem__(self, name):
-        return self.get(name)
-    def __setitem__(self, name, value):
-        return self.set(name, value)
+        return self.getfile(name)
+    
+    def __setitem__(self, name, content):
+        if isinstance(content, rawsbasefile):
+            if content.dir: content = content.copy()
+            content.setpath(name)
+            self.add(file=content, replace=True)
+        elif isinstance(content, rawsqueryable):
+            self.add(file=name, replace=True, tokens=content.tokens())
+        elif isinstance(content, basestring):
+            self.add(file=name, replace=True, data=content)
+        else:
+            self.add(file=name, tokens=content)
     
     def __contains__(self, item):
         return str(item) in self.files
@@ -59,28 +69,33 @@ class rawsdir(rawsqueryableobj):
         
     def add(self, file=None, path=None, loc=None, replace=False, **kwargs):
         if file is None:
-            if path is None: raise ValueError
+            if path is None: raise ValueError('Failed to add file to dir because neither a name, path, nor file object was specified.')
             file = rawsfile(path=path, dir=self, **kwargs)
         if isinstance(file, basestring):
-            splitloc, name = os.path.split(file)
-            loc = os.path.join(loc, splitloc) if loc else splitloc
-            file = rawsfile(name=name, loc=loc, path=path, dir=self, **kwargs)
+            if path:
+                rawsfile(name=file, path=path, dir=self, **kwargs)
+            else:
+                splitloc, name = os.path.split(file)
+                name, ext = os.path.splitext(name)
+                loc = os.path.join(loc, splitloc) if loc else splitloc
+                file = rawsfile(name=name, ext=ext, loc=loc, path=path, dir=self, **kwargs)
         else:
-            if file.dir is self: raise ValueError('Failed to add file %s because it already belongs to this dir.' % file)
-            if file.dir is not None: raise ValueError('Failed to add file %s because it already belongs to another dir. You probably meant to remove the file first or to add a copy.' % file)
+            if file.dir is not self and file.dir is not None:
+                raise ValueError('Failed to add file %s to dir because it already belongs to another dir. You probably meant to remove the file first or to add a copy.' % file)
             file.dir = self
-        if (not replace) and file in self.files: raise KeyError('Dir already contains a file by the name %s.' % file)
-        self.files[str(file)] = file
-        return file
-        
-    def addfilekey(self, file):
-        '''Internal: Add a raws file to this dir's files and filenames dicts.'''
+        if str(file) in self.files:
+            if replace:
+                self.remove(file)
+            else:
+                raise KeyError('Failed to add file %s to dir because it already contains a file by the same name.' % file)
         self.files[str(file)] = file
         if file.name not in self.filenames: self.filenames[file.name] = []
         self.filenames[file.name].append(file)
+        return file
         
     def remove(self, file=None):
-        if file not in self.files: raise KeyError
+        if isinstance(file, basestring): file = self.getfile(file)
+        if (file not in self.files) or (file.dir is not self): raise KeyError('Failed to remove file %s from dir because it doesn\'t belong to the dir.' % file)
         self.files[str(file)].dir = None
         del self.files[str(file)]
         
@@ -101,18 +116,19 @@ class rawsdir(rawsqueryableobj):
             
         for path in paths:
             for root, dirs, files in os.walk(path):
-                addeddirs = []
+                addeddirs = {}
                 # Add files
                 for name in files:
                     filepath = os.path.join(root, name)
                     file = rawsbasefile.factory(filepath, root=path, dir=self)
-                    self.files[str(file)] = file
-                    addeddirs.append(os.path.abspath(os.path.dirname(filepath)))
+                    addeddirs[os.path.abspath(os.path.dirname(filepath))] = True
+                    self.add(file)
                 # Add empty directories
                 for dir in dirs:
-                    dir = os.path.abspath(dir)
-                    if not any([added.startswith(dir) for added in addeddirs]):
+                    dir = os.path.abspath(os.path.join(path, dir))
+                    if not any([added.startswith(dir) for added in addeddirs.iterkeys()]):
                         file = rawsotherfile(path=dir, root=path, dir=self)
+                        self.add(file)
         
     def write(self, path=None):
         '''Writes raws to the specified directory.'''

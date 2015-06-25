@@ -62,6 +62,7 @@ class rawsbasefile(object):
         if loc: self.loc = loc
         if name: self.name = name
         if ext: self.ext = ext
+        self.kind = self.ext[1:] if self.ext else 'dir'
         
     def dest(self, path, makedir=False):
         '''Internal: Given a root directory that this file would be written to, get the full path of where this file belongs.'''
@@ -96,7 +97,6 @@ class rawsotherfile(rawsbasefile):
     def __init__(self, path, dir=None, root=None):
         self.dir = dir
         self.setpath(path, root)
-        self.kind = self.ext[1:] if self.ext else 'dir'
     
     def copy(self):
         copy = rawsotherfile()
