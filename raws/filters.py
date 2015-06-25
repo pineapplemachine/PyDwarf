@@ -1,12 +1,7 @@
 import re
 import copy
 
-
-
-# Hackish solution to cyclic import
-def rawstoken():
-    if 'token' not in globals(): import token
-    return token.rawstoken
+from token import rawstoken
 
 
 
@@ -118,13 +113,16 @@ class rawstokenfilter(rawsbasefilter):
             True.
         '''
         self.pretty = pretty
+        
         if pretty:
-            token = rawstoken().parseone(pretty)
+            token = rawstoken.parseone(pretty)
             exact_value = token.value
             if token.nargs(): exact_args = token.args
+            
         if match_token:
             exact_value = match_token.value
             exact_args = match_token.args
+            
         self.exact_token = exact_token
         self.exact_value = exact_value
         self.except_value = except_value
@@ -148,7 +146,9 @@ class rawstokenfilter(rawsbasefilter):
         self.limit = limit
         self.limit_terminates = limit_terminates
         
-        # Anchor regular expressions
+        self.anchor()
+        
+    def anchor(self):
         if self.re_value: self.re_value += '$'
         if self.re_prefix: self.re_prefix += '$'
         if self.re_suffix: self.re_suffix += '$'

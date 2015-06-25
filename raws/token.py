@@ -1,7 +1,6 @@
 import itertools
 
 from queryable import rawsqueryable, rawstokenlist
-from filters import rawstokenfilter
 
 class rawstoken(rawsqueryable):
     
@@ -641,29 +640,6 @@ class rawstoken(rawsqueryable):
             if (step is None) or (count % step == 0): yield itertoken
             itertoken = itertoken.prev if reverse else itertoken.next
             count += 1
-            
-    def match(self, filter=None, **kwargs):
-        '''Returns True if this method matches some filter, false otherwise.
-        
-        filter: The filter to check, for example a raws.tokenfilter object.
-        **kwargs: Passed to the taws.tokenfilter constructor to nab a filter
-            to use if no filter was otherwise specified.
-        
-        Example usage:
-            >>> filter = raws.tokenfilter(exact_value='EXAMPLE')
-            >>> token_a = raws.token('HELLO:THERE')
-            >>> token_b = raws.token('EXAMPLE')
-            >>> token_c = raws.token('EXAMPLE:NUMBER:TWO')
-            >>> print token_a.match(filter)
-            False
-            >>> print token_b.match(filter)
-            True
-            >>> print token_c.match(filter)
-            True
-            >>> print token_a.match(exact_value='HELLO')
-            True
-        '''
-        return (filter if filter else rawstokenfilter(**kwargs)).match(self)
         
     def add(self, auto=None, pretty=None, token=None, tokens=None, reverse=False):
         '''Adds a token or tokens nearby this one. If reverse is False the token 
