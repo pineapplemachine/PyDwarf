@@ -54,8 +54,18 @@ class rawstoken(rawsqueryable):
             False
         ''' % rawstoken.auto_arg_docstring
         
+        self.prev = prev    # previous token sequentially
+        self.next = next    # next token sequentially
+        
+        self.value = None
+        self.args = None
+        self.prefix = None
+        self.suffix = None
+        self.file = None
+        
         pretty, token, tokens = rawstoken.auto(auto, pretty, token, None)
-        if tokens is not None: raise ValueError('Failed to initialize token object because the given string %s contained more than one token.' % pretty)
+        if tokens is not None: raise ValueError('Failed to initialize token object because the given argument was not a string or a single token.' % pretty)
+        
         if pretty is not None:
             token = rawstoken.parseone(pretty, implicit_braces=True)
         if token is not None:
@@ -63,16 +73,13 @@ class rawstoken(rawsqueryable):
             args = list(token.args) if token.args else []
             prefix = token.prefix
             suffix = token.suffix
-            file = token.file
-        # tokens look like this: [value:arg1:arg2:...:argn]
-        self.prev = prev            # previous token sequentially
-        self.next = next            # next token sequentially
-        self.value = value          # value for the token
-        self.args = args            # arguments for the token
-        self.prefix = prefix        # non-token text between the preceding token and this one
-        self.suffix = suffix        # between this token and the next/eof (should typically apply to eof)
-        self.file = file            # parent rawsfile object
-        if not self.args: self.args = []
+        
+        if value: self.setvalue(value)      # value for the token
+        if args: self.setargs(args)         # arguments for the token
+        if prefix: self.setprefix(prefix)   # non-token text between the preceding token and this one
+        if suffix: self.setsuffix(suffix)   # between this token and the next/eof (should typically apply to eof)
+        
+        if self.args is None: self.args = []
         
     def __hash__(self): # Not that this class is immutable, just means you'll need to be careful about when you're using token hashes
         return hash('%s:%s' % (self.value, self.argsstr()) if self.nargs() else self.value)
@@ -257,6 +264,9 @@ class rawstoken(rawsqueryable):
         return self.nargs()
     def __contains__(self, value):
         return self.containsarg(value)
+        
+    def __iadd__(self, value):
+        self.addarg(value)
             
     def __nonzero__(self):
         return True
@@ -359,6 +369,14 @@ class rawstoken(rawsqueryable):
             [EXAMPLE:hi!:b:500]'''
         if value is None and index is not None: value = index; index = 0
         self.args[index] = rawstoken.sanitizeargstring(value)
+    
+    def setargs(self, args=None):
+        self.args = []
+        if args:
+            for arg in args: self.addarg(arg)
+            
+    def clearargs(self):
+        self.args = []
         
     def addarg(self, value):
         '''Appends an argument to the end of the argument list.
