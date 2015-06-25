@@ -53,26 +53,18 @@ def __main__(args=None):
     else:
         pydwarf.log.warning('Proceeding without backing up raws.')
     
-    # Read input raws
-    pydwarf.log.info('Configuring raws with input directory %s.' % conf.input)
-    pydwarf.urist.session.configure(raws, conf)
+    # Create a new session
+    pydwarf.log.info('Configuring session using raws input directory %s.' % conf.input)
+    session = pydwarf.session(raws, conf)
     
     # Run each script
     pydwarf.log.info('Running scripts.')
-    pydwarf.urist.session.handleall()
-    
-    # Get the output directory, remove old raws if present
-    outputdir = conf.output if conf.output else conf.input
-    if os.path.exists(outputdir):
-        pydwarf.log.info('Removing obsolete output directory %s.' % outputdir)
-        shutil.rmtree(outputdir)
-        
-    pydwarf.log.info('Creating raws output directory %s.' % outputdir)
-    os.makedirs(outputdir)
+    session.handleall()
     
     # Write the output
-    pydwarf.log.info('Writing changes to raws to %s.' % outputdir)
-    pydwarf.urist.session.dfraws.write(outputdir)
+    outputdir = conf.output if conf.output else conf.input
+    pydwarf.log.info('Writing new raws to directory %s.' % outputdir)
+    session.write(outputdir)
     
     # All done!
     pydwarf.log.info('All done!')

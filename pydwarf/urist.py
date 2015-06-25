@@ -1,28 +1,33 @@
+import os
+import shutil
 import textwrap
+
 import version as versionutils
 from log import log
 
 
 
 class session:
-    def __init__(self, conf=None, dfraws=None, dfversion=None):
-        self.conf = conf
-        self.dfraws = dfraws
-        self.dfversion = dfversion
+    def __init__(self, raws=None, conf=None):
+        self.dfraws = None
+        self.dfversion = None
+        self.conf = None
         self.successes = []
         self.failures = []
         self.noresponse = []
-        
-    def successful(self, info):
-        return self.inlist(info, self.successes)
-    def failed(self, info):
-        return self.inlist(info, self.failures)
+        if raws is not None and conf is not None: self.configure(raws, conf)
         
     def configure(self, raws, conf):
         self.conf = conf
         self.dfraws = raws.dir(path=conf.input, version=conf.version, log=log)
         self.dfraws.hack = raws.dfhack(path=conf.dfhackdir, version=conf.dfhackver)
         self.dfversion = conf.version
+        
+    def successful(self, info):
+        return self.inlist(info, self.successes)
+    def failed(self, info):
+        return self.inlist(info, self.failures)
+    
         
     def inlist(self, info, flist):
         funcs = self.funcs(info)
@@ -90,6 +95,10 @@ class session:
             for info in infos: self.handle(info)
         else:
             log.error('No scripts to run.')
+            
+    def write(self, path=None, *args, **kwargs):
+        if os.path.exists(path): shutil.rmtree(path)
+        self.dfraws.write(path=path, *args, **kwargs)
         
         
 
@@ -125,8 +134,6 @@ class urist:
     
     # Track registered functions
     registered = {}
-    # Track data about which scripts have run successfully, etc.
-    session = session()
     
     # Decorator handling
     def __init__(self, **kwargs):
@@ -226,7 +233,7 @@ class urist:
         return urist.cullcandidates(
             version = version, 
             match = match, 
-            session = session if session is not None else urist.session, 
+            session = session, 
             candidates = urist.getregistered(*urist.splitname(name))
         )
         
@@ -281,9 +288,12 @@ class urist:
     
     @staticmethod
     def cullcandidates_dependency(session, candidates):
-        newcand, culled = [], []
-        for cand in candidates: (newcand if cand.depsatisfied(session) else culled).append(cand)
-        return newcand, culled
+        if session:
+            newcand, culled = [], []
+            for cand in candidates: (newcand if cand.depsatisfied(session) else culled).append(cand)
+            return newcand, culled
+        else:
+            return candidates, []
     
     @staticmethod
     def cullcandidates_duplicates(candidates):

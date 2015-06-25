@@ -131,7 +131,6 @@ class config:
             log.warning('No Dwarf Fortress version was specified. Scripts will be run regardless of their indicated compatibility.')
         else:
             log.info('Managing Dwarf Fortress version %s.' % self.version)
-        urist.session.dfversion = self.version
     
     def setupdfhack(self):
         self.setupdfhackdir()
