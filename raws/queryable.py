@@ -1,6 +1,7 @@
 # vim:fileencoding=UTF-8
 
 import inspect
+
 from filters import *
 
 
@@ -64,7 +65,7 @@ class rawsqueryable(object):
         elif hasattr(item, '__iter__') or hasattr(item, '__getitem__'):
             return self.getitems(items)
         else:
-            raise ValueError
+            raise ValueError('Failed to get item because the argument was of an unrecognized type.')
             
     def getitems(self, items):
         result = []
@@ -497,7 +498,6 @@ class rawsqueryableobj(rawsqueryable):
             [CREATURE:BEAR_SLOTH]
         '''
         
-        if re_id and id_in: raise ValueError
         type, exact_id = rawsqueryableobj.objpretty(pretty, type, exact_id)
         results = rawstokenlist()
         for objecttoken in self.getobjheaders(type):
@@ -539,7 +539,7 @@ class rawsqueryableobj(rawsqueryable):
         if pretty is not None:
             if ':' in pretty:
                 parts = pretty.split(':')
-                if len(parts) != 2: raise ValueError
+                if len(parts) != 2: raise ValueError('Failed to parse argument because there were too many or too few colons, there ought to be be just one.')
                 return parts[0], parts[1]
             elif type is None:
                 return pretty, id
@@ -553,8 +553,7 @@ class rawsqueryableobj(rawsqueryable):
 class rawstokenlist(list, rawsqueryable):
     '''Extends builtin list with token querying functionality.'''
     
-    def tokens(self, range=None, include_self=False, reverse=False):
-        if include_self: raise ValueError
+    def tokens(self, range=None, reverse=False):
         for i in xrange(self.__len__()-1, -1, -1) if reverse else xrange(0, self.__len__()):
             if range is not None and range <= count: break
             yield self.__getitem__(i)

@@ -1,4 +1,5 @@
 import os
+
 from copytree import copytree
 from queryable import rawsqueryable, rawsqueryableobj, rawstokenlist
 from file import rawsbasefile, rawsotherfile, rawsfile
@@ -94,7 +95,7 @@ class rawsdir(rawsqueryableobj):
         '''Reads raws from all text files in the specified directory.'''
         
         if path is None:
-            if self.path is None: raise ValueError('Couldn\'t read dir because no path was specified.')
+            if self.path is None: raise ValueError('Failed to read dir because no path was specified.')
             path = self.path
         paths = (path,) if isinstance(path, basestring) else path
             
@@ -117,7 +118,7 @@ class rawsdir(rawsqueryableobj):
         '''Writes raws to the specified directory.'''
         
         if path is None:
-            if self.path is None and self.dest is None: raise ValueError
+            if self.path is None and self.dest is None: raise ValueError('Failed to write dir because no path was specified.')
             path = self.dest if self.dest else self.path
         
         if self.log: self.log.debug('Writing %d files to %s.' % (len(self.files), path))

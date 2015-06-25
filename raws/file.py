@@ -116,7 +116,7 @@ class rawsotherfile(rawsbasefile):
             elif os.path.isdir(self.path):
                 copytree(self.path, dest)
             else:
-                raise ValueError
+                raise ValueError('Failed to write file because its path %s refers to neither a file nor a directory.' % self.path)
 
 
 

@@ -44,7 +44,7 @@ def __main__(args=None):
     
     # Make backup
     if conf.backup is not None:
-        pydwarf.log.info('Backing up raws to %s.' % conf.backup)
+        pydwarf.log.info('Backing up raws to directory %s.' % conf.backup)
         try:
             raws.copytree(conf.input, conf.backup)
         except:
