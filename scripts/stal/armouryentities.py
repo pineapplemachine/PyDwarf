@@ -6,14 +6,14 @@ sys.path.append('../../')
 import json
 import raws
 
-print 'And so it begins.'
+print('And so it begins.')
 
 entities = raws.dir(path='StalsArmouryPackv1_8a_4024')['entity_default']
 
 edict = {}
 
 for entity in entities.all(exact_value='ENTITY'):
-    print 'Entity: %s' % entity
+    print('Entity: %s' % entity)
     itemtypes = ('AMMO', 'DIGGER', 'TOOL', 'WEAPON', 'ARMOR', 'PANTS', 'GLOVES', 'SHOES', 'HELM', 'SHIELD')
     edict[entity.args[0]] = {}
     entitydict = edict[entity.args[0]]
@@ -27,8 +27,8 @@ for entity in entities.all(exact_value='ENTITY'):
             if item.value not in entitydict: entitydict[item.value] = []
             entitydict[item.value].append(item.args[0])
 
-print edict
+print(edict)
 
 with open('armouryentities.json', 'wb') as efile: json.dump(edict, efile)
 
-print 'All done!'
+print('All done!')
