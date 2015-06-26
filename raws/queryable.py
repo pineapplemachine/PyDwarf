@@ -2,7 +2,7 @@
 
 import inspect
 
-from filters import *
+from filters import rawstokenfilter
 
 
 
