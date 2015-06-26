@@ -137,7 +137,6 @@ Type "help", "copyright", "credits" or "license" for more information.
 >>> print description
 [DESCRIPTION:A medium-sized creature undeserving of life.]
 >>> df.write(path='raw/objects')
-<raws.dir.rawsdir instance at 0x10239b758>
 >>> quit()
 client-170:PyDwarf pineapple$ grep 'CREATURE:ELF' raw/objects/creature_standard.txt -A 4
 [CREATURE:ELF]
