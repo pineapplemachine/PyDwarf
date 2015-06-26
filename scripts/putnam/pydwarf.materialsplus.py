@@ -71,9 +71,11 @@ def materialsplus(dfraws):
                 rfile = dfraws.getfile(destname)
                 if rfile:
                     pydwarf.log.debug('Appending data to file %s from %s...' % (destname, path))
-                    with open(path, 'rb') as matplusfile: rfile.add(pretty=matplusfile)
+                    with open(path, 'rb') as matplusfile: 
+                        rfile.add(pretty=matplusfile)
                 else:
-                    with open(path, 'rb') as matplusfile: rfile = dfraws.addfile(rfile=raws.file(header=destname, rfile=matplusfile))
+                    with open(path, 'rb') as matplusfile: 
+                        rfile = dfraws.add(raws.file(name=destname, file=matplusfile))
                     pydwarf.log.debug('Adding data to new file %s.' % destname)
                     addedreactions += rfile.all(exact_value='REACTION', args_count=1)
                     
