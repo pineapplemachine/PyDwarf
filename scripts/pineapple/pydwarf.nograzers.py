@@ -16,4 +16,3 @@ def nograzers(df):
         return pydwarf.success('Removed %d GRAZER and %d STANDARD_GRAZER tokens.' % (len(grazers), len(standardgrazers)))
     else:
         return pydwarf.failure('I found no grazer tokens to remove.')
-

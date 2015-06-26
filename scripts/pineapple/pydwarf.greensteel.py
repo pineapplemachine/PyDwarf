@@ -1,10 +1,18 @@
 import os
 import pydwarf
 
-greendir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'raws/greensteel')
+
+
+greendir = pydwarf.rel(__file__, 'raw/greensteel')
+added_reactions = (
+    'GREEN_STEEL_MAKING_ADAMANT_PINEAPPLE',
+    'GREEN_STEEL_MAKING_ADMANTINE_PINEAPPLE',
+)
+
 
 
 default_entities = ['MOUNTAIN']
+
 
 
 @pydwarf.urist(
@@ -23,14 +31,11 @@ default_entities = ['MOUNTAIN']
 def greensteel(df, entities=default_entities):
     # Add greensteel raws
     try:
-        df.read(path=greendir)
+        df.add(path=greendir, loc='raw/objects')
         return pydwarf.urist.getfn('pineapple.utils.addtoentity')(
             df,
             entities = entities,
-            permitted_reaction = (
-                'GREEN_STEEL_MAKING_ADAMANT_PINEAPPLE',
-                'GREEN_STEEL_MAKING_ADMANTINE_PINEAPPLE'
-            )
+            permitted_reaction = added_reactions
         )
     except:
         pydwarf.log.exception('Failed to add greensteel raws.')

@@ -14,7 +14,7 @@ default_log_count = 1
 
 default_entities = ['MOUNTAIN', 'PLAINS']
 
-default_file = 'reaction_woodmechanisms_pineapple'
+default_file = 'raw/objects/reaction_woodmechanisms_pineapple.txt'
 
 
 

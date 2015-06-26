@@ -105,3 +105,46 @@ def objecttokens(df, object_type, token, add_to=None, remove_from=None):
         return pydwarf.success('Added %d %s tokens and removed %d from object type %s.' % (added, token, removed, object_type))
     else:
         return pydwarf.failure('Didn\'t add or remove any %s tokens.' % token)  
+
+
+
+@pydwarf.urist(
+    name = 'pineapple.utils.addhack',
+    version = '1.0.0',
+    author = 'Sophie Kirschner',
+    description = '''Utility script for adding a new DFHack script.''',
+    arguments = {
+        'name': 'The file name of the script to add.',
+        'auto_run': '''If set to True, a line will be added to dfhack.init containing only
+            the name of the added script. If set to None, no such line will be added. If set
+            to an arbitrary string, that string will be added as a new line at the end of
+            dfhack.init.''',
+        '**kwargs': '''Other named arguments will be passed on to the dir.add method used to
+            create the file object corresponding to the added script.'''
+    },
+    compatibility = '.*'
+)
+def addhack(df, name, auto_run, **kwargs):
+    pydwarf.log.debug('Adding new file %s.' % name)
+    file = df.add(name=name, **kwargs)
+    
+    if auto_run:
+        if auto_run is True: auto_run = '\n%s' % file.name
+        pydwarf.log.debug('Appending line %s to the end of dfhack.init.' % auto_run)
+        
+        if 'dfhack.init' not in df:
+            if 'dfhack.init-example' in df:
+                pydwarf.log.info('Copying dfhack.init-example to new file dfhack.init before adding new content to the file.')
+                init = df['dfhack.init-example'].copy().bin()
+                init.name = 'dfhack.init'
+                df.add(file=init)
+            else:
+                return pydwarf.failure('Failed to locate dfhack.init or dfhack.init-example.')
+        else:
+            init = df['dfhack.init'].bin()
+        
+        init.add('\n%s # Added by PyDwarf\n' % auto_run)
+        return pydwarf.success('Added new file %s and appended line %s to dfhack.init.' % (name, auto_run))
+        
+    else:
+        return pydwarf.success('Added new file %s.' % name)

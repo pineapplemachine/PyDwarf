@@ -15,7 +15,7 @@ default_entities = ['MOUNTAIN']
 
 default_anvil_cost = 5 # Cost in iron bars
 
-default_file = 'reaction_smelter_castanvil_pineapple'
+default_file = 'raw/objects/reaction_smelter_castanvil_pineapple.txt'
 
 
 

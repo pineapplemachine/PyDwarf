@@ -21,7 +21,7 @@ default_bone_count = 2
 
 default_entities = ['MOUNTAIN', 'PLAINS']
 
-default_file = 'reaction_kiln_boneflux_pineapple'
+default_file = 'raw/objects/reaction_kiln_boneflux_pineapple.txt'
 
 
 

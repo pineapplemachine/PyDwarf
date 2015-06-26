@@ -13,7 +13,7 @@ alumtobaux_reaction = '''
 
 default_entities = ['MOUNTAIN']
 
-default_file = 'reaction_smelter_bauxtoalum_pineapple'
+default_file = 'raw/objects/reaction_smelter_bauxtoalum_pineapple.txt'
 
 
 
