@@ -11,23 +11,25 @@ class session:
     def __init__(self, raws=None, conf=None):
         self.dfraws = None
         self.dfversion = None
+        self.hackversion = None
         self.conf = None
+        self.raws = None
         self.successes = []
         self.failures = []
         self.noresponse = []
         if raws is not None and conf is not None: self.configure(raws, conf)
         
     def configure(self, raws, conf):
+        self.raws = raws
         self.conf = conf
-        self.dfraws = raws.dir(path=conf.input, version=conf.version, log=log)
-        self.dfraws.hack = raws.dfhack(path=conf.dfhackdir, version=conf.dfhackver)
+        self.dfraws = raws.dir(root=conf.input, dest=conf.output, paths=conf.paths, version=conf.version, log=log)
         self.dfversion = conf.version
-        
+        self.hackversion = conf.dfhackver
+    
     def successful(self, info):
         return self.inlist(info, self.successes)
     def failed(self, info):
         return self.inlist(info, self.failures)
-    
         
     def inlist(self, info, flist):
         funcs = self.funcs(info)
@@ -45,11 +47,11 @@ class session:
             name = uristinstance.getname()
         else:
             name = func.__name__
+        
         # Actually execute the script
         log.info('Running script %s%s.' % (name, ('with args %s' % args) if args else ''))
         try:
-            # Call the function
-            response = func(self.dfraws, **args) if args else func(self.dfraws)
+            response = func(self.dfraws, **args) if args else func(self.dfraws) # Call the function
             if response:
                 # Handle success/failure response
                 log.info(str(response))
@@ -57,9 +59,11 @@ class session:
             else:
                 log.error('Received no response from script %s.' % name)
                 self.noresponse.append(uristinstance if uristinstance else func)
+            
         except Exception:
             log.exception('Unhandled exception while running script %s.' % name)
             return False
+        
         else:
             log.info('Finished running script %s.' % name)
             return True
@@ -96,9 +100,21 @@ class session:
         else:
             log.error('No scripts to run.')
             
-    def write(self, path=None, *args, **kwargs):
-        if os.path.exists(path): shutil.rmtree(path)
-        self.dfraws.write(path=path, *args, **kwargs)
+    def write(self, dest=None, *args, **kwargs):
+        self.dfraws.clean(dest=dest)
+        self.dfraws.write(dest=dest, *args, **kwargs)
+        
+    def backup(self, dest=None):
+        if dest is None: dest = self.conf.backup
+        if dest:
+            for path in self.conf.paths:
+                srcpath = os.path.join(self.conf.input, path)
+                destpath = os.path.join(dest, path)
+                if not os.path.isdir(os.path.dirname(destpath)): os.makedirs(os.path.dirname(destpath))
+                if os.path.isfile(srcpath):
+                    shutil.copy2(srcpath, destpath)
+                else:
+                    self.raws.copytree(srcpath, destpath)
         
         
 

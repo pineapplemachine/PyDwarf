@@ -16,5 +16,6 @@ from version import *
 from response import *
 from urist import *
 from config import *
+from helpers import *
 
 __version__ = '1.0.1'

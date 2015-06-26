@@ -25,12 +25,14 @@ class rawsbasefile(object):
                 if txt.readline().strip() == os.path.splitext(os.path.basename(path))[0]:
                     txt.seek(0)
                     return rawsfile(path=path, file=txt, **kwargs)
-        return rawsotherfile(path=path, **kwargs)
-        
+        if os.path.basename(path) in ('dfhack.init', 'dfhack.init-example'):
+            return rawsbinfile(path=path, **kwargs)
+        return rawsreffile(path=path, **kwargs)
+    
     def __str__(self):
         name = ''.join((self.name, self.ext)) if self.ext else self.name
         path = os.path.join(self.loc, name) if self.loc else name
-        return path
+        return path.replace('\\', '/')
     def __repr__(self):
         return str(self)
         
@@ -52,10 +54,13 @@ class rawsbasefile(object):
         return str(self) <= str(other)
         
     def setpath(self, path, root=None, loc=None, name=None, ext=None):
+        if self.dir and self.dir.root and (not root): root = self.dir.root
+        path = os.path.abspath(path) if path else None
+        root = os.path.abspath(root) if root else None
         self.path = path
         self.rootpath = root
         self.name, self.ext = (os.path.splitext(os.path.basename(path)) if os.path.isfile(path) else (os.path.basename(path), None)) if path else (None, None)
-        if root and path and (not os.path.samefile(root, os.path.dirname(path))) and os.path.abspath(path).startswith(os.path.abspath(root)):
+        if root and path and root != path and path.startswith(root):
             self.loc = os.path.dirname(os.path.relpath(path, root))
         else:
             self.loc = None
@@ -63,6 +68,12 @@ class rawsbasefile(object):
         if name: self.name = name
         if ext: self.ext = ext
         self.kind = self.ext[1:] if self.ext else 'dir'
+        
+    def reloc(self, loc):
+        if loc and self.loc:
+            self.loc = os.path.join(loc, self.loc)
+        elif loc:
+            self.loc = loc
         
     def dest(self, path, makedir=False):
         '''Internal: Given a root directory that this file would be written to, get the full path of where this file belongs.'''
@@ -93,10 +104,10 @@ class rawsbasefile(object):
         
 
 
-class rawsotherfile(rawsbasefile):
-    def __init__(self, path, dir=None, root=None):
+class rawsreffile(rawsbasefile):
+    def __init__(self, path=None, dir=None, root=None, **kwargs):
         self.dir = dir
-        self.setpath(path, root)
+        self.setpath(path, root, **kwargs)
     
     def copy(self):
         copy = rawsotherfile()
@@ -108,6 +119,19 @@ class rawsotherfile(rawsbasefile):
         copy.loc = self.loc
         return copy
     
+    def ref(self):
+        return self
+    def bin(self):
+        self.kind = 'bin'
+        self.__class__ = rawsbinfile
+        self.read()
+        return self
+    def raw(self):
+        self.kind = 'raw'
+        self.__class__ = rawsfile
+        self.read()
+        return self
+    
     def write(self, path):
         dest = self.dest(path, makedir=True)
         if self.path != dest:
@@ -117,6 +141,54 @@ class rawsotherfile(rawsbasefile):
                 copytree(self.path, dest)
             else:
                 raise ValueError('Failed to write file because its path %s refers to neither a file nor a directory.' % self.path)
+
+
+
+class rawsbinfile(rawsreffile):
+    def __init__(self, content=None, path=None, dir=None, **kwargs):
+        self.dir = None
+        self.setpath(path, **kwargs)
+        self.dir = dir
+        self.content = content
+        if self.content is None and self.path is not None and os.path.isfile(self.path): self.read(self.path)
+        
+    def read(self, path=None):
+        with open(path if path else self.path, 'rb') as binfile: self.content = binfile.read()
+        
+    def ref(self):
+        raise ValueError('Failed to cast binary file to reference file because it is an invalid conversion.')
+    def bin(self):
+        return self
+    def raw(self):
+        self.kind = 'raw'
+        self.__class__ = rawsfile
+        self.settokens(rawstoken.parse(self.content))
+        return self
+        
+    def copy(self):
+        copy = rawsbinfile()
+        copy.path = self.path
+        copy.dir = self.dir
+        copy.rootpath = self.rootpath
+        copy.name = self.name
+        copy.ext = self.ext
+        copy.loc = self.loc
+        copy.content = self.content
+        return copy
+    
+    def __repr__(self):
+        return str(self.content)
+        
+    def __len__(self):
+        return len(self.content)
+        
+    def write(self, path):
+        dest = self.dest(path, makedir=True)
+        with open(dest, 'wb') as file:
+            file.write(self.content)
+            
+    def add(self, content):
+        self.content += content
 
 
 
@@ -135,7 +207,7 @@ class rawsfile(rawsbasefile, rawsqueryableobj):
         '''
         
         self.dir = dir
-        self.setpath(path=path, root=dir.path if (dir and dir.path and not root) else root, **kwargs)
+        self.setpath(path=path, root=root, **kwargs)
         
         self.roottoken = None
         self.tailtoken = None
@@ -178,6 +250,16 @@ class rawsfile(rawsbasefile, rawsqueryableobj):
         
     def content(self):
         return '%s\n%s' %(self.name, ''.join([repr(o) for o in self.tokens()]))
+        
+    def ref(self):
+        raise ValueError('Failed to cast binary file to reference file because it is an invalid conversion.')
+    def bin(self):
+        self.kind = 'bin'
+        self.content = self.content()
+        self.__class__ =  rawsbinfile
+        return self
+    def raw(self):
+        return self
     
     def index(self, index):
         itrtoken = self.root() if index >= 0 else self.tail()
@@ -298,8 +380,9 @@ class rawsfile(rawsbasefile, rawsqueryableobj):
         for token in generator:
             yield token
             
-    def read(self, file):
+    def read(self, file=None):
         '''Given a path or file-like object, reads name and data.'''
+        if file is None: file = self.path
         if isinstance(file, basestring):
             self.path = file
             self.ext = os.path.splitext(file)[1]

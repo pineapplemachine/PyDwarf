@@ -26,7 +26,10 @@ from queryable import rawsqueryable as queryable
 from queryable import rawsqueryableobj as queryableobj
 from queryable import rawstokenlist as tokenlist
 from token import rawstoken as token
-from file import rawsfile as file
+from file import rawsbasefile as basefile
+from file import rawsreffile as reffile
+from file import rawsbinfile as binfile
+from file import rawsfile as file # TODO: rename to "rawfile"
 from dir import rawsdir as dir
 from dfhack import dfhack
 from copytree import copytree

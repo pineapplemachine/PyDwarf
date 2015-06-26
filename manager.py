@@ -42,20 +42,16 @@ def __main__(args=None):
         pydwarf.log.error('Specified raws directory %s does not exist.' % conf.input)
         exit(1)
     
-    # Make backup
-    if conf.backup is not None:
-        pydwarf.log.info('Backing up raws to directory %s.' % conf.backup)
-        try:
-            raws.copytree(conf.input, conf.backup)
-        except:
-            pydwarf.log.exception('Failed to create backup.')
-            exit(1)
-    else:
-        pydwarf.log.warning('Proceeding without backing up raws.')
-    
     # Create a new session
     pydwarf.log.info('Configuring session using raws input directory %s.' % conf.input)
     session = pydwarf.session(raws, conf)
+    
+    # Make backup
+    if conf.backup is not None:
+        pydwarf.log.info('Backing up raws to directory %s.' % conf.backup)
+        session.backup()
+    else:
+        pydwarf.log.warning('Proceeding without backing up raws.')
     
     # Run each script
     pydwarf.log.info('Running scripts.')
@@ -120,11 +116,11 @@ def parseargs():
     parser.add_argument('-i', '--input', help='raws input directory', type=str)
     parser.add_argument('-o', '--output', help='raws output directory', type=str)
     parser.add_argument('-b', '--backup', help='raws backup directory', type=str)
+    parser.add_argument('-t', '--paths', help='which paths relative to input to store in memory and allow access to', nargs='+', type=str)
     parser.add_argument('-s', '--scripts', help='run scripts by name or namespace', nargs='+', type=str)
     parser.add_argument('-p', '--packages', help='import packages containing PyDwarf scripts', nargs='+', type=str)
     parser.add_argument('-c', '--config', help='run with json config file if the extension is json, otherwise treat as a Python package, import, and override settings using export dict', type=str)
     parser.add_argument('-v', '--verbose', help='set stdout logging level to DEBUG', action='store_true')
-    parser.add_argument('-hdir', '--dfhackdir', help='indicate DFHack directory', type=str)
     parser.add_argument('-hver', '--dfhackver', help='indicate DFHack version', type=str)
     parser.add_argument('--log', help='output log file to path', type=str)
     parser.add_argument('--list', help='list available scripts', action='store_true')

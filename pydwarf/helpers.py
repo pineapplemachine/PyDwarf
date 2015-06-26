@@ -1,6 +1,13 @@
 import os
 from log import log
 
+
+
+def rel(base, *parts):
+    return os.path.join(os.path.dirname(base) if os.path.isfile(base) else base, *parts)
+    
+    
+
 def findfile(name, paths, recursion=6):
     log.debug('Looking for file %s.' % name)
     for path in paths:

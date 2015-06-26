@@ -13,8 +13,8 @@ if False:
         'input': os.path.join(dfdir, 'vanillaraw/objects'),
         'output': 'output',
         'backup': 'backup',
+        'paths': 'auto',
         'version': 'auto',
-        'dfhackdir': 'auto',
         'dfhackver': 'auto',
         'scripts': [
             {
