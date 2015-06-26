@@ -1,7 +1,12 @@
 import re
 import copy
 
-from token import rawstoken
+
+
+# Hackish solution to cyclic import (the struggle is real)
+def rawstoken():
+    if 'token' not in globals(): import token
+    return token.rawstoken
 
 
 
@@ -115,7 +120,7 @@ class rawstokenfilter(rawsbasefilter):
         self.pretty = pretty
         
         if pretty:
-            token = rawstoken.parseone(pretty)
+            token = rawstoken().parseone(pretty)
             exact_value = token.value
             if token.nargs(): exact_args = token.args
             
