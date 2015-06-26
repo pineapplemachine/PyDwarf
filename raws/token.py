@@ -1,5 +1,6 @@
 import itertools
 
+from tokenargs import tokenargs
 from queryable import rawsqueryable, rawstokenlist
 
 class rawstoken(rawsqueryable):
@@ -10,18 +11,10 @@ class rawstoken(rawsqueryable):
             detected automatically. If a rawstoken is specified it will be treated
             as a token argument. If a string, pretty. If anything else, tokens.'''
     
-    '''Don't allow these characters in values or arguments.'''
-    illegal_internal_chars = '[]:'
+    illegal_internal_chars = tokenargs.illegal # TODO: make this better
     
     '''Don't allow these characters in a token's prefix or suffix.'''
     illegal_external_chars = '['
-    
-    '''Automatically replace some illegal strings when passed to setarg with their legal equivalents.'''
-    argument_replacements = {
-        "':'": '58',
-        "'['": '91',
-        "']'": '93'
-    }
     
     def __init__(self, auto=None, pretty=None, token=None, value=None, args=None, prefix=None, suffix=None, prev=None, next=None, file=None):
         '''Constructs a token object.
@@ -69,7 +62,7 @@ class rawstoken(rawsqueryable):
             token = rawstoken.parseone(pretty, implicit_braces=True)
         if token is not None:
             value = token.value
-            args = list(token.args) if token.args else []
+            args = tokenargs(token.args) if token.args else tokenargs()
             prefix = token.prefix
             suffix = token.suffix
         
@@ -78,7 +71,7 @@ class rawstoken(rawsqueryable):
         if prefix: self.setprefix(prefix)   # non-token text between the preceding token and this one
         if suffix: self.setsuffix(suffix)   # between this token and the next/eof (should typically apply to eof)
         
-        if self.args is None: self.args = []
+        if self.args is None: self.args = tokenargs()
         
     def __hash__(self): # Not that this class is immutable, just means you'll need to be careful about when you're using token hashes
         return hash('%s:%s' % (self.value, self.argsstr()) if self.nargs() else self.value)
@@ -274,21 +267,15 @@ class rawstoken(rawsqueryable):
     def auto(auto, pretty, token, tokens):
         '''Internal: Convenience function for handling method arguments'''
         if auto is not None:
-            if isinstance(auto, basestring): pretty = auto
-            elif isinstance(auto, rawstoken): token = auto
-            elif isinstance(auto, rawsqueryable): tokens = auto.tokens()
-            else: tokens = auto
+            if isinstance(auto, basestring):
+                pretty = auto
+            elif isinstance(auto, rawstoken):
+                token = auto
+            elif isinstance(auto, rawsqueryable):
+                tokens = auto.tokens()
+            else:
+                tokens = auto
         return pretty, token, tokens
-       
-    @staticmethod
-    def sanitizeargstring(value):
-        '''Internal: Utility method for sanitizing a string intended to be evaluated as an arugment for a token.'''
-        valuestr = str(value)
-        if valuestr in rawstoken.argument_replacements:
-            valuestr = rawstoken.argument_replacements[valuestr]
-        else:
-            if any([char in valuestr for char in rawstoken.illegal_internal_chars]): raise ValueError('Illegal character in argument %s.' % valuestr)
-        return valuestr
         
     def index(self, index):
         itrtoken = self
@@ -367,15 +354,16 @@ class rawstoken(rawsqueryable):
             >>> print token
             [EXAMPLE:hi!:b:500]'''
         if value is None and index is not None: value = index; index = 0
-        self.args[index] = rawstoken.sanitizeargstring(value)
+        self.args[index] = value
     
     def setargs(self, args=None):
-        self.args = []
-        if args:
-            for arg in args: self.addarg(arg)
+        if self.args is None:
+            self.args = tokenargs(args)
+        else:
+            self.args[:] = args
             
     def clearargs(self):
-        self.args = []
+        self.args.clear()
         
     def addarg(self, value):
         '''Appends an argument to the end of the argument list.
@@ -390,10 +378,13 @@ class rawstoken(rawsqueryable):
             >>> print token
             [EXAMPLE:hi!]
         '''
-        self.args.append(rawstoken.sanitizeargstring(value))
+        self.args.append(value)
+        
+    def addargs(self, values):
+        self.args.extend(values)
         
     def containsarg(self, value):
-        return rawstoken.sanitizeargstring(value) in self.args
+        return value in self.args
         
     def argsstr(self):
         '''Return arguments joined by ':'.
@@ -403,7 +394,7 @@ class rawstoken(rawsqueryable):
             >>> print token.argsstr()
             a:b:c
         '''
-        return ':'.join([str(a) for a in self.args])
+        return str(self.args)
         
     def getvalue(self):
         '''Get the token's value.
@@ -530,12 +521,10 @@ class rawstoken(rawsqueryable):
             >>> print token_c is token_a
             False
         '''
-        
         return(
             other is not None and
             self.value == other.value and
-            self.nargs() == other.nargs() and
-            all([str(self.args[i]) == str(other.args[i]) for i in xrange(0, self.nargs())])
+            self.args == other.args
         )
         
     @staticmethod
