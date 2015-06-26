@@ -2,14 +2,14 @@ import os
 import pydwarf
 import raws
 
-smalldir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'smallthingsmod')
+smalldir = pydwarf.rel(__file__, 'raw/smallthings')
 
 
 
 # A bit of esoteric code which makes smallraws only be read once
 def getsmallraws():
     if 'smallraws' not in globals():
-        globals()['smallraws'] = raws.dir(path=smalldir, log=pydwarf.log)
+        globals()['smallraws'] = raws.dir(root=smalldir, log=pydwarf.log)
     return smallraws
 
 
@@ -108,7 +108,7 @@ def engraving(dfraws):
     dfshapesdict = dfraws.objdict('SHAPE')
     
     # Add a new file for the new shapes
-    dfshapesfile = dfraws.add('descriptor_shape_umiman')
+    dfshapesfile = dfraws.add('raw/objects/descriptor_shape_umiman.txt')
     dfshapesfile.add('OBJECT:DESCRIPTOR_SHAPE')
     shapesadded = 0
     
