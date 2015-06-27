@@ -1,7 +1,7 @@
 df-vegan
 ========
 
-Created by Patrick Dawson. (https://github.com/pkdawson)
+Created by Patrick Dawson. (https://github.com/pkdawson)  
 Rewritten for PyDwarf by Sophie Kirschner. (http://www.pineapplemachine.com)
 
 A few tweaks are required to make vegan dwarves completely practical in Dwarf Fortress. This mod adds cloth quivers and backpacks, which can be made at a Craftsdwarf's Workshop, using the Clothesmaking skill.
