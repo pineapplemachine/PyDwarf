@@ -63,13 +63,14 @@ def format_lua_content(content, labors):
     version = '1.0.0',
     author = ('Patrick Dawson', 'Sophie Kirschner'),
     description = '''Adds reactions to the craftdwarf's workshop for making quivers and
-        backpacks from cloth, which normally require leather. Also adds a dfhack script
+        backpacks from cloth, which normally require leather. Also adds a DFHack script
         which disables non-vegan labors using autolabor.''',
     arguments = {
         'labors': '''These labors will be disabled using a DFHack script. If set to None
-            then no DFHack script will be written.''',
-        'lua_file': '''The DFHack script will be added to this path, relative to the hack/
-            directory. If set to None then no DFHack script will be written.''',
+            then no DFHack script will be written. The default labors are %s.
+            ''' % ', '.join(default_labors),
+        'lua_file': '''The DFHack script will be added to this path, relative to DF's
+            root directory. If set to None then no DFHack script will be written.''',
         'auto_run':  '''If set to True, and if the DFHack script is added, then a line
             will be added to the end of dfhack.init which runs this script on startup.
             If set to False then the script will wait to be run manually.'''
