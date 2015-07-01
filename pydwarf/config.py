@@ -126,7 +126,7 @@ class config:
                 'gamelog.txt', 'errorlog.txt',
                 'stderr.log', 'stdout.log',
                 'raw/objects', 'raw/graphics',
-                'data/init',
+                'data/art', 'data/init', 'data/speech',
                 'dfhack.init', 'dfhack.init-example', 'dfhack.history',
                 'hack/lua', 'hack/plugins', 'hack/raw', 'hack/ruby', 'hack/scripts',
             ]
