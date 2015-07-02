@@ -316,28 +316,6 @@ class rawstoken(rawsqueryable):
         '''
         return len(self.args) if (count is None) else (len(self.args) == count)
         
-    def getarg(self, index=0):
-        '''Gets argument at index, returns None if the index is out of bounds.
-        
-        index: The argument index.
-        
-        Example usage:
-            >>> token = raws.token('EXAMPLE:argument 0:argument 1')
-            >>> print token.getarg(0)
-            argument 0
-            >>> print token.getarg(1)
-            argument 1
-            >>> print token.getarg(2)
-            None
-            >>> print token.getarg(-1)
-            argument 1
-            >>> print token.getarg(-2)
-            argument 0
-            >>> print token.getarg(-3)
-            None
-        '''
-        return self.args[index] if index >= -len(self.args) and index < len(self.args) else None
-    
     def setarg(self, index, value=None):
         '''Sets argument at index, also verifies that the input contains no illegal characters.
         If the index argument is set but not value, then the index is assumed to be referring to
@@ -483,12 +461,25 @@ class rawstoken(rawsqueryable):
         if any([char in valuestr for char in rawstoken.illegal_external_chars]): raise ValueError('Failed to set token suffix to %s because the string contains illegal characters.' % valuestr)
         self.suffix = value
         
-    def arg(self):
-        '''When a token is expected to have only one argument, this method can be used
-        to access it. It there's one argument it will be returned, otherwise an
-        exception will be raised.
+    def arg(self, index=None):
+        '''When an index is given, the argument at that index is returned. If left
+        set to None then the first argument is returned if the token has exactly one
+        argument, otherwise an exception is raised.
         
         Example usage:
+            >>> token = raws.token('EXAMPLE:argument 0:argument 1')
+            >>> print token.getarg(0)
+            argument 0
+            >>> print token.getarg(1)
+            argument 1
+            >>> print token.getarg(2)
+            None
+            >>> print token.getarg(-1)
+            argument 1
+            >>> print token.getarg(-2)
+            argument 0
+            >>> print token.getarg(-3)
+            None
             >>> token_a = raws.token('EXAMPLE:x')
             >>> token_b = raws.token('EXAMPLE:x:y:z')
             >>> print token_a.arg()
@@ -499,10 +490,11 @@ class rawstoken(rawsqueryable):
             ...     print 'token_b doesn\'t have the correct number of arguments!'
             ...
             token_b doesn't have the correct number of arguments!'''
-        if len(self.args) == 1:
+        if index is None:
+            if len(self.args) != 1: raise ValueError('Failed to retrieve token argument because it doesn\'t have exactly one.')
             return self.args[0]
         else:
-            raise ValueError('Failed to retrieve token argument because it doesn\'t have exactly one.')
+            return self.args[index]
         
     def equals(self, other):
         '''Returns True if two tokens have identical values and arguments, False otherwise.
