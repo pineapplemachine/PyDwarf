@@ -30,9 +30,9 @@ class rawsbasefile(object):
         return rawsreffile(path=path, **kwargs)
     
     def __str__(self):
-        name = ''.join((self.name, self.ext)) if self.ext else self.name
-        path = os.path.join(self.loc, name) if self.loc else name
-        return path.replace('\\', '/')
+        name = ''.join((self.name, self.ext)) if self.ext and self.name else self.name
+        path = os.path.join(self.loc, name) if self.loc and name else name
+        return path.replace('\\', '/') if path else ''
     def __repr__(self):
         return str(self)
         
@@ -59,7 +59,12 @@ class rawsbasefile(object):
         root = os.path.abspath(root) if root else None
         self.path = path
         self.rootpath = root
-        self.name, self.ext = (os.path.splitext(os.path.basename(path)) if os.path.isfile(path) else (os.path.basename(path), None)) if path else (None, None)
+        if not path:
+            self.name, self.ext = None, None
+        elif os.path.isfile(path):
+            self.name, self.ext = os.path.splitext(os.path.basename(path))
+        else:
+            self.name, self.ext = os.path.basename(path), None
         if root and path and root != path and path.startswith(root):
             self.loc = os.path.dirname(os.path.relpath(path, root))
         else:
@@ -195,7 +200,7 @@ class rawsbinfile(rawsreffile):
 class rawsfile(rawsbasefile, rawsqueryableobj):
     '''Represents a single file within a raws directory.'''
     
-    def __init__(self, name=None, file=None, path=None, root=None, content=None, tokens=None, dir=None, **kwargs):
+    def __init__(self, name=None, file=None, path=None, root=None, content=None, tokens=None, dir=None, readpath=True, **kwargs):
         '''Constructs a new raws file object.
         
         name: The name string to appear at the top of the file. Also used to determine filename.
@@ -207,6 +212,7 @@ class rawsfile(rawsbasefile, rawsqueryableobj):
         '''
         
         self.dir = dir
+        self.data = None
         self.setpath(path=path, root=root, **kwargs)
         
         self.roottoken = None
@@ -214,18 +220,20 @@ class rawsfile(rawsbasefile, rawsqueryableobj):
         
         if file:
             self.read(file)
-            if name is not None: self.name = name
-            if content is not None: self.data = content
-        else:
-            self.name = name
-            self.data = content
+        elif path and readpath:
+            self.read(path)
+            
+        if name is not None: self.name = name
+        if content is not None: self.data = content
         
         if self.data is not None:
             tokens = rawstoken.parse(self.data, implicit_braces=False, file=self)
             self.settokens(tokens, setfile=False)
         elif tokens is not None:
             self.settokens(tokens, setfile=True)
-            
+        
+        if name: self.name = name
+        
         if (not self.path) and (not self.ext): self.ext = '.txt'
         self.kind = 'raw'
             
