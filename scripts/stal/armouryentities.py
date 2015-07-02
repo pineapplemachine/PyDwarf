@@ -8,7 +8,7 @@ import raws
 
 print('And so it begins.')
 
-entities = raws.dir(path='StalsArmouryPackv1_8a_4024')['entity_default']
+entities = raws.dir(path='raw/armoury')['entity_default']
 
 edict = {}
 
@@ -17,7 +17,7 @@ for entity in entities.all(exact_value='ENTITY'):
     itemtypes = ('AMMO', 'DIGGER', 'TOOL', 'WEAPON', 'ARMOR', 'PANTS', 'GLOVES', 'SHOES', 'HELM', 'SHIELD')
     edict[entity.args[0]] = {}
     entitydict = edict[entity.args[0]]
-    for item in entity.alluntil(value_in=itemtypes, until_exact_value='ENTITY'):
+    for item in entity.getprop(value_in=itemtypes):
         if item.value == 'AMMO':
             if item.value not in entitydict: entitydict[item.value] = {}
             forweapon = item.get(exact_value='WEAPON', reverse=True).args[0]

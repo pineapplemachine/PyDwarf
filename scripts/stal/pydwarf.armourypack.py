@@ -4,7 +4,8 @@ import pydwarf
 import raws
 
 # Armoury raws are located in this directory
-armourydir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'StalsArmouryPackv1_8a_4024')
+entities_json = pydwarf.rel(__file__, 'armouryentities.json')
+armoury_dir = pydwarf.rel(__file__, 'raw/armoury')
 
 # Armory raws are variations on vanilla names, this records them so they can be changed back.
 # Without this, other mods which attempt to make changes to the same items might run into problems.
@@ -55,7 +56,7 @@ armoury_items = [
 ]
 
 # These are the items that each entity should have. (JSON courtesy of helper script armouryentities.py.)
-with open(os.path.join(armourydir, '../armouryentities.json'), 'rb') as efile: armoury_entities = json.load(efile)
+with open(entities_json, 'rb') as efile: armoury_entities = json.load(efile)
 
 
 
@@ -189,7 +190,7 @@ def removeattacks(dfraws, remove_attacks, remove_attacks_from):
 )
 def armourypack(dfraws, remove_entity_items=True, remove_attacks=('SCRATCH', 'BITE'), remove_attacks_from=('DWARF', 'HUMAN', 'ELF')):
     try:
-        armouryraws = raws.dir(path=armourydir, log=pydwarf.log)
+        armouryraws = raws.dir(root=armoury_dir, log=pydwarf.log)
     except:
         return pydwarf.failure('Unable to load armoury raws.')
     
