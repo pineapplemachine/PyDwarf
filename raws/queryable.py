@@ -31,7 +31,8 @@ class rawsqueryable(object):
             named normally.)
     ''' % query_tokeniter_docstring
             
-    def __iter__(self): return self.tokens()
+    def __iter__(self):
+        return self.tokens()
     
     def __contains__(self, item):
         if isinstance(item, basestring):
@@ -86,6 +87,53 @@ class rawsqueryable(object):
                 yield token
         else:
             return
+            
+    def removefirst(self, *args, **kwargs):
+        token = self.get(*args, **kwargs)
+        if token is not None: token.remove()
+        return token
+    def removelast(self, *args, **kwargs):
+        token = self.getlast(*args, **kwargs)
+        if token is not None: token.remove()
+        return token
+    def removeuntil(self, *args, **kwargs):
+        token = self.until(*args, **kwargs)
+        if token is not None: token.remove()
+        return token
+    def removefirstuntil(self, *args, **kwargs):
+        token = self.getuntil(*args, **kwargs)
+        if token is not None: token.remove()
+        return token
+    def removelastuntil(self, *args, **kwargs):
+        token = self.getlastuntil(*args, **kwargs)
+        if token is not None: token.remove()
+        return token
+        
+    def removeall(self, *args, **kwargs):
+        tokens = self.all(*args, **kwargs)
+        for token in tokens: token.remove()
+        return tokens
+    def removealluntil(self, *args, **kwargs):
+        tokens = self.alluntil(*args, **kwargs)
+        for token in tokens: token.remove()
+        return tokens
+        
+    def removeprop(self, *args, **kwargs):
+        token = self.getprop(*args, **kwargs)
+        if token is not None: token.remove()
+        return token
+    def removelastprop(self, *args, **kwargs):
+        token = self.getlastprop(*args, **kwargs)
+        if token is not None: token.remove()
+        return token
+    def removeallprop(self, *args, **kwargs):
+        tokens = self.allprop(*args, **kwargs)
+        for token in tokens: token.remove()
+        return tokens
+    def removeselfandprops(self, *args, **kwargs):
+        tokens = [self] + self.removeallprop(*args, **kwargs)
+        self.remove()
+        return tokens
     
     def query(self, filters, tokeniter=None, **kwargs):
         '''Executes a query on some iterable containing tokens.
@@ -277,7 +325,7 @@ class rawsqueryable(object):
         )
         return self.query(filters, tokeniter, **tokens_args)[1].result
     
-    def getprop(self, pretty=None, **kwargs):
+    def getprop(self, *args, **kwargs):
         '''Gets the first token matching the arguments, but stops at the next
         token with the same value as this one. Should be sufficient in almost
         all cases to get a token representing a property of an object, when
@@ -293,9 +341,9 @@ class rawsqueryable(object):
         '''
         
         until_exact_value, until_re_value, until_value_in = self.argsprops()
-        return self.getuntil(pretty=pretty, until_exact_value=until_exact_value, until_re_value=until_re_value, until_value_in=until_value_in, **kwargs)
+        return self.getuntil(*args, until_exact_value=until_exact_value, until_re_value=until_re_value, until_value_in=until_value_in, **kwargs)
         
-    def getlastprop(self, pretty=None, **kwargs):
+    def getlastprop(self, *args, **kwargs):
         '''Gets the last token matching the arguments, but stops at the next
         token with the same value as this one. Should be sufficient in almost
         all cases to get a token representing a property of an object, when
@@ -311,9 +359,9 @@ class rawsqueryable(object):
         '''
         
         until_exact_value, until_re_value, until_value_in = self.argsprops()
-        return self.getlastuntil(pretty=pretty, until_exact_value=until_exact_value, until_re_value=until_re_value, until_value_in=until_value_in, **kwargs)
+        return self.getlastuntil(*args, until_exact_value=until_exact_value, until_re_value=until_re_value, until_value_in=until_value_in, **kwargs)
             
-    def allprop(self, pretty=None, **kwargs):
+    def allprop(self, *args, **kwargs):
         '''Gets the all tokens matching the arguments, but stops at the next
         token with the same value as this one. Should be sufficient in almost
         all cases to get a token representing a property of an object, when
@@ -330,7 +378,7 @@ class rawsqueryable(object):
         '''
         
         until_exact_value, until_re_value, until_value_in = self.argsprops()
-        return self.alluntil(pretty=pretty, until_exact_value=until_exact_value, until_re_value=until_re_value, until_value_in=until_value_in, **kwargs)
+        return self.alluntil(*args, until_exact_value=until_exact_value, until_re_value=until_re_value, until_value_in=until_value_in, **kwargs)
             
     def propdict(self, always_list=True, value_keys=True, full_keys=True, **kwargs):
         '''Returns a dictionary with token values mapped as keys to the tokens
@@ -441,6 +489,15 @@ class rawsqueryableobj(rawsqueryable):
             headers.update(self.getobjheaders(type))
         return headers
             
+    def removeobj(self, *args, **kwargs):
+        obj = self.getobj(*args, **kwargs)
+        if obj: obj.removeselfandprops()
+        return obj
+    def removeallobj(self, *args, **kwargs):
+        objects = self.allobj(*args, **kwargs)
+        for obj in objects: obj.removeselfandprops()
+        return objects
+        
     def getobj(self, pretty=None, type=None, exact_id=None, type_in=None, re_id=None, id_in=None):
         '''Get the first object token matching a given type and id. (If there's more 
             than one result for any given query then I'm afraid you've done something
