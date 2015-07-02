@@ -433,7 +433,15 @@ class rawsqueryableobj(rawsqueryable):
         else:
             return objects.headerforobject(type, version)
     
-    def getobj(self, pretty=None, type=None, exact_id=None):
+    def headersfortype(type=None, type_in=None):
+        headers = set()
+        if type_in:
+            for type in type_in: headers.update(self.getobjheaders(type))
+        if type:
+            headers.update(self.getobjheaders(type))
+        return headers
+            
+    def getobj(self, pretty=None, type=None, exact_id=None, type_in=None, re_id=None, id_in=None):
         '''Get the first object token matching a given type and id. (If there's more 
             than one result for any given query then I'm afraid you've done something
             silly with your raws.) This method should work properly with things like
@@ -456,12 +464,18 @@ class rawsqueryableobj(rawsqueryable):
         '''
             
         type, exact_id = rawsqueryableobj.objpretty(pretty, type, exact_id)
-        for objecttoken in self.getobjheaders(type):
-            obj = objecttoken.get(exact_value=type, exact_args=(exact_id,))
+        for objecttoken in self.headersfortype(type, type_in):
+            obj = objecttoken.get(
+                exact_value = type,
+                exact_args = (exact_id,) if exact_id else None,
+                re_args = (re_id,) if re_id else None,
+                arg_in = ((0, id_in),) if id_in else None,
+                args_count = 1
+            )
             if obj: return obj
         return None
         
-    def allobj(self, pretty=None, type=None, exact_id=None, re_id=None, id_in=None):
+    def allobj(self, pretty=None, type=None, exact_id=None, type_in=None, re_id=None, id_in=None):
         '''Gets all objects matching a given type and optional id or id regex.
         
         Example usage:
@@ -486,7 +500,7 @@ class rawsqueryableobj(rawsqueryable):
         
         type, exact_id = rawsqueryableobj.objpretty(pretty, type, exact_id)
         results = rawstokenlist()
-        for objecttoken in self.getobjheaders(type):
+        for objecttoken in self.headersfortype(type, type_in):
             for result in objecttoken.all(
                 exact_value = type,
                 exact_args = (exact_id,) if exact_id else None,
@@ -533,7 +547,7 @@ class rawsqueryableobj(rawsqueryable):
                 return pretty, type
         else:
             return type, id
-
+        
 
 
 class rawstokenlist(list, rawsqueryable):
