@@ -1,5 +1,5 @@
-import os
 import pydwarf
+import raws
 
 
 
@@ -35,7 +35,7 @@ def greensteel(df, entities=default_entities):
         return pydwarf.urist.getfn('pineapple.utils.addtoentity')(
             df,
             entities = entities,
-            permitted_reaction = added_reactions
+            tokens = [raws.token(value='PERMITTED_REACTION', arg=reaction) for reaction in added_reactions]
         )
     except:
         pydwarf.log.exception('Failed to add greensteel raws.')
