@@ -73,13 +73,13 @@ def format_lua_content(content, labors):
             root directory. If set to None then no DFHack script will be written.''',
         'auto_run':  '''If set to True, and if the DFHack script is added, then a line
             will be added to the end of dfhack.init which runs this script on startup.
-            If set to False then the script will wait to be run manually.'''
+            If set to False then the script will wait to be run manually.''',
         'entities': 'Adds the reaction to these entities. Defaults to MOUNTAIN and PLAINS.',
         'add_to_file': 'Adds the reaction to this file.'
     },
     compatibility = pydwarf.df_0_40
 )
-def vegan(df, labors=default_labors, lua_file=default_lua_file, auto_run=True, entities=default_entities, add_to_file=default_file):
+def vegan(df, labors=default_labors, lua_file=default_lua_file, auto_run=False, entities=default_entities, add_to_file=default_file):
     # Add the reactions
     addreaction = pydwarf.urist.getfn('pineapple.utils.addreaction')
     for reactionid, reactioncontent in vegan_reactions.iteritems():
