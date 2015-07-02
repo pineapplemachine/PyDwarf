@@ -195,7 +195,7 @@ class rawsbinfile(rawsreffile):
 class rawsfile(rawsbasefile, rawsqueryableobj):
     '''Represents a single file within a raws directory.'''
     
-    def __init__(self, name=None, file=None, path=None, root=None, data=None, tokens=None, dir=None, **kwargs):
+    def __init__(self, name=None, file=None, path=None, root=None, content=None, tokens=None, dir=None, **kwargs):
         '''Constructs a new raws file object.
         
         name: The name string to appear at the top of the file. Also used to determine filename.
@@ -215,10 +215,10 @@ class rawsfile(rawsbasefile, rawsqueryableobj):
         if file:
             self.read(file)
             if name is not None: self.name = name
-            if data is not None: self.data = data
+            if content is not None: self.data = content
         else:
             self.name = name
-            self.data = data
+            self.data = content
         
         if self.data is not None:
             tokens = rawstoken.parse(self.data, implicit_braces=False, file=self)
@@ -479,7 +479,6 @@ class rawsfile(rawsbasefile, rawsqueryableobj):
         self.tailtoken = None
         
     def getobjheaders(self, type):
+        match_types = self.getobjheadername(type)
         root = self.root()
-        if root is not None and root.value == 'OBJECT' and root.nargs() == 1 and root.args[0] in match_types:
-            return (root,)
-        return tuple()
+        return (root,) if root is not None and root.value == 'OBJECT' and root.nargs(1) and root.args[0] in match_types else tuple()
