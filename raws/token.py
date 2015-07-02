@@ -252,6 +252,9 @@ class rawstoken(rawsqueryable):
             tokens.append(rawstoken.copy(self))
         return tokens
     
+    def __iter__(self):
+        yield self.value
+        for arg in self.args: yield arg
     def __len__(self):
         return self.nargs()
     def __contains__(self, value):
