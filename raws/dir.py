@@ -41,6 +41,7 @@ class rawsdir(rawsqueryableobj):
             self.add(file=name, replace=True, tokens=content.tokens())
         elif isinstance(content, basestring):
             self.add(file=name, replace=True, data=content)
+            self.add(file=name, replace=True, content=content)
         else:
             self.add(file=name, tokens=content)
     
