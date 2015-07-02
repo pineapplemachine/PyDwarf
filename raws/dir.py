@@ -40,13 +40,15 @@ class rawsdir(rawsqueryableobj):
         elif isinstance(content, rawsqueryable):
             self.add(file=name, replace=True, tokens=content.tokens())
         elif isinstance(content, basestring):
-            self.add(file=name, replace=True, data=content)
             self.add(file=name, replace=True, content=content)
         else:
             self.add(file=name, tokens=content)
     
     def __contains__(self, item):
-        return str(item) in self.files or str(item) in self.filenames
+        if isinstance(item, rawsbasefile):
+            return item in self.files.itervalues()
+        else:
+            return str(item) in self.files or str(item) in self.filenames
         
     def getfile(self, name, create=None, conflicts=False):
         '''Gets the file with a given name. If no file by that name is found,
@@ -54,6 +56,9 @@ class rawsdir(rawsqueryableobj):
         None, the behavior when no file by some name exists is altered: A new
         file is created and associated with that name, and then its add
         method is called using the value for create as its argument.'''
+        
+        if isinstance(name, rawsbasefile):
+            return name if name in self.files.itervalues() else None
         
         file = self.files.get(name)
         if file is None:
@@ -69,6 +74,9 @@ class rawsdir(rawsqueryableobj):
             file = self.add(name)
             file.add(create)
         return file
+        
+    def iterfiles(self, *args, **kwargs):
+        return self.files.itervalues(*args, **kwargs)
         
     def add(self, auto=None, **kwargs):
         if auto is not None:
@@ -187,6 +195,7 @@ class rawsdir(rawsqueryableobj):
     def remove(self, file=None):
         if isinstance(file, basestring): file = self.getfile(file)
         if (file not in self.files) or (file.dir is not self) or (file is None): raise KeyError('Failed to remove file %s from dir because it doesn\'t belong to the dir.' % file)
+        self.filenames[file.name].remove(file)
         self.files[str(file)].dir = None
         del self.files[str(file)]
         
