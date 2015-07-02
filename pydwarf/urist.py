@@ -52,7 +52,7 @@ class session:
         log.info('Running script %s%s.' % (name, ('with args %s' % args) if args else ''))
         try:
             response = func(self.dfraws, **args) if args else func(self.dfraws) # Call the function
-            if response:
+            if response is not None:
                 # Handle success/failure response
                 log.info(str(response))
                 (self.successes if response.success else self.failures).append(uristinstance if uristinstance else func)
