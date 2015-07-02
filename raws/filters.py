@@ -151,6 +151,11 @@ class rawstokenfilter(rawsbasefilter):
         self.limit = limit
         self.limit_terminates = limit_terminates
         
+        # Make exact_arg, re_arg, and arg_in easier: Allow a single iterable with index and value, don't always require an iterable of them.
+        if self.exact_arg and isinstance(self.exact_arg[0], int): self.exact_arg = (self.exact_arg,)
+        if self.re_arg and isinstance(self.re_arg[0], int): self.re_arg = (self.re_arg,)
+        if self.arg_in and isinstance(self.arg_in[0], int): self.arg_in = (self.arg_in,)
+        
         self.anchor()
         
     def anchor(self):
