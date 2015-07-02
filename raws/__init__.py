@@ -31,6 +31,7 @@ from file import rawsreffile as reffile
 from file import rawsbinfile as binfile
 from file import rawsfile as file # TODO: rename to "rawfile"
 from dir import rawsdir as dir
+from objects import objects, headers, objectdict, headerdict, headerforobject, objectsforheader
 from copytree import copytree
 import color
 
