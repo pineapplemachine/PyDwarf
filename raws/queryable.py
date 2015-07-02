@@ -2,6 +2,7 @@
 
 import inspect
 
+import objects
 from filters import rawstokenfilter
 
 
@@ -413,15 +414,10 @@ class rawsqueryable(object):
             
     def argsprops(self):
         # Utility function for handling arguments of getprop, allprop, and propdict methods
+        # TODO: refactor a bit so that the obviated until_exact_value and until_re_value are no longer returned
         until_exact_value = None
         until_re_value = None
-        until_value_in = None
-        if self.value.startswith('ITEM_'):
-            until_re_value = 'ITEM_.+'
-        elif self.value == 'WORD' or self.value == 'SYMBOL':
-            until_value_in = ('WORD', 'SYMBOL')
-        else:
-            until_exact_value = self.value
+        until_value_in = objects.objectsforheader(objects.headerforobject(self.value))
         return until_exact_value, until_re_value, until_value_in
 
 
@@ -431,21 +427,11 @@ class rawsqueryableobj(rawsqueryable):
         self.files = None
     
     def getobjheadername(self, type):
-        # Utility function fit for handling objects as of 0.40.24
-        if type in ('WORD', 'SYMBOL', 'TRANSLATION'):
-            return ('LANGUAGE',)
-        elif type.startswith('ITEM_'):
-            return ('ITEM',)
-        elif type == 'COLOR' or type == 'SHAPE':
-            return ('DESCRIPTOR', 'DESCRIPTOR_%s' % type)
-        elif type == 'COLOR_PATTERN':
-            return ('DESCRIPTOR_PATTERN',)
-        elif type.startswith('MATGLOSS_'):
-            return ('MATGLOSS',)
-        elif type in ('TILE_PAGE', 'CREATURE_GRAPHICS'):
-            type = ('GRAPHICS',)
+        version = self if hasattr(self, 'config') or hasattr(self, 'version') else self.dir
+        if type is None:
+            return objects.headers(version)
         else:
-            return type
+            return objects.headerforobject(type, version)
     
     def getobj(self, pretty=None, type=None, exact_id=None):
         '''Get the first object token matching a given type and id. (If there's more 
