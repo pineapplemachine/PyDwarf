@@ -10,29 +10,19 @@ import raws
     description = '''A simple utility script which adds tokens to entities.''',
     arguments = {
         'entities': 'Adds tokens to these entities.',
-        '**kwargs': ''''Should map keywords to iterables. For example, setting the argument
-            permitted_job=('MINER', 'CARPENTER') would result in the tokens
-            [PERMITTED_JOB:MINER] and [PERMITTED_JOB:CARPENTER] being added to each of the
-            listed entities if they aren't present already.'''
+        'tokens': 'A string or collection of tokens to add to each entity.'
     },
     compatibility = '.*'
 )
-def addtoentity(df, entities, **kwargs):
+def addtoentity(df, entities, tokens):
+    if isinstance(entities, basestring): entities = (entities,)
     pydwarf.log.debug('Adding tokens to %d entities.' % len(entities))
-    added = 0
     entitytokens = df.allobj(type='ENTITY', id_in=entities)
+    for entitytoken in entitytokens: entitytoken.addprop(tokens)
     if len(entitytokens) != len(entities):
-        return pydwarf.failure()
+        return pydwarf.failure('Failed to add tokens to all given entities because only %d of %d exist.' % (len(entitytokens), len(entities)))
     else:
-        for permittype, permititems in kwargs.iteritems():
-            permitvalue = permittype.upper()
-            pydwarf.log.debug('Handling tokens of type %s.' % permitvalue)
-            for permititem in permititems:
-                for entitytoken in entitytokens:
-                    if not entitytoken.getprop(exact_value=permitvalue, exact_args=(permititem,)):
-                        entitytoken.addprop(raws.token(value=permitvalue, args=[permititem]))
-                        added += 1
-        return pydwarf.success('Added %d permitted things to %d entities.' % (added, len(entitytokens)))
+        return pydwarf.success('Added tokens to %d entities.' % len(entitytokens))
 
 
 
@@ -51,7 +41,7 @@ def addtoentity(df, entities, **kwargs):
     compatibility = '.*'
 )
 def addreaction(df, id, tokens, add_to_file='reaction_custom', permit_entities=None):
-    if permit_entities is not None and (not addtoentity(df, permit_entities, permitted_reaction=(id,)).success):
+    if permit_entities is not None and (not addtoentity(df, permit_entities, 'PERMITTED_REACTION:%s' % id).success):
         return pydwarf.failure('Failed to add permitted reactions to entites.')
     else:
         if df.getobj(type='REACTION', exact_id=id):
@@ -148,3 +138,172 @@ def addhack(df, name, auto_run, **kwargs):
         
     else:
         return pydwarf.success('Added new file %s.' % name)
+
+
+
+@pydwarf.urist(
+    name = 'pineapple.utils.addobject',
+    version = '1.0.0',
+    author = 'Sophie Kirschner',
+    description = '''Utility script for adding a new object to the raws.''',
+    arguments = {
+        'add_to_file': '''The name of the file to add the object to. If it doesn't exist already
+            then the file is created anew. The string is formatted such that %(type)s is
+            replaced with the object_header, lower case.''',
+        'tokens': '''The tokens belonging to the object to create.''',
+        'type': '''Specifies the object type. If type and id are left unspecified, the first
+            token of the tokens argument is assumed to be the object's [TYPE:ID] token and the
+            type and id arguments are taken out of that.''',
+        'id': '''Specifies the object id. If type and id are left unspecified, the first
+            token of the tokens argument is assumed to be the object's [TYPE:ID] token and the
+            type and id arguments are taken out of that.''',
+        'permit_entities': '''For relevant object types such as reactions, buildings, and items,
+            if permit_entities is specified then tokens are added to those entities to permit
+            the added object.''',
+        'item_rarity': '''Most items, when adding tokens to entities to permit them, accept an
+            optional second argument specifying rarity. It should be one of 'RARE', 'UNCOMMON',
+            'COMMON', or 'FORCED'. This argument can be used to set that rarity.''',
+        'object_header': '''When the object is added to a file which doesn't already exist,
+            an [OBJECT:TYPE] token must be added at its beginning. This argument, if specified,
+            provides the type in that token. Otherwise, when the argument is left set to None,
+            the type will be automatically decided.'''
+    },
+    compatibility = '.*'
+)
+def addobject(df, add_to_file, tokens, type=None, id=None, permit_entities=None, item_rarity=None, object_header=None):
+    # If type and id weren't explicitly given then assume the first given token is the TYPE:ID header and get the info from there.
+    header_in_tokens = type is None and id is None
+    header = None
+    if header_in_tokens:
+        if isinstance(tokens, basestring): tokens = raws.token.parse(tokens)
+        header = tokens[0]
+        type = header.value
+        id = header.arg()
+        pydwarf.log.debug('Extracted object type %s and id %s from given tokens.' % (type, id))
+        
+    # Get the applicable object dict which knows how to map TYPE:ID to its corresponding OBJECT:TYPE header.
+    if object_header is None:
+        object_header = raws.objects.headerforobject(type)
+    
+    # If add_to_file already exists, fetch it. Otherwise add it to the raws.
+    add_to_file = add_to_file % {'type': object_header.lower()}
+    if add_to_file in df:
+        file = df.getfile(file)
+    else:
+        file = df.add(add_to_file)
+        file.add(raws.token(value='OBJECT', args=[object_header]))
+        pydwarf.log.debug('Added new file %s to dir.' % add_to_file)
+    
+    # Add the object itself to the raws.
+    if not header_in_tokens: header = file.add(raws.token(value=type, args=[id]))
+    file.add(tokens)
+    
+    # Add tokens to entities to permit the use of this object.
+    if permit_entities:
+        response = permitobject(
+            df,
+            type = type,
+            id = id,
+            permit_entities = permit_entities,
+            item_rarity = item_rarity
+        )
+        if not response: return response
+            
+    # All done!
+    return pydwarf.success('Added object %s to file %s.' % (header, file))
+
+
+
+@pydwarf.urist(
+    name = 'pineapple.utils.addobjects',
+    version = '1.0.0',
+    author = 'Sophie Kirschner',
+    description = '''Utility script for adding several new objects to the raws at once.''',
+    arguments = {
+        'add_to_file': '''The name of the file to add the object to. If it doesn't exist already
+            then the file is created anew. The string is formatted such that %(type)s is
+            replaced with the object_header, lower case.''',
+        'objects': '''An iterable containing tokens belonging to the objects to add.''',
+        '**kwargs': 'Passed on to pineapple.utils.addobject.',
+    },
+    compatibility = '.*'
+)
+def addobjects(df, add_to_file, objects, **kwargs):
+    for obj in objects:
+        response = addobject(df, add_to_file, **kwargs)
+        if not response.success: return response
+    return response.success('Added %d objects.' % len(objects))
+
+
+
+@pydwarf.urist(
+    name = 'pineapple.utils.permitobject',
+    version = '1.0.0',
+    author = 'Sophie Kirschner',
+    description = '''Utility script for permitting an object with entities.''',
+    arguments = {
+        'type': '''Specifies the object type.''',
+        'id': '''Specifies the object id.''',
+        'permit_entities': '''For relevant object types such as reactions, buildings, and items,
+            if permit_entities is specified then tokens are added to those entities to permit
+            the added object.''',
+        'item_rarity': '''Some items, when adding tokens to entities to permit them, accept an
+            optional second argument specifying rarity. It should be one of 'RARE', 'UNCOMMON',
+            'COMMON', or 'FORCED'. This argument can be used to set that rarity.'''
+    },
+    compatibility = '.*'
+)
+def permitobject(df, type=None, id=None, permit_entities=None, item_rarity=None):
+    # Decide what tokens need to be added to the entities based on the object type
+    if type == 'REACTION':
+        tokens = 'PERMITTED_REACTION:%s' % id
+    elif type.startswith('BUILDING_'):
+        tokens = 'PERMITTED_BUILDING:%s' % id
+    elif type.startswith('ITEM_'):
+        value = type.split('_')[1]
+        args = [id, item_rarity] if item_rarity else [id]
+        tokens = raws.token(value=value, args=args)
+    else:
+        tokens = None
+    
+    # Actually add those tokens
+    if tokens is None:
+        return pydwarf.success('Didn\'t actually permit object [%s:%s] because objects of this type cannot be permitted.' % (type, id))
+    elif not permit_entities:
+        return pydwarf.failure('No entities were given for permitting.')
+    else:
+        response = addtoentity(
+            df,
+            entities = permit_entities, 
+            tokens = tokens
+        )
+        if not response:
+            return response
+        else:
+            return pydwarf.success('Permitted object [%s:%s] for %d entities.' % (type, id, len(permit_entities)))
+    
+    
+    
+@pydwarf.urist(
+    name = 'pineapple.utils.permitobjects',
+    version = '1.0.0',
+    author = 'Sophie Kirschner',
+    description = '''Utility script for permitting several objects at once with entities.''',
+    arguments = {
+        'objects': '''An iterable containing type, id tuples for objects to permit.''',
+        '**kwargs': 'Passed on to pineapple.utils.permitobject.',
+    },
+    compatibility = '.*'
+)
+def permitobjects(df, objects, **kwargs):
+    for item in objects:
+        if isinstance(item, raws.token):
+            type, id = item.value, item.arg()
+        elif isinstance(item, basestring):
+            type, id = item.split(':')
+        else:
+            type, id = item
+        response = permitobject(df, type, id, **kwargs)
+        if not response: return response
+    return pydwarf.success('Permitted %d objects.' % len(objects))
+    
