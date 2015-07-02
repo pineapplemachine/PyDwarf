@@ -1,12 +1,10 @@
-import sys
-import os
-
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-
 import pydwarf
-import shukaroutils
 
-librarydir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'higherlearning')
+
+
+library_dir = pydwarf.rel(__file__, 'raw/higherlearning')
+
+default_entities = 'MOUNTAIN'
 
 librarian_position = '''
     [POSITION:LIBRARIAN]
@@ -21,7 +19,10 @@ librarian_position = '''
     [COLOR:5:0:0]
     [DUTY_BOUND]
     [REQUIRED_BEDROOM:1]
-    [REQUIRED_OFFICE:1]'''
+    [REQUIRED_OFFICE:1]
+'''
+
+
 
 @pydwarf.urist(
     name = 'shukaro.higherlearning',
@@ -49,5 +50,20 @@ librarian_position = '''
     },
     compatibility = (pydwarf.df_0_40, pydwarf.df_0_3x) # I think it should be compatible with 0.40.x? Haven't actually tried it yet.
 )
-def higherlearning(dfraws, entities=shukaroutils.default_entities):
-    return shukaroutils.addraws(pydwarf, dfraws, librarydir, entities, librarian_position)
+def higherlearning(df, entities=default_entities):
+    # Add librarian position
+    response = pydwarf.urist.getfn('pineapple.utils.addtoentity')(
+        df,
+        entities = entities,
+        tokens = librarian_position
+    )
+    if not response: return response
+    
+    # Add buildings, reactions, items from raws
+    return pydwarf.urist.getfn('pineapple.easypatch')(
+        df,
+        files = library_dir,
+        loc = 'raw/objects',
+        permit_entities = entities  
+    )
+    
