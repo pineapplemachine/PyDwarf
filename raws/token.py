@@ -16,7 +16,7 @@ class rawstoken(rawsqueryable):
     '''Don't allow these characters in a token's prefix or suffix.'''
     illegal_external_chars = '['
     
-    def __init__(self, auto=None, pretty=None, token=None, value=None, args=None, prefix=None, suffix=None, prev=None, next=None, file=None):
+    def __init__(self, auto=None, pretty=None, token=None, value=None, args=None, arg=None, prefix=None, suffix=None, prev=None, next=None, file=None):
         '''Constructs a token object.
         
         %s (However, a tokens argument is illegal here and attempting to create
@@ -66,6 +66,7 @@ class rawstoken(rawsqueryable):
             prefix = token.prefix
             suffix = token.suffix
         
+        if arg: self.setargs([arg])
         if value: self.setvalue(value)      # value for the token
         if args: self.setargs(args)         # arguments for the token
         if prefix: self.setprefix(prefix)   # non-token text between the preceding token and this one
