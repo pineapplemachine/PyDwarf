@@ -194,7 +194,7 @@ class rawsdir(rawsqueryableobj):
         
     def remove(self, file=None):
         if isinstance(file, basestring): file = self.getfile(file)
-        if (file not in self.files) or (file.dir is not self) or (file is None): raise KeyError('Failed to remove file %s from dir because it doesn\'t belong to the dir.' % file)
+        if (file is None) or (file.dir is not self) or not any(file is f for f in self.iterfiles()): raise KeyError('Failed to remove file %s from dir because it doesn\'t belong to the dir.' % file)
         self.filenames[file.name].remove(file)
         self.files[str(file)].dir = None
         del self.files[str(file)]
