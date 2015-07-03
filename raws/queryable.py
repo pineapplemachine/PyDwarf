@@ -479,16 +479,19 @@ class rawsqueryableobj(rawsqueryable):
         if type is None:
             return objects.headers(version)
         else:
-            return objects.headerforobject(type, version)
+            return (objects.headerforobject(type, version),)
     
-    def headersfortype(type=None, type_in=None):
-        headers = set()
+    def headersfortype(self, type=None, type_in=None):
+        if type or (type_in is None):
+            headers = self.getobjheaders(type)
+        else:
+            headers = []
         if type_in:
-            for type in type_in: headers.update(self.getobjheaders(type))
-        if type:
-            headers.update(self.getobjheaders(type))
+            for itertype in type_in: 
+                for header in self.getobjheaders(itertype):
+                    if not any(header is h for h in headers): headers.append(header)
         return headers
-            
+        
     def removeobj(self, *args, **kwargs):
         obj = self.getobj(*args, **kwargs)
         if obj: obj.removeselfandprops()
@@ -521,9 +524,12 @@ class rawsqueryableobj(rawsqueryable):
         '''
             
         type, exact_id = rawsqueryableobj.objpretty(pretty, type, exact_id)
-        for objecttoken in self.headersfortype(type, type_in):
+        headers = self.headersfortype(type, type_in)
+        if type is None and type_in is None: type_in = objects.objects()
+        for objecttoken in headers:
             obj = objecttoken.get(
                 exact_value = type,
+                value_in = type_in,
                 exact_args = (exact_id,) if exact_id else None,
                 re_args = (re_id,) if re_id else None,
                 arg_in = ((0, id_in),) if id_in else None,
@@ -557,9 +563,12 @@ class rawsqueryableobj(rawsqueryable):
         
         type, exact_id = rawsqueryableobj.objpretty(pretty, type, exact_id)
         results = rawstokenlist()
-        for objecttoken in self.headersfortype(type, type_in):
+        headers = self.headersfortype(type, type_in)
+        if type is None and type_in is None: type_in = objects.objects()
+        for objecttoken in headers:
             for result in objecttoken.all(
                 exact_value = type,
+                value_in = type_in,
                 exact_args = (exact_id,) if exact_id else None,
                 re_args = (re_id,) if re_id else None,
                 arg_in = ((0, id_in),) if id_in else None,
