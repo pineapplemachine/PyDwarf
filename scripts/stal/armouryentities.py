@@ -8,27 +8,22 @@ import raws
 
 print('And so it begins.')
 
-entities = raws.dir(path='raw/armoury')['entity_default']
+armouryraws = raws.dir(root='raw/armoury')
+
+itemtypes = ('AMMO', 'DIGGER', 'TOOL', 'WEAPON', 'ARMOR', 'PANTS', 'GLOVES', 'SHOES', 'HELM', 'SHIELD')
 
 edict = {}
 
-for entity in entities.all(exact_value='ENTITY'):
+for entity in armouryraws.allobj('ENTITY'):
     print('Entity: %s' % entity)
-    itemtypes = ('AMMO', 'DIGGER', 'TOOL', 'WEAPON', 'ARMOR', 'PANTS', 'GLOVES', 'SHOES', 'HELM', 'SHIELD')
     edict[entity.args[0]] = {}
     entitydict = edict[entity.args[0]]
-    for item in entity.getprop(value_in=itemtypes):
-        if item.value == 'AMMO':
-            if item.value not in entitydict: entitydict[item.value] = {}
-            forweapon = item.get(exact_value='WEAPON', reverse=True).args[0]
-            if forweapon not in entitydict[item.value]: entitydict[item.value][forweapon] = []
-            entitydict[item.value][forweapon].append(item.args[0])
-        else:
-            if item.value not in entitydict: entitydict[item.value] = []
-            entitydict[item.value].append(item.args[0])
+    for item in entity.allprop(value_in=itemtypes):
+        if item.value not in entitydict: entitydict[item.value] = []
+        entitydict[item.value].append(item.args)
 
 print(edict)
 
-with open('armouryentities.json', 'wb') as efile: json.dump(edict, efile)
+with open('armouryentities.json', 'wb') as efile: json.dump(edict, efile, indent=4)
 
 print('All done!')

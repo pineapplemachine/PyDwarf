@@ -44,133 +44,25 @@ missing_armoury_names = [
 
 # These are the only item types we care about.
 armoury_items = [
-    'ITEM_AMMO',
-    'ITEM_ARMOR',
-    'ITEM_HELM',
-    'ITEM_GLOVES'
-    'ITEM_PANTS',
-    'ITEM_SHIELD',
-    'ITEM_SHOES',
-    'ITEM_TOOL',
-    'ITEM_WEAPON',
+    'AMMO',
+    'ARMOR',
+    'HELM',
+    'GLOVES',
+    'PANTS',
+    'SHIELD',
+    'SHOES',
+    'TOOL',
+    'WEAPON',
 ]
+armoury_item_objects = ['ITEM_%s' % item for item in armoury_items]
 
 # These are the items that each entity should have. (JSON courtesy of helper script armouryentities.py.)
 with open(entities_json, 'rb') as efile: armoury_entities = json.load(efile)
 
 
 
-def additemstoraws(dfraws, armouryraws):
-    pydwarf.log.debug('Building dict to index relevant items in df raws...')
-    dfitems = {str(token): token for token in dfraws.all(value_in=armoury_items)}
-    pydwarf.log.debug('Dict dfitems contains %d tokens.' % len(dfitems))
-    
-    # Add new items to raws and edit already-present ones
-    for filename in armouryraws.files.keys():
-        if filename.startswith('item_'):
-            for armouryitem in armouryraws[filename].all(value_in=armoury_items, args_count=1):
-                pydwarf.log.debug('Handling armoury item %s...' % armouryitem)
-                
-                # Account for names that were changed from the normal DF raws
-                if armouryitem.args[0] in weird_armoury_names: armouryitem.args[0] = weird_armoury_names[armouryitem.args[0]]
-                
-                # Get the tokens belonging to this item
-                armourytokens = armouryitem.alluntil(until_exact_value=armouryitem.value)
-                # Get the current item with the same ID (if present)
-                dfitem = dfitems.get(str(armouryitem))
-                
-                # Replace item properties
-                if dfitem and armouryitem:
-                    pydwarf.log.debug('Replacing properties of item %s...' % armouryitem)
-                    for removeitem in dfitem.alluntil(until_re_value='ITEM_.+'): removeitem.remove()
-                    dfitem.add(tokens=raws.token.copy(armourytokens))
-                    del dfitems[str(armouryitem)]
-                    
-                # Add new item
-                elif armourytokens:
-                    pydwarf.log.debug('Adding new item %s...' % armouryitem)
-                    if filename not in dfraws.files: dfraws.add(filename)
-                    armouryitem.prefix = '\n\n' # Makes outputted raws a bit neater
-                    dfraws[filename].add(token=armouryitem)
-                    dfraws[filename].add(tokens=raws.token.copy(armourytokens))
-                    
-                # This really shouldn't happen, but check for it anyway
-                else:
-                    pydwarf.log.error('Found no tokens belonging to armoury item %s.' % armouryitem)
-                    
-def additemstoents(dfraws, armouryraws, remove_entity_items):
-    # Screw around with which items are allowed for which entities 
-    for entityname, aentity in armoury_entities.iteritems():
-        dfentity = dfraws.get(exact_value='ENTITY', exact_args=[entityname])
-        entityitems = {}
-        if dfentity:
-            pydwarf.log.debug('Handling entity %s...' % dfentity)
-            
-            # Maintain this dict because it makes ammo easier to add
-            weapons = {}
-            
-            # If we're removing items, just remove all the present ones in one go before adding things back
-            if remove_entity_items:
-                for itemtoken in dfentity.alluntil(value_in=armoury_entities, args_count=1, until_exact_value='ENTITY'): itemtoken.remove()
-                
-            # Time to add the items!
-            for itemtype, items in aentity.iteritems():
-                if itemtype != 'AMMO':
-                    for itemname in items:
-                        # Account for names that were changed from the normal DF raws
-                        if itemname in weird_armoury_names: itemname = weird_armoury_names[itemname]
-                        # Add the token if it isn't there already
-                        dftoken = None if remove_entity_items else dfentity.getuntil(exact_value=itemtype, exact_args=[itemname], until_exact_value='ENTITY')
-                        if remove_entity_items or not dftoken: dftoken = dfentity.add(raws.token(value=itemtype, args=[itemname]))
-                        if itemtype == 'WEAPON': weapons[itemname] = dftoken
-                        
-            # Now add the ammunition
-            if 'AMMO' in aentity:
-                for weaponname, ammos in aentity['AMMO'].iteritems():
-                    weapontoken = weapons.get(weaponname)
-                    if not weapontoken: weapontoken = dfentity.get(exact_value='WEAPON', exact_args=[weaponname])
-                    if weapontoken:
-                        ammotokens = {token.args[0]: token for token in weapontoken.alluntil(exact_value='AMMO', args_count=1, until_except_value='AMMO')}
-                        for addammo in ammos:
-                            if addammo not in ammotokens: weapontoken.add(raws.token(value='AMMO', args=[addammo]))
-                    else:
-                        pydwarf.log.error('Failed to add ammo %s to weapon %s.' % ammos, weaponname)
-                    
-        else:
-            pydwarf.log.error('Failed to find entity %s for editing.' % entityname)
-            
-def addreactions(dfraws, armouryraws):
-    # Add raws file containing new reactions
-    armouryreactions = armouryraws['reaction_armoury']
-    if armouryreactions:
-        if 'stal_reaction_armoury' not in dfraws.files:
-            armouryreactions.header = 'stal_reaction_armoury'
-            dfraws.files['stal_reaction_armoury'] = armouryreactions
-        else:
-            pydwarf.log.error('DF raws already contain stal_reaction_armory.')
-    else:
-        pydwarf.log.error('Couldn\'t load reaction_armoury raws file for reading.')
-        
-def removeattacks(dfraws, remove_attacks, remove_attacks_from):
-    # Removes e.g. bite and scratch attacks from e.g. dwarves, humans, and elves
-    if remove_attacks is not None and remove_attacks_from is not None:
-        for species in remove_attacks_from:
-            creaturetoken = dfraws.get(exact_value='CREATURE', exact_args=[species])
-            if creaturetoken:
-                for attacktype in remove_attacks:
-                    attacktokens = creaturetoken.alluntil(exact_value='ATTACK', exact_arg=((0, attacktype),), until_exact_value='CREATURE')
-                    for attacktoken in attacktokens:
-                        subtokens = attacktoken.alluntil(until_re_value='(?!ATTACK_).+')
-                        for subtoken in subtokens: subtoken.remove()
-                        attacktoken.remove()
-                    pydwarf.log.debug('Removed attack %s from creature %s.' % (attacktype, species))
-            else:
-                pydwarf.log.error('Couldn\'t find creature %s to remove bite and scratch attacks from.' % species)
-
-
-
 @pydwarf.urist(
-    name = 'stal.armoury',
+    name = 'stal.armoury.items',
     version = '1.0.0',
     author = ('Stalhansch', 'Sophie Kirschner'),
     description = 'Attempts to improve the balance and realism of combat.',
@@ -179,24 +71,124 @@ def removeattacks(dfraws, remove_attacks, remove_attacks_from):
             entities should be removed from those entities or not. If you're also using other
             mods that make changes to weapons and armour and such it may be desireable to set
             this flag to False. Otherwise, for best results, the flag should be set to True.
-            Defaults to True''',
+            Defaults to True'''
+    },
+    compatibility = pydwarf.df_revision_range('0.40.14', '0.40.24')
+)
+def armoury(df, remove_entity_items=True):
+    try:
+        pydwarf.log.debug('Loading armoury raws from %s.' % armoury_dir)
+        armouryraws = raws.dir(root=armoury_dir, log=pydwarf.log)
+    except:
+        return pydwarf.failure('Unable to load armoury raws.')
+        
+    # Persist a list of armoury item tokens because we're going to be needing them for a few things
+    armouryitemtokens = armouryraws.allobj(type_in=armoury_item_objects)
+    
+    # Rename items in the armoury raws in accordance with a manually compiled list of naming oddities
+    for item in armouryitemtokens.all(arg_in=(0, weird_armoury_names)):
+        item.args[0] = weird_armoury_names[item.args[0]]
+        
+    # Remove any existing items in the raws which share an id with the items about to be added
+    pydwarf.log.debug('Removing obsolete items.')
+    df.removeallobj(type_in=armoury_item_objects, id_in=[token.arg() for token in armouryitemtokens])
+    
+    # Look for files made empty as a result (of which there should be a few) and remove them
+    removedfiles = []
+    for file in df.files.values():
+        if isinstance(file, raws.file) and len(file) <= 1:
+            pydwarf.log.debug('Removing emptied file %s.' % file)
+            file.remove()
+            removedfiles.append(file)
+    
+    # Get a list of entity tokens corresponding to the relevant names
+    entitytokens = [df.getobj('ENTITY', entity) for entity in armoury_entities]
+    
+    # If remove_entity_items is set to True, remove all existing tokens which permit relevant items
+    # Otherwise, just remove the ones with conflict with those about to be added
+    for entitytoken in entitytokens:
+        pydwarf.log.debug('Removing permission tokens from %s.' % entitytoken)
+        entitytoken.removeallprop(
+            value_in = armoury_items,
+            arg_in = (
+                None if remove_entity_items else (0, [token.args[0] for token in armouryitemtokens])
+            )
+        )
+    
+    # Now add all the armoury raw files that have items in them
+    try:
+        for file in armouryraws.iterfiles():
+            if file.kind == 'raw' and file.name.startswith('item_'):
+                pydwarf.log.debug('Adding file %s to raws.' % file)
+                copy = file.copy()
+                copy.loc = 'raw/objects'
+                copy.name += '_armoury_stal'
+                df.add(copy)
+    except:
+        pydwarf.log.exception('Encountered exception.')
+        return pydwarf.failure('Failed to add armoury item raws.')
+        
+    # Add new permitted item tokens
+    try:
+        for entitytoken in entitytokens:
+            pydwarf.log.debug('Permitting items for %s.' % entitytoken)
+            for itemtype, items in armoury_entities[entitytoken.arg()].iteritems():
+                for item in items:
+                    entitytoken.add(
+                        raws.token(
+                            value = itemtype,
+                            args = [weird_armoury_names.get(item[0], item[0])] + item[1:]
+                        )
+                    )
+    except:
+        pydwarf.log.exception('Encountered exception.')
+        return pydwarf.failure('Failed to permit items for entities.')
+            
+    # And add the new reactions
+    try:
+        pydwarf.log.debug('Adding new reactions.')
+        reactions = armouryraws['reaction_armoury'].copy()
+        reactions.loc = 'raw/objects'
+        reactions.name = 'reaction_armoury_stal'
+        response = pydwarf.urist.getfn('pineapple.easypatch')(
+            df,
+            reactions,
+            permit_entities = armoury_entities.keys()
+        )
+        if not response: return response
+    except:
+        pydwarf.log.exception('Encountered exception.')
+        return pydwarf.failure('Failed to add new reactions.')
+    
+    # All done!
+    return pydwarf.success()
+        
+
+
+@pydwarf.urist(
+    name = 'stal.armoury.attacks',
+    version = '1.0.0',
+    author = ('Stalhansch', 'Sophie Kirschner'),
+    description = '''Removes attacks from creatures. By default, as a way to improve balance in
+        combat, scratch and bite attacks are removed from dwarves, humans, and elves.''',
+    arguments = {
         'remove_attacks': '''Removes these attacks from species listed in remove_attacks_from.
             Defaults to scratch and bite.''',
         'remove_attacks_from': '''If set to True, specified remove_attacks are removed
             from the species in the list to improve combat balancing. If set to None those
             attacks will not be touched. Defaults to dwarves, humans, and elves.'''
     },
-    compatibility = pydwarf.df_revision_range('0.40.14', '0.40.24')
+    compatibility = (pydwarf.df_0_40, pydwarf.df_0_3x)
 )
-def armourypack(dfraws, remove_entity_items=True, remove_attacks=('SCRATCH', 'BITE'), remove_attacks_from=('DWARF', 'HUMAN', 'ELF')):
-    try:
-        armouryraws = raws.dir(root=armoury_dir, log=pydwarf.log)
-    except:
-        return pydwarf.failure('Unable to load armoury raws.')
-    
-    additemstoraws(dfraws, armouryraws)
-    additemstoents(dfraws, armouryraws, remove_entity_items)
-    addreactions(dfraws, armouryraws)
-    removeattacks(dfraws, remove_attacks, remove_attacks_from)
-    
-    return pydwarf.success()
+def removeattacks(df, remove_attacks=('SCRATCH', 'BITE'), remove_attacks_from=('DWARF', 'HUMAN', 'ELF')):
+    removed = 0
+    for creature in df.allobj(type='CREATURE', id_in=remove_attacks_from):
+        for attack in creature.allprop(exact_value='ATTACK', arg_in=((0, remove_attacks),)):
+            pydwarf.log.debug('Removing attack %s from creature %s.' % (attack, creature))
+            for token in attack.alluntil(until_re_value='(?!ATTACK_).+'): token.remove()
+            attack.remove()
+            removed += 1
+    if removed:
+        return pydwarf.success('Removed %d attacks from %d creatures.' % (removed, len(remove_attacks_from)))
+    else:
+        return pydwarf.failure('Removed no attacks from creatures.')
