@@ -59,12 +59,13 @@ def easypatch_tokens(df, tokens, loc, **kwargs):
     file = raws.file(path=loc, tokens=tokens)
     return easypatch_file(df, file, **kwargs)
 
-def easypatch_file(df, file, collision_fails=True, **kwargs):
-    if str(file) not in df:
-        df.add(file)
+def easypatch_file(df, file, collision_fails=True, replace=False, **kwargs):
+    if replace or str(file) not in df:
+        df.add(file, replace=replace)
+        objects = file.allobj()
         response = pydwarf.urist.getfn('pineapple.utils.permitobjects')(
             df,
-            objects = file.allobj(),
+            objects = objects,
             **kwargs
         )
         return response
