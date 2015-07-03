@@ -14,7 +14,6 @@ for root, dirs, files in os.walk(os.path.dirname(os.path.realpath(__file__))):
         path = os.path.join(root, filename)
         modulename = '.'.join(os.path.basename(filename).split('.')[1:-1])
         if filename.endswith('.py') and filename.startswith('pydwarf.'):
-            pydwarf.log.debug('Loading script %s from %s...' % (modulename, path))
             try:
                 with open(path, 'U') as modulefile:
                     module = imp.load_module(modulename, modulefile, path, ('.py', 'U', imp.PY_SOURCE))
