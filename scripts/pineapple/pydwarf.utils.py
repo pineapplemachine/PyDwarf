@@ -11,23 +11,17 @@ import raws
     arguments = {
         'entities': 'Adds tokens to these entities.',
         'tokens': 'A string or collection of tokens to add to each entity.',
-        'check_existing': '''If set to True then before adding the tokens an entity will first
-            be checked for whether it already has any of the given tokens. If it does then none
-            of the given tokens will be added to that entity.'''
     },
     compatibility = '.*'
 )
-def addtoentity(df, entities, tokens, check_existing=True):
+def addtoentity(df, entities, tokens):
     if isinstance(entities, basestring): entities = (entities,)
-    if isinstance(tokens, basestring): tokens = raws.token.parse(tokens)
-    pydwarf.log.debug('Adding tokens to %d entities.' % len(entities))
+    pydwarf.log.debug('Adding tokens to entities %s.' % ', '.join(str(ent) for ent in entities))
     entitytokens = df.allobj(type='ENTITY', id_in=entities)
     
     for entitytoken in entitytokens:
-        if check_existing and any(entitytoken.getprop(match_token=token) for token in tokens):
-            pydwarf.log.debug('Skipping entity %s because it already contains a token that would have been added.' % entitytoken)
-        else:
-            entitytoken.addprop(tokens)
+        entitytoken.addprop(tokens)
+        if isinstance(tokens, raws.queryable): tokens = raws.token.copy(tokens)
         
     if len(entitytokens) != len(entities):
         return pydwarf.failure('Failed to add tokens to all given entities because only %d of %d exist.' % (len(entitytokens), len(entities)))
@@ -266,15 +260,17 @@ def addobjects(df, add_to_file, objects, **kwargs):
 def permitobject(df, type=None, id=None, permit_entities=None, item_rarity=None):
     # Decide what tokens need to be added to the entities based on the object type
     if type == 'REACTION':
-        tokens = raws.token(exact_value='PERMITTED_REACTION', args=[id])
+        tokens = raws.token(value='PERMITTED_REACTION', args=[id])
     elif type.startswith('BUILDING_'):
-        tokens = raws.token(exact_value='PERMITTED_BUILDING', args=[id])
+        tokens = raws.token(value='PERMITTED_BUILDING', args=[id])
     elif type.startswith('ITEM_'):
         value = type.split('_')[1]
         args = [id, item_rarity] if item_rarity else [id]
         tokens = raws.token(value=value, args=args)
     else:
         tokens = None
+    
+    pydwarf.log.debug('Permitting object [%s:%s] for %d entities.' % (type, id, len(permit_entities)))
     
     # Actually add those tokens
     if tokens is None:
@@ -306,6 +302,7 @@ def permitobject(df, type=None, id=None, permit_entities=None, item_rarity=None)
     compatibility = '.*'
 )
 def permitobjects(df, objects, **kwargs):
+    pydwarf.log.debug('Permitting %d objects.' % len(objects))
     for item in objects:
         if isinstance(item, raws.token):
             type, id = item.value, item.arg()
