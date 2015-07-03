@@ -122,7 +122,7 @@ def objectdict(version=None):
     
 def headerforobject(type, version=None):
     '''Returns the header for a particular object type given a version.'''
-    return objectdict(version).get(type)
+    return objectdict(version)[type]
 def objectsforheader(header, version=None):
     '''Returns the object types corresponding to a particular header given a version.'''
-    return headerdict(version).get(header)
+    return headerdict(version)[header]
