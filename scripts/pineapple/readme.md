@@ -43,7 +43,8 @@ Adds discipline as a natural skill to creatures that shouldn't be running away s
 Add a file or a bunch of tokens and the script handles entity permissions all on its own. Good for adding small mods, for example:
 
 ``` json
-"pineapple.easypatch" {
+{
+    "name": "pineapple.easypatch",
     "args": {
         "files": "path/to/raws",
         "loc": "raw/objects",
