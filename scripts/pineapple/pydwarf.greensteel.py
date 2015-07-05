@@ -4,14 +4,8 @@ import raws
 
 
 greendir = pydwarf.rel(__file__, 'raw/greensteel')
-added_reactions = (
-    'GREEN_STEEL_MAKING_ADAMANT_PINEAPPLE',
-    'GREEN_STEEL_MAKING_ADMANTINE_PINEAPPLE',
-)
 
-
-
-default_entities = ['MOUNTAIN']
+default_entities = 'MOUNTAIN'
 
 
 
@@ -30,13 +24,9 @@ default_entities = ['MOUNTAIN']
 )
 def greensteel(df, entities=default_entities):
     # Add greensteel raws
-    try:
-        df.add(path=greendir, loc='raw/objects')
-        return pydwarf.urist.getfn('pineapple.utils.addtoentity')(
-            df,
-            entities = entities,
-            tokens = [raws.token(value='PERMITTED_REACTION', arg=reaction) for reaction in added_reactions]
-        )
-    except:
-        pydwarf.log.exception('Failed to add greensteel raws.')
-        return pydwarf.failure()
+    return pydwarf.urist.getfn('pineapple.easypatch')(
+        df,
+        files = greendir,
+        loc = 'raw/objects',
+        permit_entities = entities
+    )
