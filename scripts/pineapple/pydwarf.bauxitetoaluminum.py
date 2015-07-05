@@ -2,14 +2,7 @@ import pydwarf
 
 
 
-alumtobaux_reaction = '''
-    [NAME:smelt aluminum from bauxite]
-    [SMELTER]
-    [REAGENT:1:STONE:NO_SUBTYPE:STONE:BAUXITE]
-    [REAGENT:1:STONE:NO_SUBTYPE:STONE:CRYOLITE]
-    [PRODUCT:100:1:BAR:NO_SUBTYPE:METAL:ALUMINUM]
-    [FUEL]
-'''
+alumtobaux_reaction = 
 
 default_entities = ['MOUNTAIN']
 
@@ -47,10 +40,18 @@ def bauxitetoaluminum(df, aluminum_value=0.75, entities=default_entities, add_to
         return pydwarf.failure()
         
     # Add the reaction
-    return pydwarf.urist.getfn('pineapple.utils.addreaction')(
+    return pydwarf.urist.getfn('pineapple.utils.addobject')(
         df,
+        type = 'REACTION',
         id = 'SMELT_BAUXITE_ALUMINUM_PINEAPPLE',
-        tokens = alumtobaux_reaction,
+        tokens = '''
+            [NAME:smelt aluminum from bauxite]
+            [SMELTER]
+            [REAGENT:1:STONE:NO_SUBTYPE:STONE:BAUXITE]
+            [REAGENT:1:STONE:NO_SUBTYPE:STONE:CRYOLITE]
+            [PRODUCT:100:1:BAR:NO_SUBTYPE:METAL:ALUMINUM]
+            [FUEL]
+        ''',
         add_to_file = add_to_file,
         permit_entities = entities
     )

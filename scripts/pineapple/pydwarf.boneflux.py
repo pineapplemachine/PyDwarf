@@ -2,17 +2,6 @@ import pydwarf
 
 
 
-boneflux_reaction = '''
-    [NAME:%(name)s]
-    [BUILDING:KILN:NONE]
-    [REAGENT:bone:%(bones)s:NONE:NONE:NONE:NONE]
-        [USE_BODY_COMPONENT]
-        [ANY_BONE_MATERIAL]
-    [PRODUCT:100:1:BOULDER:NONE:INORGANIC:%(product)s]
-    [FUEL]
-    [SKILL:SMELT]
-'''
-
 default_product_id = 'CALCITE'
 
 default_reaction_name = 'make calcite from bones'
@@ -41,10 +30,20 @@ default_file = 'raw/objects/reaction_kiln_boneflux_pineapple.txt'
     compatibility = (pydwarf.df_0_2x, pydwarf.df_0_3x, pydwarf.df_0_40)
 )
 def boneflux(df, product_id=default_product_id, reaction_name=default_reaction_name, bone_count=default_bone_count, entities=default_entities, add_to_file=default_file):
-    return pydwarf.urist.getfn('pineapple.utils.addreaction')(
+    return pydwarf.urist.getfn('pineapple.utils.addobject')(
         df,
+        type = 'REACTION',
         id = 'BONE_TO_FLUX_PINEAPPLE',
-        tokens = boneflux_reaction % {
+        tokens = '''
+            [NAME:%(name)s]
+            [BUILDING:KILN:NONE]
+            [REAGENT:bone:%(bones)s:NONE:NONE:NONE:NONE]
+            [USE_BODY_COMPONENT]
+            [ANY_BONE_MATERIAL]
+            [PRODUCT:100:1:BOULDER:NONE:INORGANIC:%(product)s]
+            [FUEL]
+            [SKILL:SMELT]
+        ''' % {
             'name': reaction_name,
             'product': product_id,
             'bones': bone_count

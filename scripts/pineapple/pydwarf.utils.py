@@ -31,33 +31,6 @@ def addtoentity(df, entities, tokens):
 
 
 @pydwarf.urist(
-    name = 'pineapple.utils.addreaction',
-    version = '1.0.1',
-    author = 'Sophie Kirschner',
-    description = '''A simple utility script which adds a single reaction.''',
-    arguments = {
-        'id': 'ID of the reaction to add.',
-        'tokens': 'The tokens that should be added immediately after the REACTION:ID token.',
-        'add_to_file': 'Adds the reaction to this file. Defaults to reaction_custom.',
-        'permit_entities': '''An iterable containing entities to which to add
-            PERMITTED_REACTION tokens to. When set to None, no such tokens will be added.'''
-    },
-    compatibility = '.*'
-)
-def addreaction(df, id, tokens, add_to_file='reaction_custom', permit_entities=None):
-    if permit_entities is not None and (not addtoentity(df, permit_entities, 'PERMITTED_REACTION:%s' % id).success):
-        return pydwarf.failure('Failed to add permitted reactions to entites.')
-    else:
-        if df.getobj(type='REACTION', exact_id=id):
-            return pydwarf.failure('Reaction %s already exists.' % id)
-        else:
-            rfile = df.getfile(add_to_file, create='OBJECT:REACTION')
-            rfile.add(raws.token(value='REACTION', args=[id], prefix='\n\n')).add(tokens)
-            return pydwarf.success('Added reaction %s to file %s and entities %s.' % (id, add_to_file, permit_entities))
-    
-
-
-@pydwarf.urist(
     name = 'pineapple.utils.objecttokens',
     version = '1.0.0',
     author = 'Sophie Kirschner',

@@ -81,11 +81,12 @@ def format_lua_content(content, labors):
 )
 def vegan(df, labors=default_labors, lua_file=default_lua_file, auto_run=False, entities=default_entities, add_to_file=default_file):
     # Add the reactions
-    addreaction = pydwarf.urist.getfn('pineapple.utils.addreaction')
+    addreaction = pydwarf.urist.getfn('pineapple.utils.addobject')
     for reactionid, reactioncontent in vegan_reactions.iteritems():
         pydwarf.log.debug('Adding reaction %s.' % reactionid)
         response = addreaction(
             df,
+            type = 'REACTION',
             id = reactionid,
             tokens = reactioncontent,
             add_to_file = add_to_file,

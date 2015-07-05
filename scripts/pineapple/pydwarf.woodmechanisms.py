@@ -2,13 +2,7 @@ import pydwarf
 
 
 
-wood_mechanisms_reaction = '''
-    [NAME:craft wooden mechanisms]
-    [BUILDING:CRAFTSMAN:NONE]
-    [REAGENT:A:%d:WOOD:NONE:NONE:NONE]
-    [PRODUCT:100:1:TRAPPARTS:NONE:GET_MATERIAL_FROM_REAGENT:A:NONE]
-    [SKILL:MECHANICS]
-'''
+wood_mechanisms_reaction = 
 
 default_log_count = 1
 
@@ -32,10 +26,17 @@ default_file = 'raw/objects/reaction_woodmechanisms_pineapple.txt'
     compatibility = (pydwarf.df_0_2x, pydwarf.df_0_3x, pydwarf.df_0_40)
 )
 def woodmechanisms(df, log_count=default_log_count, entities=default_entities, add_to_file=default_file):
-    return pydwarf.urist.getfn('pineapple.utils.addreaction')(
+    return pydwarf.urist.getfn('pineapple.utils.addobject')(
         df,
+        type = 'REACTION',
         id = 'WOODEN_MECHANISMS_PINEAPPLE',
-        tokens = wood_mechanisms_reaction % log_count,
+        tokens = '''
+            [NAME:craft wooden mechanisms]
+            [BUILDING:CRAFTSMAN:NONE]
+            [REAGENT:A:%d:WOOD:NONE:NONE:NONE]
+            [PRODUCT:100:1:TRAPPARTS:NONE:GET_MATERIAL_FROM_REAGENT:A:NONE]
+            [SKILL:MECHANICS]
+        ''' % log_count,
         add_to_file = add_to_file,
         permit_entities = entities
     )

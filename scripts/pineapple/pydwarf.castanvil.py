@@ -2,16 +2,7 @@ import pydwarf
 
 
 
-cast_anvil_reaction = '''
-    [NAME:cast iron anvil]
-    [BUILDING:SMELTER:NONE]
-    [REAGENT:A:%d:BAR:NO_SUBTYPE:METAL:IRON]
-    [PRODUCT:100:1:ANVIL:NONE:METAL:IRON]
-    [FUEL]
-    [SKILL:SMELT]
-'''
-
-default_entities = ['MOUNTAIN']
+default_entities = 'MOUNTAIN'
 
 default_anvil_cost = 5 # Cost in iron bars
 
@@ -35,10 +26,18 @@ default_file = 'raw/objects/reaction_smelter_castanvil_pineapple.txt'
 )
 def castanvil(df, anvil_cost=default_anvil_cost, entities=default_entities, add_to_file=default_file):
     # Super easy using pineapple.utils
-    return pydwarf.urist.getfn('pineapple.utils.addreaction')(
+    return pydwarf.urist.getfn('pineapple.utils.addobject')(
         df,
+        type = 'REACTION',
         id = 'CAST_IRON_ANVIL_PINEAPPLE',
-        tokens = cast_anvil_reaction % (anvil_cost * 150),
+        tokens = '''
+            [NAME:cast iron anvil]
+            [BUILDING:SMELTER:NONE]
+            [REAGENT:A:%d:BAR:NO_SUBTYPE:METAL:IRON]
+            [PRODUCT:100:1:ANVIL:NONE:METAL:IRON]
+            [FUEL]
+            [SKILL:SMELT]
+        ''' % (anvil_cost * 150),
         add_to_file = add_to_file,
         permit_entities = entities
     )
