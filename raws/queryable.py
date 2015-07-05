@@ -624,6 +624,9 @@ class rawstokenlist(list, rawsqueryable):
             if range is not None and range <= count: break
             yield self.__getitem__(i)
             
+    def add(self, *args, **kwargs):
+        for token in self.tokens: token.add(*args, **kwargs)
+            
     def __str__(self):
         if len(self) == 0:
             return ''
