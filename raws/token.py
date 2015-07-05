@@ -659,7 +659,7 @@ class rawstoken(rawsqueryable):
         else:
             raise ValueError('Failed to add token or tokens because no object was specified.')
             
-    def addprop(self, auto=None, **kwargs):
+    def addprop(self, *args, **kwargs):
         '''When this token is an object token like CREATURE:X or INORGANIC:X, a
         new token is usually added immediately afterwards. However, if a token like
         COPY_TAGS_FROM or USE_MATERIAL_TEMPLATE exists underneath the object, then
@@ -689,7 +689,7 @@ class rawstoken(rawsqueryable):
             aftervalues = ('COPY_TAGS_FROM',)
         addafter = self.getlastprop(value_in=aftervalues)
         if not addafter: addafter = self
-        addafter.add(auto=auto, **kwargs)
+        addafter.add(*args, **kwargs)
     
     @staticmethod
     def firstandlast(tokens, setfile=None):
