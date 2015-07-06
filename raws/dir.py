@@ -183,7 +183,7 @@ class rawsdir(rawsqueryableobj):
         
         if str(file) in self.files:
             if not replace: raise KeyError('Failed to add file %s to dir because it already contains a file by the same name.' % file)
-            self.remove(file)
+            self.remove(self.files[str(file)])
             
         file.dir = self
         
