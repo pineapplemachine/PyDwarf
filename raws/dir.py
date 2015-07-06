@@ -95,8 +95,10 @@ class rawsdir(rawsqueryableobj):
             path = kwargs['path']
             if os.path.isfile(path):
                 return self.addbyfilepath(**kwargs)
-            else:
+            elif os.path.isdir(path):
                 return self.addbydirpath(**kwargs)
+            else:
+                raise ValueError('Failed to add file because the path %s refers to neither a file nor a directory.' % path)
         elif 'filepath' in kwargs:
             kwargs['path'] = kwargs['filepath']
             del kwargs['filepath']
@@ -193,8 +195,12 @@ class rawsdir(rawsqueryableobj):
         self.filenames[file.name].append(file)
         
     def remove(self, file=None):
+        if file is None: raise KeyError('Failed to remove file because no file was given.')
         if isinstance(file, basestring): file = self.getfile(file)
-        if (file is None) or (file.dir is not self) or not any(file is f for f in self.iterfiles()): raise KeyError('Failed to remove file %s from dir because it doesn\'t belong to the dir.' % file)
+        
+        if file.dir is not self: raise KeyError('Failed to remove file because it belongs to a different dir.')
+        if not any(file is f for f in self.iterfiles()): raise KeyError('Failed to remove file because it doesn\'t belong to this dir.')
+        
         self.filenames[file.name].remove(file)
         self.files[str(file)].dir = None
         del self.files[str(file)]
