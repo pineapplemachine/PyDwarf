@@ -1,15 +1,18 @@
-import os
 import pydwarf
 import raws
 
-smalldir = pydwarf.rel(__file__, 'raw/smallthings')
+
+
+threats_path = pydwarf.rel(__file__, 'data/smallthings/threat.txt')
+nofamily_path = pydwarf.rel(__file__, 'data/smallthings/no_family.txt')
+small_dir = pydwarf.rel(__file__, 'raw/smallthings')
 
 
 
 # A bit of esoteric code which makes smallraws only be read once
 def getsmallraws():
     if 'smallraws' not in globals():
-        globals()['smallraws'] = raws.dir(root=smalldir, log=pydwarf.log)
+        globals()['smallraws'] = raws.dir(root=small_dir, log=pydwarf.log)
     return smallraws
 
 
@@ -46,19 +49,17 @@ shapenamedict = {
         fleshed out descriptions of the things your dwarves like, as well as more
         varied ones. With five each, it's pretty rare to see the same two twice.
         Hopefully I don't have any repeating prefstrings.
-        
-        Originally created by Umiman. Ported to ModBase by Fieari. Ported again to
-        PyDwarf by Sophie.''',
+    ''',
     compatibility = (pydwarf.df_0_2x, pydwarf.df_0_3x, pydwarf.df_0_40)
 )
-def prefstring(dfraws):
+def prefstring(df):
     # Get the smallthings ModBase raws, which is where this data will be coming from
     smallraws = getsmallraws()
     if not smallraws: return pydwarf.failure('Failed to read smallthings raws.')
     
     # Get all creatures
     smallcreatures = smallraws.allobj('CREATURE')
-    dfcreaturesdict = dfraws.objdict('CREATURE')
+    dfcreaturesdict = df.objdict('CREATURE')
     
     # Add the new prefstrings
     failedcreatures = 0
@@ -91,24 +92,22 @@ def prefstring(dfraws):
         Basically, I added maybe 100 or so new engravings you can potentially see on
         your floors, walls, studded armour, images, and the like. Keep in mind maybe
         one or two metagame just a tad but it's funny! I swear!
-        
-        Originally created by Umiman. Ported to ModBase by Fieari. Ported again to
-        PyDwarf by Sophie.''',
+    ''',
     compatibility = (pydwarf.df_0_2x, pydwarf.df_0_3x, pydwarf.df_0_40)
 )
-def engraving(dfraws):
-    if 'descriptor_shape_umiman' in dfraws: return pydwarf.failure('File descriptor_shape_umiman already exists.')
+def engraving(df):
+    if 'descriptor_shape_umiman' in df: return pydwarf.failure('File descriptor_shape_umiman already exists.')
         
     # Get the smallthings ModBase raws, which is where this data will be coming from
     smallraws = getsmallraws()
     if not smallraws: return pydwarf.failure('Failed to read smallthings raws.')
     
     # Get existing words and shapes
-    dfwordsdict = dfraws.objdict('WORD')
-    dfshapesdict = dfraws.objdict('SHAPE')
+    dfwordsdict = df.objdict('WORD')
+    dfshapesdict = df.objdict('SHAPE')
     
     # Add a new file for the new shapes
-    dfshapesfile = dfraws.add('raw/objects/descriptor_shape_umiman.txt')
+    dfshapesfile = df.add('raw/objects/descriptor_shape_umiman.txt')
     dfshapesfile.add('OBJECT:DESCRIPTOR_SHAPE')
     shapesadded = 0
     
@@ -147,3 +146,32 @@ def engraving(dfraws):
     
     # All done!
     return pydwarf.success('Added %s new shapes.' % shapesadded)
+
+@pydwarf.urist(
+    name = 'umiman.smallthings.speech.threats',
+    version = '1.0.0',
+    author = ('Umiman', 'Sophie Kirschner'),
+    description = '''Awhile back I asked the community to contribute to fill out the
+        threat.txt which is used in adventurer when someone threatens you. I.E: in vanilla,
+        when you face a megabeast or someone who has killed a named creature, they will
+        talk about who they killed and then say, "prepare to die!!!". That's all they said.
+        Boring. This compilation has some of the best threats (around 150 and counting)
+        compiled from that thread and should make killing things too proud of their own
+        achievements a lot more fun.
+    ''',
+    compatibility = (pydwarf.df_0_2x, pydwarf.df_0_3x, pydwarf.df_0_40)
+)
+def threats(df):
+    df.add(path=threats_path, loc='data/speech', kind=raws.binfile, replace=True)
+    return pydwarf.success()
+    
+@pydwarf.urist(
+    name = 'umiman.smallthings.speech.nofamily',
+    version = '1.0.0',
+    author = ('Umiman', 'Sophie Kirschner'),
+    description = '''Adds more dialog options to no_family.txt.''',
+    compatibility = (pydwarf.df_0_2x, pydwarf.df_0_3x, pydwarf.df_0_40)
+)
+def nofamily(df):
+    df.add(path=nofamily_path, loc='data/speech', kind=raws.binfile, replace=True)
+    return pydwarf.success()
