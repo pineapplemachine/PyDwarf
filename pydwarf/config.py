@@ -16,6 +16,16 @@ from helpers import findfile
 datetimeformat = '%Y.%m.%d.%H.%M.%S'
 timestamp = datetime.now().strftime(datetimeformat)
 
+auto_paths = [
+    'gamelog.txt', 'errorlog.txt',
+    'stderr.log', 'stdout.log',
+    'raw/objects', 'raw/graphics',
+    'data/art', 'data/init', 'data/speech',
+    'dfhack.init', 'dfhack.init-example', 'dfhack.history',
+    'hack/lua', 'hack/plugins', 'hack/raw', 'hack/ruby', 'hack/scripts',
+    'stonesense',
+]
+
 
 
 class config:
@@ -122,14 +132,7 @@ class config:
         
     def setuppaths(self):
         if self.paths == 'auto' or self.paths == ['auto'] or self.paths == ('auto',):
-            self.paths = [
-                'gamelog.txt', 'errorlog.txt',
-                'stderr.log', 'stdout.log',
-                'raw/objects', 'raw/graphics',
-                'data/art', 'data/init', 'data/speech',
-                'dfhack.init', 'dfhack.init-example', 'dfhack.history',
-                'hack/lua', 'hack/plugins', 'hack/raw', 'hack/ruby', 'hack/scripts',
-            ]
+            self.paths = auto_paths
         
     def setupversion(self):
         # Handle automatic version detection
