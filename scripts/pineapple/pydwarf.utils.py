@@ -81,7 +81,6 @@ def objecttokens(df, object_type, token, add_to=None, remove_from=None):
     author = 'Sophie Kirschner',
     description = '''Utility script for adding a new DFHack script.''',
     arguments = {
-        'name': 'The file name of the script to add.',
         'auto_run': '''If set to True, a line will be added to dfhack.init containing only
             the name of the added script. If set to None, no such line will be added. If set
             to an arbitrary string, that string will be added as a new line at the end of
@@ -91,9 +90,11 @@ def objecttokens(df, object_type, token, add_to=None, remove_from=None):
     },
     compatibility = '.*'
 )
-def addhack(df, name, auto_run, **kwargs):
+def addhack(df, auto_run, **kwargs):
+    name = kwargs.get('name', kwargs.get('path', 'unnamed'))
+    
     pydwarf.log.debug('Adding new file %s.' % name)
-    file = df.add(name=name, **kwargs)
+    file = df.add(**kwargs)
     
     if auto_run:
         if auto_run is True: auto_run = '\n%s' % file.name
@@ -165,7 +166,7 @@ def addobject(df, add_to_file, tokens, type=None, id=None, permit_entities=None,
     # If add_to_file already exists, fetch it. Otherwise add it to the raws.
     add_to_file = add_to_file % {'type': object_header.lower()}
     if add_to_file in df:
-        file = df.getfile(file)
+        file = df.getfile(add_to_file)
     else:
         file = df.add(add_to_file)
         file.add(raws.token(value='OBJECT', args=[object_header]))
@@ -269,7 +270,8 @@ def permitobject(df, type=None, id=None, permit_entities=None, item_rarity=None)
     author = 'Sophie Kirschner',
     description = '''Utility script for permitting several objects at once with entities.''',
     arguments = {
-        'objects': '''An iterable containing type, id tuples for objects to permit.''',
+        'objects': '''An iterable containing either tokens or type, id tuples representing objects
+            to be permitted.''',
         '**kwargs': 'Passed on to pineapple.utils.permitobject.',
     },
     compatibility = '.*'

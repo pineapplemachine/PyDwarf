@@ -1,4 +1,5 @@
 import pydwarf
+import raws
 
 
 
@@ -31,29 +32,19 @@ item_tokens_no_anvil.remove('ITEMS_ANVIL')
     compatibility = (pydwarf.df_0_3x, pydwarf.df_0_40)
 )
 def metalitems(df, metals=default_metals, items=default_item_tokens):
-    # Handle each metal
-    modified = 0
-    for inorganictoken in df.allobj('INORGANIC'):
-        if inorganictoken.args[0] in metals:
-            metal = inorganictoken.args[0]
-            pydwarf.log.debug('Handling metal %s...' % metal)
-            itemtokens = inorganictoken.allprop(value_in=items)
-            if len(itemtokens) < len(items):
-                pydwarf.log.debug('Adding tokens to metal %s...' % metal)
-                # Remove existing item tokens from the list (To avoid making duplicates)
-                for itemtoken in itemtokens:
-                    itemtoken.remove()
-                # Add new ones
-                templatetoken = inorganictoken.getlastprop('USE_MATERIAL_TEMPLATE')
-                addaftertoken = templatetoken if templatetoken else inorganictoken
-                for item in items:
-                    addaftertoken.add(item)
-                modified += 1
-            else:
-                pydwarf.log.debug('Metal %s already allows all the item types specified, skipping.' % metal)
-            
-    # All done
-    if modified > 0:
-        return pydwarf.success('Added tokens to %d metals.' % modified)
+    # Turn the item names into a list of tokens
+    itemtokens = [raws.token(value=item) for item in items]
+    
+    # Apply to each metal
+    affected = df.allobj(type='INORGANIC', id_in=metals).each(
+        lambda token: (
+            token.removeallprop(value_in=items),        # Remove existing tokens first to prevent duplicates when adding
+            token.addprop(raws.token.copy(itemtokens))  # And now add the specified tokens
+        )
+    )
+    
+    # All done!
+    if affected:
+        return pydwarf.success('Affected %d metals.' % len(affected))
     else:
-        return pydwarf.failure('No tokens were added to any metals.')
+        return pydwarf.failure('Affected no metals.')

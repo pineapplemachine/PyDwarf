@@ -22,7 +22,7 @@ import raws
 def easypatch(df, files, **kwargs):
     if isinstance(files, basestring):
         if os.path.isfile(files):
-            return easypatch_filepath(df, files **kwargs)
+            return easypatch_filepath(df, files, **kwargs)
         elif os.path.isdir(files):
             return easypatch_dirpath(df, files, collision_fails=False, **kwargs)
         else:

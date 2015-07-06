@@ -2,8 +2,6 @@ import pydwarf
 
 
 
-wood_mechanisms_reaction = 
-
 default_log_count = 1
 
 default_entities = ['MOUNTAIN', 'PLAINS']

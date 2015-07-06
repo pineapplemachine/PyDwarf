@@ -8,10 +8,11 @@ import pydwarf
     compatibility = (pydwarf.df_0_34, pydwarf.df_0_40)
 )
 def nograzers(df):
-    grazers = df.all(exact_value='GRAZER')
-    standardgrazers = df.all('STANDARD_GRAZER')
-    for grazer in grazers: grazer.remove()
-    for grazer in standardgrazers: grazer.remove()
+    # Do the removing
+    grazers = df.removeall('GRAZER')
+    standardgrazers = df.removeall('STANDARD_GRAZER')
+    
+    # All done!
     if len(grazers) or len(standardgrazers):
         return pydwarf.success('Removed %d GRAZER and %d STANDARD_GRAZER tokens.' % (len(grazers), len(standardgrazers)))
     else:
