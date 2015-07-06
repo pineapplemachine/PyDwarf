@@ -65,7 +65,6 @@ class session:
             return False
         
         else:
-            log.info('Finished running script %s.' % name)
             return True
     
     def funcs(self, info):
