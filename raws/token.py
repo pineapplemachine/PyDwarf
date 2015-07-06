@@ -738,7 +738,7 @@ class rawstoken(rawsqueryable):
         else:
             first.prev = self
             last.next = self.next
-            if self.next: self.next.prev = tokens[-1]
+            if self.next: self.next.prev = last
             self.next = first
         return tokens
     
