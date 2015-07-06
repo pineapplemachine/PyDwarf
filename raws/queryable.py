@@ -113,6 +113,10 @@ class rawsqueryable(object):
         tokens = self.all(*args, **kwargs)
         for token in tokens: token.remove()
         return tokens
+    def removeuntil(self, *args, **kwargs):
+        tokens = self.until(*args, **kwargs)
+        for token in tokens: token.remove()
+        return tokens
     def removealluntil(self, *args, **kwargs):
         tokens = self.alluntil(*args, **kwargs)
         for token in tokens: token.remove()
@@ -600,8 +604,7 @@ class rawsqueryableobj(rawsqueryable):
         
     @staticmethod
     def objpretty(pretty, type, id):
-        '''Internal'''
-        # Utility method for handling getobj/allobj arguments.
+        '''Internal: Used for handling getobj/allobj arguments.'''
         if pretty is not None:
             if ':' in pretty:
                 parts = pretty.split(':')
@@ -624,9 +627,21 @@ class rawstokenlist(list, rawsqueryable):
             if range is not None and range <= count: break
             yield self.__getitem__(i)
             
-    def add(self, *args, **kwargs):
-        for token in self.tokens: token.add(*args, **kwargs)
-            
+    def add(self, item):
+        if isinstance(item, rawstoken):
+            self.append(item)
+        elif isinstance(item, rawsqueryable):
+            self.extend(item.tokens())
+        elif isinstance(item, list):
+            self.extend(item)
+        else:
+            raise ValueError('Failed to add item because it was of an unrecognized type.')
+    
+    def each(self, fn, *args, **kwargs):
+        '''Calls a function for each entry in the list with that entry as the argument, and
+        appends each result to a returned tokenlist.'''
+        return rawstokenlist(fn(token, *args, **kwargs) for token in self)
+    
     def __str__(self):
         if len(self) == 0:
             return ''
