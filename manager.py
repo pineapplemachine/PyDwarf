@@ -35,11 +35,18 @@ def __main__(args=None):
     pydwarf.log.debug('With DFHack version %s.' % conf.hackversion)
     
     # Handle flags that completely change behavior
+    specialtext = None
+    
     if args.list:
-        pydwarf.urist.list()
-        exit(0)
+        items = pydwarf.urist.list()
+        specialtext = '\n'.join(items)
     elif args.meta is not None:
-        pydwarf.urist.doclist(args.meta)
+        specialtext = pydwarf.urist.doclist(args.meta, format=args.metaformat)
+    
+    if specialtext is not None:
+        pydwarf.log.info('\n\n%s\n' % specialtext)
+        if args.writedoc:
+            with open(args.writedoc, 'wb') as writedoc: writedoc.write(specialtext)
         exit(0)
     
     # Verify that input directory exists
@@ -131,6 +138,8 @@ def parseargs():
     parser.add_argument('--list', help='list available scripts', action='store_true')
     parser.add_argument('--jscripts', help='specify scripts given a json array', type=str)
     parser.add_argument('--meta', help='show metadata for scripts', nargs='*', type=str)
+    parser.add_argument('--metaformat', help='how to format shown metadata', type=str)
+    parser.add_argument('--writedoc', help='write data given by --list or --meta to a file path in addition to the log', type=str)
     args = parser.parse_args()
     
     if args.jscripts is not None: args.scripts = json.loads(args.jscripts) if args.scripts is None else (args.scripts + json.loads(args.jscripts))

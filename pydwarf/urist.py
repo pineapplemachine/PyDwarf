@@ -4,6 +4,7 @@ import textwrap
 
 import version as versionutils
 from log import log
+import uristdoc
 
 
 
@@ -174,8 +175,8 @@ class urist:
     def getname(self):
         return '.'.join((self.namespace, self.name)) if self.namespace else self.name
     
-    def meta(self, key):
-        return self.metadata.get(key)
+    def meta(self, key, default=None):
+        return self.metadata.get(key, default)
     
     def matches(self, match):
         return all([self.meta(i) == j for i, j in match.iteritems()]) if match else True
@@ -344,7 +345,6 @@ class urist:
             
     @staticmethod
     def list():
-        log.info('Listing registered scripts.')
         names = {}
         total = 0
         for uristlist in urist.registered.itervalues():
@@ -353,69 +353,41 @@ class urist:
                 if uname not in names: names[uname] = []
                 names[uname].append(uristinstance)
                 total += 1
-        log.info('Found %d registered scripts in total.' % total)
-        for name, uristlist in sorted(names.items()):
-            log.info('Found %d script%s named %s.' % (len(uristlist), 's' if len(uristlist) > 1 else '', name))
+        # log.info('Found %d registered scripts in total.' % total)
+        # for name, uristlist in sorted(names.items()):
+        #     log.info('Found %d script%s named %s.' % (len(uristlist), 's' if len(uristlist) > 1 else '', name))
+        return sorted(names.keys())
 
-    def doc(self):
+    def doc(self, format=None):
         '''Make a pretty metadata string.'''
         
-        doc = ''
+        template = uristdoc.template.format.get(format if format else 'txt')
+        if template is None: raise KeyError('Failed to create documentation string because the format %s was unrecognized.' % format)
         
-        # Utility function
-        def normalize(string): return ' '.join([l.strip() for l in str(string).split('\n')])
+        handled_metadata_keys = ('name', 'namespace', 'author', 'version', 'description', 'arguments', 'dependency', 'compatibility')
         
-        # Title
-        author = self.meta('author')
-        version = self.meta('version')
-        if author and not isinstance(author, basestring): author = ', '.join(author)
-        versionstr = (' %s' % version) if version else ''
-        authorstr = (' by %s' % author) if author else ''
-        doc += 'Script:\n  %s%s%s.' % (self.getname(), versionstr, authorstr)
-        
-        # Description
-        desc = self.meta('description')
-        if desc:
-            doc += '\n\nDescription:\n%s' % textwrap.fill('  %s' % normalize(desc))
-            
-        # Arguments
-        args = self.meta('arguments')
-        if args:
-            doc += '\n\nArguments:'
-            for argname, arginfo in args.iteritems():
-                doc += '\n%s' % textwrap.fill('  %s: %s' % (argname, normalize(arginfo)))
-        
-        # Dependencies
-        deps = self.meta('dependency')
-        if deps:
-            if not isinstance(deps, basestring): deps = ', '.join(deps)
-            doc += '\nDepends on:\n%s' % textwrap.fill('  %s' % deps)
-        
-        # Compatibility
-        compat = self.meta('compatibility')
-        if compat:
-            doc += '\n\nDF version compatibility regex:\n  %s' % str(compat)
-            
-        # Everything else
-        othermeta = []
-        for key, value in self.metadata.iteritems():
-            if key not in ('name', 'namespace', 'author', 'version', 'description', 'arguments', 'dependency', 'compatibility'): othermeta.append((key, value))
-        if len(othermeta):
-            doc += '\n\nOther metadata:'
-            for key, value in othermeta:
-                doc += '\n%s' % textwrap.fill('  %s: %s' % (key, normalize(value)))
-        
-        # All done!
-        return doc
-        
+        return template.full(
+            name = self.getname(),
+            version = self.meta('version'),
+            author = self.meta('author'),
+            description = self.meta('description'),
+            compatibility = self.meta('compatibility'),
+            dependencies = self.meta('dependency'),
+            arguments = self.meta('arguments'),
+            metadata = {key: value for key, value in self.metadata.iteritems() if key not in handled_metadata_keys}
+        )
+
     @staticmethod
-    def doclist(names=[]):
-        log.info('Showing metadata for scripts.')
+    def doclist(names=[], delimiter='\n\n', format=None):
         urists = []
         if len(names):
             for name in names: urists += urist.getregistered(*urist.splitname(name))
         else:
             urists = urist.allregistered()
-        for uristinstance in urists:
-            log.info('\n\n%s\n' % uristinstance.doc())
-        
+        items = sorted(ur.doc(format=format) for ur in urists)
+        template = uristdoc.template.format.get(format if format else 'txt')
+        if items and template:
+            text = template.concat(items)
+        else:
+            text = delimiter.join(items)
+        return text
