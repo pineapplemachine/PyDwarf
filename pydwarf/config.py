@@ -29,9 +29,9 @@ auto_paths = [
 
 
 class config:
-    def __init__(self, version=None, paths=None, dfhackver=None, input=None, output=None, backup=None, scripts=[], packages=[], verbose=False, log='logs/%s.txt' % timestamp):
+    def __init__(self, version=None, paths=None, hackversion=None, input=None, output=None, backup=None, scripts=[], packages=[], verbose=False, log='logs/%s.txt' % timestamp):
         self.version = version          # Dwarf Fortress version, for handling script compatibility metadata
-        self.dfhackver = dfhackver      # DFHack version
+        self.hackversion = hackversion      # DFHack version
         self.input = input              # Raws are loaded from this input directory
         self.output = output            # Raws are written to this output directory
         self.backup = backup            # Raws are backed up to this directory before any changes are made
@@ -105,8 +105,8 @@ class config:
         self.setuppaths()
         # Handle version == 'auto'
         self.setupversion()
-        # Handle dfhackver == 'auto'
-        self.setupdfhackver()
+        # Handle hackversion == 'auto'
+        self.setuphackversion()
         # Import packages
         self.setuppackages()
         
@@ -148,8 +148,8 @@ class config:
         else:
             log.info('Managing Dwarf Fortress version %s.' % self.version)
         
-    def setupdfhackver(self):
-        if self.dfhackver == 'auto':
+    def setuphackversion(self):
+        if self.hackversion == 'auto':
             log.debug('Attempting to automatically detect DFHack version.')
             
             dfhackdir = findfile(name='hack', paths=(self.input, self.output))
@@ -161,12 +161,12 @@ class config:
                 
             newspath = os.path.join(dfhackdir, 'NEWS')
             if os.path.isfile(newspath):
-                with open(newspath, 'rb') as news: self.dfhackver = news.readline().strip()
+                with open(newspath, 'rb') as news: self.hackversion = news.readline().strip()
                 
-            if self.dfhackver is None:
+            if self.hackversion is None:
                 log.error('Unable to detect DFHack version.')
             else:
-                log.debug('Detected DFHack version %s.' % self.dfhackver)
+                log.debug('Detected DFHack version %s.' % self.hackversion)
                 
-        elif self.dfhackver is None:
+        elif self.hackversion is None:
             log.warning('No DFHack version was specified.')

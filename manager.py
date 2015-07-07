@@ -32,7 +32,7 @@ def __main__(args=None):
     pydwarf.log.debug('With pydwarf version %s.' % pydwarf.__version__)
     pydwarf.log.debug('With raws version %s.' % raws.__version__)
     pydwarf.log.debug('With Dwarf Fortress version %s.' % conf.version)
-    pydwarf.log.debug('With DFHack version %s.' % conf.dfhackver)
+    pydwarf.log.debug('With DFHack version %s.' % conf.hackversion)
     
     # Handle flags that completely change behavior
     if args.list:
@@ -126,7 +126,7 @@ def parseargs():
     parser.add_argument('-p', '--packages', help='import packages containing PyDwarf scripts', nargs='+', type=str)
     parser.add_argument('-c', '--config', help='run with json config file if the extension is json, otherwise treat as a Python package, import, and override settings using export dict', type=str)
     parser.add_argument('-v', '--verbose', help='set stdout logging level to DEBUG', action='store_true')
-    parser.add_argument('-hver', '--dfhackver', help='indicate DFHack version', type=str)
+    parser.add_argument('-hver', '--hackversion', help='indicate DFHack version', type=str)
     parser.add_argument('--log', help='output log file to path', type=str)
     parser.add_argument('--list', help='list available scripts', action='store_true')
     parser.add_argument('--jscripts', help='specify scripts given a json array', type=str)

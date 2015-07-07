@@ -24,7 +24,7 @@ class session:
         self.conf = conf
         self.dfraws = raws.dir(root=conf.input, dest=conf.output, paths=conf.paths, version=conf.version, log=log)
         self.dfversion = conf.version
-        self.hackversion = conf.dfhackver
+        self.hackversion = conf.hackversion
     
     def successful(self, info):
         return self.inlist(info, self.successes)

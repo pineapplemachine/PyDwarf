@@ -15,7 +15,7 @@ if False:
         'backup': 'backup',
         'paths': 'auto',
         'version': 'auto',
-        'dfhackver': 'auto',
+        'hackversion': 'auto',
         'scripts': [
             {
                 'name': 'pineapple.deerappear',

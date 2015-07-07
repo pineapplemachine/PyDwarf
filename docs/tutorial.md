@@ -36,7 +36,7 @@ For convenient reference, this is an example config.json file:
     
     "version":  "auto",
     "dfhackdir": "auto",
-    "dfhackver": "auto",
+    "hackversion": "auto",
     
     "scripts": [
         {"name": "pineapple.deerappear", "args": {"tile": "'d'", "color": [6, 0, 1]}},
@@ -60,7 +60,7 @@ Here is the purpose of each of those attributes:
 * `backup`: Before anything else is done, if it's not `null` or `None`, the input raws will be copied and saved to this directory.
 * `version`: Specifies the Dwarf Fortress version. For example, `"version": "0.40.24"`. If set to `auto` then PyDwarf will attempt to detect the Dwarf Fortress version automatically. This should succeed as long as either the `input` or `output` directory is somewhere inside Dwarf Fortress's directory.
 * `dfhackdir`: The location of a hack/ directory, if any, within the Dwarf Fortress directory
-* `dfhackver`: The version of DFHack contained within a hack/ directory, if any, within the Dwarf Fortress directory
+* `hackversion`: The version of DFHack contained within a hack/ directory, if any, within the Dwarf Fortress directory
 * `scripts`: Lists the scripts that should be run.
 * `packages`: Lists the Python packages that should be imported. In essence, it specifies for PyDwarf that it should look for scripts inside the `scripts` package, in this case a directory containing an `__init__.py` file. This is an advanced feature and the typical user won't need to worry about this.
 
@@ -77,7 +77,7 @@ PyDwarf's configuration can also be passed as command line arguments when runnin
 * `-b` or `--backup`: Specifies raws backup directory.
 * `-ver` or `--version`: Specifies Dwarf Fortress version.
 * `-hdir` or `--dfhackdir`: Specifies DFHack directory.
-* `-hver` or `--dfhackver`: Specifies DFHack version.
+* `-hver` or `--hackversion`: Specifies DFHack version.
 * `-s` or `--scripts`: The list of scripts to run. (Only names and namespaces may be specified in this way, not dictionaries.)
 * `-p` or `--packages`: The list of Python packages to import.
 * `-c` or `--config`: Reads configuration from the json file given by the path. Can also refer to a Python file or package, which will be imported and used for configuration. See `config_override.py` for an example.
