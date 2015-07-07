@@ -29,7 +29,7 @@ def easypatch(df, files, **kwargs):
             return easypatch_content(df, files, **kwargs)
     elif isinstance(files, raws.tokenlist):
         return easypatch_tokens(df, files, **kwargs)
-    elif isinstance(files, raws.file):
+    elif isinstance(files, raws.rawfile):
         return easypatch_file(df, files, **kwargs)
     else:
         for file in files:
@@ -48,15 +48,15 @@ def easypatch_dirpath(df, path, loc=None, **kwargs):
     return pydwarf.success('Added files from directory %s.' % path)
 
 def easypatch_filepath(df, path, loc=None, root=None, **kwargs):
-    file = raws.file(path=path, loc=loc, root=root)
+    file = raws.rawfile(path=path, loc=loc, root=root)
     return easypatch_file(df, file, **kwargs)
 
 def easypatch_content(df, content, loc, **kwargs):
-    file = raws.file(path=loc, content=content)
+    file = raws.rawfile(path=loc, content=content)
     return easypatch_file(df, file, **kwargs)
     
 def easypatch_tokens(df, tokens, loc, **kwargs):
-    file = raws.file(path=loc, tokens=tokens)
+    file = raws.rawfile(path=loc, tokens=tokens)
     return easypatch_file(df, file, **kwargs)
 
 def easypatch_file(df, file, collision_fails=True, replace=False, **kwargs):

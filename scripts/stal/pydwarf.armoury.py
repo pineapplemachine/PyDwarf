@@ -96,7 +96,7 @@ def armoury(df, remove_entity_items=True):
     # Look for files made empty as a result (of which there should be a few) and remove them
     removedfiles = []
     for file in df.files.values():
-        if isinstance(file, raws.file) and len(file) <= 1:
+        if isinstance(file, raws.rawfile) and len(file) <= 1:
             pydwarf.log.debug('Removing emptied file %s.' % file)
             file.remove()
             removedfiles.append(file)
