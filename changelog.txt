@@ -1,3 +1,31 @@
+v1.0.2: Magma Forge
+
+Fixed the vagueness of most exceptions in the raws and pydwarf packages, most of them should now be reasonably forthcoming about what went wrong and why.
+Fixed bug in raws.token.add which was arising from a dumb typo and really should have been caught long before.
+Renamed raws.dir.addfile to raws.dir.add and raws.dir.setfile to raws.dir.set.
+Renamed raws.file to raws.rawfile to make things less confusing in light of some other additions.
+Renamed stal.armourypack to stal.armoury because why not.
+Removed pineapple.utils.addreaction, which has been superseded by the newer and shinier pineapple.utils.addobject.
+Added a great deal of functionality to the raws.dir object, which is now capable of tracking an entire DF directory as opposed to just its raw/objects subdirectory.
+Added three new file classes: raws.basefile, raws.reffile, and raws.binfile.
+Added more documentation and tutorials, big surprise. (Also added and neglected to document a bunch of new functionality while I was at it, he he he.)
+Added a number of handy new operator overloads and fiddled a few existing ones while I was at it.
+Added methods like raws.queryable.removefirst, raws.queryable.removeall, and quite a few more.
+Added script pkdawson.vegan, a port of df-vegan.
+Added scripts underneath omniclasm.decay, a port of State of Decay.
+Added scripts umiman.smallthings.threats and umiman.smallthings.nofamily, ports of parts of smallthings that PyDwarf couldn't support until now.
+Added scripts pineapple.easypatch, pineapple.utils.addobject, pineapple.utils.addobjects, pineapple.utils.permitobject, pineapple.utils.permitobjects, and pineapple.utils.addhack.
+Added raws.objects module which helps with knowing some things about how raws files are supposed to be structured.
+Added a very nifty raws.tokenlist.each method which did great wonders for terseness of some mods.
+Improved general flow and structure of manager code against pydwarf.session code, moved things around and generally tidied up.
+Improved the __getitem__ method for raws.queryable objects so that now it can handle ellipses and slices and some other stuff too.
+Improved the way token arguments are internally handled, and made a few changes to pertinent token methods.
+Improved pineapple.utils.addentity and made a pretty big change to how it accepts arguments in the process.
+Improved raws.queryable.getobj and raws.queryable.allobj methods, now they can do even more stuff than before.
+Improved the raws.tokenfilter constructor, which is now decent enough to handle passing a single tuple/whatever to exact_arg, re_arg, or arg_in rather than an iterable of them.
+Improved stal.armoury, putnam.materialsplus, putnam.microreduce, shukaro.higherlearning, and shukaro.creationforge by rewriting each of them entirely.
+Tweaked almost every script in some way, really, mostly in the interest of utilizing newer and more awesome functionality.
+
 v1.0.1: Strange Mood
 
 Fixed pineapple.boneflux reaction by being less bad at string formatting
