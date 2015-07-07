@@ -72,7 +72,7 @@ def materialsplus(df, entities=default_entities):
     errors = 0
     for identifier, re_id, addprops in add_properties:
         additions = df.allobj(type='INORGANIC', re_id=re_id).each(
-            raws.token.addprop, addprops
+            lambda token: token.addprop(addprops)
         )
         if len(additions):
             pydwarf.log.debug('Added %s properties to %d inorganics.' % (identifier, len(additions)))
