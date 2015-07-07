@@ -1,6 +1,11 @@
 import os
 import re
 
+from log import log
+from helpers import findfile
+
+
+
 # Can be expected to match all past and future 0.40.* releases. (Time of writing is 21 May 15, the most recent version is 0.40.24.)
 df_0_40 = '(0\.40\.\d{2,}[abcdefg]?)'
 # Matches all DF 0.34.* releases
@@ -22,6 +27,8 @@ df_0_21 = '(0\.21\.(10(5\.21a|4\.(21[abc]|19[abc])|2\.19a|1\.19[abcd]|0\.19a)|9[
 # Matches all DF 0.27, 0.23, 0.22, and 0.21 releases
 df_0_2x = '|'.join((df_0_21, df_0_22, df_0_23, df_0_27, df_0_28))
 
+
+
 # Generates a regex which should properly match from, until, and each version in-between.
 # For example: pydwarf_range('0.40.14', '0.40.24')
 def df_revision_range(prettymin=None, prettymax=None, major=None, minor=None, minrevision=None, maxrevision=None):
@@ -35,6 +42,8 @@ def df_revision_range(prettymin=None, prettymax=None, major=None, minor=None, mi
         maxrevision = parts[2] if len(parts) > 2 else '0'
     return '%s\.%s\.(%s)' % (major, minor, '|'.join([str(r) for r in range(int(minrevision), int(maxrevision)+1)]))
 
+
+
 # Given a version and a compatibility regex, determine compatibility
 def compatible(compatibility, version):
     if isinstance(compatibility, basestring):
@@ -42,25 +51,14 @@ def compatible(compatibility, version):
     else:
         return any([re.match(item, version) for item in compatibility])
 
-def detectversion(paths, recursion=8, log=None):
-    # Given a list of directories that may be inside a DF directory, e.g. raws input or output, look for release notes.txt and get the version from that
-    if log: log.debug('Attempting to detect Dwarf Fortress version given paths %s.' % [str(p) for p in paths])
-    for path in paths:
-        if path is not None:
-            currentpath = path
-            for i in xrange(0, recursion):
-                if os.path.isdir(currentpath):
-                    if log: log.debug('Checking path %s for release notes.' % currentpath)
-                    if 'release notes.txt' in os.listdir(currentpath):
-                        version = versionfromreleasenotes(os.path.join(currentpath, 'release notes.txt'), log)
-                        if version: return version
-                    else:
-                        currentpath = os.path.dirname(currentpath)
-                else:
-                    break
-    return None
 
-def versionfromreleasenotes(path, log=None):
+
+def detectversion(*args, **kwargs):
+    # Given a list of directories that may be inside a DF directory, e.g. raws input or output, look for release notes.txt and get the version from that
+    path = findfile(name='release notes.txt', *args, **kwargs)
+    return versionfromreleasenotes(path)
+
+def versionfromreleasenotes(path):
     with open(path, 'rb') as releasenotes:
         for line in releasenotes.readlines():
             if line.startswith('Release notes for'): return line.split()[3]

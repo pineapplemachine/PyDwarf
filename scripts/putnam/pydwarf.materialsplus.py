@@ -2,91 +2,98 @@ import os
 import pydwarf
 import raws
 
-# Utility function for putting new properties after an inorganic's USE_MATERIAL_TEMPLATE token, if it has one
-# Otherwise, the property is just added after the INORGANIC object token.
-def addaftertemplate(inorganic, addition):
-    template = inorganic.getuntil(exact_value='USE_MATERIAL_TEMPLATE', until_exact_value='INORGANIC')
-    addafter = template if template else inorganic
-    return addafter.add(addition)
+
+
+mats_dir = pydwarf.rel(__file__, 'raw/materialsplus')
+
+default_entities = 'MOUNTAIN'
+
+add_paths = [os.path.join(mats_dir, path) for path in [
+    'inorganic_alloys_mat_plus.txt',
+    'inorganic_metals_mat_plus.txt',
+    'inorganic_other_mat_plus.txt',
+    'item_mat_plus.txt'
+]]
+
+patch_paths = [os.path.join(mats_dir, path) for path in [
+    'reaction_alloys_mat_plus.txt',
+    'reaction_production_mat_plus.txt'
+]]
+
+
+
+add_properties = [
+    (
+        # Identifier for making the log easier to understand
+        'zircon',
+        # Regex to match inorganic IDs
+        '.* ZIRCON',
+        # Add these properties
+        'MATERIAL_REACTION_PRODUCT:KROLL_PROCESS:INORGANIC:ZIRCONIUM_PUTNAM'
+    ),
+    (
+        'beryl',
+        '.* BERYL|HELIODOR|MORGANITE|GOSHENITE|EMERALD',
+        'REACTION_CLASS:BERYLLIUM'
+    ),
+    (
+        'silicon',
+        'ANDESITE|OLIVINE|HORNBLENDE|SERPENTINE|ORTHOCLASE|MICROCLINE|MICA',
+        'REACTION_CLASS:SILICON'
+    ),
+    (
+        'dolomite',
+        'DOLOMITE',
+        'REACTION_CLASS:PIDGEON_PROCESS'
+    ),
+    (
+        'cromite',
+        'CHROMITE',
+        '[METAL_ORE:CHROMIUM_PUTNAM:100][METAL_ORE:IRON:50]'
+    ),
+    (
+        'pyrolusite',
+        'PYROLUSITE',
+        'METAL_ORE:MANGANESE_PUTNAM:100'
+    ),
+]
+
+
 
 @pydwarf.urist(
     name = 'putnam.materialsplus',
-    version = '1.0.0',
+    version = '1.0.1',
     author = ('Putnam', 'Sophie Kirschner'),
     description = 'Adds a bunch of materials to the game.',
     compatibility = (pydwarf.df_0_34, pydwarf.df_0_40)
 )
-def materialsplus(dfraws):
-    exceptions = 0
-    addedreactions = []
+def materialsplus(df, entities=default_entities):
+    # Add properties to various inorganics as defined by the add_properties dict
+    errors = 0
+    for identifier, re_id, addprops in add_properties:
+        additions = df.allobj(type='INORGANIC', re_id=re_id).each(
+            lambda token: token.addprop(addprops)
+        )
+        if len(additions):
+            pydwarf.log.debug('Added %s properties to %d inorganics.' % (identifier, len(additions)))
+        else:
+            errors += 1
+            pydwarf.log.error('Failed to add %s properties because no matching inorganics were found.' % identifier)
     
-    try:
-        for zircon in dfraws.all(exact_value='INORGANIC', re_args=['.* ZIRCON']):
-            addaftertemplate(zircon, 'MATERIAL_REACTION_PRODUCT:KROLL_PROCESS:INORGANIC:ZIRCONIUM_PUTNAM')
-        pydwarf.log.debug('Added reaction to zircons.')
-    except:
-        pydwarf.log.exception('Failed to add reaction to zircons.')
-        exceptions += 1
-        
-    try:
-        for beryl in dfraws.all(exact_value='INORGANIC', re_args=['.* BERYL|HELIODOR|MORGANITE|GOSHENITE|EMERALD']):
-            addaftertemplate(beryl, 'REACTION_CLASS:BERYLLIUM')
-        pydwarf.log.debug('Added reaction to beryls.')
-    except:
-        pydwarf.log.exception('Failed to add reaction to beryls.')
-        exceptions += 1
+    for path in add_paths:
+        pydwarf.log.debug('Adding file at %s.' % path)
+        df.add(path=path, loc='raw/objects')
     
-    try:
-        chromite = dfraws.get('INORGANIC:CHROMITE')
-        pyrolusite = dfraws.get('INORGANIC:PYROLUSITE')
-        addaftertemplate(chromite, '[METAL_ORE:CHROMIUM_PUTNAM:100][METAL_ORE:IRON:50]')
-        addaftertemplate(pyrolusite, 'METAL_ORE:MANGANESE_PUTNAM:100')
-        pydwarf.log.debug('Added titanium ores.')
-    except:
-        pydwarf.log.exception('Failed to add titanium ores.')
-        exceptions += 1
+    for path in patch_paths:
+        response = pydwarf.urist.getfn('pineapple.easypatch')(
+            df,
+            files = path,
+            loc = 'raw/objects',
+            permit_entities = entities
+        )
+        if not response: return response
     
-    try:
-        for silicon in dfraws.all(exact_value='INORGANIC', re_args=['ANDESITE|OLIVINE|HORNBLENDE|SERPENTINE|ORTHOCLASE|MICROCLINE|MICA']):
-            addaftertemplate(silicon, 'REACTION_CLASS:SILICON')
-        pydwarf.log.debug('Added silicon reactions.')
-    except:
-        pydwarf.log.exception('Failed to add silicon reactions.')
-        exceptions += 1
-        
-    try:
-        dolomite = dfraws.get('INORGANIC:DOLOMITE')
-        addaftertemplate(dolomite, 'REACTION_CLASS:PIDGEON_PROCESS')
-        pydwarf.log.debug('Added reaction to dolomite.')
-    except:
-        pydwarf.log.exception('Failed to add reaction to dolomite.')
-        exceptions += 1
-        
-    for root, dirs, files in os.walk(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'Materials Plus')):
-        for filename in files:
-            suffix = '_mat_plus.txt'
-            if filename.endswith(suffix):
-                path = os.path.join(root, filename)
-                destname = 'putnam_%s' % filename[:-len(suffix)]
-                rfile = dfraws.getfile(destname)
-                if rfile:
-                    pydwarf.log.debug('Appending data to file %s from %s...' % (destname, path))
-                    with open(path, 'rb') as matplusfile: rfile.add(pretty=matplusfile)
-                else:
-                    with open(path, 'rb') as matplusfile: rfile = dfraws.addfile(rfile=raws.file(header=destname, rfile=matplusfile))
-                    pydwarf.log.debug('Adding data to new file %s.' % destname)
-                    addedreactions += rfile.all(exact_value='REACTION', args_count=1)
-                    
-    try:
-        mountain = dfraws.get('ENTITY:MOUNTAIN')
-        for reaction in addedreactions:
-            mountain.add(raws.token(value='PERMITTED_REACTION', args=[reaction.args[0]]))
-        pydwarf.log.debug('Added %d permitted reactions.' % len(addedreactions))
-    except:
-        pydwarf.log.exception('Failed to add permitted reactions.')
-        exceptions += 1
-                    
-    if exceptions == 0:
+    if not errors:
         return pydwarf.success()
     else:
-        return pydwarf.failure('Failed to complete %d operations.' % exceptions)
+        return pydwarf.failure('Failed to add inorganic properties for %d groups.' % errors)

@@ -3,7 +3,7 @@ import copy
 
 
 
-# Hackish solution to cyclic import
+# Hackish solution to cyclic import (the struggle is real)
 def rawstoken():
     if 'token' not in globals(): import token
     return token.rawstoken
@@ -118,13 +118,16 @@ class rawstokenfilter(rawsbasefilter):
             True.
         '''
         self.pretty = pretty
+        
         if pretty:
             token = rawstoken().parseone(pretty)
             exact_value = token.value
             if token.nargs(): exact_args = token.args
+            
         if match_token:
             exact_value = match_token.value
             exact_args = match_token.args
+            
         self.exact_token = exact_token
         self.exact_value = exact_value
         self.except_value = except_value
@@ -148,7 +151,14 @@ class rawstokenfilter(rawsbasefilter):
         self.limit = limit
         self.limit_terminates = limit_terminates
         
-        # Anchor regular expressions
+        # Make exact_arg, re_arg, and arg_in easier: Allow a single iterable with index and value, don't always require an iterable of them.
+        if self.exact_arg and isinstance(self.exact_arg[0], int): self.exact_arg = (self.exact_arg,)
+        if self.re_arg and isinstance(self.re_arg[0], int): self.re_arg = (self.re_arg,)
+        if self.arg_in and isinstance(self.arg_in[0], int): self.arg_in = (self.arg_in,)
+        
+        self.anchor()
+        
+    def anchor(self):
         if self.re_value: self.re_value += '$'
         if self.re_prefix: self.re_prefix += '$'
         if self.re_suffix: self.re_suffix += '$'

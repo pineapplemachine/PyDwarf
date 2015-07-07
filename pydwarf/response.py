@@ -6,6 +6,9 @@ class response:
     def __str__(self):
         return '%s: %s' % ('SUCCESS' if self.success else 'FAILURE', self.status if self.status else ('Ran %ssuccessfully.' % ('' if self.success else 'un')))
         
+    def __nonzero__(self):
+        return self.success
+        
     @staticmethod
     def success(status=None):
         return response(True, status)

@@ -1,6 +1,7 @@
 import itertools
+
+from tokenargs import tokenargs
 from queryable import rawsqueryable, rawstokenlist
-from filters import rawstokenfilter
 
 class rawstoken(rawsqueryable):
     
@@ -10,20 +11,12 @@ class rawstoken(rawsqueryable):
             detected automatically. If a rawstoken is specified it will be treated
             as a token argument. If a string, pretty. If anything else, tokens.'''
     
-    '''Don't allow these characters in values or arguments.'''
-    illegal_internal_chars = '[]:'
+    illegal_internal_chars = tokenargs.illegal # TODO: make this better
     
     '''Don't allow these characters in a token's prefix or suffix.'''
     illegal_external_chars = '['
     
-    '''Automatically replace some illegal strings when passed to setarg with their legal equivalents.'''
-    argument_replacements = {
-        "':'": '58',
-        "'['": '91',
-        "']'": '93'
-    }
-    
-    def __init__(self, auto=None, pretty=None, token=None, value=None, args=None, prefix=None, suffix=None, prev=None, next=None, file=None):
+    def __init__(self, auto=None, pretty=None, token=None, value=None, args=None, arg=None, prefix=None, suffix=None, prev=None, next=None, file=None):
         '''Constructs a token object.
         
         %s (However, a tokens argument is illegal here and attempting to create
@@ -53,25 +46,33 @@ class rawstoken(rawsqueryable):
             False
         ''' % rawstoken.auto_arg_docstring
         
+        self.prev = prev    # previous token sequentially
+        self.next = next    # next token sequentially
+        
+        self.value = None
+        self.args = None
+        self.prefix = None
+        self.suffix = None
+        self.file = None
+        
         pretty, token, tokens = rawstoken.auto(auto, pretty, token, None)
-        if tokens is not None: raise ValueError
+        if tokens is not None: raise ValueError('Failed to initialize token object because the given argument was not a string or a single token.' % pretty)
+        
         if pretty is not None:
             token = rawstoken.parseone(pretty, implicit_braces=True)
         if token is not None:
             value = token.value
-            args = list(token.args) if token.args else []
+            args = tokenargs(token.args) if token.args else tokenargs()
             prefix = token.prefix
             suffix = token.suffix
-            file = token.file
-        # tokens look like this: [value:arg1:arg2:...:argn]
-        self.prev = prev            # previous token sequentially
-        self.next = next            # next token sequentially
-        self.value = value          # value for the token
-        self.args = args            # arguments for the token
-        self.prefix = prefix        # non-token text between the preceding token and this one
-        self.suffix = suffix        # between this token and the next/eof (should typically apply to eof)
-        self.file = file            # parent rawsfile object
-        if not self.args: self.args = []
+        
+        if arg: self.setargs([arg])
+        if value: self.setvalue(value)      # value for the token
+        if args: self.setargs(args)         # arguments for the token
+        if prefix: self.setprefix(prefix)   # non-token text between the preceding token and this one
+        if suffix: self.setsuffix(suffix)   # between this token and the next/eof (should typically apply to eof)
+        
+        if self.args is None: self.args = tokenargs()
         
     def __hash__(self): # Not that this class is immutable, just means you'll need to be careful about when you're using token hashes
         return hash('%s:%s' % (self.value, self.argsstr()) if self.nargs() else self.value)
@@ -221,8 +222,7 @@ class rawstoken(rawsqueryable):
             tokens.extend(other)
             return tokens
         else:
-            raise ValueError
-            
+            raise ValueError('Failed to perform concatenation because the type of the other operand was unrecognized.')
     def __radd__(self, other):
         '''Internal: Same as __add__ except reversed.'''
         if isinstance(other, rawstoken):
@@ -236,7 +236,7 @@ class rawstoken(rawsqueryable):
             tokens.append(self)
             return tokens
         else:
-            raise ValueError
+            raise ValueError('Failed to perform concatenation because the type of the other operand was unrecognized.')
             
     def __mul__(self, value):
         '''Concatenates copies of this token the number of times specified.
@@ -253,10 +253,16 @@ class rawstoken(rawsqueryable):
             tokens.append(rawstoken.copy(self))
         return tokens
     
+    def __iter__(self):
+        yield self.value
+        for arg in self.args: yield arg
     def __len__(self):
         return self.nargs()
     def __contains__(self, value):
         return self.containsarg(value)
+        
+    def __iadd__(self, value):
+        self.addarg(value)
             
     def __nonzero__(self):
         return True
@@ -265,21 +271,15 @@ class rawstoken(rawsqueryable):
     def auto(auto, pretty, token, tokens):
         '''Internal: Convenience function for handling method arguments'''
         if auto is not None:
-            if isinstance(auto, basestring): pretty = auto
-            elif isinstance(auto, rawstoken): token = auto
-            elif isinstance(auto, rawsqueryable): tokens = auto.tokens()
-            else: tokens = auto
+            if isinstance(auto, basestring):
+                pretty = auto
+            elif isinstance(auto, rawstoken):
+                token = auto
+            elif isinstance(auto, rawsqueryable):
+                tokens = auto.tokens()
+            else:
+                tokens = auto
         return pretty, token, tokens
-       
-    @staticmethod
-    def sanitizeargstring(value):
-        '''Internal: Utility method for sanitizing a string intended to be evaluated as an arugment for a token.'''
-        valuestr = str(value)
-        if valuestr in rawstoken.argument_replacements:
-            valuestr = rawstoken.argument_replacements[valuestr]
-        else:
-            if any([char in valuestr for char in rawstoken.illegal_internal_chars]): raise ValueError('Illegal character in argument: %s.' % valuestr)
-        return valuestr
         
     def index(self, index):
         itrtoken = self
@@ -317,28 +317,6 @@ class rawstoken(rawsqueryable):
         '''
         return len(self.args) if (count is None) else (len(self.args) == count)
         
-    def getarg(self, index=0):
-        '''Gets argument at index, returns None if the index is out of bounds.
-        
-        index: The argument index.
-        
-        Example usage:
-            >>> token = raws.token('EXAMPLE:argument 0:argument 1')
-            >>> print token.getarg(0)
-            argument 0
-            >>> print token.getarg(1)
-            argument 1
-            >>> print token.getarg(2)
-            None
-            >>> print token.getarg(-1)
-            argument 1
-            >>> print token.getarg(-2)
-            argument 0
-            >>> print token.getarg(-3)
-            None
-        '''
-        return self.args[index] if index >= -len(self.args) and index < len(self.args) else None
-    
     def setarg(self, index, value=None):
         '''Sets argument at index, also verifies that the input contains no illegal characters.
         If the index argument is set but not value, then the index is assumed to be referring to
@@ -358,7 +336,16 @@ class rawstoken(rawsqueryable):
             >>> print token
             [EXAMPLE:hi!:b:500]'''
         if value is None and index is not None: value = index; index = 0
-        self.args[index] = rawstoken.sanitizeargstring(value)
+        self.args[index] = value
+    
+    def setargs(self, args=None):
+        if self.args is None:
+            self.args = tokenargs(args)
+        else:
+            self.args[:] = args
+            
+    def clearargs(self):
+        self.args.clear()
         
     def addarg(self, value):
         '''Appends an argument to the end of the argument list.
@@ -373,10 +360,13 @@ class rawstoken(rawsqueryable):
             >>> print token
             [EXAMPLE:hi!]
         '''
-        self.args.append(rawstoken.sanitizeargstring(value))
+        self.args.append(value)
+        
+    def addargs(self, values):
+        self.args.extend(values)
         
     def containsarg(self, value):
-        return rawstoken.sanitizeargstring(value) in self.args
+        return value in self.args
         
     def argsstr(self):
         '''Return arguments joined by ':'.
@@ -386,7 +376,7 @@ class rawstoken(rawsqueryable):
             >>> print token.argsstr()
             a:b:c
         '''
-        return ':'.join([str(a) for a in self.args])
+        return str(self.args)
         
     def getvalue(self):
         '''Get the token's value.
@@ -409,7 +399,7 @@ class rawstoken(rawsqueryable):
             [JUST KIDDING:a:b:c]
         '''
         valuestr = str(value)
-        if any([char in valuestr for char in rawstoken.illegal_internal_chars]): raise ValueError
+        if any([char in valuestr for char in rawstoken.illegal_internal_chars]): raise ValueError('Failed to set token value to %s because the string contains illegal characters.' % valuestr)
         self.value = value
         
     def getprefix(self):
@@ -439,7 +429,7 @@ class rawstoken(rawsqueryable):
             hello [EXAMPLE]
         '''
         valuestr = str(value)
-        if any([char in valuestr for char in rawstoken.illegal_external_chars]): raise ValueError
+        if any([char in valuestr for char in rawstoken.illegal_external_chars]): raise ValueError('Failed to set token prefix to %s because the string contains illegal characters.' % valuestr)
         self.prefix = value
         
     def getsuffix(self):
@@ -469,15 +459,28 @@ class rawstoken(rawsqueryable):
             [EXAMPLE] world
         '''
         valuestr = str(value)
-        if any([char in valuestr for char in rawstoken.illegal_external_chars]): raise ValueError
+        if any([char in valuestr for char in rawstoken.illegal_external_chars]): raise ValueError('Failed to set token suffix to %s because the string contains illegal characters.' % valuestr)
         self.suffix = value
         
-    def arg(self):
-        '''When a token is expected to have only one argument, this method can be used
-        to access it. It there's one argument it will be returned, otherwise an
-        exception will be raised.
+    def arg(self, index=None):
+        '''When an index is given, the argument at that index is returned. If left
+        set to None then the first argument is returned if the token has exactly one
+        argument, otherwise an exception is raised.
         
         Example usage:
+            >>> token = raws.token('EXAMPLE:argument 0:argument 1')
+            >>> print token.getarg(0)
+            argument 0
+            >>> print token.getarg(1)
+            argument 1
+            >>> print token.getarg(2)
+            None
+            >>> print token.getarg(-1)
+            argument 1
+            >>> print token.getarg(-2)
+            argument 0
+            >>> print token.getarg(-3)
+            None
             >>> token_a = raws.token('EXAMPLE:x')
             >>> token_b = raws.token('EXAMPLE:x:y:z')
             >>> print token_a.arg()
@@ -488,10 +491,11 @@ class rawstoken(rawsqueryable):
             ...     print 'token_b doesn\'t have the correct number of arguments!'
             ...
             token_b doesn't have the correct number of arguments!'''
-        if len(self.args) == 1:
+        if index is None:
+            if len(self.args) != 1: raise ValueError('Failed to retrieve token argument because it doesn\'t have exactly one.')
             return self.args[0]
         else:
-            raise ValueError
+            return self.args[index]
         
     def equals(self, other):
         '''Returns True if two tokens have identical values and arguments, False otherwise.
@@ -513,12 +517,10 @@ class rawstoken(rawsqueryable):
             >>> print token_c is token_a
             False
         '''
-        
         return(
             other is not None and
             self.value == other.value and
-            self.nargs() == other.nargs() and
-            all([str(self.args[i]) == str(other.args[i]) for i in xrange(0, self.nargs())])
+            self.args == other.args
         )
         
     @staticmethod
@@ -582,7 +584,7 @@ class rawstoken(rawsqueryable):
                 prevtoken = newtoken
             return copied
         else:
-            raise ValueError
+            raise ValueError('Failed to copy token or tokens because no object was specified.')
         
     def tokens(self, range=None, include_self=False, reverse=False, until_token=None, step=None):
         '''Iterate through successive tokens starting with this one.
@@ -623,29 +625,6 @@ class rawstoken(rawsqueryable):
             if (step is None) or (count % step == 0): yield itertoken
             itertoken = itertoken.prev if reverse else itertoken.next
             count += 1
-            
-    def match(self, filter=None, **kwargs):
-        '''Returns True if this method matches some filter, false otherwise.
-        
-        filter: The filter to check, for example a raws.tokenfilter object.
-        **kwargs: Passed to the taws.tokenfilter constructor to nab a filter
-            to use if no filter was otherwise specified.
-        
-        Example usage:
-            >>> filter = raws.tokenfilter(exact_value='EXAMPLE')
-            >>> token_a = raws.token('HELLO:THERE')
-            >>> token_b = raws.token('EXAMPLE')
-            >>> token_c = raws.token('EXAMPLE:NUMBER:TWO')
-            >>> print token_a.match(filter)
-            False
-            >>> print token_b.match(filter)
-            True
-            >>> print token_c.match(filter)
-            True
-            >>> print token_a.match(exact_value='HELLO')
-            True
-        '''
-        return (filter if filter else rawstokenfilter(**kwargs)).match(self)
         
     def add(self, auto=None, pretty=None, token=None, tokens=None, reverse=False):
         '''Adds a token or tokens nearby this one. If reverse is False the token 
@@ -678,9 +657,9 @@ class rawstoken(rawsqueryable):
         elif tokens is not None:
             return self.addall(tokens, reverse)
         else:
-            raise ValueError
+            raise ValueError('Failed to add token or tokens because no object was specified.')
             
-    def addprop(self, auto=None, **kwargs):
+    def addprop(self, *args, **kwargs):
         '''When this token is an object token like CREATURE:X or INORGANIC:X, a
         new token is usually added immediately afterwards. However, if a token like
         COPY_TAGS_FROM or USE_MATERIAL_TEMPLATE exists underneath the object, then
@@ -710,7 +689,7 @@ class rawstoken(rawsqueryable):
             aftervalues = ('COPY_TAGS_FROM',)
         addafter = self.getlastprop(value_in=aftervalues)
         if not addafter: addafter = self
-        addafter.add(auto=auto, **kwargs)
+        addafter.add(*args, **kwargs)
     
     @staticmethod
     def firstandlast(tokens, setfile=None):
@@ -724,7 +703,7 @@ class rawstoken(rawsqueryable):
         try:
             if setfile is not None: raise ValueError
             return tokens[0], tokens[-1]
-        except:
+        except Exception as e:
             first, last = None, None
             for token in tokens:
                 if first is None: first = token
@@ -759,7 +738,7 @@ class rawstoken(rawsqueryable):
         else:
             first.prev = self
             last.next = self.next
-            if self.next: self.next.prev = tokens[-1]
+            if self.next: self.next.prev = last
             self.next = first
         return tokens
     
@@ -836,7 +815,7 @@ class rawstoken(rawsqueryable):
                 tokens.append(token)
                 return tokens
             else:
-                raise ValueError
+                raise ValueError('Failed to parse data string because it had no braces and because implicit_braces was set to False.')
         else:
             while pos < len(data):
                 token = None
@@ -879,5 +858,5 @@ class rawstoken(rawsqueryable):
             There was more than one token!
         '''
         tokens = rawstoken.parse(*args, **kwargs)
-        if len(tokens) != 1: raise ValueError
+        if len(tokens) != 1: raise ValueError('Failed to parse one token because the data string contained %d tokens.' % len(tokens))
         return tokens[0]

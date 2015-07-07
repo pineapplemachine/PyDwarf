@@ -1,22 +1,32 @@
-import logging
+import os
+import shutil
 import textwrap
+
 import version as versionutils
-
-
-
-# Make a default logger object
-log = logging.getLogger()
+from log import log
+import uristdoc
 
 
 
 class session:
-    def __init__(self, dfraws=None, dfversion=None):
-        self.dfraws = dfraws
-        self.dfversion = dfversion
+    def __init__(self, raws=None, conf=None):
+        self.dfraws = None
+        self.dfversion = None
+        self.hackversion = None
+        self.conf = None
+        self.raws = None
         self.successes = []
         self.failures = []
         self.noresponse = []
+        if raws is not None and conf is not None: self.configure(raws, conf)
         
+    def configure(self, raws, conf):
+        self.raws = raws
+        self.conf = conf
+        self.dfraws = raws.dir(root=conf.input, dest=conf.output, paths=conf.paths, version=conf.version, log=log)
+        self.dfversion = conf.version
+        self.hackversion = conf.hackversion
+    
     def successful(self, info):
         return self.inlist(info, self.successes)
     def failed(self, info):
@@ -38,23 +48,24 @@ class session:
             name = uristinstance.getname()
         else:
             name = func.__name__
+        
         # Actually execute the script
         log.info('Running script %s%s.' % (name, ('with args %s' % args) if args else ''))
         try:
-            # Call the function
-            response = func(self.dfraws, **args) if args else func(self.dfraws)
-            if response:
+            response = func(self.dfraws, **args) if args else func(self.dfraws) # Call the function
+            if response is not None:
                 # Handle success/failure response
                 log.info(str(response))
                 (self.successes if response.success else self.failures).append(uristinstance if uristinstance else func)
             else:
                 log.error('Received no response from script %s.' % name)
                 self.noresponse.append(uristinstance if uristinstance else func)
+            
         except Exception:
             log.exception('Unhandled exception while running script %s.' % name)
             return False
+        
         else:
-            log.info('Finished running script %s.' % name)
             return True
     
     def funcs(self, info):
@@ -82,11 +93,28 @@ class session:
         else:
             log.error('Found no scripts matching %s.' % info)
             
-    def handleall(self, infos):
+    def handleall(self, infos=None):
+        if infos is None and self.conf is not None: infos = self.conf.scripts
         if infos and len(infos):
             for info in infos: self.handle(info)
         else:
             log.error('No scripts to run.')
+            
+    def write(self, dest=None, *args, **kwargs):
+        self.dfraws.clean(dest=dest)
+        self.dfraws.write(dest=dest, *args, **kwargs)
+        
+    def backup(self, dest=None):
+        if dest is None: dest = self.conf.backup
+        if dest:
+            for path in self.conf.paths:
+                srcpath = os.path.join(self.conf.input, path)
+                destpath = os.path.join(dest, path)
+                if not os.path.isdir(os.path.dirname(destpath)): os.makedirs(os.path.dirname(destpath))
+                if os.path.isfile(srcpath):
+                    shutil.copy2(srcpath, destpath)
+                else:
+                    self.raws.copytree(srcpath, destpath)
         
         
 
@@ -122,8 +150,6 @@ class urist:
     
     # Track registered functions
     registered = {}
-    # Track data about which scripts have run successfully, etc.
-    session = session()
     
     # Decorator handling
     def __init__(self, **kwargs):
@@ -149,8 +175,8 @@ class urist:
     def getname(self):
         return '.'.join((self.namespace, self.name)) if self.namespace else self.name
     
-    def meta(self, key):
-        return self.metadata.get(key)
+    def meta(self, key, default=None):
+        return self.metadata.get(key, default)
     
     def matches(self, match):
         return all([self.meta(i) == j for i, j in match.iteritems()]) if match else True
@@ -223,7 +249,7 @@ class urist:
         return urist.cullcandidates(
             version = version, 
             match = match, 
-            session = session if session is not None else urist.session, 
+            session = session, 
             candidates = urist.getregistered(*urist.splitname(name))
         )
         
@@ -278,9 +304,12 @@ class urist:
     
     @staticmethod
     def cullcandidates_dependency(session, candidates):
-        newcand, culled = [], []
-        for cand in candidates: (newcand if cand.depsatisfied(session) else culled).append(cand)
-        return newcand, culled
+        if session:
+            newcand, culled = [], []
+            for cand in candidates: (newcand if cand.depsatisfied(session) else culled).append(cand)
+            return newcand, culled
+        else:
+            return candidates, []
     
     @staticmethod
     def cullcandidates_duplicates(candidates):
@@ -316,7 +345,6 @@ class urist:
             
     @staticmethod
     def list():
-        log.info('Listing registered scripts.')
         names = {}
         total = 0
         for uristlist in urist.registered.itervalues():
@@ -325,69 +353,41 @@ class urist:
                 if uname not in names: names[uname] = []
                 names[uname].append(uristinstance)
                 total += 1
-        log.info('Found %d registered scripts in total.' % total)
-        for name, uristlist in sorted(names.items()):
-            log.info('Found %d script%s named %s.' % (len(uristlist), 's' if len(uristlist) > 1 else '', name))
+        # log.info('Found %d registered scripts in total.' % total)
+        # for name, uristlist in sorted(names.items()):
+        #     log.info('Found %d script%s named %s.' % (len(uristlist), 's' if len(uristlist) > 1 else '', name))
+        return sorted(names.keys())
 
-    def doc(self):
+    def doc(self, format=None):
         '''Make a pretty metadata string.'''
         
-        doc = ''
+        template = uristdoc.template.format.get(format if format else 'txt')
+        if template is None: raise KeyError('Failed to create documentation string because the format %s was unrecognized.' % format)
         
-        # Utility function
-        def normalize(string): return ' '.join([l.strip() for l in str(string).split('\n')])
+        handled_metadata_keys = ('name', 'namespace', 'author', 'version', 'description', 'arguments', 'dependency', 'compatibility')
         
-        # Title
-        author = self.meta('author')
-        version = self.meta('version')
-        if author and not isinstance(author, basestring): author = ', '.join(author)
-        versionstr = (' %s' % version) if version else ''
-        authorstr = (' by %s' % author) if author else ''
-        doc += 'Script:\n  %s%s%s.' % (self.getname(), versionstr, authorstr)
-        
-        # Description
-        desc = self.meta('description')
-        if desc:
-            doc += '\n\nDescription:\n%s' % textwrap.fill('  %s' % normalize(desc))
-            
-        # Arguments
-        args = self.meta('arguments')
-        if args:
-            doc += '\n\nArguments:'
-            for argname, arginfo in args.iteritems():
-                doc += '\n%s' % textwrap.fill('  %s: %s' % (argname, normalize(arginfo)))
-        
-        # Dependencies
-        deps = self.meta('dependency')
-        if deps:
-            if not isinstance(deps, basestring): deps = ', '.join(deps)
-            doc += '\nDepends on:\n%s' % textwrap.fill('  %s' % deps)
-        
-        # Compatibility
-        compat = self.meta('compatibility')
-        if compat:
-            doc += '\n\nDF version compatibility regex:\n  %s' % str(compat)
-            
-        # Everything else
-        othermeta = []
-        for key, value in self.metadata.iteritems():
-            if key not in ('name', 'namespace', 'author', 'version', 'description', 'arguments', 'dependency', 'compatibility'): othermeta.append((key, value))
-        if len(othermeta):
-            doc += '\n\nOther metadata:'
-            for key, value in othermeta:
-                doc += '\n%s' % textwrap.fill('  %s: %s' % (key, normalize(value)))
-        
-        # All done!
-        return doc
-        
+        return template.full(
+            name = self.getname(),
+            version = self.meta('version'),
+            author = self.meta('author'),
+            description = self.meta('description'),
+            compatibility = self.meta('compatibility'),
+            dependencies = self.meta('dependency'),
+            arguments = self.meta('arguments'),
+            metadata = {key: value for key, value in self.metadata.iteritems() if key not in handled_metadata_keys}
+        )
+
     @staticmethod
-    def doclist(names=[]):
-        log.info('Showing metadata for scripts.')
+    def doclist(names=[], delimiter='\n\n', format=None):
         urists = []
         if len(names):
             for name in names: urists += urist.getregistered(*urist.splitname(name))
         else:
             urists = urist.allregistered()
-        for uristinstance in urists:
-            log.info('\n\n%s\n' % uristinstance.doc())
-        
+        items = sorted(ur.doc(format=format) for ur in urists)
+        template = uristdoc.template.format.get(format if format else 'txt')
+        if items and template:
+            text = template.concat(items)
+        else:
+            text = delimiter.join(items)
+        return text

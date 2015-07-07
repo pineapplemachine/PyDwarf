@@ -2,11 +2,14 @@
     
     "comment":  "This is an example file! Before running the manager you will need to change the provided paths to better suit your particular setup.",
     
-    "input":    "E:/Sophie/Desktop/Files/Games/Dwarf Fortress/df_40_24_win/rawvanilla/objects",
-    "output":   "E:/Sophie/Desktop/Files/Games/Dwarf Fortress/df_40_24_win/raw/objects",
-    "backup":   "E:/Sophie/Desktop/Files/Games/Dwarf Fortress/df_40_24_win/rawbak/",
+    "input":    "E:/Sophie/Desktop/Files/Games/Dwarf Fortress/df_40_24_win/",
+    "output":   "E:/Sophie/Desktop/Files/Games/Dwarf Fortress/df_40_24_win/pydwarf_output",
+    "backup":   "E:/Sophie/Desktop/Files/Games/Dwarf Fortress/df_40_24_win/pydwarf_backup",
+    
+    "paths": "auto",
     
     "version":  "auto",
+    "hackversion": "auto",
     
     "scripts": [
         {

@@ -2,24 +2,15 @@ import pydwarf
 
 
 
-alumtobaux_reaction = '''
-    [NAME:smelt aluminum from bauxite]
-    [SMELTER]
-    [REAGENT:1:STONE:NO_SUBTYPE:STONE:BAUXITE]
-    [REAGENT:1:STONE:NO_SUBTYPE:STONE:CRYOLITE]
-    [PRODUCT:100:1:BAR:NO_SUBTYPE:METAL:ALUMINUM]
-    [FUEL]
-'''
-
 default_entities = ['MOUNTAIN']
 
-default_file = 'reaction_smelter_bauxtoalum_pineapple'
+default_file = 'raw/objects/reaction_smelter_bauxtoalum_pineapple.txt'
 
 
 
 @pydwarf.urist(
     name = 'pineapple.bauxitetoaluminum',
-    version = '1.0.0',
+    version = '1.0.1',
     author = 'Sophie Kirschner',
     description = '''Adds a reaction to the smelter to allow the creation of aluminum bars
     from bauxite (as ore) and cryolite (as flux). Credit to this forum discussion for the
@@ -34,21 +25,31 @@ default_file = 'reaction_smelter_bauxtoalum_pineapple'
     },
     compatibility = (pydwarf.df_0_3x, pydwarf.df_0_40)
 )
-def bauxtoalum(df, aluminum_value=0.75, entities=default_entities, add_to_file=default_file):
+def bauxitetoaluminum(df, aluminum_value=0.75, entities=default_entities, add_to_file=default_file):
     # Affect value of aluminum
     pydwarf.log.debug('Multiplying value of aluminum by %f.' % aluminum_value)
     try:
-        matvaluetoken = df.getobj('INORGANIC:ALUMINUM').getprop('MATERIAL_VALUE')
+        aluminum = df.getobj('INORGANIC:ALUMINUM')
+        if aluminum is None: return pydwarf.failure('Couldn\'t find aluminum token to affect its value.')
+        matvaluetoken = aluminum.getprop('MATERIAL_VALUE')
         matvaluetoken.args[0] = str( float(matvaluetoken.args[0]) * aluminum_value )
     except:
         pydwarf.log.exception('Failed to affect value of aluminum.')
         return pydwarf.failure()
         
     # Add the reaction
-    return pydwarf.urist.getfn('pineapple.utils.addreaction')(
+    return pydwarf.urist.getfn('pineapple.utils.addobject')(
         df,
+        type = 'REACTION',
         id = 'SMELT_BAUXITE_ALUMINUM_PINEAPPLE',
-        tokens = alumtobaux_reaction,
+        tokens = '''
+            [NAME:smelt aluminum from bauxite]
+            [SMELTER]
+            [REAGENT:1:STONE:NO_SUBTYPE:STONE:BAUXITE]
+            [REAGENT:1:STONE:NO_SUBTYPE:STONE:CRYOLITE]
+            [PRODUCT:100:1:BAR:NO_SUBTYPE:METAL:ALUMINUM]
+            [FUEL]
+        ''',
         add_to_file = add_to_file,
         permit_entities = entities
     )

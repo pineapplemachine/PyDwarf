@@ -13,7 +13,9 @@ if False:
         'input': os.path.join(dfdir, 'vanillaraw/objects'),
         'output': 'output',
         'backup': 'backup',
+        'paths': 'auto',
         'version': 'auto',
+        'hackversion': 'auto',
         'scripts': [
             {
                 'name': 'pineapple.deerappear',
@@ -36,3 +38,4 @@ if False:
 else:
     
     export = {}
+

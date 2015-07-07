@@ -1,7 +1,7 @@
 # Creation Forge
 
 Created by Shukaro. (http://www.bay12forums.com/smf/index.php?topic=60815)  
-Forge ported to PyDwarf by Sophie Kirschner. (http://www.pineapplemachine.com)
+Rewritten for PyDwarf by Sophie Kirschner. (http://www.pineapplemachine.com)
 
 This is a simple workshop I modded in to help test custom reactions, buildings, and creatures. It's used to create various different items so that you don't have to set up an entire fortress to test some reactions. Hopefully it's a useful tool to people, even if it's just to look at the raw formatting.
 
@@ -9,7 +9,7 @@ This is a simple workshop I modded in to help test custom reactions, buildings, 
 # Dwarven Higher Learning
 
 Created by Shukaro. (http://www.bay12forums.com/smf/index.php?topic=60853.0)  
-Ported to PyDwarf by Sophie Kirschner. (http://www.pineapplemachine.com)
+Rewritten for PyDwarf by Sophie Kirschner. (http://www.pineapplemachine.com)
 
 
 ## Introduction

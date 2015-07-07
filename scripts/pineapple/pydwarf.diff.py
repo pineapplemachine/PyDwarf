@@ -29,7 +29,7 @@ class diffrecord:
         
 @pydwarf.urist(
     name = 'pineapple.diff',
-    version = '1.0.0',
+    version = '1.0.1',
     author = 'Sophie Kirschner',
     description = '''Merges and applies changes made to some modded raws via diff checking.
         Should be reasonably smart about automatic conflict resolution but if it complains
@@ -44,14 +44,14 @@ class diffrecord:
     },
     compatibility = '.*'
 )
-def diff(dfraws, paths):
+def diff(df, paths):
     
     # Get all the files in the mods
     newfiles = []
     for path in paths:
         if os.path.isfile(path) and path.endswith('.txt'):
             with open(path, 'rb') as rfilestream:
-                rfiles = (raws.file(rfile=rfilestream, path=path),)
+                rfiles = (raws.rawfile(rfile=rfilestream, path=path),)
         elif os.path.isdir(path):
             rfiles = raws.dir(path=path).files.values()
         else:
@@ -70,8 +70,8 @@ def diff(dfraws, paths):
             currentfiletokens = None
             if newfile.header in currentfiletokensdict:
                 currentfiletokens = currentfiletokensdict[newfile.header]
-            elif newfile.header in dfraws.files:
-                currentfiletokens = list(dfraws.getfile(newfile.header))
+            elif newfile.header in df.files:
+                currentfiletokens = list(df.getfile(newfile.header))
                 currentfiletokensdict[newfile.header] = currentfiletokens
             
             # Do a diff
@@ -87,7 +87,7 @@ def diff(dfraws, paths):
             # File doesn't exist yet, don't bother with a diff
             else:
                 pydwarf.log.debug('File didn\'t exist yet, adding...')
-                dfraws.addfile(rfile=newfile)
+                df.add(newfile)
                 
     for fileheader, fileops in operations.iteritems():
         # Do some handling for potentially conflicting replacements

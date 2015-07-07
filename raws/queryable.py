@@ -1,7 +1,9 @@
 # vim:fileencoding=UTF-8
 
 import inspect
-from filters import *
+
+import objects
+from filters import rawstokenfilter
 
 
 
@@ -13,11 +15,11 @@ class rawsqueryable(object):
             its limit or the tokens have run out.'''
     
     quick_query_args_docstring = '''
-        %s
         pretty: Convenience argument which acts as a substitute for directly
             assigning a filter's exact_value and exact_args arguments. Some methods
             also accept an until_pretty argument which acts as a substitute for
             until_exact_value and until_exact_args.
+        %s
         **kwargs: If no tokeniter is specified, then arguments which correspond to
             named arguments of the object's tokens method will be passed to that
             method. All other arguments will be passed to the appropriate filters,
@@ -29,7 +31,8 @@ class rawsqueryable(object):
             named normally.)
     ''' % query_tokeniter_docstring
             
-    def __iter__(self): return self.tokens()
+    def __iter__(self):
+        return self.tokens()
     
     def __contains__(self, item):
         if isinstance(item, basestring):
@@ -38,15 +41,41 @@ class rawsqueryable(object):
             return item in self.tokens()
     
     def __getitem__(self, item):
-        if isinstance(item, basestring):
+        '''Overrides object[...] behavior. Accepts a number of different types for the item argument, each resulting in different behavior.
+        
+        object[...]
+            Returns the same as object.list().
+        object[str]
+            Returns the same as object.get(str).
+        object[int]
+            Returns the same as object.index(int).
+        object[slice]
+            Returns the same as object.slice(slice).
+        object[iterable]
+            Returns a flattened list containing object[member] in order for each member of iterable.
+        object[anything else]
+            Raises an exception.
+        '''
+        if item is Ellipsis:
+            return self.list()
+        elif isinstance(item, basestring):
             return self.get(pretty=item)
         elif isinstance(item, int):
             return self.index(item)
         elif isinstance(item, slice):
             return self.slice(item)
+        elif hasattr(item, '__iter__') or hasattr(item, '__getitem__'):
+            return self.getitems(items)
         else:
-            raise ValueError
-    
+            raise ValueError('Failed to get item because the argument was of an unrecognized type.')
+            
+    def getitems(self, items):
+        result = []
+        for item in items:
+            ext = self.__getitem__(item)
+            (result.extend if isinstance(ext, list) else result.append)(ext)
+        return result
+        
     def slice(self, slice):
         return rawstokenlist(self.islice(slice))
         
@@ -58,14 +87,65 @@ class rawsqueryable(object):
                 yield token
         else:
             return
+            
+    def removefirst(self, *args, **kwargs):
+        token = self.get(*args, **kwargs)
+        if token is not None: token.remove()
+        return token
+    def removelast(self, *args, **kwargs):
+        token = self.getlast(*args, **kwargs)
+        if token is not None: token.remove()
+        return token
+    def removeuntil(self, *args, **kwargs):
+        token = self.until(*args, **kwargs)
+        if token is not None: token.remove()
+        return token
+    def removefirstuntil(self, *args, **kwargs):
+        token = self.getuntil(*args, **kwargs)
+        if token is not None: token.remove()
+        return token
+    def removelastuntil(self, *args, **kwargs):
+        token = self.getlastuntil(*args, **kwargs)
+        if token is not None: token.remove()
+        return token
+        
+    def removeall(self, *args, **kwargs):
+        tokens = self.all(*args, **kwargs)
+        for token in tokens: token.remove()
+        return tokens
+    def removeuntil(self, *args, **kwargs):
+        tokens = self.until(*args, **kwargs)
+        for token in tokens: token.remove()
+        return tokens
+    def removealluntil(self, *args, **kwargs):
+        tokens = self.alluntil(*args, **kwargs)
+        for token in tokens: token.remove()
+        return tokens
+        
+    def removeprop(self, *args, **kwargs):
+        token = self.getprop(*args, **kwargs)
+        if token is not None: token.remove()
+        return token
+    def removelastprop(self, *args, **kwargs):
+        token = self.getlastprop(*args, **kwargs)
+        if token is not None: token.remove()
+        return token
+    def removeallprop(self, *args, **kwargs):
+        tokens = self.allprop(*args, **kwargs)
+        for token in tokens: token.remove()
+        return tokens
+    def removeselfandprops(self, *args, **kwargs):
+        tokens = [self] + self.removeallprop(*args, **kwargs)
+        self.remove()
+        return tokens
     
     def query(self, filters, tokeniter=None, **kwargs):
         '''Executes a query on some iterable containing tokens.
         
         filters: A dict or other iterable containing rawstokenfilter-like objects.
+        %s
         **kwargs: If tokeniter is not given, then the object's token method will be
             called with these arguments and used instead.
-        %s
         ''' % rawsqueryable.query_tokeniter_docstring
         
         if tokeniter is None: tokeniter = self.tokens(**kwargs)
@@ -249,7 +329,7 @@ class rawsqueryable(object):
         )
         return self.query(filters, tokeniter, **tokens_args)[1].result
     
-    def getprop(self, pretty=None, **kwargs):
+    def getprop(self, *args, **kwargs):
         '''Gets the first token matching the arguments, but stops at the next
         token with the same value as this one. Should be sufficient in almost
         all cases to get a token representing a property of an object, when
@@ -265,9 +345,9 @@ class rawsqueryable(object):
         '''
         
         until_exact_value, until_re_value, until_value_in = self.argsprops()
-        return self.getuntil(pretty=pretty, until_exact_value=until_exact_value, until_re_value=until_re_value, until_value_in=until_value_in, **kwargs)
+        return self.getuntil(*args, until_exact_value=until_exact_value, until_re_value=until_re_value, until_value_in=until_value_in, **kwargs)
         
-    def getlastprop(self, pretty=None, **kwargs):
+    def getlastprop(self, *args, **kwargs):
         '''Gets the last token matching the arguments, but stops at the next
         token with the same value as this one. Should be sufficient in almost
         all cases to get a token representing a property of an object, when
@@ -283,9 +363,9 @@ class rawsqueryable(object):
         '''
         
         until_exact_value, until_re_value, until_value_in = self.argsprops()
-        return self.getlastuntil(pretty=pretty, until_exact_value=until_exact_value, until_re_value=until_re_value, until_value_in=until_value_in, **kwargs)
+        return self.getlastuntil(*args, until_exact_value=until_exact_value, until_re_value=until_re_value, until_value_in=until_value_in, **kwargs)
             
-    def allprop(self, pretty=None, **kwargs):
+    def allprop(self, *args, **kwargs):
         '''Gets the all tokens matching the arguments, but stops at the next
         token with the same value as this one. Should be sufficient in almost
         all cases to get a token representing a property of an object, when
@@ -302,7 +382,7 @@ class rawsqueryable(object):
         '''
         
         until_exact_value, until_re_value, until_value_in = self.argsprops()
-        return self.alluntil(pretty=pretty, until_exact_value=until_exact_value, until_re_value=until_re_value, until_value_in=until_value_in, **kwargs)
+        return self.alluntil(*args, until_exact_value=until_exact_value, until_re_value=until_re_value, until_value_in=until_value_in, **kwargs)
             
     def propdict(self, always_list=True, value_keys=True, full_keys=True, **kwargs):
         '''Returns a dictionary with token values mapped as keys to the tokens
@@ -386,41 +466,46 @@ class rawsqueryable(object):
             
     def argsprops(self):
         # Utility function for handling arguments of getprop, allprop, and propdict methods
+        # TODO: refactor a bit so that the obviated until_exact_value and until_re_value are no longer returned
         until_exact_value = None
         until_re_value = None
-        until_value_in = None
-        if self.value.startswith('ITEM_'):
-            until_re_value = 'ITEM_.+'
-        elif self.value == 'WORD' or self.value == 'SYMBOL':
-            until_value_in = ('WORD', 'SYMBOL')
-        else:
-            until_exact_value = self.value
+        until_value_in = objects.objectsforheader(objects.headerforobject(self.value))
         return until_exact_value, until_re_value, until_value_in
 
 
 
-class rawsqueryable_obj(rawsqueryable):
+class rawsqueryableobj(rawsqueryable):
     def __init__(self):
         self.files = None
     
     def getobjheadername(self, type):
-        # Utility function fit for handling objects as of 0.40.24
-        if type in ('WORD', 'SYMBOL', 'TRANSLATION'):
-            return ('LANGUAGE',)
-        elif type.startswith('ITEM_'):
-            return ('ITEM',)
-        elif type == 'COLOR' or type == 'SHAPE':
-            return ('DESCRIPTOR', 'DESCRIPTOR_%s' % type)
-        elif type == 'COLOR_PATTERN':
-            return ('DESCRIPTOR_PATTERN',)
-        elif type.startswith('MATGLOSS_'):
-            return ('MATGLOSS',)
-        elif type in ('TILE_PAGE', 'CREATURE_GRAPHICS'):
-            type = ('GRAPHICS',)
+        version = self if hasattr(self, 'config') or hasattr(self, 'version') else self.dir
+        if type is None:
+            return objects.headers(version)
         else:
-            return type
+            return (objects.headerforobject(type, version),)
     
-    def getobj(self, pretty=None, type=None, exact_id=None):
+    def headersfortype(self, type=None, type_in=None):
+        if type or (type_in is None):
+            headers = self.getobjheaders(type)
+        else:
+            headers = []
+        if type_in:
+            for itertype in type_in: 
+                for header in self.getobjheaders(itertype):
+                    if not any(header is h for h in headers): headers.append(header)
+        return headers
+        
+    def removeobj(self, *args, **kwargs):
+        obj = self.getobj(*args, **kwargs)
+        if obj: obj.removeselfandprops()
+        return obj
+    def removeallobj(self, *args, **kwargs):
+        objects = self.allobj(*args, **kwargs)
+        for obj in objects: obj.removeselfandprops()
+        return objects
+        
+    def getobj(self, pretty=None, type=None, exact_id=None, type_in=None, re_id=None, id_in=None):
         '''Get the first object token matching a given type and id. (If there's more 
             than one result for any given query then I'm afraid you've done something
             silly with your raws.) This method should work properly with things like
@@ -442,13 +527,22 @@ class rawsqueryable_obj(rawsqueryable):
                 [WEAPON:ITEM_WEAPON_AXE_BATTLE]
         '''
             
-        type, exact_id = rawsqueryable_obj.objpretty(pretty, type, exact_id)
-        for objecttoken in self.getobjheaders(type):
-            obj = objecttoken.get(exact_value=type, exact_args=(exact_id,))
+        type, exact_id = rawsqueryableobj.objpretty(pretty, type, exact_id)
+        headers = self.headersfortype(type, type_in)
+        if type is None and type_in is None: type_in = objects.objects()
+        for objecttoken in headers:
+            obj = objecttoken.get(
+                exact_value = type,
+                value_in = type_in,
+                exact_args = (exact_id,) if exact_id else None,
+                re_args = (re_id,) if re_id else None,
+                arg_in = ((0, id_in),) if id_in else None,
+                args_count = 1
+            )
             if obj: return obj
         return None
         
-    def allobj(self, pretty=None, type=None, exact_id=None, re_id=None, id_in=None):
+    def allobj(self, pretty=None, type=None, exact_id=None, type_in=None, re_id=None, id_in=None):
         '''Gets all objects matching a given type and optional id or id regex.
         
         Example usage:
@@ -471,12 +565,14 @@ class rawsqueryable_obj(rawsqueryable):
             [CREATURE:BEAR_SLOTH]
         '''
         
-        if re_id and id_in: raise ValueError
-        type, exact_id = rawsqueryable_obj.objpretty(pretty, type, exact_id)
+        type, exact_id = rawsqueryableobj.objpretty(pretty, type, exact_id)
         results = rawstokenlist()
-        for objecttoken in self.getobjheaders(type):
+        headers = self.headersfortype(type, type_in)
+        if type is None and type_in is None: type_in = objects.objects()
+        for objecttoken in headers:
             for result in objecttoken.all(
                 exact_value = type,
+                value_in = type_in,
                 exact_args = (exact_id,) if exact_id else None,
                 re_args = (re_id,) if re_id else None,
                 arg_in = ((0, id_in),) if id_in else None,
@@ -508,12 +604,11 @@ class rawsqueryable_obj(rawsqueryable):
         
     @staticmethod
     def objpretty(pretty, type, id):
-        '''Internal'''
-        # Utility method for handling getobj/allobj arguments.
+        '''Internal: Used for handling getobj/allobj arguments.'''
         if pretty is not None:
             if ':' in pretty:
                 parts = pretty.split(':')
-                if len(parts) != 2: raise ValueError
+                if len(parts) != 2: raise ValueError('Failed to parse argument because there were too many or too few colons, there ought to be be just one.')
                 return parts[0], parts[1]
             elif type is None:
                 return pretty, id
@@ -521,18 +616,32 @@ class rawsqueryable_obj(rawsqueryable):
                 return pretty, type
         else:
             return type, id
-
+        
 
 
 class rawstokenlist(list, rawsqueryable):
     '''Extends builtin list with token querying functionality.'''
     
-    def tokens(self, range=None, include_self=False, reverse=False):
-        if include_self: raise ValueError
+    def tokens(self, range=None, reverse=False):
         for i in xrange(self.__len__()-1, -1, -1) if reverse else xrange(0, self.__len__()):
             if range is not None and range <= count: break
             yield self.__getitem__(i)
             
+    def add(self, item):
+        if isinstance(item, rawstoken):
+            self.append(item)
+        elif isinstance(item, rawsqueryable):
+            self.extend(item.tokens())
+        elif isinstance(item, list):
+            self.extend(item)
+        else:
+            raise ValueError('Failed to add item because it was of an unrecognized type.')
+    
+    def each(self, fn, *args, **kwargs):
+        '''Calls a function for each entry in the list with that entry as the argument, and
+        appends each result to a returned tokenlist.'''
+        return rawstokenlist(fn(token, *args, **kwargs) for token in self)
+    
     def __str__(self):
         if len(self) == 0:
             return ''

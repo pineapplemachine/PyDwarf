@@ -1,15 +1,17 @@
-import os
 import pydwarf
+import raws
 
-greendir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'raws/greensteel')
 
 
-default_entities = ['MOUNTAIN']
+greendir = pydwarf.rel(__file__, 'raw/greensteel')
+
+default_entities = 'MOUNTAIN'
+
 
 
 @pydwarf.urist(
     name = 'pineapple.greensteel',
-    version = '1.0.0',
+    version = '1.0.1',
     author = 'Sophie Kirschner',
     description = '''Adds an alloy which is lighter and sharper than steel but not so much
         as adamantine. It can be made from similar ingredients as steel with the addition
@@ -22,16 +24,9 @@ default_entities = ['MOUNTAIN']
 )
 def greensteel(df, entities=default_entities):
     # Add greensteel raws
-    try:
-        df.read(path=greendir, log=pydwarf.log)
-        return pydwarf.urist.getfn('pineapple.utils.addtoentity')(
-            df,
-            entities = entities,
-            permitted_reaction = (
-                'GREEN_STEEL_MAKING_ADAMANT_PINEAPPLE',
-                'GREEN_STEEL_MAKING_ADMANTINE_PINEAPPLE'
-            )
-        )
-    except:
-        pydwarf.log.exception('Failed to add greensteel raws.')
-        return pydwarf.failure()
+    return pydwarf.urist.getfn('pineapple.easypatch')(
+        df,
+        files = greendir,
+        loc = 'raw/objects',
+        permit_entities = entities
+    )

@@ -38,6 +38,21 @@ Can be used to merge and apply changes made to modified raws. Attempting to appl
 
 Adds discipline as a natural skill to creatures that shouldn't be running away so easily. Creatures given bonuses include civilized creatures, trainable creatures, evil creatures, megabeasts, and more.
 
+## easypatch
+
+Add a file or a bunch of tokens and the script handles entity permissions all on its own. Good for adding small mods, for example:
+
+``` json
+{
+    "name": "pineapple.easypatch",
+    "args": {
+        "files": "path/to/raws",
+        "loc": "raw/objects",
+        "permit_entities": "MOUNTAIN"
+    }
+}
+```
+
 ## flybears
 
 A simple example script which adds a `[FLIER]` tag to all female vanilla bears.
@@ -94,15 +109,31 @@ With default settings it becomes possible to craft items using the normally unco
 
 ### addtoentity
 
-A utility script intended for adding things like `[PERMITTED_REACTION]` to entities.
-
-### addreaction
-
-A utility script which adds a reaction as well as `[PERMITTED_REACTION]` tokens to entities.
+Utility script intended for adding things like `[PERMITTED_REACTION:ID]` to entities.
 
 ### objecttokens
 
-A utility script which abstracts adding tokens to or removing them from objects, either all at once or given an iterable containing object IDs.
+Utility script which abstracts adding tokens to or removing them from objects, either all at once or given an iterable containing object IDs.
+
+### addhack
+
+Utility script for adding a DFHack script. It can also add a line to dfhack.init to automatically run the script when the game starts.
+
+### addobject
+
+Utility script adds an object and handles permitting reactions and buildings and such with entities.
+
+### addobject
+
+Utility script adds multiple objects using pineapple.utils.addobject.
+
+### permitobject
+
+Utility script adds tokens like `[PERMITTED_REACTION:ID]` to entities given an object.
+
+### permitobjects
+
+Utility script permits multiple objects using pineapple.utils.permitobject.
 
 ## woodmechanisms
 
