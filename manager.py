@@ -1,3 +1,12 @@
+#!/usr/bin/env python
+
+__author__ = 'Sophie Kirschner'
+__license__ = 'zlib/libpng'
+__email__ = 'sophiek@pineapplemachine.com'
+__version__ = '1.0.1'
+
+
+
 import re
 import os
 import shutil
@@ -6,10 +15,6 @@ import argparse
 import importlib
 import pydwarf
 import raws
-
-
-
-__version__ = '1.0.1'
 
 
 

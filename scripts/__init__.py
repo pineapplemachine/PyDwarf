@@ -1,4 +1,15 @@
-# Imports all scripts in this directory
+#!/usr/bin/env python
+
+__author__ = 'Sophie Kirschner'
+__license__ = 'zlib/libpng'
+__email__ = 'sophiek@pineapplemachine.com'
+__version__ = '1.0.1'
+
+
+
+'''Recursively imports every PyDwarf script in this directory.'''
+
+
 
 import sys
 sys.path.append('../')
@@ -6,6 +17,8 @@ sys.path.append('../')
 import os
 import imp
 import pydwarf
+
+
 
 __all__ = []
 
