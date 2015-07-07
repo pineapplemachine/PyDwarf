@@ -29,7 +29,7 @@ class diffrecord:
         
 @pydwarf.urist(
     name = 'pineapple.diff',
-    version = '1.0.0',
+    version = '1.0.1',
     author = 'Sophie Kirschner',
     description = '''Merges and applies changes made to some modded raws via diff checking.
         Should be reasonably smart about automatic conflict resolution but if it complains

@@ -5,7 +5,7 @@ import raws
 
 @pydwarf.urist(
     name = 'pineapple.utils.addtoentity',
-    version = '1.0.0',
+    version = '1.0.1',
     author = 'Sophie Kirschner',
     description = '''A simple utility script which adds tokens to entities.''',
     arguments = {

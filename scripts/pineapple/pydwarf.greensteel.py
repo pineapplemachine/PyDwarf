@@ -11,7 +11,7 @@ default_entities = 'MOUNTAIN'
 
 @pydwarf.urist(
     name = 'pineapple.greensteel',
-    version = '1.0.0',
+    version = '1.0.1',
     author = 'Sophie Kirschner',
     description = '''Adds an alloy which is lighter and sharper than steel but not so much
         as adamantine. It can be made from similar ingredients as steel with the addition
