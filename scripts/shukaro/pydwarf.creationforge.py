@@ -10,7 +10,7 @@ default_entities = ('MOUNTAIN',)
 
 @pydwarf.urist(
     name = 'shukaro.creationforge',
-    version = '1.0.0',
+    version = '1.0.1',
     author = ('Shukaro', 'Sophie Kirschner'),
     description = '''This is a simple workshop I modded in to help test custom reactions,
         buildings, and creatures. It's used to create various different items so that you

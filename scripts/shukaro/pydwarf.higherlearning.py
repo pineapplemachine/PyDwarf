@@ -26,7 +26,7 @@ librarian_position = '''
 
 @pydwarf.urist(
     name = 'shukaro.higherlearning',
-    version = '1.0.0',
+    version = '1.0.1',
     author = ('Shukaro', 'Sophie Kirschner'),
     description = '''Have you ever wondered to yourself, "Man, my dwarves are such idiots,
         I wish I could chisel some intelligence into their heads."? No? Then, er, disregard

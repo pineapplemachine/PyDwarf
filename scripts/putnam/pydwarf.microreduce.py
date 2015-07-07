@@ -10,7 +10,7 @@ default_entities = 'MOUNTAIN'
 
 @pydwarf.urist(
     name = 'putnam.microreduce',
-    version = '1.0.0',
+    version = '1.0.1',
     author = ('Putnam', 'Sophie Kirschner'),
     description = 'A mod to reduce the amount of micromanagement in Dwarf Fortress. One-step soap making and clothesmaking!',
     compatibility = pydwarf.df_0_40

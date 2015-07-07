@@ -62,7 +62,7 @@ add_properties = [
 
 @pydwarf.urist(
     name = 'putnam.materialsplus',
-    version = '1.0.0',
+    version = '1.0.1',
     author = ('Putnam', 'Sophie Kirschner'),
     description = 'Adds a bunch of materials to the game.',
     compatibility = (pydwarf.df_0_34, pydwarf.df_0_40)
