@@ -4,7 +4,7 @@ import pydwarf
     name = 'pineapple.adoptsowner',
     version = '1.0.0',
     author = 'Sophie Kirschner',
-    description = '''todo''',
+    description = '''ADOPTS_OWNER tokens are added to or removed from creatures.''',
     arguments = {
         'add_to': '''If set to None, no ADOPTS_OWNER tokens are added. If set
             to '*', tokens are added to all creatures. If set to an iterable
