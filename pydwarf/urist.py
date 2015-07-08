@@ -353,9 +353,6 @@ class urist:
                 if uname not in names: names[uname] = []
                 names[uname].append(uristinstance)
                 total += 1
-        # log.info('Found %d registered scripts in total.' % total)
-        # for name, uristlist in sorted(names.items()):
-        #     log.info('Found %d script%s named %s.' % (len(uristlist), 's' if len(uristlist) > 1 else '', name))
         return sorted(names.keys())
 
     def doc(self, format=None):
