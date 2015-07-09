@@ -1,13 +1,17 @@
 import os
 import shutil
 
+import forward
+
 from copytree import copytree
-from queryable import rawsqueryable, rawstokenlist
+from queryable import rawsqueryable
+from tokenlist import tokenlist
 from queryableobj import rawsqueryableobj
 from file import rawsbasefile, rawsfile, rawsbinfile, rawsreffile
 
 
 
+@forward.declare
 class rawsdir(rawsqueryableobj):
     '''Represents as a whole all the raws contained within a directory.'''
     
@@ -312,7 +316,7 @@ class rawsdir(rawsqueryableobj):
         '''
         
         match_types = self.getobjheadername(type)
-        results = rawstokenlist()
+        results = tokenlist()
         for file in self.files.itervalues():
             if isinstance(file, rawsqueryable):
                 root = file.root()

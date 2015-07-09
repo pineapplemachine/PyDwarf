@@ -3,10 +3,13 @@
 import inspect
 
 import objects
-from filters import rawstokenfilter, rawstoken # TODO: make dependencies less spaghetti
+from filters import rawstokenfilter
+
+import forward
 
 
 
+@forward.declare
 class rawsqueryable(object):
     '''Classes which contain raws tokens should inherit from this in order to provide querying functionality.'''
     
@@ -77,7 +80,7 @@ class rawsqueryable(object):
         return result
         
     def slice(self, slice):
-        return rawstokenlist(self.islice(slice))
+        return forward.declare.tokenlist(self.islice(slice))
         
     def islice(self, slice):
         root = self.index(slice.start)
@@ -134,12 +137,8 @@ class rawsqueryable(object):
         tokens = self.allprop(*args, **kwargs)
         for token in tokens: token.remove()
         return tokens
-    def removeselfandprops(self, *args, **kwargs):
-        tokens = [self] + self.removeallprop(*args, **kwargs)
-        self.remove()
-        return tokens
     
-    def query(self, filters, tokeniter=None, **kwargs):
+    def query(self, filters, tokeniter=None, **kwargs): # TODO: make it possible to use an iterable also
         '''Executes a query on some iterable containing tokens.
         
         filters: A dict or other iterable containing rawstokenfilter-like objects.
@@ -151,7 +150,7 @@ class rawsqueryable(object):
         if tokeniter is None: tokeniter = self.tokens(**kwargs)
         filteriter = (filters.itervalues() if isinstance(filters, dict) else filters)
         limit = False
-        for filter in filteriter: filter.result = rawstokenlist()
+        for filter in filteriter: filter.result = forward.declare.tokenlist() # TODO: don't do this
         for token in tokeniter:
             for filter in filteriter:
                 if (not filter.limit) or len(filter.result) < filter.limit:
@@ -413,7 +412,7 @@ class rawsqueryable(object):
                 if key is not None:
                     if key not in pdict:
                         if always_list:
-                            pdict[key] = rawstokenlist()
+                            pdict[key] = forward.declare.tokenlist()
                             pdict[key].append(prop)
                         else:
                             pdict[key] = prop
@@ -421,41 +420,10 @@ class rawsqueryable(object):
                         if isinstance(pdict[key], list):
                             pdict[key].append(prop)
                         else:
-                            pdict[key] = rawstokenlist()
+                            pdict[key] = forward.declare.tokenlist()
                             pdict[key].append(prop)
                             pdict[key].append(pdict[key], prop)
         return pdict
-        
-    
-    def set(self, *args, **kwargs):
-        value, args = rawsqueryable.argsset(*args, **kwargs)
-        settoken = self.get(exact_value=value)
-        if not settoken:
-            return self.add(value=value, args=args)
-        else:
-            settoken.setargs(args)
-            return settoken
-            
-    def setprop(self, *args, **kwargs):
-        value, args = rawsqueryable.argsset(*args, **kwargs)
-        settoken = self.getprop(exact_value=value)
-        if not settoken:
-            return self.addprop(value=value, args=args)
-        else:
-            settoken.setargs(args)
-            return settoken
-            
-    def setall(self, *args, **kwargs):
-        value, args = rawsqueryable.argsset(*args, **kwargs)
-        settokens = self.all(exact_value=value)
-        settokens.each(lambda token: token.setargs(args))
-        return settokens
-            
-    def setallprop(self, *args, **kwargs):
-        value, args = rawsqueryable.argsset(*args, **kwargs)
-        settokens = self.allprop(exact_value=value)
-        settokens.each(lambda token: token.setargs(args))
-        return settokens
         
     def list(self, *args, **kwargs):
         '''Convenience method acts as a shortcut for raws.tokenlist(obj.tokens(*args, **kwargs)).
@@ -471,14 +439,8 @@ class rawsqueryable(object):
                 [CASTE_NAME:elf:elves:elven]
                 [CREATURE_TILE:'e'][COLOR:3:0:0]
         '''
-        
-        return rawstokenlist(self.tokens(*args, **kwargs))
+        return forward.declare.tokenlist(self.tokens(*args, **kwargs))
     
-    @staticmethod
-    def argsset(self, *args, **kwargs):
-        token = rawstoken().autosingular(*args, **kwargs)
-        return token.value, token.args
-        
     def argsuntil(self, kwargs):
         # Utility function for handling arguments of getuntil and alluntil methods
         until_args, condition_args = {}, {}
@@ -507,48 +469,3 @@ class rawsqueryable(object):
         until_re_value = None
         until_value_in = objects.objectsforheader(objects.headerforobject(self.value))
         return until_exact_value, until_re_value, until_value_in
-
-
-
-class rawstokenlist(list, rawsqueryable):
-    '''Extends builtin list with token querying functionality.'''
-    
-    def tokens(self, range=None, reverse=False):
-        for i in xrange(self.__len__()-1, -1, -1) if reverse else xrange(0, self.__len__()):
-            if range is not None and range <= count: break
-            yield self.__getitem__(i)
-            
-    def add(self, item):
-        if isinstance(item, rawstoken):
-            self.append(item)
-        elif isinstance(item, rawsqueryable):
-            self.extend(item.tokens())
-        elif isinstance(item, list):
-            self.extend(item)
-        else:
-            raise ValueError('Failed to add item because it was of an unrecognized type.')
-    
-    def each(self, func=None, filter=None):
-        '''Calls a function for each entry in the list with that entry as the argument, and
-        appends each result to a returned tokenlist.'''
-        return rawstokenlist(
-            (func(token) if func is not None else token) for token in self if (filter is None or filter(token))
-        )
-        
-    def copy(self):
-        return rawstoken().copytokens(self)
-    
-    def __str__(self):
-        if len(self) == 0:
-            return ''
-        elif len(self) == 1:
-            return str(self[0])
-        else:
-            parts = []
-            for token in self:
-                if token is not self[0] and ((token.prefix and '\n' in token.prefix)): parts += '\n'
-                if token.prefix: parts += token.prefix.split('\n')[-1]
-                parts += str(token)
-                if token.suffix: parts += token.suffix.split('\n')[0]
-                if token is not self[-1] and ((token.suffix and '\n' in token.suffix)): parts += '\n'
-            return ''.join(parts)

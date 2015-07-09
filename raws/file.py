@@ -3,13 +3,16 @@ import re
 import shutil
 import traceback
 
+import forward
+
 from copytree import copytree
-from queryable import rawstokenlist
+from tokenlist import tokenlist
 from queryableobj import rawsqueryableobj
 from token import rawstoken
 
 
 
+@forward.declare
 class rawsbasefile(object):
     def __init__(self):
         self.dir = None

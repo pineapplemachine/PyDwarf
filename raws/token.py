@@ -1,9 +1,15 @@
 import itertools
 import inspect
 
-from tokenargs import tokenargs
-from queryable import rawsqueryable, rawstokenlist
+import forward
 
+from tokenargs import tokenargs
+from queryable import rawsqueryable
+from tokenlist import tokenlist
+
+
+
+@forward.declare
 class rawstoken(rawsqueryable):
     
     '''Internal: Recurring piece of docstrings.'''
@@ -221,12 +227,12 @@ class rawstoken(rawsqueryable):
             [NUMBER:ZERO][NUMBER:ONE][NUMBER:TWO][NUMBER:THREE]
         '''
         if isinstance(other, rawstoken):
-            tokens = rawstokenlist()
+            tokens = tokenlist()
             tokens.append(self)
             tokens.append(other)
             return tokens
         elif isinstance(other, rawsqueryable):
-            tokens = rawstokenlist()
+            tokens = tokenlist()
             tokens.append(self)
             tokens.extend(other)
             return tokens
@@ -235,12 +241,12 @@ class rawstoken(rawsqueryable):
     def __radd__(self, other):
         '''Internal: Same as __add__ except reversed.'''
         if isinstance(other, rawstoken):
-            tokens = rawstokenlist()
+            tokens = tokenlist()
             tokens.append(other)
             tokens.append(self)
             return tokens
         elif isinstance(other, rawsqueryable):
-            tokens = rawstokenlist()
+            tokens = tokenlist()
             tokens.extend(other)
             tokens.append(self)
             return tokens
@@ -257,7 +263,7 @@ class rawstoken(rawsqueryable):
             >>> print token * 6
             [EXAMPLE][EXAMPLE][EXAMPLE][EXAMPLE][EXAMPLE][EXAMPLE]
         '''
-        tokens = rawstokenlist()
+        tokens = tokenlist()
         for i in xrange(0, int(value)):
             tokens.append(rawstoken.copy(self))
         return tokens
@@ -293,7 +299,7 @@ class rawstoken(rawsqueryable):
         '''Internal: Convenience function for handling method arguments when a list of tokens is expected.'''
         token, tokens = rawstoken.autovariable(*args, **kwargs)
         if token is not None:
-            tokens = rawstokenlist()
+            tokens = tokenlist()
             tokens.append(token)
         return tokens
         
@@ -619,7 +625,7 @@ class rawstoken(rawsqueryable):
     
     @staticmethod
     def copytokens(tokens):
-        copiedtokens = rawstokenlist()
+        copiedtokens = tokenlist()
         prevtoken = None
         for token in tokens:
             copytoken = rawstoken(copy=token)
@@ -846,6 +852,11 @@ class rawstoken(rawsqueryable):
         if left: left.next = right
         if right: right.prev = left
         self.file = None
+        
+    def removeselfandprops(self, *args, **kwargs):
+        tokens = [self] + self.removeallprop(*args, **kwargs)
+        self.remove()
+        return tokens
     
     @staticmethod
     def parse(data, implicit_braces=False, **kwargs):
@@ -871,7 +882,7 @@ class rawstoken(rawsqueryable):
             [BEAUTIFUL] 
         '''
 
-        tokens = rawstokenlist()    # maintain a sequential list of tokens
+        tokens = tokenlist()    # maintain a sequential list of tokens
         pos = 0                     # byte position in data
         if data.find('[') == -1 and data.find(']') == -1:
             if implicit_braces:

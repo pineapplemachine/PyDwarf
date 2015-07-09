@@ -1,18 +1,11 @@
 import re
 import copy
 
-
-
-# Hackish solution to cyclic import (the struggle is real)
-def rawstoken(*args, **kwargs):
-    if 'token' not in globals(): import token
-    if args or kwargs:
-        return token.rawstoken(*args, **kwargs)
-    else:
-        return token.rawstoken
+import forward
 
 
 
+@forward.declare
 class rawsbasefilter:
     def __init__(self, invert=False):
         self.inv = invert
@@ -50,6 +43,7 @@ class rawsbasefilter:
 
 
 
+@forward.declare
 class rawstokenfilter(rawsbasefilter):
     '''Basic filter class for applying to rawstoken objects.'''
     
@@ -126,7 +120,7 @@ class rawstokenfilter(rawsbasefilter):
         self.pretty = pretty
         
         if pretty:
-            token = rawstoken().parseone(pretty)
+            token = forward.declare.rawstoken.parseone(pretty)
             exact_value = token.value
             if token.nargs(): exact_args = token.args
             
@@ -220,6 +214,7 @@ class rawstokenfilter(rawsbasefilter):
         
 
 
+@forward.declare
 class rawsboolfilter(rawsbasefilter):
     '''Logical filter class for combining other filters.'''
     
