@@ -1,5 +1,5 @@
 import objects
-from rawsqueryable import rawsqueryable
+from queryable import rawsqueryable
 
 import forward
 

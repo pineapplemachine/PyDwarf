@@ -8,6 +8,7 @@ import forward
 from copytree import copytree
 from tokenlist import tokenlist
 from queryableobj import rawsqueryableobj
+from queryableadd import rawsqueryableadd
 from token import rawstoken
 
 
@@ -216,7 +217,7 @@ class rawsbinfile(rawsreffile):
 
 
 
-class rawsfile(rawsbasefile, rawsqueryableobj):
+class rawsfile(rawsbasefile, rawsqueryableobj, rawsqueryableadd):
     '''Represents a single file within a raws directory.'''
     
     def __init__(self, name=None, file=None, path=None, root=None, content=None, tokens=None, dir=None, readpath=True, noheader=False, **kwargs):

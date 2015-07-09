@@ -4,13 +4,13 @@ import inspect
 import forward
 
 from tokenargs import tokenargs
-from queryable import rawsqueryable
+from queryableadd import rawsqueryableadd
 from tokenlist import tokenlist
 
 
 
 @forward.declare
-class rawstoken(rawsqueryable):
+class rawstoken(rawsqueryableadd):
     
     '''Internal: Recurring piece of docstrings.'''
     auto_arg_docstring = '''
