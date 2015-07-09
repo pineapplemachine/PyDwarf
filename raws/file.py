@@ -1,9 +1,11 @@
 import os
 import re
 import shutil
+import traceback
 
 from copytree import copytree
-from queryable import rawsqueryableobj, rawstokenlist
+from queryable import rawstokenlist
+from queryableobj import rawsqueryableobj
 from token import rawstoken
 
 
@@ -19,15 +21,23 @@ class rawsbasefile(object):
         self.kind = None
     
     @staticmethod
-    def factory(path, **kwargs):
-        if path.endswith('.txt'):
-            with open(path, 'rb') as txt:
-                if txt.readline().strip() == os.path.splitext(os.path.basename(path))[0]:
-                    txt.seek(0)
-                    return rawsfile(path=path, file=txt, **kwargs)
-        if os.path.basename(path) in ('dfhack.init', 'dfhack.init-example'):
-            return rawsbinfile(path=path, **kwargs)
-        return rawsreffile(path=path, **kwargs)
+    def factory(path, **kwargs): # TODO: move this elsewhere and make it more easily configurable
+        basename = os.path.basename(path)
+        try:
+            if basename.endswith('.txt'):
+                with open(path, 'rb') as txt:
+                    if txt.readline().strip() == os.path.splitext(os.path.basename(path))[0]:
+                        txt.seek(0)
+                        return rawsfile(path=path, file=txt, **kwargs)
+            elif basename in ('dfhack.init', 'dfhack.init-example'):
+                return rawsbinfile(path=path, **kwargs)
+            elif basename in ('init.txt', 'd_init.txt', 'colors.txt', 'interface.txt', 'announcements.txt', 'world_gen.txt', 'overrides.txt'):
+                return rawsfile(path=path, file=txt, noheader=True, **kwargs)
+        except Exception as e:
+            pydwarf.log.warning('Failed to read file from path %s. Defauling to reading as a reffile, which should (hopefully) work despite.' % path)
+            pydwarf.log.debug(traceback.format_exc())
+        finally:
+            return rawsreffile(path=path, **kwargs)
     
     def __str__(self):
         name = ''.join((self.name, self.ext)) if self.ext and self.name else self.name
@@ -124,16 +134,20 @@ class rawsreffile(rawsbasefile):
         copy.loc = self.loc
         return copy
     
-    def ref(self):
+    def ref(self, **kwargs):
+        for key, value in kwargs.iteritems(): self.__dict__[key] = value
         return self
-    def bin(self):
+    def bin(self, **kwargs):
         self.kind = 'bin'
         self.__class__ = rawsbinfile
+        for key, value in kwargs.iteritems(): self.__dict__[key] = value
         self.read()
         return self
-    def raw(self):
+    def raw(self, **kwargs):
+        print '!!!'
         self.kind = 'raw'
         self.__class__ = rawsfile
+        for key, value in kwargs.iteritems(): self.__dict__[key] = value
         self.read()
         return self
     
@@ -160,14 +174,16 @@ class rawsbinfile(rawsreffile):
     def read(self, path=None):
         with open(path if path else self.path, 'rb') as binfile: self.content = binfile.read()
         
-    def ref(self):
-        raise ValueError('Failed to cast binary file to reference file because it is an invalid conversion.')
-    def bin(self):
+    def ref(self, **kwargs):
+        raise ValueError('Failed to cast binfile %s to a reffile because it is an invalid conversion.' % self)
+    def bin(self, **kwargs):
+        for key, value in kwargs.iteritems(): self.__dict__[key] = value
         return self
-    def raw(self):
+    def raw(self, **kwargs):
         self.kind = 'raw'
         self.__class__ = rawsfile
-        self.settokens(rawstoken.parse(self.content))
+        for key, value in kwargs.iteritems(): self.__dict__[key] = value
+        self.read(content=self.content)
         return self
         
     def copy(self):
@@ -200,7 +216,7 @@ class rawsbinfile(rawsreffile):
 class rawsfile(rawsbasefile, rawsqueryableobj):
     '''Represents a single file within a raws directory.'''
     
-    def __init__(self, name=None, file=None, path=None, root=None, content=None, tokens=None, dir=None, readpath=True, **kwargs):
+    def __init__(self, name=None, file=None, path=None, root=None, content=None, tokens=None, dir=None, readpath=True, noheader=False, **kwargs):
         '''Constructs a new raws file object.
         
         name: The name string to appear at the top of the file. Also used to determine filename.
@@ -213,6 +229,7 @@ class rawsfile(rawsbasefile, rawsqueryableobj):
         
         self.dir = dir
         self.data = None
+        self.noheader = noheader
         self.setpath(path=path, root=root, **kwargs)
         
         self.roottoken = None
@@ -224,11 +241,9 @@ class rawsfile(rawsbasefile, rawsqueryableobj):
             self.read(path)
             
         if name is not None: self.name = name
-        if content is not None: self.data = content
         
-        if self.data is not None:
-            tokens = rawstoken.parse(self.data, implicit_braces=False, file=self)
-            self.settokens(tokens, setfile=False)
+        if content is not None:
+            self.read(content=content)
         elif tokens is not None:
             self.settokens(tokens, setfile=True)
         
@@ -257,16 +272,23 @@ class rawsfile(rawsbasefile, rawsqueryableobj):
         return self.content()
         
     def content(self):
-        return '%s\n%s' %(self.name, ''.join([repr(o) for o in self.tokens()]))
+        tokencontent = ''.join([repr(o) for o in self.tokens()])
+        if self.noheader:
+            return tokencontent
+        else:
+            return '%s\n%s' %(self.name, tokencontent)
         
-    def ref(self):
-        raise ValueError('Failed to cast binary file to reference file because it is an invalid conversion.')
-    def bin(self):
+    def ref(self, **kwargs):
+        raise ValueError('Failed to cast rawfile %s to reffile because it is an invalid conversion.' % self)
+    def bin(self, **kwargs):
         self.kind = 'bin'
-        self.content = self.content()
         self.__class__ =  rawsbinfile
+        content = kwargs.get('content', self.content())
+        for key, value in kwargs.iteritems(): self.__dict__[key] = value
+        self.content = content
         return self
-    def raw(self):
+    def raw(self, **kwargs):
+        for key, value in kwargs.iteritems(): self.__dict__[key] = value
         return self
     
     def index(self, index):
@@ -343,6 +365,7 @@ class rawsfile(rawsbasefile, rawsqueryableobj):
         copy.name = self.name
         copy.ext = self.ext
         copy.loc = self.loc
+        copy.noheader = self.noheader
         copy.settokens(rawstoken.copy(self.tokens()))
         return copy
         
@@ -388,16 +411,38 @@ class rawsfile(rawsbasefile, rawsqueryableobj):
         for token in generator:
             yield token
             
-    def read(self, file=None):
+    def read(self, file=None, content=None, **kwargs):
         '''Given a path or file-like object, reads name and data.'''
-        if file is None: file = self.path
-        if isinstance(file, basestring):
+        self.roottoken = None
+        self.tailtoken = None 
+        
+        if file is None and content is None:
+            with open(self.path, 'rb') as src:
+                content = src.read()
+        elif isinstance(file, basestring):
             self.path = file
             self.ext = os.path.splitext(file)[1]
             with open(file, 'rb') as src:
-                self.name, self.data = src.readline().strip(), src.read()
+                content = src.read()
         else:
-            self.name, self.data = file.readline().strip(), file.read()
+            content = file.read()
+        
+        if content:
+            parts = content.split('\n', 1)
+            header = None
+            data = None
+            if len(parts) == 1:
+                data = parts[0]
+            elif len(parts) == 2:
+                header, data = parts
+            header = header.strip()
+            if self.name:
+                if header != self.name: self.noheader = True
+            if data:
+                self.settokens(rawstoken.parse(data, file=self))
+        else:
+            self.noheader = True
+            self.data = None
             
     def write(self, file):
         '''Given a path to a directory or a file-like object, writes the file's contents to that file.'''
@@ -407,7 +452,7 @@ class rawsfile(rawsbasefile, rawsqueryableobj):
         else:
             file.write(self.content())
     
-    def add(self, auto=None, pretty=None, token=None, tokens=None, **kwargs):
+    def add(self, *args, **kwargs):
         '''Adds tokens to the end of a file.
         
         Example usage:
@@ -440,12 +485,9 @@ class rawsfile(rawsbasefile, rawsqueryableobj):
         '''
         tail = self.tail()
         if tail:
-            return tail.add(auto=auto, pretty=pretty, token=token, tokens=tokens, **kwargs)
+            return tail.add(*args, **kwargs)
         else:
-            pretty, token, tokens = rawstoken.auto(auto, pretty, token, tokens)
-            if pretty is not None:
-                tokens = rawstoken.parse(pretty)
-                if len(tokens) == 1: token = tokens[0]
+            token, tokens = rawstoken.autovariable(*args, **kwargs)
             if token is not None:
                 self.roottoken = token
                 self.tailtoken = token
@@ -455,7 +497,7 @@ class rawsfile(rawsbasefile, rawsqueryableobj):
                 self.settokens(tokens)
                 return tokens
         
-    def length(self):
+    def length(self, *args, **kwargs):
         '''Get the number of tokens in this file.
         
         Example usage:
@@ -466,9 +508,7 @@ class rawsfile(rawsbasefile, rawsqueryableobj):
             >>> print df.getfile('item_pants').length()
             109
         '''
-        count = 0
-        for token in self.tokens(): count += 1
-        return count
+        return sum(1 for token in self.tokens(*args, **kwargs))
         
     def clear(self):
         '''Remove all tokens from this file.
@@ -481,8 +521,7 @@ class rawsfile(rawsbasefile, rawsqueryableobj):
             >>> print item_pants.length()
             0
         '''
-        for token in self.tokens():
-            token.file = None
+        for token in self.tokens(): token.file = None
         self.roottoken = None
         self.tailtoken = None
         

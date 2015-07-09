@@ -4,9 +4,12 @@ import copy
 
 
 # Hackish solution to cyclic import (the struggle is real)
-def rawstoken():
+def rawstoken(*args, **kwargs):
     if 'token' not in globals(): import token
-    return token.rawstoken
+    if args or kwargs:
+        return token.rawstoken(*args, **kwargs)
+    else:
+        return token.rawstoken
 
 
 
@@ -41,6 +44,9 @@ class rawsbasefilter:
     
     def __contains__(self, token):
         return self.match(token)
+        
+    def __call__(self, *args, **kwargs):
+        return self.match(*args, **kwargs)
 
 
 

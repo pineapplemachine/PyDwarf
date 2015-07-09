@@ -2,7 +2,8 @@ import os
 import shutil
 
 from copytree import copytree
-from queryable import rawsqueryable, rawsqueryableobj, rawstokenlist
+from queryable import rawsqueryable, rawstokenlist
+from queryableobj import rawsqueryableobj
 from file import rawsbasefile, rawsfile, rawsbinfile, rawsreffile
 
 
@@ -260,7 +261,10 @@ class rawsdir(rawsqueryableobj):
         dest = self.getdestforfileop(dest)
         if self.log: self.log.debug('Writing %d files to %s.' % (len(self.files), dest))
         for file in self.files.itervalues():
-            file.write(dest)
+            try:
+                file.write(dest)
+            except:
+                if self.log: self.log.exception('Failed to write file %s to %s.' % (file, dest))
             
     def clean(self, dest=None):
         dest = self.getdestforfileop(dest)

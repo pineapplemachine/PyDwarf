@@ -39,8 +39,8 @@ raws.parseone: A convenience alias for raws.token.parseone, which acts like raws
 from filters import rawstokenfilter as tokenfilter
 from filters import rawsboolfilter as boolfilter
 from queryable import rawsqueryable as queryable
-from queryable import rawsqueryableobj as queryableobj
 from queryable import rawstokenlist as tokenlist
+from queryableobj import rawsqueryableobj as queryableobj
 from token import rawstoken as token
 from file import rawsbasefile as basefile
 from file import rawsreffile as reffile
