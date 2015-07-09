@@ -1,4 +1,5 @@
 import itertools
+import inspect
 
 from tokenargs import tokenargs
 from queryable import rawsqueryable, rawstokenlist
@@ -16,7 +17,7 @@ class rawstoken(rawsqueryable):
     '''Don't allow these characters in a token's prefix or suffix.'''
     illegal_external_chars = '['
     
-    def __init__(self, auto=None, pretty=None, token=None, value=None, args=None, arg=None, prefix=None, suffix=None, prev=None, next=None, file=None):
+    def __init__(self, auto=None, pretty=None, copy=None, value=None, args=None, arg=None, prefix=None, suffix=None, prev=None, next=None, file=None):
         '''Constructs a token object.
         
         %s (However, a tokens argument is illegal here and attempting to create
@@ -46,33 +47,41 @@ class rawstoken(rawsqueryable):
             False
         ''' % rawstoken.auto_arg_docstring
         
-        self.prev = prev    # previous token sequentially
-        self.next = next    # next token sequentially
+        if auto is not None:
+            if isinstance(auto, basestring):
+                pretty = auto
+            elif isinstance(auto, rawstoken):
+                copy = auto
+            else:
+                raise ValueError('Failed to recognize argument of type %s.' % str(type(auto)))
         
         self.value = None
         self.args = None
         self.prefix = None
         self.suffix = None
+        self.prev = None
+        self.next = None
         self.file = None
         
-        pretty, token, tokens = rawstoken.auto(auto, pretty, token, None)
-        if tokens is not None: raise ValueError('Failed to initialize token object because the given argument was not a string or a single token.' % pretty)
-        
         if pretty is not None:
-            token = rawstoken.parseone(pretty, implicit_braces=True)
-        if token is not None:
-            value = token.value
-            args = tokenargs(token.args) if token.args else tokenargs()
-            prefix = token.prefix
-            suffix = token.suffix
+            copy = rawstoken.parseone(pretty, apply=self)
+            
+        if copy is not None:
+            value = copy.value
+            args = copy.args
+            prefix = copy.prefix
+            suffix = copy.suffix
+            
+        if arg is not None:
+            args = [arg]
         
-        if arg: self.setargs([arg])
-        if value: self.setvalue(value)      # value for the token
-        if args: self.setargs(args)         # arguments for the token
-        if prefix: self.setprefix(prefix)   # non-token text between the preceding token and this one
-        if suffix: self.setsuffix(suffix)   # between this token and the next/eof (should typically apply to eof)
-        
-        if self.args is None: self.args = tokenargs()
+        if args is not None or self.args is None: self.setargs(args)
+        if value is not None: self.setvalue(value)
+        if prefix is not None: self.setprefix(prefix)
+        if suffix is not None: self.setsuffix(suffix)
+        if prev is not None: self.prev = prev
+        if next is not None: self.next = next
+        if file is not None: self.file = file
         
     def __hash__(self): # Not that this class is immutable, just means you'll need to be careful about when you're using token hashes
         return hash('%s:%s' % (self.value, self.argsstr()) if self.nargs() else self.value)
@@ -268,8 +277,29 @@ class rawstoken(rawsqueryable):
         return True
         
     @staticmethod
-    def auto(auto, pretty, token, tokens):
-        '''Internal: Convenience function for handling method arguments'''
+    def autosingular(auto=None, token=None, **kwargs):
+        '''Internal: Convenience function for handling method arguments when exactly one token is expected.'''
+        if auto is not None:
+            if isinstance(auto, basestring):
+                kwargs['pretty'] = auto
+            elif isinstance(auto, rawstoken):
+                return auto
+            else:
+                raise ValueError('Failed to recognize argument of type %s as valid.' % str(type(auto)))
+        return rawstoken(**kwargs)
+        
+    @staticmethod
+    def autoplural(*args, **kwargs):
+        '''Internal: Convenience function for handling method arguments when a list of tokens is expected.'''
+        token, tokens = rawstoken.autovariable(*args, **kwargs)
+        if token is not None:
+            tokens = rawstokenlist()
+            tokens.append(token)
+        return tokens
+        
+    @staticmethod
+    def autovariable(auto=None, pretty=None, token=None, tokens=None, **kwargs):
+        '''Internal: Convenience function when either a single token or a list of tokens is acceptable as a method's argument.'''
         if auto is not None:
             if isinstance(auto, basestring):
                 pretty = auto
@@ -279,7 +309,15 @@ class rawstoken(rawsqueryable):
                 tokens = auto.tokens()
             else:
                 tokens = auto
-        return pretty, token, tokens
+        if pretty is not None:
+            tokens = rawstoken.parse(pretty)
+        if kwargs:
+            token = rawstoken.autosingular(**kwargs)
+        if token is not None and tokens is not None:
+            raise ValueError('Failed to recognize arguments because both singular and plural token arguments were detected.')
+        elif token is None and tokens is None:
+            raise ValueError('Received no recognized arguments.')
+        return token, tokens
         
     def index(self, index):
         itrtoken = self
@@ -543,7 +581,7 @@ class rawstoken(rawsqueryable):
         return True
     
     @staticmethod
-    def copy(auto=None, token=None, tokens=None):
+    def copy(*args, **kwargs):
         '''Copies some token or iterable collection of tokens.
         
         Example usage:
@@ -570,21 +608,36 @@ class rawstoken(rawsqueryable):
             >>> print tokens is copied_tokens
             False
         '''
-        pretty, token, tokens = rawstoken.auto(auto, None, token, tokens)
+        token, tokens = rawstoken.autovariable(*args, **kwargs)
         if token is not None:
-            return rawstoken(token=token)
+            return rawstoken(copy=token)
         elif tokens is not None:
-            copied = rawstokenlist()
-            prevtoken = None
-            for token in tokens:
-                newtoken = rawstoken(token=token)
-                copied.append(newtoken)
-                newtoken.prev = prevtoken
-                if prevtoken: prevtoken.next = newtoken
-                prevtoken = newtoken
-            return copied
-        else:
-            raise ValueError('Failed to copy token or tokens because no object was specified.')
+            if inspect.isgenerator(tokens) or inspect.isgeneratorfunction(tokens):
+                return rawstoken.icopytokens(tokens=tokens)
+            else:
+                return rawstoken.copytokens(tokens=tokens)
+    
+    @staticmethod
+    def copytokens(tokens):
+        copiedtokens = rawstokenlist()
+        prevtoken = None
+        for token in tokens:
+            copytoken = rawstoken(copy=token)
+            copiedtokens.append(copytoken)
+            copytoken.prev = prevtoken
+            if prevtoken is not None: prevtoken.next = copytoken
+            prevtoken = copytoken
+        return copiedtokens
+        
+    @staticmethod
+    def icopytokens(tokens):
+        prevtoken = None
+        for token in tokens:
+            copytoken = rawstoken(copy=token)
+            copytoken.prev = prevtoken
+            if prevtoken is not None: prevtoken.next = copytoken
+            prevtoken = copytoken
+            yield token
         
     def tokens(self, range=None, include_self=False, reverse=False, until_token=None, step=None):
         '''Iterate through successive tokens starting with this one.
@@ -625,39 +678,37 @@ class rawstoken(rawsqueryable):
             if (step is None) or (count % step == 0): yield itertoken
             itertoken = itertoken.prev if reverse else itertoken.next
             count += 1
-        
-    def add(self, auto=None, pretty=None, token=None, tokens=None, reverse=False):
-        '''Adds a token or tokens nearby this one. If reverse is False the token 
-        or tokens are added immediately after. If it's True, they are added before.
-        
-        %s
-        pretty: Parses the string and adds the tokens within it.
-        token: Adds this one token.
-        tokens: Adds all of these tokens.
-        reverse: If True, the tokens are added before instead of after.
-        
-        Example usage:
-            >>> two = raws.token('TWO')
-            >>> two.add('THREE')
-            [THREE]
-            >>> print two.list(include_self=True)
-            [TWO][THREE]
-            >>> three = two.next
-            >>> three.add('[TWO AND A HALF][TWO AND THREE QUARTERS]', reverse=True)
-            [[TWO AND A HALF], [TWO AND THREE QUARTERS]]
-            >>> print two.list(include_self=True)
-            [TWO][TWO AND A HALF][TWO AND THREE QUARTERS][THREE]
+    
+    def add(self, *args, **kwargs):
+        '''
+            Adds a token or tokens nearby this one. If reverse is False the token 
+            or tokens are added immediately after. If it's True, they are added before.
+            
+            %s
+            pretty: Parses the string and adds the tokens within it.
+            token: Adds this one token.
+            tokens: Adds all of these tokens.
+            reverse: If True, the tokens are added before instead of after.
+            
+            Example usage:
+                >>> two = raws.token('TWO')
+                >>> two.add('THREE')
+                [THREE]
+                >>> print two.list(include_self=True)
+                [TWO][THREE]
+                >>> three = two.next
+                >>> three.add('[TWO AND A HALF][TWO AND THREE QUARTERS]', reverse=True)
+                [[TWO AND A HALF], [TWO AND THREE QUARTERS]]
+                >>> print two.list(include_self=True)
+                [TWO][TWO AND A HALF][TWO AND THREE QUARTERS][THREE]
         ''' % rawstoken.auto_arg_docstring
-        pretty, token, tokens = rawstoken.auto(auto, pretty, token, tokens)
-        if pretty is not None:
-            tokens = rawstoken.parse(pretty)
-            if len(tokens) == 1: token = tokens[0]
+        reverse = kwargs.get('reverse', False)
+        knit = kwargs.get('knit', False)
+        token, tokens = rawstoken.autovariable(*args, **kwargs)
         if token is not None:
-            return self.addone(token, reverse)
+            return self.addone(token, reverse=reverse, knit=knit)
         elif tokens is not None:
-            return self.addall(tokens, reverse)
-        else:
-            raise ValueError('Failed to add token or tokens because no object was specified.')
+            return self.addall(tokens, reverse=reverse, knit=knit)
             
     def addprop(self, *args, **kwargs):
         '''When this token is an object token like CREATURE:X or INORGANIC:X, a
@@ -714,10 +765,17 @@ class rawstoken(rawsqueryable):
                 if setfile is not None: token.file = setfile
             return first, last            
         
-    def addone(self, token, reverse=False):
+    def addone(self, token, reverse=False, knit=True):
         '''Internal: Utility method called by add when adding a single token'''
         
         token.file = self.file
+        if token.prev is not None or token.next is not None:
+            if knit:
+                if token.prev is not None: token.prev.next = token.next
+                if token.next is not None: token.next.prev = token.prev
+            else:
+                raise ValueError('Failed to add tokens because they already appear within a sequence of other tokens.')
+        
         if reverse:
             token.next = self
             token.prev = self.prev
@@ -729,10 +787,18 @@ class rawstoken(rawsqueryable):
             if self.next: self.next.prev = token
             self.next = token
         return token
-    def addall(self, tokens, reverse=False):
+    
+    def addall(self, tokens, reverse=False, knit=True):
         '''Internal: Utility method called by add when adding multiple tokens'''
         
-        first, last = rawstoken.firstandlast(tokens, setfile=self.file)
+        first, last = rawstoken.firstandlast(tokens, setfile=self.file, knit=True)
+        if token.prev is not None or token.next is not None:
+            if knit:
+                if first.prev is not None: first.prev.next = last.next
+                if last.next is not None: last.next.prev = first.prev
+            else:
+                raise ValueError('Failed to add tokens because they already appear within a sequence of other tokens.')
+                
         if reverse:
             last.next = self
             first.prev = self.prev
@@ -782,7 +848,7 @@ class rawstoken(rawsqueryable):
         self.file = None
     
     @staticmethod
-    def parse(data, implicit_braces=True, **kwargs):
+    def parse(data, implicit_braces=False, **kwargs):
         '''Parses a string, turns it into a list of tokens.
 
         data: The string to be parsed.
@@ -811,8 +877,8 @@ class rawstoken(rawsqueryable):
             if implicit_braces:
                 tokenparts = data.split(':')
                 token = rawstoken(
-                    value=tokenparts[0],
-                    args=tokenparts[1:],
+                    value = tokenparts[0],
+                    args = tokenparts[1:],
                     **kwargs
                 )
                 tokens.append(token)
@@ -830,10 +896,10 @@ class rawstoken(rawsqueryable):
                         tokentext = data[open+1:close]
                         tokenparts = tokentext.split(':')
                         token = rawstoken(
-                            value=tokenparts[0],
-                            args=tokenparts[1:],
-                            prefix=prefix,
-                            prev=tokens[-1] if len(tokens) else None,
+                            value = tokenparts[0],
+                            args = tokenparts[1:],
+                            prefix = prefix,
+                            prev = tokens[-1] if len(tokens) else None,
                             **kwargs
                         )
                         pos = close+1
@@ -847,7 +913,7 @@ class rawstoken(rawsqueryable):
             return tokens
             
     @staticmethod
-    def parseone(*args, **kwargs):
+    def parseone(data, implicit_braces=True, fail_on_multiple=True, apply=None, **kwargs):
         '''Parses a string containing exactly one token. **kwargs are passed on to the parse static method.
         
         Example usage:
@@ -860,6 +926,24 @@ class rawstoken(rawsqueryable):
             ...
             There was more than one token!
         '''
-        tokens = rawstoken.parse(*args, **kwargs)
-        if len(tokens) != 1: raise ValueError('Failed to parse one token because the data string contained %d tokens.' % len(tokens))
-        return tokens[0]
+        if fail_on_multiple and data.count('[') > 1: raise ValueError('Failed to parse token because there was more than one open bracket in the data string.')
+        open = data.find('[')
+        close = data.find(']')
+        tokenparts = None
+        if open == -1 and close == -1 and implicit_braces:
+            pass
+        elif open >= 0 and close >= 0:
+            data = data[data.find('[') + 1 : data.find(']')]
+        else:
+            raise ValueError('Failed to parse token because data string contained mismatched brackets.')
+        tokenparts = data.split(':')
+        if apply:
+            apply.setvalue(tokenparts[0])
+            apply.setargs(tokenparts[1:])
+            return apply
+        else:
+            return rawstoken(
+                value = tokenparts[0],
+                args = tokenparts[1:],
+                **kwargs
+            )
