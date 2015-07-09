@@ -1,223 +1,16 @@
 import os
-import re
-import shutil
-import traceback
 
 import forward
 
-from copytree import copytree
-from tokenlist import tokenlist
 from queryableobj import rawsqueryableobj
 from queryableadd import rawsqueryableadd
+from basefile import basefile
 from token import rawstoken
 
 
 
 @forward.declare
-class rawsbasefile(object):
-    def __init__(self):
-        self.dir = None
-        self.path = None
-        self.rootpath = None
-        self.loc = None
-        self.name = None
-        self.ext = None
-        self.kind = None
-    
-    @staticmethod
-    def factory(path, **kwargs): # TODO: move this elsewhere and make it more easily configurable
-        basename = os.path.basename(path)
-        try:
-            if basename.endswith('.txt'):
-                with open(path, 'rb') as txt:
-                    if txt.readline().strip() == os.path.splitext(os.path.basename(path))[0]:
-                        txt.seek(0)
-                        return rawsfile(path=path, file=txt, **kwargs)
-            elif basename in ('dfhack.init', 'dfhack.init-example'):
-                return rawsbinfile(path=path, **kwargs)
-            elif basename in ('init.txt', 'd_init.txt', 'colors.txt', 'interface.txt', 'announcements.txt', 'world_gen.txt', 'overrides.txt'):
-                return rawsfile(path=path, file=txt, noheader=True, **kwargs)
-        except Exception as e:
-            pydwarf.log.warning('Failed to read file from path %s. Defauling to reading as a reffile, which should (hopefully) work despite.' % path)
-            pydwarf.log.debug(traceback.format_exc())
-        finally:
-            return rawsreffile(path=path, **kwargs)
-    
-    def __str__(self):
-        name = ''.join((self.name, self.ext)) if self.ext and self.name else self.name
-        path = os.path.join(self.loc, name) if self.loc and name else name
-        return path.replace('\\', '/') if path else ''
-    def __repr__(self):
-        return str(self)
-        
-    def __hash__(self):
-        return hash(str(self))
-        
-    def __eq__(self, other):
-        return str(self) == str(other)
-    def __ne__(self, other):
-        return str(self) != str(other)
-    
-    def __gt__(self, other):
-        return str(self) > str(other)
-    def __ge__(self, other):
-        return str(self) >= str(other)
-    def __lt__(self, other):
-        return str(self) < str(other)
-    def __le__(self, other):
-        return str(self) <= str(other)
-        
-    def setpath(self, path, root=None, loc=None, name=None, ext=None):
-        if self.dir and self.dir.root and (not root): root = self.dir.root
-        path = os.path.abspath(path) if path else None
-        root = os.path.abspath(root) if root else None
-        self.path = path
-        self.rootpath = root
-        if not path:
-            self.name, self.ext = None, None
-        elif os.path.isfile(path):
-            self.name, self.ext = os.path.splitext(os.path.basename(path))
-        else:
-            self.name, self.ext = os.path.basename(path), None
-        if root and path and root != path and path.startswith(root):
-            self.loc = os.path.dirname(os.path.relpath(path, root))
-        else:
-            self.loc = None
-        if loc: self.loc = loc
-        if name: self.name = name
-        if ext: self.ext = ext
-        self.kind = self.ext[1:] if self.ext else 'dir'
-        
-    def reloc(self, loc):
-        if loc and self.loc:
-            self.loc = os.path.join(loc, self.loc)
-        elif loc:
-            self.loc = loc
-        
-    def dest(self, path, makedir=False):
-        '''Internal: Given a root directory that this file would be written to, get the full path of where this file belongs.'''
-        dest = os.path.join(path, str(self))
-        dir = os.path.dirname(dest)
-        if makedir and not os.path.isdir(dir): os.makedirs(dir)
-        return dest
-                
-    def remove(self):
-        '''Remove this file from the raws.dir object to which it belongs.
-        
-        Example usage:
-            >>> dwarf = df.getobj('CREATURE:DWARF')
-            >>> print dwarf
-            [CREATURE:DWARF]
-            >>> print dwarf.file
-            creature_standard
-            >>> dwarf.file.remove()
-            >>> print df.getobj('CREATURE:DWARF')
-            None
-            >>> print df.getfile('creature_standard')
-            None
-        '''
-        if self.dir is not None:
-            self.dir.remove(self)
-        else:
-            raise ValueError('Failed to remove file because it doesn\'t belong to any dir.')
-        
-
-
-class rawsreffile(rawsbasefile):
-    def __init__(self, path=None, dir=None, root=None, **kwargs):
-        self.dir = dir
-        self.setpath(path, root, **kwargs)
-    
-    def copy(self):
-        copy = rawsotherfile()
-        copy.path = self.path
-        copy.dir = self.dir
-        copy.rootpath = self.rootpath
-        copy.name = self.name
-        copy.ext = self.ext
-        copy.loc = self.loc
-        return copy
-    
-    def ref(self, **kwargs):
-        for key, value in kwargs.iteritems(): self.__dict__[key] = value
-        return self
-    def bin(self, **kwargs):
-        self.kind = 'bin'
-        self.__class__ = rawsbinfile
-        for key, value in kwargs.iteritems(): self.__dict__[key] = value
-        self.read()
-        return self
-    def raw(self, **kwargs):
-        print '!!!'
-        self.kind = 'raw'
-        self.__class__ = rawsfile
-        for key, value in kwargs.iteritems(): self.__dict__[key] = value
-        self.read()
-        return self
-    
-    def write(self, path):
-        dest = self.dest(path, makedir=True)
-        if self.path != dest:
-            if os.path.isfile(self.path):
-                shutil.copy2(self.path, dest)
-            elif os.path.isdir(self.path):
-                copytree(self.path, dest)
-            else:
-                raise ValueError('Failed to write file because its path %s refers to neither a file nor a directory.' % self.path)
-
-
-
-class rawsbinfile(rawsreffile):
-    def __init__(self, content=None, path=None, dir=None, **kwargs):
-        self.dir = None
-        self.setpath(path, **kwargs)
-        self.dir = dir
-        self.content = content
-        if self.content is None and self.path is not None and os.path.isfile(self.path): self.read(self.path)
-        
-    def read(self, path=None):
-        with open(path if path else self.path, 'rb') as binfile: self.content = binfile.read()
-        
-    def ref(self, **kwargs):
-        raise ValueError('Failed to cast binfile %s to a reffile because it is an invalid conversion.' % self)
-    def bin(self, **kwargs):
-        for key, value in kwargs.iteritems(): self.__dict__[key] = value
-        return self
-    def raw(self, **kwargs):
-        self.kind = 'raw'
-        self.__class__ = rawsfile
-        for key, value in kwargs.iteritems(): self.__dict__[key] = value
-        self.read(content=self.content)
-        return self
-        
-    def copy(self):
-        copy = rawsbinfile()
-        copy.path = self.path
-        copy.dir = self.dir
-        copy.rootpath = self.rootpath
-        copy.name = self.name
-        copy.ext = self.ext
-        copy.loc = self.loc
-        copy.content = self.content
-        return copy
-    
-    def __repr__(self):
-        return str(self.content)
-        
-    def __len__(self):
-        return len(self.content)
-        
-    def write(self, path):
-        dest = self.dest(path, makedir=True)
-        with open(dest, 'wb') as file:
-            file.write(self.content)
-            
-    def add(self, content):
-        self.content += content
-
-
-
-class rawsfile(rawsbasefile, rawsqueryableobj, rawsqueryableadd):
+class rawfile(basefile, rawsqueryableobj, rawsqueryableadd):
     '''Represents a single file within a raws directory.'''
     
     def __init__(self, name=None, file=None, path=None, root=None, content=None, tokens=None, dir=None, readpath=True, noheader=False, **kwargs):
@@ -286,7 +79,7 @@ class rawsfile(rawsbasefile, rawsqueryableobj, rawsqueryableadd):
         raise ValueError('Failed to cast rawfile %s to reffile because it is an invalid conversion.' % self)
     def bin(self, **kwargs):
         self.kind = 'bin'
-        self.__class__ =  rawsbinfile
+        self.__class__ =  binfile
         content = kwargs.get('content', self.content())
         for key, value in kwargs.iteritems(): self.__dict__[key] = value
         self.content = content
@@ -363,7 +156,7 @@ class rawsfile(rawsbasefile, rawsqueryableobj, rawsqueryableadd):
             >>> print item_food == food_copy
             False
         '''
-        copy = rawsfile()
+        copy = rawfile()
         copy.path = self.path
         copy.rootpath = self.rootpath
         copy.name = self.name
