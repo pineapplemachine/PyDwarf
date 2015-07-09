@@ -42,6 +42,6 @@ class rawsqueryableadd(rawsqueryable):
         
     @staticmethod
     def argsset(*args, **kwargs):
-        token = forward.declare.rawstoken.autosingular(*args, **kwargs)
+        token = forward.declare.token.autosingular(*args, **kwargs)
         return token.value, token.args
     

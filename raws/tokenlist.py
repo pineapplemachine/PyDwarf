@@ -31,7 +31,7 @@ class tokenlist(list, rawsqueryable):
         )
         
     def copy(self):
-        return forward.declare.rawstoken.copytokens(self)
+        return forward.declare.token.copytokens(self)
     
     def __str__(self):
         if len(self) == 0:

@@ -11,42 +11,37 @@ examples = [
         [DISPLAY_COLOR:6:0:1]
         >>> print raws.token(value='DISPLAY_COLOR', args=['6', '0', '1'])
         [DISPLAY_COLOR:6:0:1]
-        >>> print raws.token(value='EXAMPLE', arg='TOKEN', suffix=' hiya')
+        >>> print repr(raws.token(value='EXAMPLE', arg='TOKEN', suffix=' hiya'))
         [EXAMPLE:TOKEN] hiya
     '''),
-    ('dir.getobj', 'queryable.get', 'token.__str__', 'token.__repr__', '''
-        >>> dwarf = df.getobj('CREATURE:DWARF')
-        >>> caste = dwarf.get('CASTE')
-        >>> print '"%s"' % str(caste) # show only the value and arguments
-        "[CASTE:FEMALE]"
-        >>> print '"%s"' % repr(caste) # show everything, including preceding and following text
-        "
-
-            Now we'll declare the specific castes.
-
-            [CASTE:FEMALE]"
+    ('token.__init__', 'token.__str__', 'token.__repr__', '''
+        >>> token = raws.token('prefix [HI] suffix')
+        >>> print str(token)
+        [HI]
+        >>> print repr(token)
+        prefix [HI] suffix
     '''),
     ('token.__init__', 'token.__eq__', 'token.__ne__', '''
-            >>> example_a = raws.token('EXAMPLE')
-            >>> example_b = raws.token('EXAMPLE')
-            >>> example_c = raws.token('ANOTHER_EXAMPLE')
-            >>> example_d = raws.token('ANOTHER_EXAMPLE')
-            >>> example_a == example_a
-            True
-            >>> example_a == example_b
-            True
-            >>> example_a == example_c
-            False
-            >>> example_c == example_d
-            True
-            >>> print example_a != example_b
-            False
-            >>> print example_a != example_c
-            True
-            >>> example_a is example_a
-            True
-            >>> example_a is example_b
-            False
+        >>> example_a = raws.token('EXAMPLE')
+        >>> example_b = raws.token('EXAMPLE')
+        >>> example_c = raws.token('ANOTHER_EXAMPLE')
+        >>> example_d = raws.token('ANOTHER_EXAMPLE')
+        >>> example_a == example_a
+        True
+        >>> example_a == example_b
+        True
+        >>> example_a == example_c
+        False
+        >>> example_c == example_d
+        True
+        >>> print example_a != example_b
+        False
+        >>> print example_a != example_c
+        True
+        >>> example_a is example_a
+        True
+        >>> example_a is example_b
+        False
     '''),
     ('dir.getfile', 'queryable.get', 'token.__gt__', 'token.__lt__', 'token.__ge__', 'token.__le__', '''
         >>> creature_standard = df.getfile('creature_standard')
@@ -69,7 +64,7 @@ examples = [
         >>> one = raws.token('NUMBER:ONE')
         >>> two = raws.token('NUMBER:TWO')
         >>> three = raws.token('NUMBER:THREE')
-        >>> tokens =  one + two + three
+        >>> tokens = one + two + three
         >>> print tokens
         [NUMBER:ONE][NUMBER:TWO][NUMBER:THREE]
         >>> zero = raws.token('NUMBER:ZERO')
@@ -88,7 +83,7 @@ examples = [
         >>> print token
         [EXAMPLE]
         >>> token += 'ONE'
-        print token
+        >>> print token
         [EXAMPLE:ONE]
         >>> token += 'TWO'
         >>> token += 'THREE'
@@ -105,18 +100,19 @@ examples = [
 
 
 
-exampledocs = {}
+examplesdict = {}
 for example in examples:
-    exampletext = example[-1]
-    for classname, membername in (item.split('.') for item in example[:-1])
-        if classname not in exampledocs: exampledocs[classname] = {}
-        if membername not in exampledocs[classname]: exampledocs[classname][membername] = []
-        exampledocs[classname][membername].append(exampletext)
-        
+    if len(example) > 1:
+        exampletext = example[-1]
+        for classname, membername in (item.split('.') for item in example[:-1]):
+            if classname not in examplesdict: examplesdict[classname] = {}
+            if membername not in examplesdict[classname]: examplesdict[classname][membername] = []
+            examplesdict[classname][membername].append(exampletext)
+
 def getexamples(classname, membername):
-    examples = descriptions.get(docclass.__name__, {}).get(method.__name__)
-    if examples:
-        return '\n\n'.join(examples)
+    exampleslist = examplesdict.get(classname, {}).get(membername)
+    if exampleslist:
+        return '\n\n'.join(exampleslist)
     else:
         return ''
     
@@ -126,33 +122,39 @@ def getclass(method):
     return None
     
 def docclass(cls):
-    members = inspect.getmembers(cls)
-    for member in members: docmember(method, cls)
+    members = inspect.getmembers(cls, predicate=inspect.ismethod)
+    for member in members: docmember(member[1], cls)
     return cls
     
 def docmember(member, cls=None):
     classname, membername = (cls if cls else getclass(member)).__name__, member.__name__
-    description = member.__doc__
+    description = member.__doc__.strip() if member.__doc__ else ''
     examples = getexamples(classname, membername)
-    member.__doc__ = '\n\n'.join(i for i in description, examples if i)
+    docstring = '\n\n'.join(i for i in (description, examples) if i)
+    try:
+        member.__doc__ = docstring
+    except:
+        member.__func__.__doc__ = docstring
     return member
     
 def test(df, raws):
     globs = {'df': df, 'raws': raws}
-    runner = doctest.DocTestRunner()
+    docparser = doctest.DocTestParser()
+    docrunner = doctest.DocTestRunner()
     results = []
+    testnum = 0
     for example in examples:
-        test = doctest.DocTestParser.get_doctest(
+        testnum += 1
+        test = docparser.get_doctest(
             string = example[-1],
             globs = globs,
-            name = 'doctest',
+            name = 'doctest %d' % testnum,
             filename = None,
-            lineno = None,
-            docstring = None
+            lineno = None
         )
-        runner.run(
+        docrunner.run(
             test = test,
-            out = lambda result: results.append(result)
+            out = lambda result: results.append(result),
             clear_globs = False
         )
     return results

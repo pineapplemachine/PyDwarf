@@ -65,9 +65,11 @@ class tokenargs(list):
         
     def __iadd__(self, item):
         self.add(item)
+        return self
         
     def __isub__(self, items):
         self.sub(items)
+        return self
         
     def __contains__(self, item):
         try:

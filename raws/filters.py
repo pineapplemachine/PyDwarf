@@ -120,7 +120,7 @@ class rawstokenfilter(rawsbasefilter):
         self.pretty = pretty
         
         if pretty:
-            token = forward.declare.rawstoken.parseone(pretty)
+            token = forward.declare.token.parseone(pretty)
             exact_value = token.value
             if token.nargs(): exact_args = token.args
             

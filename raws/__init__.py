@@ -41,7 +41,7 @@ from filters import rawsboolfilter as boolfilter
 from queryable import rawsqueryable as queryable
 from queryableobj import rawsqueryableobj as queryableobj
 from tokenlist import tokenlist
-from token import rawstoken as token
+from token import token
 from filefactory import filefactory
 from basefile import basefile
 from reffile import reffile
@@ -51,6 +51,7 @@ from dir import rawsdir as dir
 from copytree import copytree
 import objects
 import color
+import docs
 
 filter = tokenfilter
 parse = token.parse

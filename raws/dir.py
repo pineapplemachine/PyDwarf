@@ -11,7 +11,7 @@ from basefile import basefile
 from reffile import reffile
 from binfile import binfile
 from rawfile import rawfile
-from filefactory import factory as filefactory
+from filefactory import filefactory
 
 
 
@@ -59,7 +59,7 @@ class rawsdir(rawsqueryableobj):
         else:
             return str(item) in self.files or str(item) in self.filenames
         
-    def getfile(self, name, create=None, conflicts=False):
+    def getfile(self, name, create=None, conflicts=False, **kwargs):
         '''Gets the file with a given name. If no file by that name is found,
         None is returned instead. If creature is set to something other than
         None, the behavior when no file by some name exists is altered: A new
@@ -80,7 +80,7 @@ class rawsdir(rawsqueryableobj):
                     return file
                     
         if create is not None and file is None:
-            file = self.add(name)
+            file = self.add(name, **kwargs)
             file.add(create)
         return file
         

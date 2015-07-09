@@ -4,6 +4,7 @@ import inspect
 import forward
 
 from tokenargs import tokenargs
+from queryable import rawsqueryable
 from queryableadd import rawsqueryableadd
 from tokenlist import tokenlist
 from docs import doc
@@ -12,7 +13,7 @@ from docs import doc
 
 @doc
 @forward.declare
-class rawstoken(rawsqueryableadd):
+class token(rawsqueryableadd):
     
     '''Internal: Recurring piece of docstrings.'''
     auto_arg_docstring = '''
@@ -27,9 +28,7 @@ class rawstoken(rawsqueryableadd):
     
     def __init__(self, auto=None, pretty=None, copy=None, value=None, args=None, arg=None, prefix=None, suffix=None, prev=None, next=None, file=None):
         '''Constructs a token object.
-        
-        %s (However, a tokens argument is illegal here and attempting to create
-        a rawstoken using one will cause an exception.)
+
         pretty: Parses the token's text from a string. A string without opening
             and closing braces is considered to have them implicitly.
         token: Copies this token's attributes from another.
@@ -41,19 +40,7 @@ class rawstoken(rawsqueryableadd):
         prev: The previous token.
         next: The following token.
         file: Indicates the raws.file object to which this token belongs, if any.
-        
-        Example usage:
-            >>> token_a = raws.token('DISPLAY_COLOR:6:0:1')
-            >>> print token_a
-            [DISPLAY_COLOR:6:0:1]
-            >>> token_b = token = raws.token(value='DISPLAY_COLOR', args=['6', '0', '1'])
-            >>> print token_b
-            [DISPLAY_COLOR:6:0:1]
-            >>> print token_a == token_b
-            True
-            >>> print token_a is token_b
-            False
-        ''' % rawstoken.auto_arg_docstring
+        '''
         
         if auto is not None:
             if isinstance(auto, basestring):
@@ -95,11 +82,11 @@ class rawstoken(rawsqueryableadd):
         return hash('%s:%s' % (self.value, self.argsstr()) if self.nargs() else self.value)
     
     def __str__(self):
-        '''Get a string representation.
+        '''Get a concise string representation.
         '''
         return '[%s%s]' %(self.value, (':%s' % self.argsstr()) if self.args and len(self.args) else '')
     def __repr__(self):
-        '''Get a string representation.
+        '''Get a full string representation.
         '''
         return '%s%s%s' % (self.prefix if self.prefix else '', str(self), self.suffix if self.suffix else '')
         
@@ -178,8 +165,10 @@ class rawstoken(rawsqueryableadd):
         
     def __iadd__(self, value):
         self.args.add(value)
+        return self
     def __isub__(self, value):
         self.args.sub(value)
+        return self
             
     def __nonzero__(self):
         return True
@@ -847,21 +836,31 @@ class rawstoken(rawsqueryableadd):
         if fail_on_multiple and data.count('[') > 1: raise ValueError('Failed to parse token because there was more than one open bracket in the data string.')
         open = data.find('[')
         close = data.find(']')
+        prefix = None
+        suffix = None
         tokenparts = None
         if open == -1 and close == -1 and implicit_braces:
             pass
         elif open >= 0 and close >= 0:
-            data = data[data.find('[') + 1 : data.find(']')]
+            prefix = data[:open]
+            suffix = data[close+1:]
+            data = data[open+1:close]
         else:
             raise ValueError('Failed to parse token because data string contained mismatched brackets.')
         tokenparts = data.split(':')
         if apply:
             apply.setvalue(tokenparts[0])
             apply.setargs(tokenparts[1:])
+            if prefix is not None: apply.setprefix(prefix)
+            if suffix is not None: apply.setsuffix(suffix)
             return apply
         else:
             return rawstoken(
                 value = tokenparts[0],
                 args = tokenparts[1:],
+                prefix = prefix,
+                suffix = suffix,
                 **kwargs
             )
+
+rawstoken = token

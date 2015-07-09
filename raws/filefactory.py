@@ -23,12 +23,12 @@ rawnames = [
 
 
 
-def factory(path, **kwargs): # TODO: move this elsewhere and make it more easily configurable
+def filefactory(path, log=None, **kwargs): # TODO: move this elsewhere and make it more easily configurable
     basename = os.path.basename(path)
     try:
         if basename.endswith('.txt'):
             with open(path, 'rb') as txt:
-                if txt.readline().strip() == os.path.splitext(os.path.basename(path))[0]:
+                if txt.readline().strip() == os.path.splitext(basename)[0]:
                     txt.seek(0)
                     return rawfile(path=path, file=txt, **kwargs)
         elif basename in binnames:
@@ -37,8 +37,8 @@ def factory(path, **kwargs): # TODO: move this elsewhere and make it more easily
             return rawfile(path=path, file=txt, **kwargs)
     
     except Exception as e:
-        pydwarf.log.warning('Failed to read file from path %s. Defauling to reading as a reffile, which should (hopefully) work despite.' % path)
-        pydwarf.log.debug(traceback.format_exc())
+        if log:
+            log.warning('Failed to read file from path %s. Defauling to reading as a reffile, which should (hopefully) work despite.' % path)
+            log.debug(traceback.format_exc())
     
-    finally:
-        return reffile(path=path, **kwargs)
+    return reffile(path=path, **kwargs)
