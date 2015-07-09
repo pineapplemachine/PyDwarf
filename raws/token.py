@@ -6,9 +6,11 @@ import forward
 from tokenargs import tokenargs
 from queryableadd import rawsqueryableadd
 from tokenlist import tokenlist
+from docs import doc
 
 
 
+@doc
 @forward.declare
 class rawstoken(rawsqueryableadd):
     
@@ -94,137 +96,41 @@ class rawstoken(rawsqueryableadd):
     
     def __str__(self):
         '''Get a string representation.
-        
-        Example usage:
-            >>> dwarf = df.getobj('CREATURE:DWARF')
-            >>> caste = dwarf.get('CASTE')
-            >>> print '"%s"' % str(caste) # show only the value and arguments
-            "[CASTE:FEMALE]"
-            >>> print '"%s"' % repr(caste) # show everything, including preceding and following text
-            "
-
-                Now we'll declare the specific castes.
-
-                [CASTE:FEMALE]"
         '''
         return '[%s%s]' %(self.value, (':%s' % self.argsstr()) if self.args and len(self.args) else '')
     def __repr__(self):
         '''Get a string representation.
-        
-        Example usage:
-            >>> dwarf = df.getobj('CREATURE:DWARF')
-            >>> caste = dwarf.get('CASTE')
-            >>> print '"%s"' % str(caste) # show only the value and arguments
-            "[CASTE:FEMALE]"
-            >>> print '"%s"' % repr(caste) # show everything, including preceding and following text
-            "
-
-                Now we'll declare the specific castes.
-
-                [CASTE:FEMALE]"
         '''
         return '%s%s%s' % (self.prefix if self.prefix else '', str(self), self.suffix if self.suffix else '')
         
     def __eq__(self, other):
         '''Returns True if this and the other token have the same value and arguments.
-        
-        Example usage:
-            >>> example_a = raws.token('EXAMPLE')
-            >>> example_b = raws.token('EXAMPLE')
-            >>> example_c = raws.token('ANOTHER_EXAMPLE')
-            >>> example_d = raws.token('ANOTHER_EXAMPLE')
-            >>> example_a == example_a
-            True
-            >>> example_a == example_b
-            True
-            >>> example_a == example_c
-            False
-            >>> example_c == example_d
-            True
         '''
         return self.equals(other)
     def __ne__(self, other):
         '''Returns True if this and the other token have a different value and arguments.
-        
-        Example usage:
-            >>> example_a = raws.token('EXAMPLE')
-            >>> example_b = raws.token('EXAMPLE')
-            >>> example_c = raws.token('ANOTHER_EXAMPLE')
-            >>> print example_a == example_b
-            True
-            >>> print example_a == example_c
-            False
-            >>> print example_a != example_b
-            False
-            >>> print example_a != example_c
-            True
         '''
         return not self.equals(other)
     
     def __lt__(self, other):
         '''Returns True if this token appears before the other token in a file.
-        
-        Example usage:
-            >>> creature_standard = df.getfile('creature_standard')
-            >>> elf = creature_standard.get('CREATURE:ELF')
-            >>> goblin = creature_standard.get('CREATURE:GOBLIN') # goblins are defined immediately after elves in creature_standard
-            >>> print elf > goblin
-            False
-            >>> print elf < goblin
-            True
         '''
         return other.follows(self)
     def __gt__(self, other):
         '''Returns True if this token appears after the other token in a file.
-        
-        Example usage:
-            >>> creature_standard = df.getfile('creature_standard')
-            >>> elf = creature_standard.get('CREATURE:ELF')
-            >>> goblin = creature_standard.get('CREATURE:GOBLIN') # goblins are defined immediately after elves in creature_standard
-            >>> print elf > goblin
-            False
-            >>> print elf < goblin
-            True
         '''
         return self.follows(other)
     def __le__(self, other):
         '''Returns True if this token appears before the other token in a file, or if this and the other refer to the same token.
-        
-        Example usage:
-            >>> creature_standard = df.getfile('creature_standard')
-            >>> elf = creature_standard.get('CREATURE:ELF')
-            >>> print elf < elf
-            False
-            >>> print elf <= elf
-            True
         '''
         return self is other or self.__lt__(other)
     def __ge__(self, other):
         '''Returns True if this token appears after the other token in a file, or if this and the other refer to the same token.
-        
-        Example usage:
-            >>> creature_standard = df.getfile('creature_standard')
-            >>> elf = creature_standard.get('CREATURE:ELF')
-            >>> print elf > elf
-            False
-            >>> print elf >= elf
-            True
         '''
         return self is other or self.__gt__(other)
         
     def __add__(self, other):
         '''Concatenates and returns a raws.tokenlist object.
-        
-        Example usage:
-            >>> one = raws.token('NUMBER:ONE')
-            >>> two = raws.token('NUMBER:TWO')
-            >>> three = raws.token('NUMBER:THREE')
-            >>> tokens =  one + two + three
-            >>> print tokens
-            [NUMBER:ONE][NUMBER:TWO][NUMBER:THREE]
-            >>> zero = raws.token('NUMBER:ZERO')
-            >>> print zero + tokens
-            [NUMBER:ZERO][NUMBER:ONE][NUMBER:TWO][NUMBER:THREE]
         '''
         if isinstance(other, rawstoken):
             tokens = tokenlist()
@@ -238,6 +144,7 @@ class rawstoken(rawsqueryableadd):
             return tokens
         else:
             raise ValueError('Failed to perform concatenation because the type of the other operand was unrecognized.')
+        
     def __radd__(self, other):
         '''Internal: Same as __add__ except reversed.'''
         if isinstance(other, rawstoken):
@@ -255,13 +162,6 @@ class rawstoken(rawsqueryableadd):
             
     def __mul__(self, value):
         '''Concatenates copies of this token the number of times specified.
-        
-        Example usage:
-            >>> token = raws.token('EXAMPLE')
-            >>> print token * 2
-            [EXAMPLE][EXAMPLE]
-            >>> print token * 6
-            [EXAMPLE][EXAMPLE][EXAMPLE][EXAMPLE][EXAMPLE][EXAMPLE]
         '''
         tokens = tokenlist()
         for i in xrange(0, int(value)):
@@ -277,7 +177,9 @@ class rawstoken(rawsqueryableadd):
         return self.containsarg(value)
         
     def __iadd__(self, value):
-        self.addarg(value)
+        self.args.add(value)
+    def __isub__(self, value):
+        self.args.sub(value)
             
     def __nonzero__(self):
         return True
@@ -383,10 +285,12 @@ class rawstoken(rawsqueryableadd):
         self.args[index] = value
     
     def setargs(self, args=None):
-        if self.args is None:
+        if args is None:
+            self.clearargs()
+        elif self.args is None:
             self.args = tokenargs(args)
         else:
-            self.args[:] = args
+            self.args.reset(args)
             
     def clearargs(self):
         self.args.clear()
@@ -404,7 +308,7 @@ class rawstoken(rawsqueryableadd):
             >>> print token
             [EXAMPLE:hi!]
         '''
-        self.args.append(value)
+        self.args.add(value)
         
     def addargs(self, values):
         self.args.extend(values)
@@ -431,6 +335,7 @@ class rawstoken(rawsqueryableadd):
             EXAMPLE
         '''
         return self.value
+        
     def setvalue(self, value):
         '''Set the token's value.
         
@@ -459,6 +364,7 @@ class rawstoken(rawsqueryableadd):
              so is this
         '''
         return self.prefix
+    
     def setprefix(self, value):
         '''Set the comment text preceding a token.
         
@@ -489,6 +395,7 @@ class rawstoken(rawsqueryableadd):
             This is a comment
         '''
         return self.suffix
+    
     def setsuffix(self, value):
         '''Set the comment text following a token.
         
