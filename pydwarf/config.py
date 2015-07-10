@@ -7,7 +7,6 @@ from datetime import datetime
 
 from log import log
 from version import detectversion
-from urist import urist, session
 from helpers import findfile
 
 
@@ -22,6 +21,7 @@ auto_paths = [
     'raw/objects', 'raw/graphics',
     'data/art', 'data/init', 'data/speech',
     'dfhack.init', 'dfhack.init-example', 'dfhack.history',
+    'raw/onLoad.init', 'raw/onWorldLoad.init',
     'hack/lua', 'hack/plugins', 'hack/raw', 'hack/ruby', 'hack/scripts',
     'stonesense',
 ]
@@ -31,15 +31,58 @@ auto_paths = [
 class config:
     def __init__(self, version=None, paths=None, hackversion=None, input=None, output=None, backup=None, scripts=[], packages=[], verbose=False, log='logs/%s.txt' % timestamp):
         self.version = version          # Dwarf Fortress version, for handling script compatibility metadata
-        self.hackversion = hackversion      # DFHack version
+        self.hackversion = hackversion  # DFHack version
         self.input = input              # Raws are loaded from this input directory
         self.output = output            # Raws are written to this output directory
         self.backup = backup            # Raws are backed up to this directory before any changes are made
-        self.paths = paths  # Files are only handled in these paths, relative to input
+        self.paths = paths              # Files are only handled in these paths, relative to input
         self.scripts = scripts          # These scripts are run in the order that they appear
         self.packages = packages        # These packages are imported (probably because they contain PyDwarf scripts)
         self.verbose = verbose          # Log DEBUG messages to stdout if True, otherwise only INFO and above
         self.log = log                  # Log file goes here
+        
+    @staticmethod
+    def load(root=None, json='config.json', override='config_override', args=None):
+        conf = config()
+        
+        # Load json config
+        if json:
+            if root: json = os.path.join(root, json)
+            if os.path.isfile(json): conf.json(json)
+        
+        # Handle --config argument
+        if args and args.get('config'):
+            if args['config'].endswith('.json'):
+                conf.json(args['config'])
+            else:
+                override = args['config']
+        
+        # Handle config override
+        if override:
+            #if root: override = os.path.join(root, override)
+            overrideexception = None
+            try:
+                package = importlib.import_module(override)
+                conf.apply(package.export)
+            except Exception as e:
+                overrideexception = e
+                
+        # Apply other command line arguments
+        if args: conf.apply(args)
+        
+        # Setup logger
+        conf.setuplogger()
+        
+        # If there was an exception when reading the overridename package, report it now
+        # Don't report it earlier because the logger wasn't set up yet
+        if overrideexception:
+            log.error('Failed to override configuration using %s.\n%s' % (overridename, overrideexception))
+            
+        # Handle things like automatic version detection, package importing
+        conf.setup()
+        
+        # All done!
+        return conf
         
     def __str__(self):
         return str(self.__dict__)
@@ -128,7 +171,13 @@ class config:
             log.addHandler(logfilehandler)
         
     def setuppackages(self):
-        self.importedpackages = [importlib.import_module(package) for package in self.packages]
+        self.importedpackages = []
+        if isinstance(self.packages, basestring): self.packages = (self.packages,)
+        for package in self.packages:
+            try:
+                self.importedpackages.append(importlib.import_module(package))
+            except:
+                log.exception('Failed to import package %s.' % package)
         
     def setuppaths(self):
         if self.paths == 'auto' or self.paths == ['auto'] or self.paths == ('auto',):

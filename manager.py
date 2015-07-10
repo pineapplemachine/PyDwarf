@@ -18,13 +18,9 @@ import raws
 
 
 
-jsonconfigpath = 'config.json'
-
-
-
 # Actually run the program
 def __main__(args=None):
-    conf = getconf(args)
+    conf = pydwarf.config.load(args=args.__dict__)
     pydwarf.log.debug('Proceeding with configuration: %s.' % conf)
     
     # Report versions
@@ -49,76 +45,13 @@ def __main__(args=None):
             with open(args.writedoc, 'wb') as writedoc: writedoc.write(specialtext)
         exit(0)
     
-    # Verify that input directory exists
-    if not os.path.exists(conf.input):
-        pydwarf.log.error('Specified raws directory %s does not exist.' % conf.input)
-        exit(1)
-    
-    # Create a new session
+    # Create a new session and run it
     pydwarf.log.info('Configuring session using raws input directory %s.' % conf.input)
     session = pydwarf.session(raws, conf)
-    
-    # Make backup
-    if conf.backup is not None:
-        pydwarf.log.info('Backing up raws to directory %s.' % conf.backup)
-        session.backup()
-    else:
-        pydwarf.log.warning('Proceeding without backing up raws.')
-    
-    # Run each script
-    pydwarf.log.info('Running scripts.')
-    session.handleall()
-    
-    # Write the output
-    outputdir = conf.output if conf.output else conf.input
-    pydwarf.log.info('Writing new raws to directory %s.' % outputdir)
-    session.write(outputdir)
+    session.run()
     
     # All done!
     pydwarf.log.info('All done!')
-
-
-
-def getconf(args=None):
-    # Load initial config from json file
-    conf = pydwarf.config()
-    if os.path.isfile(jsonconfigpath): conf.json(jsonconfigpath)
-    
-    # Default name of configuration override package
-    overridename = 'config_override'
-    
-    # Override settings from command line arguments, first check for --config argument
-    if args.config:
-        if args.config.endswith('.json'):
-            conf.json(args.config)
-        else:
-            overridename = args.config
-    
-    # Apply settings in override package
-    overrideexception = None
-    if overridename and (os.path.isfile(overridename + '.py') or os.path.isfile(os.path.join(overridename, '__init__.py'))):
-        try:
-            package = importlib.import_module(overridename)
-            conf.apply(package.export)
-        except Exception, e:
-            overrideexception = e
-            
-    # Apply other command line arguments   
-    conf.apply(args.__dict__)
-    
-    # Setup logger
-    conf.setuplogger()
-    
-    # If there was an exception when reading the overridename package, report it now
-    # Don't report it earlier because the logger wasn't set up yet
-    if overrideexception:
-        pydwarf.log.error('Failed to apply configuration from %s package.\n%s' % (overridename, overrideexception))
-        
-    # Handle things like automatic version detection, package importing
-    conf.setup()
-    
-    # All done!
-    return conf
 
 
 

@@ -5,14 +5,14 @@ import textwrap
 import version as versionutils
 from log import log
 import uristdoc
+from config import config
 
 
 
 class session:
     def __init__(self, raws=None, conf=None):
-        self.dfraws = None
+        self.df = None
         self.dfversion = None
-        self.hackversion = None
         self.conf = None
         self.raws = None
         self.successes = []
@@ -23,9 +23,30 @@ class session:
     def configure(self, raws, conf):
         self.raws = raws
         self.conf = conf
-        self.dfraws = raws.dir(root=conf.input, dest=conf.output, paths=conf.paths, version=conf.version, log=log)
         self.dfversion = conf.version
-        self.hackversion = conf.hackversion
+        if conf.input and os.path.isdir(conf.input):
+            self.df = raws.dir(root=conf.input, dest=conf.output, paths=conf.paths, version=conf.version, log=log)
+        else:
+            log.error('Specified input directory %s does not exist.' % conf.input)
+            
+    def load(self, raws, *args, **kwargs):
+        self.configure(raws, config.load(*args, **kwargs))
+            
+    def run(self):
+        if self.conf is None: raise ValueError('Failed to run session because it doesn\'t have a configuration object.')
+        
+        # Backup
+        if self.conf.backup:
+            self.backup()
+        else:
+            log.warning('Proceeding without first backing up raws.')
+            
+        # Run scripts
+        self.handleall()
+        
+        # Write output
+        outputdir = self.conf.output if self.conf.output else self.conf.input
+        self.write(outputdir)
     
     def successful(self, info):
         return self.inlist(info, self.successes)
@@ -52,7 +73,7 @@ class session:
         # Actually execute the script
         log.info('Running script %s%s.' % (name, ('with args %s' % args) if args else ''))
         try:
-            response = func(self.dfraws, **args) if args else func(self.dfraws) # Call the function
+            response = func(self.df, **args) if args else func(self.df) # Call the function
             if response is not None:
                 # Handle success/failure response
                 log.info(str(response))
@@ -101,21 +122,28 @@ class session:
             log.error('No scripts to run.')
             
     def write(self, dest=None, *args, **kwargs):
-        self.dfraws.clean(dest=dest)
-        self.dfraws.write(dest=dest, *args, **kwargs)
+        log.info('Writing output to destination %s.' % dest)
+        self.df.clean(dest=dest)
+        self.df.write(dest=dest, *args, **kwargs)
         
-    def backup(self, dest=None):
+    def backup(self, dest=None, skipfails=False):
         if dest is None: dest = self.conf.backup
-        if dest:
-            for path in self.conf.paths:
-                srcpath = os.path.join(self.conf.input, path)
-                destpath = os.path.join(dest, path)
-                if not os.path.isdir(os.path.dirname(destpath)): os.makedirs(os.path.dirname(destpath))
-                if os.path.isfile(srcpath):
-                    shutil.copy2(srcpath, destpath)
-                else:
-                    self.raws.copytree(srcpath, destpath)
+        if not dest: raise ValueError('Failed to backup files because no destination was provided.')
         
+        log.info('Backing up raws to desination %s.' % dest)
+        for path in self.conf.paths:
+            srcpath = os.path.join(self.conf.input, path)
+            destpath = os.path.join(dest, path)
+            
+            if not os.path.isdir(os.path.dirname(destpath)): os.makedirs(os.path.dirname(destpath))
+            
+            if os.path.isfile(srcpath):
+                shutil.copy2(srcpath, destpath)
+            elif os.path.isdir(srcpath):
+                self.raws.copytree(srcpath, destpath)
+            elif skipfails:
+                raise ValueError('Failed to backup path %s because it refers to neither a file nor a directory.' % srcpath)
+    
         
 
 # Functions in scripts must be decorated with this in order to be made available to PyDwarf
