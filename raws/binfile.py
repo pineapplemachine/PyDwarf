@@ -14,6 +14,7 @@ class binfile(basefile):
         self.dir = dir
         self.content = content
         if self.content is None and self.path is not None and os.path.isfile(self.path): self.read(self.path)
+        self.kind = 'bin'
         
     def read(self, path=None):
         with open(path if path else self.path, 'rb') as binfile: self.content = binfile.read()

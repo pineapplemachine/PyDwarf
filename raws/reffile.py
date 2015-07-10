@@ -13,6 +13,7 @@ class reffile(basefile):
     def __init__(self, path=None, dir=None, root=None, **kwargs):
         self.dir = dir
         self.setpath(path, root, **kwargs)
+        self.kind = 'ref'
     
     def copy(self):
         copy = rawsotherfile()

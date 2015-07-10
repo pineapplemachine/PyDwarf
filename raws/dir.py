@@ -221,7 +221,7 @@ class rawsdir(rawsqueryableobj):
         '''Deprecated: As of v1.0.2. Use the remove method instead.'''
         return self.remove(file if file is not None else name)
     
-    def read(self, root=None, paths=None):
+    def read(self, root=None, paths=None, skipfails=False):
         '''Reads raws from all text files in the specified directory.'''
         
         if root is None:
@@ -261,7 +261,7 @@ class rawsdir(rawsqueryableobj):
                 addeddirs[os.path.abspath(os.path.dirname(path))] = True
                 self.add(file)
                 
-            else:
+            elif skipfails:
                 raise ValueError('Failed to read dir because a bad path %s was provided.' % path)
         
     def write(self, dest=None):

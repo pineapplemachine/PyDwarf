@@ -7,11 +7,9 @@ from tokenargs import tokenargs
 from queryable import rawsqueryable
 from queryableadd import rawsqueryableadd
 from tokenlist import tokenlist
-from docs import doc
 
 
 
-@doc
 @forward.declare
 class token(rawsqueryableadd):
     
@@ -188,14 +186,14 @@ class token(rawsqueryableadd):
     @staticmethod
     def autoplural(*args, **kwargs):
         '''Internal: Convenience function for handling method arguments when a list of tokens is expected.'''
-        token, tokens = rawstoken.autovariable(*args, **kwargs)
+        token, tokens = rawstoken.autovariable(*args, implicit=kwargs.get('implicit', False), **kwargs)
         if token is not None:
             tokens = tokenlist()
             tokens.append(token)
         return tokens
         
     @staticmethod
-    def autovariable(auto=None, pretty=None, token=None, tokens=None, **kwargs):
+    def autovariable(auto=None, pretty=None, token=None, tokens=None, implicit=True, **kwargs):
         '''Internal: Convenience function when either a single token or a list of tokens is acceptable as a method's argument.'''
         if auto is not None:
             if isinstance(auto, basestring):
@@ -207,7 +205,7 @@ class token(rawsqueryableadd):
             else:
                 tokens = auto
         if pretty is not None:
-            tokens = rawstoken.parse(pretty)
+            tokens = rawstoken.parse(pretty, implicit_braces=implicit)
         if kwargs:
             token = rawstoken.autosingular(**kwargs)
         if token is not None and tokens is not None:
@@ -273,7 +271,7 @@ class token(rawsqueryableadd):
             [JUST KIDDING:a:b:c]
         '''
         valuestr = str(value)
-        if any([char in valuestr for char in rawstoken.illegal_internal_chars]): raise ValueError('Failed to set token value to %s because the string contains illegal characters.' % valuestr)
+        if any([char in valuestr for char in rawstoken.illegal_internal_chars]): raise ValueError('Failed to set token value to "%s" because the string contains illegal characters.' % valuestr)
         self.value = value
         
     def getprefix(self):
@@ -298,7 +296,7 @@ class token(rawsqueryableadd):
             hello [EXAMPLE]
         '''
         valuestr = str(value)
-        if any([char in valuestr for char in rawstoken.illegal_external_chars]): raise ValueError('Failed to set token prefix to %s because the string contains illegal characters.' % valuestr)
+        if any([char in valuestr for char in rawstoken.illegal_external_chars]): raise ValueError('Failed to set token prefix to "%s" because the string contains illegal characters.' % valuestr)
         self.prefix = value
         
     def getsuffix(self):
@@ -329,7 +327,7 @@ class token(rawsqueryableadd):
             [EXAMPLE] world
         '''
         valuestr = str(value)
-        if any([char in valuestr for char in rawstoken.illegal_external_chars]): raise ValueError('Failed to set token suffix to %s because the string contains illegal characters.' % valuestr)
+        if any([char in valuestr for char in rawstoken.illegal_external_chars]): raise ValueError('Failed to set token suffix to "%s" because the string contains illegal characters.' % valuestr)
         self.suffix = value
         
     def arg(self, index=None):
@@ -623,7 +621,7 @@ class token(rawsqueryableadd):
     def addall(self, tokens, reverse=False, knit=True):
         '''Internal: Utility method called by add when adding multiple tokens'''
         
-        first, last = rawstoken.firstandlast(tokens, setfile=self.file, knit=True)
+        first, last = rawstoken.firstandlast(tokens, setfile=self.file)
         if token.prev is not None or token.next is not None:
             if knit:
                 if first.prev is not None: first.prev.next = last.next
@@ -645,23 +643,6 @@ class token(rawsqueryableadd):
     
     def remove(self, count=0, reverse=False):
         '''Removes this token and the next count tokens in the direction indicated by reverse.
-        
-        Example usage:
-            >>> forest = df.getobj('ENTITY:FOREST')
-            >>> print forest.list(range=5, include_self=True)
-            [ENTITY:FOREST]
-                [CREATURE:ELF]
-                [TRANSLATION:ELF]
-                [WEAPON:ITEM_WEAPON_SWORD_SHORT]
-                [WEAPON:ITEM_WEAPON_SPEAR]
-            >>> sword = forest.get('WEAPON:ITEM_WEAPON_SWORD_SHORT')
-            >>> sword.remove()
-            >>> print forest.list(range=5, include_self=True)
-            [ENTITY:FOREST]
-                [CREATURE:ELF]
-                [TRANSLATION:ELF]
-                [WEAPON:ITEM_WEAPON_SPEAR]
-                [WEAPON:ITEM_WEAPON_BOW]
         '''
         left = self.prev
         right = self.next
@@ -694,18 +675,6 @@ class token(rawsqueryableadd):
             If False, an exception is raised.
         **kwargs: Extra named arguments are passed to the constructor each time a new
             rawstoken is distinguished and created.
-            
-        Example usage:
-           >>> token = raws.token.parse('HELLO:THERE')
-            >>> print token
-            [HELLO:THERE]
-            >>> tokens = raws.token.parse('[WHAT] a [BEAUTIFUL][DAY]')
-            >>> print tokens
-            [WHAT] a [BEAUTIFUL][DAY]
-            >>> print tokens[0]
-            [WHAT]
-            >>> print tokens[1]
-            [BEAUTIFUL] 
         '''
 
         tokens = tokenlist()    # maintain a sequential list of tokens
@@ -752,18 +721,12 @@ class token(rawsqueryableadd):
     @staticmethod
     def parseone(data, implicit_braces=True, fail_on_multiple=True, apply=None, **kwargs):
         '''Parses a string containing exactly one token. **kwargs are passed on to the parse static method.
-        
-        Example usage:
-            >>> raws.token.parseone('[EXAMPLE]')
-            [EXAMPLE]
-            >>> try:
-            ...     raws.token.parseone('[MORE][THAN][ONE][TOKEN]')
-            ... except:
-            ...     print 'There was more than one token!'
-            ...
-            There was more than one token!
         '''
-        if fail_on_multiple and data.count('[') > 1: raise ValueError('Failed to parse token because there was more than one open bracket in the data string.')
+        if data.count('[') > 1:
+            if fail_on_multiple:
+                raise ValueError('Failed to parse token because there was more than one open bracket in the data string.')
+            else:
+                data = data[:data.find('[', data.find('[')+1)]
         open = data.find('[')
         close = data.find(']')
         prefix = None

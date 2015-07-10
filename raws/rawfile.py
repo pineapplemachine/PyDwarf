@@ -99,62 +99,12 @@ class rawfile(basefile, rawsqueryableobj, rawsqueryableadd):
     def getpath(self):
         return self.path
         
-    def getname(self):
-        '''Get the file name.
-        
-        Example usage:
-            >>> dwarf = df.getobj('CREATURE:DWARF')
-            >>> creature_standard = dwarf.file
-            >>> print creature_standard.getname()
-            creature_standard
-            >>> creature_standard.setheader('example_header')
-            >>> print creature_standard.getname()
-            example_header
-        '''
-        return self.name
-    def setname(self, name):
-        '''Set the file name.
-        
-        Example usage:
-            >>> dwarf = df.getobj('CREATURE:DWARF')
-            >>> creature_standard = dwarf.file
-            >>> print creature_standard.getname()
-            creature_standard
-            >>> creature_standard.setheader('example_header')
-            >>> print creature_standard.getname()
-            example_header
-        '''
-        self.name = name
-            
     def settokens(self, tokens, setfile=True):
         '''Internal: Utility method for setting the root and tail tokens given an iterable.'''
         self.roottoken, self.tailtoken = rawstoken.firstandlast(tokens, self if setfile else None)
     
     def copy(self):
         '''Makes a copy of a file and its contents.
-        
-        Example usage:
-            >>> item_food = df.getfile('item_food')
-            >>> food_copy = item_food.copy()
-            >>> print item_food is food_copy
-            False
-            >>> print item_food == food_copy
-            True
-            >>> food_copy.add('EXAMPLE:TOKEN')
-            [EXAMPLE:TOKEN]
-            >>> print food_copy.list()
-            [OBJECT:ITEM]
-            [ITEM_FOOD:ITEM_FOOD_BISCUITS]
-            [NAME:biscuits]
-            [LEVEL:2]
-            [ITEM_FOOD:ITEM_FOOD_STEW]
-            [NAME:stew]
-            [LEVEL:3]
-            [ITEM_FOOD:ITEM_FOOD_ROAST]
-            [NAME:roast]
-            [LEVEL:4][EXAMPLE:TOKEN]
-            >>> print item_food == food_copy
-            False
         '''
         copy = rawfile()
         copy.path = self.path
@@ -171,21 +121,11 @@ class rawfile(basefile, rawsqueryableobj, rawsqueryableadd):
         
     def root(self):
         '''Gets the first token in the file.
-        
-        Example usage:
-            >>> creature_standard = df.getfile('creature_standard')
-            >>> print creature_standard.root()
-            [OBJECT:CREATURE]
         '''
         while self.roottoken is not None and self.roottoken.prev is not None: self.roottoken = self.roottoken.prev
         return self.roottoken
     def tail(self):
         '''Gets the last token in the file.
-        
-        Example usage:
-            >>> creature_standard = df.getfile('creature_standard')
-            >>> print creature_standard.tail()
-            [MULTIPLY_VALUE:15]
         '''
         while self.tailtoken is not None and self.tailtoken.next is not None: self.tailtoken = self.tailtoken.next
         return self.tailtoken
@@ -251,34 +191,6 @@ class rawfile(basefile, rawsqueryableobj, rawsqueryableadd):
     
     def add(self, *args, **kwargs):
         '''Adds tokens to the end of a file.
-        
-        Example usage:
-            >>> item_food = df.getfile('item_food')
-            >>> print item_food.list()
-            [OBJECT:ITEM]
-            [ITEM_FOOD:ITEM_FOOD_BISCUITS]
-            [NAME:biscuits]
-            [LEVEL:2]
-            [ITEM_FOOD:ITEM_FOOD_STEW]
-            [NAME:stew]
-            [LEVEL:3]
-            [ITEM_FOOD:ITEM_FOOD_ROAST]
-            [NAME:roast]
-            [LEVEL:4]
-            >>> tokens = item_food.add('hi! [THIS][IS][AN][EXAMPLE]')
-            >>> print tokens
-            hi! [THIS][IS][AN][EXAMPLE]
-            >>> print item_food.list()
-            [OBJECT:ITEM]
-            [ITEM_FOOD:ITEM_FOOD_BISCUITS]
-            [NAME:biscuits]
-            [LEVEL:2]
-            [ITEM_FOOD:ITEM_FOOD_STEW]
-            [NAME:stew]
-            [LEVEL:3]
-            [ITEM_FOOD:ITEM_FOOD_ROAST]
-            [NAME:roast]
-            [LEVEL:4]hi! [THIS][IS][AN][EXAMPLE]
         '''
         tail = self.tail()
         if tail:

@@ -7,6 +7,8 @@ import forward
 
 @forward.declare
 class basefile(object):
+    '''Base class for file objects.'''
+    
     def __init__(self):
         self.dir = None
         self.path = None
@@ -40,6 +42,9 @@ class basefile(object):
     def __le__(self, other):
         return str(self) <= str(other)
         
+    def getpath(self):
+        return self.path
+        
     def setpath(self, path, root=None, loc=None, name=None, ext=None):
         if self.dir and self.dir.root and (not root): root = self.dir.root
         path = os.path.abspath(path) if path else None
@@ -60,6 +65,27 @@ class basefile(object):
         if name: self.name = name
         if ext: self.ext = ext
         self.kind = self.ext[1:] if self.ext else 'dir'
+        
+    def getname(self):
+        '''Get the file name.'''
+        return self.name
+        
+    def setname(self, name):
+        '''Set the file name.'''
+        self.name = name
+        
+    def getext(self):
+        return self.ext
+        
+    def setext(self, ext):
+        if '.' in ext: raise ValueError('Failed to set file extension to "%s" because the string contains a period.')
+        self.ext = ext
+        
+    def getloc(self):
+        return self.loc
+    
+    def setloc(self, loc):
+        self.loc = loc
         
     def reloc(self, loc):
         if loc and self.loc:
