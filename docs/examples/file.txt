@@ -1,0 +1,79 @@
+basefile.getname basefile.setname
+queryableobj.getobj
+>>> dwarf = df.getobj('CREATURE:DWARF')
+>>> creature_standard = dwarf.file
+>>> print creature_standard.getname()
+creature_standard
+>>> creature_standard.setname('example_header')
+>>> print creature_standard.getname()
+example_header
+>>> creature_standard.setname('creature_standard')
+>>> print creature_standard.getname()
+creature_standard
+
+---
+
+rawfile.copy rawfile.add rawfile.__eq__
+dir.__getitem__ queryable.list
+>>> item_food = df['item_food']
+>>> food_copy = item_food.copy()
+>>> print item_food is food_copy
+False
+>>> print item_food == food_copy
+True
+>>> food_copy.add('EXAMPLE:TOKEN')
+[EXAMPLE:TOKEN]
+>>> print food_copy.list()
+[OBJECT:ITEM]
+[ITEM_FOOD:ITEM_FOOD_BISCUITS]
+[NAME:biscuits]
+[LEVEL:2]
+[ITEM_FOOD:ITEM_FOOD_STEW]
+[NAME:stew]
+[LEVEL:3]
+[ITEM_FOOD:ITEM_FOOD_ROAST]
+[NAME:roast]
+[LEVEL:4][EXAMPLE:TOKEN]
+>>> print item_food == food_copy
+False
+
+---
+
+rawfile.root rawfile.tail
+dir.__getitem__
+>>> creature_standard = df['creature_standard']
+>>> print creature_standard.root()
+[OBJECT:CREATURE]
+>>> print creature_standard.tail()
+[MULTIPLY_VALUE:15]
+
+---
+
+rawfile.add
+dir.__getitem__ queryable.list
+>>> item_food = df['item_food']
+>>> print item_food.list()
+[OBJECT:ITEM]
+[ITEM_FOOD:ITEM_FOOD_BISCUITS]
+[NAME:biscuits]
+[LEVEL:2]
+[ITEM_FOOD:ITEM_FOOD_STEW]
+[NAME:stew]
+[LEVEL:3]
+[ITEM_FOOD:ITEM_FOOD_ROAST]
+[NAME:roast]
+[LEVEL:4]
+>>> tokens = item_food.add('hi! [THIS][IS][AN][EXAMPLE]')
+>>> print tokens
+hi! [THIS][IS][AN][EXAMPLE]
+>>> print item_food.list()
+[OBJECT:ITEM]
+[ITEM_FOOD:ITEM_FOOD_BISCUITS]
+[NAME:biscuits]
+[LEVEL:2]
+[ITEM_FOOD:ITEM_FOOD_STEW]
+[NAME:stew]
+[LEVEL:3]
+[ITEM_FOOD:ITEM_FOOD_ROAST]
+[NAME:roast]
+[LEVEL:4]hi! [THIS][IS][AN][EXAMPLE]

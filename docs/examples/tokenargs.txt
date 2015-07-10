@@ -1,0 +1,38 @@
+tokenargs.set tokenargs.clear tokenargs.add
+token.__init__
+>>> token = raws.token('EXAMPLE:a:b:c')
+>>> print token
+[EXAMPLE:a:b:c]
+>>> token.args.set(2, 500)
+>>> print token
+[EXAMPLE:a:b:500]
+>>> token.args.set('hi!')
+>>> print token
+[EXAMPLE:hi!:b:500]
+>>> token.args.clear()
+>>> print token
+[EXAMPLE]
+>>> token.args.add('X')
+>>> print token
+[EXAMPLE:X]
+>>> token.args.add('Y', 'Z')
+>>> print token
+[EXAMPLE:X:Y:Z]
+
+---
+
+tokenargs.contains
+token.__init__
+>>> token = raws.token('EXAMPLE:ONE:TWO:FOUR')
+>>> print 'ONE' in token.args
+True
+>>> print 'THREE' in token.args
+False
+
+---
+
+tokenargs.__str__
+token.__init__
+>>> token = raws.token('EXAMPLE:a:b:c')
+>>> print str(token.args)
+a:b:c

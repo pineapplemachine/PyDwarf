@@ -51,7 +51,6 @@ from dir import rawsdir as dir
 from copytree import copytree
 import objects
 import color
-import docs
 
 filter = tokenfilter
 parse = token.parse

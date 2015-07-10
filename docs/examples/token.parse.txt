@@ -1,0 +1,44 @@
+token.parse
+token.__init__ tokenlist.__getitem__
+>>> token = raws.token.parse('[HELLO:THERE]')
+>>> print token
+[HELLO:THERE]
+>>> tokens = raws.token.parse('[WHAT] a [BEAUTIFUL][DAY]')
+>>> print tokens
+[WHAT] a [BEAUTIFUL][DAY]
+>>> print tokens[0]
+[WHAT]
+>>> print tokens[1]
+[BEAUTIFUL]
+
+---
+
+token.parse token.parseone
+
+>>> braces = '[EXAMPLE:TOKEN]'
+>>> nobraces = 'EXAMPLE:TOKEN'
+>>> multi = '[EXAMPLE:ONE][EXAMPLE:TWO][EXAMPLE:THREE]'
+>>> print raws.token.parse(braces)
+[EXAMPLE:TOKEN]
+>>> print raws.token.parse(multi)
+[EXAMPLE:ONE][EXAMPLE:TWO][EXAMPLE:THREE]
+>>> print raws.token.parse(nobraces)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "raws/token.py", line 713, in parse
+    raise ValueError('Failed to parse data string because it had no braces and because implicit_braces was set to False.')
+ValueError: Failed to parse data string because it had no braces and because implicit_braces was set to False.
+>>> print raws.token.parse(nobraces, implicit_braces=True)
+[EXAMPLE:TOKEN]
+>>> print raws.token.parseone(braces)
+[EXAMPLE:TOKEN]
+>>> print raws.token.parseone(nobraces)
+[EXAMPLE:TOKEN]
+>>> print raws.token.parseone(multi)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "raws/token.py", line 755, in parseone
+    if fail_on_multiple and data.count('[') > 1: raise ValueError('Failed to parse token because there was more than one open bracket in the data string.')
+ValueError: Failed to parse token because there was more than one open bracket in the data string.
+>>> print raws.token.parseone(multi, fail_on_multiple=False)
+[EXAMPLE:ONE]
