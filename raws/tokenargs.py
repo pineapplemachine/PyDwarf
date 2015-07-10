@@ -43,16 +43,24 @@ class tokenargs(list):
     def reset(self, items=None):
         self[:] = (tokenargs.sanitize(item) for item in items) if items is not None else []
         
-    def add(self, item):
+    def add(self, item, *args):
         if isinstance(item, basestring):
             self.extend(item.split(':'))
         elif hasattr(item, '__iter__') or hasattr(item, '__getitem__'):
             self.extend(item)
         else:
             self.add(str(item))
+        if args:
+            self.add(args)
             
     def sub(self, items):
         self[:] = self[:-items]
+        
+    def set(self, index, item=None):
+        if item is None:
+            item = index
+            index = 0
+        self[index] = item
         
     def __str__(self):
         return ':'.join(self)

@@ -84,7 +84,7 @@ class token(rawsqueryableadd):
     def __str__(self):
         '''Get a concise string representation.
         '''
-        return '[%s%s]' %(self.value, (':%s' % self.argsstr()) if self.args and len(self.args) else '')
+        return '[%s%s]' %(self.value, (':%s' % self.args) if self.args else '')
     def __repr__(self):
         '''Get a full string representation.
         '''
@@ -240,39 +240,9 @@ class token(rawsqueryableadd):
         given count and False if not.
         
         count: The number of arguments to match.
-        
-        Example usage:
-            >>> token = raws.token('EXAMPLE:0:1:2:3:4')
-            >>> print 'Token has %d arguments.' % token.nargs()
-            Token has 5 arguments.
-            >>> print token.nargs(2)
-            False
-            >>> print token.nargs(5)
-            True
         '''
         return len(self.args) if (count is None) else (len(self.args) == count)
-        
-    def setarg(self, index, value=None):
-        '''Sets argument at index, also verifies that the input contains no illegal characters.
-        If the index argument is set but not value, then the index is assumed to be referring to
-        a value and the index is assumed to be 0.
-        
-        index: The argument index.
-        value: The value to set that argument to.
-        
-        Example usage:
-            >>> token = raws.token('EXAMPLE:a:b:c')
-            >>> print token
-            [EXAMPLE:a:b:c]
-            >>> token.setarg(2, 500)
-            >>> print token
-            [EXAMPLE:a:b:500]
-            >>> token.setarg('hi!')
-            >>> print token
-            [EXAMPLE:hi!:b:500]'''
-        if value is None and index is not None: value = index; index = 0
-        self.args[index] = value
-    
+
     def setargs(self, args=None):
         if args is None:
             self.clearargs()
@@ -280,40 +250,6 @@ class token(rawsqueryableadd):
             self.args = tokenargs(args)
         else:
             self.args.reset(args)
-            
-    def clearargs(self):
-        self.args.clear()
-        
-    def addarg(self, value):
-        '''Appends an argument to the end of the argument list.
-        
-        value: The value to add to the argument list.
-        
-        Example usage:
-            >>> token = raws.token('EXAMPLE')
-            >>> print token
-            [EXAMPLE]
-            >>> token.addarg('hi!')
-            >>> print token
-            [EXAMPLE:hi!]
-        '''
-        self.args.add(value)
-        
-    def addargs(self, values):
-        self.args.extend(values)
-        
-    def containsarg(self, value):
-        return value in self.args
-        
-    def argsstr(self):
-        '''Return arguments joined by ':'.
-        
-        Example usage:
-            >>> token = raws.token('EXAMPLE:a:b:c')
-            >>> print token.argsstr()
-            a:b:c
-        '''
-        return str(self.args)
         
     def getvalue(self):
         '''Get the token's value.
@@ -344,13 +280,7 @@ class token(rawsqueryableadd):
         '''Get the comment text preceding a token.
         
         Example usage:
-            >>> token = raws.token('This is a comment [EXAMPLE] so is this')
-            >>> print token
-            [EXAMPLE]
-            >>> print token.getprefix()
-            This is a comment
-            >>> print token.getsuffix()
-             so is this
+
         '''
         return self.prefix
     
