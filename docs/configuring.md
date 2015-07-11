@@ -2,7 +2,7 @@
 
 The steps given here are specifically for Windows, but the procedure on other operating systems will be almost identical.
 
-- First thing, ensure that [Python 2.7](https://www.python.org/download/releases/2.7.8/) is installed on your computer. If you have another version of Python already installed this can be a little complicated but there are lots of [helpful resources](http://stackoverflow.com/questions/4583367/how-to-run-multiple-python-version-on-windows) available to guide you through it.
+- First thing, ensure that [Python 2.7](https://www.python.org/download/releases/2.7.8/) is installed on your computer. If you have another version of Python already installed this can be a little complicated but there are lots of [helpful resources](http://stackoverflow.com/questions/4583367/how-to-run-multiple-python-version-on-windows) available to guide you through it. PyDwarf will not run with Python 3.
 
 - In order to keep everything working as smoothly as possible, you should copy your Dwarf Fortress directory to another location before messing about with PyDwarf. Navigate to the directory containing your Dwarf Fortress folder, copy it, and paste it somewhere. It may be easiest to place the copy in the same location and append `_original` to the end of the directory's name. After doing this you might, for example, have a folder at `C:/df_40_24_win` and another at `C:/df_40_24_win_original`.
 
@@ -10,7 +10,7 @@ The steps given here are specifically for Windows, but the procedure on other op
 
 - You'll want to open the `config.json` file, located in PyDwarf's root directory, with a text editor such as Notepad. And then you'll be looking at a JSON file. It assigns several parameters in the format of `"name": value,` and the most important ones right now are the ones named `input`, `output`, `backup`, and `scripts`. You can see that most of the values are text information enclosed within quotes, but `scripts` in particular is assigned a list of values contained within square brackets.
 
-- Set the value for `input`, which is a file path, to the location of that copy of Dwarf Fortress you made in a previous step. This tells PyDwarf where to read your files from so that they can be worked upon by various mods. For example, this file path might be something like `C:/df_40_24_win_original`.
+- Set the value for `input`, which is a file path, to the location of that copy of Dwarf Fortress you made in a previous step. This tells PyDwarf where to read your files from so that they can be worked upon by various mods. For example, this file path might be something like `C:/df_40_24_win_original`. The json file format can be particular about slashes, so it's best to make sure your file paths use forward slashes `/` and never backslashes `\`.
 
 - And set the value for `output`, which is also a file path, to the location of the Dwarf Fortress folder that you play with. This is where PyDwarf will write your files to when it's finished modifying them. This path might look like `C:/df_40_24_win`.
 

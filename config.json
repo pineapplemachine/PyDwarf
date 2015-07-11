@@ -1,6 +1,13 @@
 {
     
-    "comment":  "This is an example file! Before running the manager you will need to change the provided paths to better suit your particular setup.",
+    "comment":  "
+        This is an example file!
+        
+        Before running the manager you will need to change the
+        provided paths to better suit your particular setup.
+        Please be sure to use forward slashes in these paths
+        rather than backslashes.
+    ",
     
     "input":    "E:/Sophie/Desktop/Files/Games/Dwarf Fortress/df_40_24_win/",
     "output":   "E:/Sophie/Desktop/Files/Games/Dwarf Fortress/df_40_24_win/pydwarf_output",

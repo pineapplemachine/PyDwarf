@@ -111,7 +111,14 @@ class config:
         return config.intersect(self, other)
         
     def json(self, path, *args, **kwargs):
-        with open(path, 'rb') as jsonfile: return self.apply(json.load(jsonfile), *args, **kwargs)
+        try:
+            with open(path, 'rb') as jsonfile:
+                jsondata = json.load(jsonfile)
+                return self.apply(jsondata, *args, **kwargs)
+        except ValueError as error:
+            strerror = str(error)
+            if strerror.startswith('Invalid \\escape'):
+                raise ValueError('Failed to load json because of a misplaced backslash at %s. Perhaps you meant to use a forward slash instead?' % strerror[17:])
     
     def apply(self, data, applynone=False):
         if data:
