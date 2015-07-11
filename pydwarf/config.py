@@ -119,6 +119,8 @@ class config:
             strerror = str(error)
             if strerror.startswith('Invalid \\escape'):
                 raise ValueError('Failed to load json because of a misplaced backslash at %s. Perhaps you meant to use a forward slash instead?' % strerror[17:])
+            else:
+                raise error
     
     def apply(self, data, applynone=False):
         if data:
