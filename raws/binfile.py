@@ -54,4 +54,7 @@ class binfile(basefile):
             file.write(self.content)
             
     def add(self, content):
-        self.content += content
+        if self.content is None:
+            self.content = str(content)
+        else:
+            self.content += str(content)
