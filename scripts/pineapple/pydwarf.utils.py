@@ -85,34 +85,68 @@ def objecttokens(df, object_type, token, add_to=None, remove_from=None):
             the name of the added script. If set to None, no such line will be added. If set
             to an arbitrary string, that string will be added as a new line at the end of
             dfhack.init.''',
+        'onload': 'If set to True then the auto_run line will be added to raw/onLoad.init.',
+        'startup': 'If set to True then the auto_run line will be added to dfhack.init.',
         '**kwargs': '''Other named arguments will be passed on to the dir.add method used to
             create the file object corresponding to the added script.'''
     },
     compatibility = '.*'
 )
-def addhack(df, auto_run, **kwargs):
+def addhack(df, auto_run, onload=True, startup=False, **kwargs):
     name = kwargs.get('name', kwargs.get('path', 'unnamed'))
     
-    pydwarf.log.debug('Adding new file %s.' % name)
-    file = df.add(**kwargs)
+    onload_path = 'raw/onLoad.init'
+    startup_path = 'dfhack.init'
+    
+    if kwargs: 
+        pydwarf.log.debug('Adding new file %s.' % name)
+        hackfile = df.add(**kwargs)
+    else:
+        hackfile = None
     
     if auto_run:
-        if auto_run is True: auto_run = '\n%s' % file.name
-        pydwarf.log.debug('Appending line %s to the end of dfhack.init.' % auto_run)
+        if auto_run is True:
+            if not hackfile: return pydwarf.failure('Failed to add lines to DFHack because auto_run was True but no file was created.')
+            auto_run = '\n%s' % hackfile.name
         
-        if 'dfhack.init' not in df:
-            if 'dfhack.init-example' in df:
-                pydwarf.log.info('Copying dfhack.init-example to new file dfhack.init before adding new content to the file.')
-                init = df['dfhack.init-example'].copy().bin()
-                init.name = 'dfhack.init'
-                df.add(file=init)
+        pydwarf.log.debug('Adding text %s to the end of dfhack.init.' % auto_run)
+        addtext = '\n%s\n' % auto_run
+        
+        if onload:
+            if onload_path not in df:
+                init = df.add(
+                    loc = 'raw',
+                    name = 'onLoad',
+                    ext = '.init',
+                    kind = raws.binfile
+                )
             else:
-                return pydwarf.failure('Failed to locate dfhack.init or dfhack.init-example.')
-        else:
-            init = df['dfhack.init'].bin()
+                init = df[onload_path]
+            init.add(addtext)
+            
+        if startup:
+            if startup_path not in df:
+                if 'dfhack.init-example' in df:
+                    pydwarf.log.info('Copying dfhack.init-example to new file dfhack.init before adding new content to the file.')
+                    init = df['dfhack.init-example'].copy().bin()
+                    init.name = startup_path
+                    df.add(file=init)
+                else:
+                    return pydwarf.failure('Failed to locate dfhack.init or dfhack.init-example.')
+            else:
+                init = df[startup_path].bin()
+            init.add(addtext)
         
-        init.add('\n%s # Added by PyDwarf\n' % auto_run)
-        return pydwarf.success('Added new file %s and appended line %s to dfhack.init.' % (name, auto_run))
+        return pydwarf.success(
+            'Added text to %s: "%s"' % (
+                ' and '.join(
+                    item for item in (
+                        onload_path if onload else None, startup_path if startup else None
+                    ) if item
+                ),
+                auto_run
+            )
+        )
         
     else:
         return pydwarf.success('Added new file %s.' % name)
