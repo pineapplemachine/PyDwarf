@@ -18,7 +18,8 @@ properties_path = pydwarf.rel(__file__, 'gemsetproperties.json')
     ''',
     arguments = {
         'variety': '''Which tileset to use. Should be either '24x24' or '48x48'.''',
-        'properties': 'todo'
+        'properties': '''File path to indicate where to find the json outputted by
+            the gemsetproperties.py utility script.'''
     },
     compatibility = pydwarf.df_0_40
 )
@@ -169,7 +170,7 @@ def font(df, variety='24x24'):
     ''',
     arguments = {
         'variety': '''Which tileset to use. Should be either '24x24' or '48x48'.''',
-        'remove_example': 'todo'
+        'remove_example': '''Whether to remove DF's example graphics file raw/graphics/graphics_example.txt.'''
     },
     compatibility = pydwarf.df_0_40
 )
@@ -216,7 +217,8 @@ def hack(df):
         plants.
     ''',
     arguments = {
-        'properties': 'todo'
+        'properties': '''File path to indicate where to find the json outputted by
+            the gemsetproperties.py utility script.'''
     },
     compatibility = pydwarf.df_0_40
 )
