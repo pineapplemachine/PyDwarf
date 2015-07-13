@@ -1,10 +1,8 @@
-import objects
-from queryable import rawsqueryable
-import tokenlist
+import queryable
 
 
 
-class rawsqueryableobj(rawsqueryable):
+class rawsqueryableobj(queryable.rawsqueryable):
     
     # Inheriting classes must implement a getobjheaders method
     
@@ -146,3 +144,8 @@ class rawsqueryableobj(rawsqueryable):
                 return pretty, type
         else:
             return type, id
+
+
+
+import objects
+import tokenlist

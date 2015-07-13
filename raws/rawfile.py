@@ -1,10 +1,8 @@
 import os
 
+import basefile
 import queryableobj
 import queryableadd
-import basefile
-from token import rawstoken
-import binfile
 
 
 
@@ -99,7 +97,7 @@ class rawfile(basefile.basefile, queryableobj.rawsqueryableobj, queryableadd.raw
         
     def settokens(self, tokens, setfile=True):
         '''Internal: Utility method for setting the root and tail tokens given an iterable.'''
-        self.roottoken, self.tailtoken = rawstoken.firstandlast(tokens, self if setfile else None)
+        self.roottoken, self.tailtoken = rawstoken.token.firstandlast(tokens, self if setfile else None)
     
     def copy(self):
         '''Makes a copy of a file and its contents.
@@ -111,11 +109,11 @@ class rawfile(basefile.basefile, queryableobj.rawsqueryableobj, queryableadd.raw
         copy.ext = self.ext
         copy.loc = self.loc
         copy.noheader = self.noheader
-        copy.settokens(rawstoken.copy(self.tokens()))
+        copy.settokens(rawstoken.token.copy(self.tokens()))
         return copy
         
     def equals(self, other):
-        return rawstoken.tokensequal(self.tokens(), other.tokens())
+        return rawstoken.token.tokensequal(self.tokens(), other.tokens())
         
     def root(self):
         '''Gets the first token in the file.
@@ -174,7 +172,7 @@ class rawfile(basefile.basefile, queryableobj.rawsqueryableobj, queryableadd.raw
             if self.name:
                 if header != self.name: self.noheader = True
             if data:
-                self.settokens(rawstoken.parse(data, file=self))
+                self.settokens(rawstoken.token.parse(data, file=self))
         else:
             self.noheader = True
             self.data = None
@@ -194,7 +192,7 @@ class rawfile(basefile.basefile, queryableobj.rawsqueryableobj, queryableadd.raw
         if tail:
             return tail.add(*args, **kwargs)
         else:
-            token, tokens = rawstoken.autovariable(*args, **kwargs)
+            token, tokens = rawstoken.token.autovariable(*args, **kwargs)
             if token is not None:
                 self.roottoken = token
                 self.tailtoken = token
@@ -236,3 +234,8 @@ class rawfile(basefile.basefile, queryableobj.rawsqueryableobj, queryableadd.raw
         match_types = self.getobjheadername(type)
         root = self.root()
         return (root,) if root is not None and root.value == 'OBJECT' and root.nargs(1) and root.args[0] in match_types else tuple()
+
+
+
+import token as rawstoken
+import binfile

@@ -1,19 +1,19 @@
 import os
 import shutil
 
-from copytree import copytree
-from queryable import rawsqueryable
-from tokenlist import tokenlist
-from queryableobj import rawsqueryableobj
-from basefile import basefile
-from reffile import reffile
-from binfile import binfile
-from rawfile import rawfile
-from filefactory import filefactory
+import copytree
+import queryable
+import tokenlist
+import queryableobj
+import basefile
+import reffile
+import binfile
+import rawfile
+import filefactory
 
 
 
-class rawsdir(rawsqueryableobj):
+class rawsdir(queryableobj.rawsqueryableobj):
     '''Represents as a whole all the raws contained within a directory.'''
     
     def __init__(self, root=None, dest=None, paths=None, version=None, log=None, **kwargs):
@@ -39,11 +39,11 @@ class rawsdir(rawsqueryableobj):
         return self.getfile(name)
     
     def __setitem__(self, name, content):
-        if isinstance(content, basefile):
+        if isinstance(content, basefile.basefile):
             if content.dir: content = content.copy()
             content.setpath(name)
             self.add(file=content, replace=True)
-        elif isinstance(content, rawsqueryable):
+        elif isinstance(content, queryable.rawsqueryable):
             self.add(file=name, replace=True, tokens=content.tokens())
         elif isinstance(content, basestring):
             self.add(file=name, replace=True, content=content)
@@ -51,7 +51,7 @@ class rawsdir(rawsqueryableobj):
             self.add(file=name, tokens=content)
     
     def __contains__(self, item):
-        if isinstance(item, basefile):
+        if isinstance(item, basefile.basefile):
             return item in self.files.itervalues()
         else:
             return str(item) in self.files or str(item) in self.filenames
@@ -63,7 +63,7 @@ class rawsdir(rawsqueryableobj):
         file is created and associated with that name, and then its add
         method is called using the value for create as its argument.'''
         
-        if isinstance(name, basefile):
+        if isinstance(name, basefile.basefile):
             return name if name in self.files.itervalues() else None
         
         file = self.files.get(name)
@@ -117,7 +117,7 @@ class rawsdir(rawsqueryableobj):
             raise ValueError('Failed to add file because no recognized arguments were specificed.')
         
     def addbyauto(self, auto, **kwargs):
-        if isinstance(auto, basefile):
+        if isinstance(auto, basefile.basefile):
             return self.addbyfile(auto, **kwargs)
         elif isinstance(auto, basestring):
             if os.path.isfile(auto):
@@ -153,22 +153,22 @@ class rawsdir(rawsqueryableobj):
         file.add(tokens)
         return file
     def addbybincontent(self, name, content, **kwargs):
-        file = self.addbyname(name, kind=binfile, **kwargs)
+        file = self.addbyname(name, kind=binfile.binfile, **kwargs)
         file.content = content
         return file
         
     def filebyname(self, name, ext=None, loc=None, kind=None):
-        if kind is None: kind = rawfile
+        if kind is None: kind = rawfile.rawfile
         splitloc, name = os.path.split(name)
         if not ext: name, ext = os.path.splitext(name)
         loc = os.path.join(loc, splitloc) if loc else splitloc
         return kind(name=name, ext=ext, loc=loc, dir=self)
     def filebyfilepath(self, path, root=None, loc=None, kind=None):
-        if kind is None: kind = rawfile
+        if kind is None: kind = rawfile.rawfile
         return kind(path=path, loc=loc, dir=self) 
     def filesbydirpath(self, path, root=None, loc=None, kind=None):
         for walkroot, walkdirs, walkfiles in os.walk(path):
-            return ((kind if kind else filefactory)(path=os.path.join(walkroot, walkfile), root=root, loc=loc, dir=self) for walkfile in walkfiles)
+            return ((kind if kind else filefactory.filefactory)(path=os.path.join(walkroot, walkfile), root=root, loc=loc, dir=self) for walkfile in walkfiles)
     def filesbydir(self, dir, loc=None):
         for dirfile in dir.files.iteritems():
             newfile = dirfile.copy()
@@ -177,7 +177,7 @@ class rawsdir(rawsqueryableobj):
             yield newfile
         
     def addtodicts(self, file, replace=False):
-        if isinstance(file, basefile):
+        if isinstance(file, basefile.basefile):
             self.addfiletodicts(file)
         else:
             self.addfilestodicts(file)
@@ -242,7 +242,7 @@ class rawsdir(rawsqueryableobj):
                     # Add files
                     for name in walkfiles:
                         filepath = os.path.join(walkroot, name)
-                        file = filefactory(filepath, root=root, dir=self)
+                        file = filefactory.filefactory(filepath, root=root, dir=self)
                         addeddirs[os.path.abspath(os.path.dirname(filepath)).replace('\\', '/')] = True
                         self.add(file)
                     
@@ -250,11 +250,11 @@ class rawsdir(rawsqueryableobj):
                     for dir in walkdirs:
                         dir = os.path.abspath(os.path.join(walkroot, dir)).replace('\\', '/')
                         if not any([added.startswith(dir) for added in addeddirs.iterkeys()]):
-                            file = filefactory(path=dir, root=root, dir=self)
+                            file = filefactory.filefactory(path=dir, root=root, dir=self)
                             self.add(file)
             
             elif os.path.isfile(path):
-                file = filefactory(path, root=root, dir=self)
+                file = filefactory.filefactory(path, root=root, dir=self)
                 addeddirs[os.path.abspath(os.path.dirname(path))] = True
                 self.add(file)
                 
@@ -291,7 +291,7 @@ class rawsdir(rawsqueryableobj):
     def tokens(self, *args, **kwargs):
         '''Iterate through all tokens.'''
         for file in self.files.itervalues():
-            if isinstance(file, rawsqueryable):
+            if isinstance(file, queryable.rawsqueryable):
                 for token in file.tokens(*args, **kwargs): yield token
                 
     def getobjheaders(self, type):
@@ -317,9 +317,9 @@ class rawsdir(rawsqueryableobj):
         '''
         
         match_types = self.getobjheadername(type)
-        results = tokenlist()
+        results = tokenlist.tokenlist()
         for file in self.files.itervalues():
-            if isinstance(file, rawsqueryable):
+            if isinstance(file, queryable.rawsqueryable):
                 root = file.root()
                 if root is not None and root.value == 'OBJECT' and root.nargs() == 1 and root.args[0] in match_types:
                     results.append(root)

@@ -1,7 +1,6 @@
 import os
 
 import basefile
-import rawfile
 
 
 
@@ -56,3 +55,7 @@ class binfile(basefile.basefile):
             self.content = str(content)
         else:
             self.content += str(content)
+
+
+
+import rawfile

@@ -1,10 +1,8 @@
 import itertools
 import inspect
 
-from tokenargs import tokenargs
-import tokenlist
 import queryableadd
-import queryable
+import tokenargs
 
 
 
@@ -16,7 +14,7 @@ class rawstoken(queryableadd.rawsqueryableadd):
             detected automatically. If a rawstoken is specified it will be treated
             as a token argument. If a string, pretty. If anything else, tokens.'''
     
-    illegal_internal_chars = tokenargs.illegal # TODO: make this better
+    illegal_internal_chars = tokenargs.tokenargs.illegal # TODO: make this better
     
     '''Don't allow these characters in a token's prefix or suffix.'''
     illegal_external_chars = '['
@@ -242,7 +240,7 @@ class rawstoken(queryableadd.rawsqueryableadd):
         if args is None:
             self.clearargs()
         elif self.args is None:
-            self.args = tokenargs(args)
+            self.args = tokenargs.tokenargs(args)
         else:
             self.args.reset(args)
         
@@ -754,3 +752,8 @@ class rawstoken(queryableadd.rawsqueryableadd):
             )
 
 token = rawstoken
+
+
+
+import queryable
+import tokenlist

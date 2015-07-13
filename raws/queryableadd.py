@@ -1,6 +1,4 @@
-import objects
 import queryable
-import token
 
 
 
@@ -42,4 +40,8 @@ class rawsqueryableadd(queryable.rawsqueryable):
     def argsset(*args, **kwargs):
         settoken = token.token.autosingular(*args, **kwargs)
         return settoken.value, settoken.args
-    
+
+
+
+import objects
+import token

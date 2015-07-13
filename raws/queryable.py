@@ -2,10 +2,6 @@
 
 import inspect
 
-import objects
-import filters
-import tokenlist
-
 
 
 class rawsqueryable(object):
@@ -348,3 +344,9 @@ class rawsqueryable(object):
         until_re_value = None
         until_value_in = objects.objectsforheader(objects.headerforobject(self.value))
         return until_exact_value, until_re_value, until_value_in
+
+
+
+import objects
+import filters
+import tokenlist

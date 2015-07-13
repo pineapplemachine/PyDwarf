@@ -1,8 +1,6 @@
 import re
 import copy
 
-import token
-
 
 
 class rawsbasefilter:
@@ -249,3 +247,5 @@ class rawsboolfilter(rawsbasefilter):
         return '%s of (%s)' % (self.operand, ', '.join(self.subs))
     
 
+
+import token

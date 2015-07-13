@@ -2,9 +2,6 @@ import os
 import shutil
 
 import basefile
-import copytree
-import binfile
-import rawfile
 
 
 
@@ -49,3 +46,9 @@ class reffile(basefile.basefile):
                 copytree.copytree(self.path, dest)
             else:
                 raise ValueError('Failed to write file because its path %s refers to neither a file nor a directory.' % self.path)
+
+
+
+import copytree
+import binfile
+import rawfile
