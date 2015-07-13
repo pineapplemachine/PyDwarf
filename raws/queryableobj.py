@@ -2,7 +2,7 @@ import queryable
 
 
 
-class rawsqueryableobj(queryable.rawsqueryable):
+class queryableobj(queryable.queryable):
     
     # Inheriting classes must implement a getobjheaders method
     
@@ -55,7 +55,7 @@ class rawsqueryableobj(queryable.rawsqueryable):
                 [WEAPON:ITEM_WEAPON_AXE_BATTLE]
         '''
             
-        type, exact_id = rawsqueryableobj.objpretty(pretty, type, exact_id)
+        type, exact_id = queryableobj.objpretty(pretty, type, exact_id)
         headers = self.headersfortype(type, type_in)
         if type is None and type_in is None: type_in = objects.objects()
         for objecttoken in headers:
@@ -93,7 +93,7 @@ class rawsqueryableobj(queryable.rawsqueryable):
             [CREATURE:BEAR_SLOTH]
         '''
         
-        type, exact_id = rawsqueryableobj.objpretty(pretty, type, exact_id)
+        type, exact_id = queryableobj.objpretty(pretty, type, exact_id)
         results = tokenlist.tokenlist()
         headers = self.headersfortype(type, type_in)
         if type is None and type_in is None: type_in = objects.objects()

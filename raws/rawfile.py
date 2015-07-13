@@ -6,7 +6,7 @@ import queryableadd
 
 
 
-class rawfile(basefile.basefile, queryableobj.rawsqueryableobj, queryableadd.rawsqueryableadd):
+class rawfile(basefile.basefile, queryableobj.queryableobj, queryableadd.queryableadd):
     '''Represents a single file within a raws directory.'''
     
     def __init__(self, name=None, file=None, path=None, root=None, content=None, tokens=None, dir=None, readpath=True, noheader=False, **kwargs):

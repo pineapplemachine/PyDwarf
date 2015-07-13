@@ -2,12 +2,12 @@ import queryable
 
 
 
-class rawsqueryableadd(queryable.rawsqueryable):
+class queryableadd(queryable.queryable):
     
     # Inheriting classes must implement an add method
     
     def set(self, *args, **kwargs):
-        value, args = rawsqueryableadd.argsset(*args, **kwargs)
+        value, args = queryableadd.argsset(*args, **kwargs)
         settoken = self.get(exact_value=value)
         if settoken is None:
             return self.add(value=value, args=args)
@@ -16,7 +16,7 @@ class rawsqueryableadd(queryable.rawsqueryable):
             return settoken
             
     def setprop(self, *args, **kwargs):
-        value, args = rawsqueryableadd.argsset(*args, **kwargs)
+        value, args = queryableadd.argsset(*args, **kwargs)
         settoken = self.getprop(exact_value=value)
         if settoken is None:
             return self.addprop(value=value, args=args)
@@ -25,13 +25,13 @@ class rawsqueryableadd(queryable.rawsqueryable):
             return settoken
             
     def setall(self, *args, **kwargs):
-        value, args = rawsqueryableadd.argsset(*args, **kwargs)
+        value, args = queryableadd.argsset(*args, **kwargs)
         settokens = self.all(exact_value=value)
         settokens.each(lambda token: token.args.reset(args))
         return settokens
             
     def setallprop(self, *args, **kwargs):
-        value, args = rawsqueryableadd.argsset(*args, **kwargs)
+        value, args = queryableadd.argsset(*args, **kwargs)
         settokens = self.allprop(exact_value=value)
         settokens.each(lambda token: token.args.reset(args))
         return settokens
@@ -43,5 +43,4 @@ class rawsqueryableadd(queryable.rawsqueryable):
 
 
 
-import objects
 import token

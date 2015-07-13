@@ -13,7 +13,7 @@ import filefactory
 
 
 
-class rawsdir(queryableobj.rawsqueryableobj):
+class rawsdir(queryableobj.queryableobj):
     '''Represents as a whole all the raws contained within a directory.'''
     
     def __init__(self, root=None, dest=None, paths=None, version=None, log=None, **kwargs):
@@ -43,7 +43,7 @@ class rawsdir(queryableobj.rawsqueryableobj):
             if content.dir: content = content.copy()
             content.setpath(name)
             self.add(file=content, replace=True)
-        elif isinstance(content, queryable.rawsqueryable):
+        elif isinstance(content, queryable.queryable):
             self.add(file=name, replace=True, tokens=content.tokens())
         elif isinstance(content, basestring):
             self.add(file=name, replace=True, content=content)
@@ -291,7 +291,7 @@ class rawsdir(queryableobj.rawsqueryableobj):
     def tokens(self, *args, **kwargs):
         '''Iterate through all tokens.'''
         for file in self.files.itervalues():
-            if isinstance(file, queryable.rawsqueryable):
+            if isinstance(file, queryable.queryable):
                 for token in file.tokens(*args, **kwargs): yield token
                 
     def getobjheaders(self, type):
@@ -319,8 +319,10 @@ class rawsdir(queryableobj.rawsqueryableobj):
         match_types = self.getobjheadername(type)
         results = tokenlist.tokenlist()
         for file in self.files.itervalues():
-            if isinstance(file, queryable.rawsqueryable):
+            if isinstance(file, queryable.queryable):
                 root = file.root()
                 if root is not None and root.value == 'OBJECT' and root.nargs() == 1 and root.args[0] in match_types:
                     results.append(root)
         return results
+
+dir = rawsdir

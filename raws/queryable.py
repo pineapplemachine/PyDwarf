@@ -4,7 +4,7 @@ import inspect
 
 
 
-class rawsqueryable(object):
+class queryable(object):
     '''Classes which contain raws tokens should inherit from this in order to provide querying functionality.'''
     
     query_tokeniter_docstring = '''
@@ -20,7 +20,7 @@ class rawsqueryable(object):
         **kwargs: If no tokeniter is specified, then arguments which correspond to
             named arguments of the object's tokens method will be passed to that
             method. All other arguments will be passed to the appropriate filters,
-            and for accepted arguments you should take a look at the rawstokenfilter
+            and for accepted arguments you should take a look at the tokenfilter
             constructor's docstring. Some quick query methods support arguments
             prepended with 'until_' to distinguish tokens that should be matched
             from tokens that should terminate the query. (These methods are getuntil,
@@ -34,7 +34,7 @@ class rawsqueryable(object):
     def __contains__(self, item):
         if isinstance(item, basestring):
             return self.get(pretty=pretty) is not None
-        elif isinstance(item, rawsqueryable):
+        elif isinstance(item, queryable):
             return item in self.tokens()
     
     def __getitem__(self, item):
@@ -135,11 +135,11 @@ class rawsqueryable(object):
     def query(self, filters, tokeniter=None, **kwargs): # TODO: make it possible to use an iterable also
         '''Executes a query on some iterable containing tokens.
         
-        filters: A dict or other iterable containing rawstokenfilter-like objects.
+        filters: A dict or other iterable containing tokenfilter-like objects.
         %s
         **kwargs: If tokeniter is not given, then the object's token method will be
             called with these arguments and used instead.
-        ''' % rawsqueryable.query_tokeniter_docstring
+        ''' % queryable.query_tokeniter_docstring
         
         if tokeniter is None: tokeniter = self.tokens(**kwargs)
         filteriter = (filters.itervalues() if isinstance(filters, dict) else filters)
@@ -157,11 +157,11 @@ class rawsqueryable(object):
         '''Get the first matching token.
         
         %s
-        ''' % rawsqueryable.quick_query_args_docstring
+        ''' % queryable.quick_query_args_docstring
         
         filter_args, tokens_args = self.argstokens(tokeniter, kwargs)
         queryfilters = (
-            filters.rawstokenfilter(pretty=pretty, limit=1, **filter_args)
+            filters.tokenfilter(pretty=pretty, limit=1, **filter_args)
         ,)
         result = self.query(queryfilters, tokeniter, **tokens_args)[0].result
         return result[0] if result and len(result) else None
@@ -170,11 +170,11 @@ class rawsqueryable(object):
         '''Get the last matching token.
         
         %s
-        ''' % rawsqueryable.quick_query_args_docstring
+        ''' % queryable.quick_query_args_docstring
         
         filter_args, tokens_args = self.argstokens(tokeniter, kwargs)
         queryfilters = (
-            filters.rawstokenfilter(pretty=pretty, **filter_args)
+            filters.tokenfilter(pretty=pretty, **filter_args)
         ,)
         result = self.query(queryfilters, tokeniter, **tokens_args)[0].result
         return result[-1] if result and len(result) else None
@@ -183,11 +183,11 @@ class rawsqueryable(object):
         '''Get a list of all matching tokens.
         
         %s
-        ''' % rawsqueryable.quick_query_args_docstring
+        ''' % queryable.quick_query_args_docstring
         
         filter_args, tokens_args = self.argstokens(tokeniter, kwargs)
         queryfilters = (
-            filters.rawstokenfilter(pretty=pretty, **filter_args)
+            filters.tokenfilter(pretty=pretty, **filter_args)
         ,)
         return self.query(queryfilters, tokeniter, **tokens_args)[0].result
     
@@ -195,12 +195,12 @@ class rawsqueryable(object):
         '''Get a list of all tokens up to a match.
         
         %s
-        ''' % rawsqueryable.quick_query_args_docstring
+        ''' % queryable.quick_query_args_docstring
         
         filter_args, tokens_args = self.argstokens(tokeniter, kwargs)
         queryfilters = (
-            filters.rawstokenfilter(pretty=pretty, limit=1, **filter_args),
-            filters.rawstokenfilter()
+            filters.tokenfilter(pretty=pretty, limit=1, **filter_args),
+            filters.tokenfilter()
         )
         return self.query(queryfilters, tokeniter, **tokens_args)[1].result
         
@@ -208,13 +208,13 @@ class rawsqueryable(object):
         '''Get the first matching token, but abort when a token matching arguments prepended with 'until_' is encountered.
         
         %s
-        ''' % rawsqueryable.quick_query_args_docstring
+        ''' % queryable.quick_query_args_docstring
         
         filter_args, tokens_args = self.argstokens(tokeniter, kwargs)
         until_args, condition_args = self.argsuntil(filter_args)
         queryfilters = (
-            filters.rawstokenfilter(pretty=until, limit=1, **until_args),
-            filters.rawstokenfilter(pretty=pretty, limit=1, **condition_args)
+            filters.tokenfilter(pretty=until, limit=1, **until_args),
+            filters.tokenfilter(pretty=pretty, limit=1, **condition_args)
         )
         result = self.query(queryfilters, tokeniter, **tokens_args)[1].result
         return result[0] if result and len(result) else None
@@ -223,13 +223,13 @@ class rawsqueryable(object):
         '''Get the last matching token, up until a token matching arguments prepended with 'until_' is encountered.
         
         %s
-        ''' % rawsqueryable.quick_query_args_docstring
+        ''' % queryable.quick_query_args_docstring
         
         filter_args, tokens_args = self.argstokens(tokeniter, kwargs)
         until_args, condition_args = self.argsuntil(filter_args)
         queryfilters = (
-            filters.rawstokenfilter(pretty=until, limit=1, **until_args),
-            filters.rawstokenfilter(pretty=pretty, **condition_args)
+            filters.tokenfilter(pretty=until, limit=1, **until_args),
+            filters.tokenfilter(pretty=pretty, **condition_args)
         )
         result = self.query(queryfilters, tokeniter, **tokens_args)[1].result
         return result[-1] if result and len(result) else None
@@ -239,13 +239,13 @@ class rawsqueryable(object):
         arguments prepended with 'until_' is encountered.
         
         %s
-        ''' % rawsqueryable.quick_query_args_docstring
+        ''' % queryable.quick_query_args_docstring
         
         filter_args, tokens_args = self.argstokens(tokeniter, kwargs)
         until_args, condition_args = self.argsuntil(filter_args)
         queryfilters = (
-            filters.rawstokenfilter(pretty=until, limit=1, **until_args),
-            filters.rawstokenfilter(pretty=pretty, **condition_args)
+            filters.tokenfilter(pretty=until, limit=1, **until_args),
+            filters.tokenfilter(pretty=pretty, **condition_args)
         )
         return self.query(queryfilters, tokeniter, **tokens_args)[1].result
     

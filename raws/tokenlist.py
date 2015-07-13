@@ -2,7 +2,7 @@ import queryable
 
 
 
-class tokenlist(list, queryable.rawsqueryable):
+class tokenlist(list, queryable.queryable):
     '''Extends builtin list with token querying functionality.'''
     
     def tokens(self, range=None, reverse=False):
@@ -11,9 +11,9 @@ class tokenlist(list, queryable.rawsqueryable):
             yield self.__getitem__(i)
             
     def add(self, item):
-        if isinstance(item, rawstoken):
+        if isinstance(item, token.token):
             self.append(item)
-        elif isinstance(item, rawsqueryable):
+        elif isinstance(item, queryable.queryable):
             self.extend(item.tokens())
         elif isinstance(item, list):
             self.extend(item)
@@ -47,3 +47,7 @@ class tokenlist(list, queryable.rawsqueryable):
                 if token.suffix: parts += token.suffix.split('\n')[0]
                 if token is not self[-1] and ((token.suffix and '\n' in token.suffix)): parts += '\n'
             return ''.join(parts)
+
+
+
+import token

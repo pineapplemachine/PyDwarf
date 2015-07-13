@@ -4,7 +4,7 @@ def getoption(version, *options):
         if isinstance(version, basestring): # For strings
             pass
         elif 'config' in version.__dict__ and 'version' in version.config.__dict__: # For dirs
-            version = rawsdir.config.version
+            version = version.config.version
         elif 'version' in version.__dict__: # For configs
             version = version.version
         else:

@@ -6,7 +6,7 @@ import tokenargs
 
 
 
-class rawstoken(queryableadd.rawsqueryableadd):
+class rawstoken(queryableadd.queryableadd):
     
     '''Internal: Recurring piece of docstrings.'''
     auto_arg_docstring = '''
@@ -117,7 +117,7 @@ class rawstoken(queryableadd.rawsqueryableadd):
             tokens.append(self)
             tokens.append(other)
             return tokens
-        elif isinstance(other, queryable.rawsqueryable):
+        elif isinstance(other, queryable.queryable):
             tokens = tokenlist.tokenlist()
             tokens.append(self)
             tokens.extend(other)
@@ -132,7 +132,7 @@ class rawstoken(queryableadd.rawsqueryableadd):
             tokens.append(other)
             tokens.append(self)
             return tokens
-        elif isinstance(other, queryable.rawsqueryable):
+        elif isinstance(other, queryable.queryable):
             tokens = tokenlist.tokenlist()
             tokens.extend(other)
             tokens.append(self)
@@ -195,7 +195,7 @@ class rawstoken(queryableadd.rawsqueryableadd):
                 pretty = auto
             elif isinstance(auto, rawstoken):
                 token = auto
-            elif isinstance(auto, queryable.rawsqueryable):
+            elif isinstance(auto, queryable.queryable):
                 tokens = auto.tokens()
             else:
                 tokens = auto

@@ -3,7 +3,7 @@ import copy
 
 
 
-class rawsbasefilter:
+class basefilter:
     def __init__(self, invert=False):
         self.inv = invert
     def invert(self):
@@ -23,11 +23,11 @@ class rawsbasefilter:
         return inv
         
     def __and__(self, other):
-        return rawsboolfilter.all(self, other)
+        return boolfilter.all(self, other)
     def __or__(self, other):
-        return rawsboolfilter.any(self, other)
+        return boolfilter.any(self, other)
     def __xor__(self, other):
-        return rawsboolfilter.one(self, other)
+        return boolfilter.one(self, other)
     
     def __invert__(self):
         return self.inverted()
@@ -40,7 +40,7 @@ class rawsbasefilter:
 
 
 
-class rawstokenfilter(rawsbasefilter):
+class tokenfilter(basefilter):
     '''Basic filter class for applying to rawstoken objects.'''
     
     def __init__(self,
@@ -210,7 +210,7 @@ class rawstokenfilter(rawsbasefilter):
         
 
 
-class rawsboolfilter(rawsbasefilter):
+class boolfilter(basefilter):
     '''Logical filter class for combining other filters.'''
     
     def __init__(self, subs, operand=None, invert=None):
@@ -235,13 +235,13 @@ class rawsboolfilter(rawsbasefilter):
             return True
             
     @staticmethod
-    def one(*subs): return rawsboolfilter(subs, 'one')
+    def one(*subs): return boolfilter(subs, 'one')
     @staticmethod
-    def any(*subs): return rawsboolfilter(subs, 'any')
+    def any(*subs): return boolfilter(subs, 'any')
     @staticmethod
-    def all(*subs): return rawsboolfilter(subs, 'all')
+    def all(*subs): return boolfilter(subs, 'all')
     @staticmethod
-    def none(*subs): return rawsboolfilter(subs, 'all', invert=True)
+    def none(*subs): return boolfilter(subs, 'all', invert=True)
     
     def __str__(self):
         return '%s of (%s)' % (self.operand, ', '.join(self.subs))
