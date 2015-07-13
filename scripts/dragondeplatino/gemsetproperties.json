@@ -1,0 +1,7043 @@
+{
+    "growths": {
+        "BABY TOES SUCCULENT": {
+            "FLOWER": [
+                "5", 
+                "5", 
+                "7", 
+                "0", 
+                "1", 
+                "250000", 
+                "260000", 
+                "1"
+            ], 
+            "BUD": [
+                "0", 
+                "7", 
+                "2", 
+                "0", 
+                "0", 
+                "NONE"
+            ]
+        }, 
+        "EYEBALL": {}, 
+        "DOWNY GRASS": {}, 
+        "BAMBOO, ARROW": {}, 
+        "MEADOWSWEET": {
+            "FLOWER": [
+                "5", 
+                "5", 
+                "7", 
+                "0", 
+                "1", 
+                "150000", 
+                "250000", 
+                "1"
+            ], 
+            "BUD": [
+                "0", 
+                "7", 
+                "2", 
+                "0", 
+                "0", 
+                "NONE"
+            ]
+        }, 
+        "CLOUDBERRY": {
+            "FLOWER": [
+                "5", 
+                "5", 
+                "7", 
+                "0", 
+                "1", 
+                "250000", 
+                "300000", 
+                "1"
+            ], 
+            "BUD": [
+                "0", 
+                "7", 
+                "2", 
+                "0", 
+                "0", 
+                "NONE"
+            ]
+        }, 
+        "DOG'S TOOTH GRASS": {}, 
+        "GRAMA": {}, 
+        "MOUNTAIN AVENS": {
+            "FLOWER": [
+                "5", 
+                "5", 
+                "7", 
+                "0", 
+                "1", 
+                "75000", 
+                "100000", 
+                "1"
+            ]
+        }, 
+        "ZOYSIA": {}, 
+        "RYEGRASS": {}, 
+        "FIELD SEDGE": {}, 
+        "RUSH": {
+            "FLOWER": [
+                "5", 
+                "5", 
+                "6", 
+                "0", 
+                "0", 
+                "110000", 
+                "130000", 
+                "1"
+            ], 
+            "BUD": [
+                "0", 
+                "7", 
+                "2", 
+                "0", 
+                "0", 
+                "NONE"
+            ]
+        }, 
+        "NEEDLE GRASS": {}, 
+        "KNOTGRASS": {}, 
+        "PURPLE MOOR GRASS": {}, 
+        "BENTGRASS": {}, 
+        "BAMBOO, HEDGE": {}, 
+        "MEADOW-GRASS": {}, 
+        "BUBBLE BULBS": {}, 
+        "SATINTAIL": {}, 
+        "WHITE MOUNTAIN HEATHER": {}, 
+        "DALLISGRASS": {}, 
+        "WORMY TENDRILS": {}, 
+        "COTTONGRASS": {
+            "FLOWER": [
+                "5", 
+                "5", 
+                "7", 
+                "0", 
+                "1", 
+                "75000", 
+                "100000", 
+                "1"
+            ], 
+            "BUD": [
+                "0", 
+                "7", 
+                "2", 
+                "0", 
+                "0", 
+                "NONE"
+            ]
+        }, 
+        "DROPSEED GRASS": {}, 
+        "COMMON REED": {}, 
+        "BLUE SEDGE": {}, 
+        "BAMBOO, GOLDEN": {}, 
+        "VELVET GRASS": {}, 
+        "CATTAIL": {}, 
+        "HAIR GRASS": {}, 
+        "FESCUE GRASS": {}, 
+        "REEDGRASS": {}, 
+        "FLOOR FUNGI": {}, 
+        "MARSH THISTLE": {
+            "FLOWER": [
+                "5", 
+                "5", 
+                "5", 
+                "0", 
+                "0", 
+                "150000", 
+                "250000", 
+                "1"
+            ], 
+            "BUD": [
+                "0", 
+                "7", 
+                "2", 
+                "0", 
+                "0", 
+                "NONE"
+            ]
+        }, 
+        "PEBBLE PLANTS": {
+            "FLOWER": [
+                "5", 
+                "5", 
+                "6", 
+                "0", 
+                "1", 
+                "250000", 
+                "260000", 
+                "1"
+            ], 
+            "BUD": [
+                "0", 
+                "7", 
+                "2", 
+                "0", 
+                "0", 
+                "NONE"
+            ]
+        }, 
+        "CARPETGRASS": {}, 
+        "CAVE MOSS": {}, 
+        "SAWGRASS": {}
+    }, 
+    "properties": {
+        "INORGANIC": {
+            "SELENITE": {
+                "TILE": [
+                    "111"
+                ], 
+                "DISPLAY_COLOR": [
+                    "7", 
+                    "15", 
+                    "0"
+                ]
+            }, 
+            "SANDY_LOAM": {
+                "TILE": [
+                    "178"
+                ], 
+                "DISPLAY_COLOR": [
+                    "6", 
+                    "4", 
+                    "0"
+                ]
+            }, 
+            "ORPIMENT": {
+                "TILE": [
+                    "9"
+                ], 
+                "DISPLAY_COLOR": [
+                    "14", 
+                    "15", 
+                    "0"
+                ]
+            }, 
+            "BAUXITE": {
+                "TILE": [
+                    "9"
+                ], 
+                "DISPLAY_COLOR": [
+                    "4", 
+                    "8", 
+                    "0"
+                ]
+            }, 
+            "CHERRY OPAL": {
+                "TILE": [
+                    "233"
+                ], 
+                "DISPLAY_COLOR": [
+                    "12", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "DIAMOND_FY": {
+                "TILE": [
+                    "247"
+                ], 
+                "DISPLAY_COLOR": [
+                    "6", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "NATIVE_GOLD": {
+                "TILE": [
+                    "176"
+                ], 
+                "DISPLAY_COLOR": [
+                    "14", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "MORGANITE": {
+                "TILE": [
+                    "236"
+                ], 
+                "DISPLAY_COLOR": [
+                    "13", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "OPAL_WHITE": {
+                "TILE": [
+                    "236"
+                ], 
+                "DISPLAY_COLOR": [
+                    "15", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "RHODOLITE": {
+                "TILE": [
+                    "236"
+                ], 
+                "DISPLAY_COLOR": [
+                    "3", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "CITRINE": {
+                "TILE": [
+                    "178"
+                ], 
+                "DISPLAY_COLOR": [
+                    "15", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "ALEXANDRITE": {
+                "TILE": [
+                    "236"
+                ], 
+                "DISPLAY_COLOR": [
+                    "13", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "MICA": {
+                "TILE": [
+                    "9"
+                ], 
+                "DISPLAY_COLOR": [
+                    "5", 
+                    "8", 
+                    "0"
+                ]
+            }, 
+            "MILK QUARTZ": {
+                "TILE": [
+                    "178"
+                ], 
+                "DISPLAY_COLOR": [
+                    "15", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "MELANITE": {
+                "TILE": [
+                    "236"
+                ], 
+                "DISPLAY_COLOR": [
+                    "8", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "ALMANDINE": {
+                "TILE": [
+                    "236"
+                ], 
+                "DISPLAY_COLOR": [
+                    "4", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "TIGER IRON": {
+                "TILE": [
+                    "178"
+                ], 
+                "DISPLAY_COLOR": [
+                    "14", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "SAND_RED": {
+                "TILE": [
+                    "177"
+                ], 
+                "DISPLAY_COLOR": [
+                    "12", 
+                    "4", 
+                    "0"
+                ]
+            }, 
+            "AMBER OPAL": {
+                "TILE": [
+                    "233"
+                ], 
+                "DISPLAY_COLOR": [
+                    "6", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "GRAPHITE": {
+                "TILE": [
+                    "9"
+                ], 
+                "DISPLAY_COLOR": [
+                    "0", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "OPAL_CRYSTAL": {
+                "TILE": [
+                    "236"
+                ], 
+                "DISPLAY_COLOR": [
+                    "15", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "SAPPHIRE": {
+                "TILE": [
+                    "247"
+                ], 
+                "DISPLAY_COLOR": [
+                    "1", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "DIAMOND_BLACK": {
+                "TILE": [
+                    "247"
+                ], 
+                "DISPLAY_COLOR": [
+                    "0", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "TSAVORITE": {
+                "TILE": [
+                    "247"
+                ], 
+                "DISPLAY_COLOR": [
+                    "2", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "CLAYSTONE": {
+                "TILE": [
+                    "35"
+                ], 
+                "DISPLAY_COLOR": [
+                    "8", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "LOAMY_SAND": {
+                "TILE": [
+                    "178"
+                ], 
+                "DISPLAY_COLOR": [
+                    "14", 
+                    "6", 
+                    "0"
+                ]
+            }, 
+            "TIGEREYE": {
+                "TILE": [
+                    "178"
+                ], 
+                "DISPLAY_COLOR": [
+                    "14", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "YELLOW SPESSARTINE": {
+                "TILE": [
+                    "236"
+                ], 
+                "DISPLAY_COLOR": [
+                    "15", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "PHYLLITE": {
+                "TILE": [
+                    "35"
+                ], 
+                "DISPLAY_COLOR": [
+                    "8", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "AQUAMARINE": {
+                "TILE": [
+                    "236"
+                ], 
+                "DISPLAY_COLOR": [
+                    "11", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "FORTIFICATION AGATE": {
+                "TILE": [
+                    "178"
+                ], 
+                "DISPLAY_COLOR": [
+                    "15", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "DIAMOND_RED": {
+                "TILE": [
+                    "247"
+                ], 
+                "DISPLAY_COLOR": [
+                    "4", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "NATIVE_COPPER": {
+                "TILE": [
+                    "126"
+                ], 
+                "DISPLAY_COLOR": [
+                    "6", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "CHROMITE": {
+                "TILE": [
+                    "9"
+                ], 
+                "DISPLAY_COLOR": [
+                    "0", 
+                    "8", 
+                    "0"
+                ]
+            }, 
+            "PELAGIC_CLAY": {
+                "TILE": [
+                    "7"
+                ], 
+                "DISPLAY_COLOR": [
+                    "13", 
+                    "5", 
+                    "0"
+                ]
+            }, 
+            "BANDED AGATE": {
+                "TILE": [
+                    "178"
+                ], 
+                "DISPLAY_COLOR": [
+                    "4", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "SANDSTONE": {
+                "TILE": [
+                    "35"
+                ], 
+                "DISPLAY_COLOR": [
+                    "6", 
+                    "8", 
+                    "0"
+                ]
+            }, 
+            "PYROLUSITE": {
+                "TILE": [
+                    "9"
+                ], 
+                "DISPLAY_COLOR": [
+                    "0", 
+                    "15", 
+                    "0"
+                ]
+            }, 
+            "AVENTURINE": {
+                "TILE": [
+                    "178"
+                ], 
+                "DISPLAY_COLOR": [
+                    "2", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "MOSS OPAL": {
+                "TILE": [
+                    "233"
+                ], 
+                "DISPLAY_COLOR": [
+                    "2", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "RHYOLITE": {
+                "TILE": [
+                    "35"
+                ], 
+                "DISPLAY_COLOR": [
+                    "8", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "PETRIFIED_WOOD": {
+                "TILE": [
+                    "9"
+                ], 
+                "DISPLAY_COLOR": [
+                    "12", 
+                    "8", 
+                    "0"
+                ]
+            }, 
+            "RUBY_STAR": {
+                "TILE": [
+                    "247"
+                ], 
+                "DISPLAY_COLOR": [
+                    "12", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "BONE OPAL": {
+                "TILE": [
+                    "233"
+                ], 
+                "DISPLAY_COLOR": [
+                    "15", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "DACITE": {
+                "TILE": [
+                    "35"
+                ], 
+                "DISPLAY_COLOR": [
+                    "8", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "MAGNETITE": {
+                "TILE": [
+                    "156"
+                ], 
+                "DISPLAY_COLOR": [
+                    "8", 
+                    "8", 
+                    "0"
+                ]
+            }, 
+            "EMERALD": {
+                "TILE": [
+                    "247"
+                ], 
+                "DISPLAY_COLOR": [
+                    "2", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "COBALTITE": {
+                "TILE": [
+                    "9"
+                ], 
+                "DISPLAY_COLOR": [
+                    "9", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "OPAL_CLARO": {
+                "TILE": [
+                    "236"
+                ], 
+                "DISPLAY_COLOR": [
+                    "9", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "CRYOLITE": {
+                "TILE": [
+                    "9"
+                ], 
+                "DISPLAY_COLOR": [
+                    "15", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "PEAT": {
+                "TILE": [
+                    "178"
+                ], 
+                "DISPLAY_COLOR": [
+                    "8", 
+                    "4", 
+                    "0"
+                ]
+            }, 
+            "DOLOMITE": {
+                "TILE": [
+                    "177"
+                ], 
+                "DISPLAY_COLOR": [
+                    "15", 
+                    "8", 
+                    "0"
+                ]
+            }, 
+            "YELLOW ZIRCON": {
+                "TILE": [
+                    "236"
+                ], 
+                "DISPLAY_COLOR": [
+                    "15", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "NATIVE_ALUMINUM": {
+                "TILE": [
+                    "177"
+                ], 
+                "DISPLAY_COLOR": [
+                    "15", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "DIAMOND_BLUE": {
+                "TILE": [
+                    "247"
+                ], 
+                "DISPLAY_COLOR": [
+                    "9", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "RESIN OPAL": {
+                "TILE": [
+                    "233"
+                ], 
+                "DISPLAY_COLOR": [
+                    "14", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "BLACK ZIRCON": {
+                "TILE": [
+                    "236"
+                ], 
+                "DISPLAY_COLOR": [
+                    "0", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "BORAX": {
+                "TILE": [
+                    "9"
+                ], 
+                "DISPLAY_COLOR": [
+                    "15", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "CLEAR GARNET": {
+                "TILE": [
+                    "236"
+                ], 
+                "DISPLAY_COLOR": [
+                    "15", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "BISMUTHINITE": {
+                "TILE": [
+                    "126"
+                ], 
+                "DISPLAY_COLOR": [
+                    "15", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "RED ZIRCON": {
+                "TILE": [
+                    "236"
+                ], 
+                "DISPLAY_COLOR": [
+                    "4", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "CLEAR TOURMALINE": {
+                "TILE": [
+                    "233"
+                ], 
+                "DISPLAY_COLOR": [
+                    "15", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "SERPENTINE": {
+                "TILE": [
+                    "9"
+                ], 
+                "DISPLAY_COLOR": [
+                    "2", 
+                    "15", 
+                    "0"
+                ]
+            }, 
+            "SANDY_CLAY": {
+                "TILE": [
+                    "176"
+                ], 
+                "DISPLAY_COLOR": [
+                    "14", 
+                    "6", 
+                    "0"
+                ]
+            }, 
+            "LAVENDER JADE": {
+                "TILE": [
+                    "178"
+                ], 
+                "DISPLAY_COLOR": [
+                    "5", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "PIPE OPAL": {
+                "TILE": [
+                    "233"
+                ], 
+                "DISPLAY_COLOR": [
+                    "15", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "OPAL_REDFLASH": {
+                "TILE": [
+                    "236"
+                ], 
+                "DISPLAY_COLOR": [
+                    "12", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "SUNSTONE": {
+                "TILE": [
+                    "178"
+                ], 
+                "DISPLAY_COLOR": [
+                    "14", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "PITCHBLENDE": {
+                "TILE": [
+                    "9"
+                ], 
+                "DISPLAY_COLOR": [
+                    "5", 
+                    "8", 
+                    "0"
+                ]
+            }, 
+            "DIAMOND_CLEAR": {
+                "TILE": [
+                    "247"
+                ], 
+                "DISPLAY_COLOR": [
+                    "15", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "ANDESITE": {
+                "TILE": [
+                    "35"
+                ], 
+                "DISPLAY_COLOR": [
+                    "8", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "CINNABAR": {
+                "TILE": [
+                    "9"
+                ], 
+                "DISPLAY_COLOR": [
+                    "12", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "GNEISS": {
+                "TILE": [
+                    "35"
+                ], 
+                "DISPLAY_COLOR": [
+                    "15", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "BLACK PYROPE": {
+                "TILE": [
+                    "236"
+                ], 
+                "DISPLAY_COLOR": [
+                    "0", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "SCHIST": {
+                "TILE": [
+                    "35"
+                ], 
+                "DISPLAY_COLOR": [
+                    "6", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "CLEAR ZIRCON": {
+                "TILE": [
+                    "236"
+                ], 
+                "DISPLAY_COLOR": [
+                    "15", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "SYLVITE": {
+                "TILE": [
+                    "9"
+                ], 
+                "DISPLAY_COLOR": [
+                    "12", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "ALABASTER": {
+                "TILE": [
+                    "111"
+                ], 
+                "DISPLAY_COLOR": [
+                    "7", 
+                    "15", 
+                    "0"
+                ]
+            }, 
+            "SAND_TAN": {
+                "TILE": [
+                    "177"
+                ], 
+                "DISPLAY_COLOR": [
+                    "8", 
+                    "6", 
+                    "0"
+                ]
+            }, 
+            "WAX OPAL": {
+                "TILE": [
+                    "233"
+                ], 
+                "DISPLAY_COLOR": [
+                    "6", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "ROCK_SALT": {
+                "TILE": [
+                    "35"
+                ], 
+                "DISPLAY_COLOR": [
+                    "15", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "TUBE AGATE": {
+                "TILE": [
+                    "178"
+                ], 
+                "DISPLAY_COLOR": [
+                    "6", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "VIOLET SPESSARTINE": {
+                "TILE": [
+                    "236"
+                ], 
+                "DISPLAY_COLOR": [
+                    "13", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "LOAM": {
+                "TILE": [
+                    "178"
+                ], 
+                "DISPLAY_COLOR": [
+                    "12", 
+                    "4", 
+                    "0"
+                ]
+            }, 
+            "PINEAPPLE OPAL": {
+                "TILE": [
+                    "233"
+                ], 
+                "DISPLAY_COLOR": [
+                    "15", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "ONYX OPAL": {
+                "TILE": [
+                    "233"
+                ], 
+                "DISPLAY_COLOR": [
+                    "15", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "GRAY CHALCEDONY": {
+                "TILE": [
+                    "178"
+                ], 
+                "DISPLAY_COLOR": [
+                    "15", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "GALENA": {
+                "TILE": [
+                    "156"
+                ], 
+                "DISPLAY_COLOR": [
+                    "15", 
+                    "8", 
+                    "0"
+                ]
+            }, 
+            "HONEY YELLOW BERYL": {
+                "TILE": [
+                    "236"
+                ], 
+                "DISPLAY_COLOR": [
+                    "6", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "SHELL OPAL": {
+                "TILE": [
+                    "233"
+                ], 
+                "DISPLAY_COLOR": [
+                    "15", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "DIAMOND_YELLOW": {
+                "TILE": [
+                    "247"
+                ], 
+                "DISPLAY_COLOR": [
+                    "15", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "SMOKY QUARTZ": {
+                "TILE": [
+                    "178"
+                ], 
+                "DISPLAY_COLOR": [
+                    "6", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "ALUNITE": {
+                "TILE": [
+                    "9"
+                ], 
+                "DISPLAY_COLOR": [
+                    "14", 
+                    "8", 
+                    "0"
+                ]
+            }, 
+            "CHALK": {
+                "TILE": [
+                    "177"
+                ], 
+                "DISPLAY_COLOR": [
+                    "15", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "TURQUOISE": {
+                "TILE": [
+                    "178"
+                ], 
+                "DISPLAY_COLOR": [
+                    "11", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "LIMESTONE": {
+                "TILE": [
+                    "177"
+                ], 
+                "DISPLAY_COLOR": [
+                    "15", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "PLUME AGATE": {
+                "TILE": [
+                    "178"
+                ], 
+                "DISPLAY_COLOR": [
+                    "6", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "GABBRO": {
+                "TILE": [
+                    "35"
+                ], 
+                "DISPLAY_COLOR": [
+                    "7", 
+                    "8", 
+                    "0"
+                ]
+            }, 
+            "BRIMSTONE": {
+                "TILE": [
+                    "9"
+                ], 
+                "DISPLAY_COLOR": [
+                    "14", 
+                    "15", 
+                    "0"
+                ]
+            }, 
+            "TOPAZOLITE": {
+                "TILE": [
+                    "236"
+                ], 
+                "DISPLAY_COLOR": [
+                    "14", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "SHALE": {
+                "TILE": [
+                    "35"
+                ], 
+                "DISPLAY_COLOR": [
+                    "8", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "MARBLE": {
+                "TILE": [
+                    "177"
+                ], 
+                "DISPLAY_COLOR": [
+                    "15", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "KAOLINITE": {
+                "TILE": [
+                    "9"
+                ], 
+                "DISPLAY_COLOR": [
+                    "4", 
+                    "8", 
+                    "0"
+                ]
+            }, 
+            "PRASE": {
+                "TILE": [
+                    "178"
+                ], 
+                "DISPLAY_COLOR": [
+                    "2", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "HORN_SILVER": {
+                "TILE": [
+                    "176"
+                ], 
+                "DISPLAY_COLOR": [
+                    "15", 
+                    "15", 
+                    "0"
+                ]
+            }, 
+            "QUARTZ_ROSE": {
+                "TILE": [
+                    "178"
+                ], 
+                "DISPLAY_COLOR": [
+                    "12", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "SARDONYX": {
+                "TILE": [
+                    "178"
+                ], 
+                "DISPLAY_COLOR": [
+                    "4", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "WHITE CHALCEDONY": {
+                "TILE": [
+                    "178"
+                ], 
+                "DISPLAY_COLOR": [
+                    "15", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "SAND_BLACK": {
+                "TILE": [
+                    "177"
+                ], 
+                "DISPLAY_COLOR": [
+                    "7", 
+                    "8", 
+                    "0"
+                ]
+            }, 
+            "KIMBERLITE": {
+                "TILE": [
+                    "9"
+                ], 
+                "DISPLAY_COLOR": [
+                    "9", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "SILT": {
+                "TILE": [
+                    "178"
+                ], 
+                "DISPLAY_COLOR": [
+                    "8", 
+                    "6", 
+                    "0"
+                ]
+            }, 
+            "PYRITE": {
+                "TILE": [
+                    "178"
+                ], 
+                "DISPLAY_COLOR": [
+                    "14", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "LIMONITE": {
+                "TILE": [
+                    "156"
+                ], 
+                "DISPLAY_COLOR": [
+                    "14", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "ORTHOCLASE": {
+                "TILE": [
+                    "9"
+                ], 
+                "DISPLAY_COLOR": [
+                    "14", 
+                    "8", 
+                    "0"
+                ]
+            }, 
+            "NATIVE_PLATINUM": {
+                "TILE": [
+                    "177"
+                ], 
+                "DISPLAY_COLOR": [
+                    "15", 
+                    "8", 
+                    "0"
+                ]
+            }, 
+            "SILTSTONE": {
+                "TILE": [
+                    "35"
+                ], 
+                "DISPLAY_COLOR": [
+                    "6", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "PERICLASE": {
+                "TILE": [
+                    "9"
+                ], 
+                "DISPLAY_COLOR": [
+                    "15", 
+                    "8", 
+                    "0"
+                ]
+            }, 
+            "PICTURE JASPER": {
+                "TILE": [
+                    "178"
+                ], 
+                "DISPLAY_COLOR": [
+                    "6", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "GOLD OPAL": {
+                "TILE": [
+                    "233"
+                ], 
+                "DISPLAY_COLOR": [
+                    "14", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "HEMATITE": {
+                "TILE": [
+                    "156"
+                ], 
+                "DISPLAY_COLOR": [
+                    "4", 
+                    "8", 
+                    "0"
+                ]
+            }, 
+            "SLADE": {
+                "TILE": [
+                    "178"
+                ], 
+                "DISPLAY_COLOR": [
+                    "7", 
+                    "8", 
+                    "0"
+                ]
+            }, 
+            "SATINSPAR": {
+                "TILE": [
+                    "111"
+                ], 
+                "DISPLAY_COLOR": [
+                    "7", 
+                    "15", 
+                    "0"
+                ]
+            }, 
+            "OPAL_HARLEQUIN": {
+                "TILE": [
+                    "236"
+                ], 
+                "DISPLAY_COLOR": [
+                    "15", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "MARCASITE": {
+                "TILE": [
+                    "9"
+                ], 
+                "DISPLAY_COLOR": [
+                    "7", 
+                    "15", 
+                    "0"
+                ]
+            }, 
+            "SLATE": {
+                "TILE": [
+                    "35"
+                ], 
+                "DISPLAY_COLOR": [
+                    "8", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "ANHYDRITE": {
+                "TILE": [
+                    "9"
+                ], 
+                "DISPLAY_COLOR": [
+                    "11", 
+                    "8", 
+                    "0"
+                ]
+            }, 
+            "HORNBLENDE": {
+                "TILE": [
+                    "9"
+                ], 
+                "DISPLAY_COLOR": [
+                    "0", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "QUARTZITE": {
+                "TILE": [
+                    "35"
+                ], 
+                "DISPLAY_COLOR": [
+                    "15", 
+                    "8", 
+                    "0"
+                ]
+            }, 
+            "TALC": {
+                "TILE": [
+                    "9"
+                ], 
+                "DISPLAY_COLOR": [
+                    "15", 
+                    "8", 
+                    "0"
+                ]
+            }, 
+            "CLAY": {
+                "TILE": [
+                    "176"
+                ], 
+                "DISPLAY_COLOR": [
+                    "15", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "RED PYROPE": {
+                "TILE": [
+                    "236"
+                ], 
+                "DISPLAY_COLOR": [
+                    "4", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "DIAMOND_GREEN": {
+                "TILE": [
+                    "247"
+                ], 
+                "DISPLAY_COLOR": [
+                    "2", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "CONGLOMERATE": {
+                "TILE": [
+                    "35"
+                ], 
+                "DISPLAY_COLOR": [
+                    "6", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "INDIGO TOURMALINE": {
+                "TILE": [
+                    "236"
+                ], 
+                "DISPLAY_COLOR": [
+                    "1", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "JET": {
+                "TILE": [
+                    "9"
+                ], 
+                "DISPLAY_COLOR": [
+                    "0", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "RAW_ADAMANTINE": {
+                "TILE": [
+                    "177"
+                ], 
+                "DISPLAY_COLOR": [
+                    "11", 
+                    "8", 
+                    "0"
+                ]
+            }, 
+            "TETRAHEDRITE": {
+                "TILE": [
+                    "156"
+                ], 
+                "DISPLAY_COLOR": [
+                    "8", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "MALACHITE": {
+                "TILE": [
+                    "126"
+                ], 
+                "DISPLAY_COLOR": [
+                    "2", 
+                    "15", 
+                    "0"
+                ]
+            }, 
+            "GARNIERITE": {
+                "TILE": [
+                    "126"
+                ], 
+                "DISPLAY_COLOR": [
+                    "10", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "ONYX": {
+                "TILE": [
+                    "178"
+                ], 
+                "DISPLAY_COLOR": [
+                    "0", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "SPINEL_PURPLE": {
+                "TILE": [
+                    "236"
+                ], 
+                "DISPLAY_COLOR": [
+                    "5", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "CRYSTAL_ROCK": {
+                "TILE": [
+                    "178"
+                ], 
+                "DISPLAY_COLOR": [
+                    "15", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "CAT'S EYE": {
+                "TILE": [
+                    "236"
+                ], 
+                "DISPLAY_COLOR": [
+                    "15", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "OPAL_BLACK": {
+                "TILE": [
+                    "247"
+                ], 
+                "DISPLAY_COLOR": [
+                    "0", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "RED GROSSULAR": {
+                "TILE": [
+                    "236"
+                ], 
+                "DISPLAY_COLOR": [
+                    "4", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "MOONSTONE": {
+                "TILE": [
+                    "178"
+                ], 
+                "DISPLAY_COLOR": [
+                    "15", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "SILTY_CLAY_LOAM": {
+                "TILE": [
+                    "178"
+                ], 
+                "DISPLAY_COLOR": [
+                    "7", 
+                    "6", 
+                    "0"
+                ]
+            }, 
+            "SAND_WHITE": {
+                "TILE": [
+                    "177"
+                ], 
+                "DISPLAY_COLOR": [
+                    "15", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "MICROCLINE": {
+                "TILE": [
+                    "9"
+                ], 
+                "DISPLAY_COLOR": [
+                    "11", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "RUBY": {
+                "TILE": [
+                    "247"
+                ], 
+                "DISPLAY_COLOR": [
+                    "4", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "BLOODSTONE": {
+                "TILE": [
+                    "178"
+                ], 
+                "DISPLAY_COLOR": [
+                    "4", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "COAL_BITUMINOUS": {
+                "TILE": [
+                    "59"
+                ], 
+                "DISPLAY_COLOR": [
+                    "0", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "PINK GARNET": {
+                "TILE": [
+                    "236"
+                ], 
+                "DISPLAY_COLOR": [
+                    "13", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "RUTILE": {
+                "TILE": [
+                    "9"
+                ], 
+                "DISPLAY_COLOR": [
+                    "5", 
+                    "8", 
+                    "0"
+                ]
+            }, 
+            "SALTPETER": {
+                "TILE": [
+                    "9"
+                ], 
+                "DISPLAY_COLOR": [
+                    "14", 
+                    "15", 
+                    "0"
+                ]
+            }, 
+            "PINK JADE": {
+                "TILE": [
+                    "178"
+                ], 
+                "DISPLAY_COLOR": [
+                    "13", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "SCHORL": {
+                "TILE": [
+                    "178"
+                ], 
+                "DISPLAY_COLOR": [
+                    "0", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "OPAL_PINFIRE": {
+                "TILE": [
+                    "236"
+                ], 
+                "DISPLAY_COLOR": [
+                    "15", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "MUDSTONE": {
+                "TILE": [
+                    "35"
+                ], 
+                "DISPLAY_COLOR": [
+                    "6", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "TANZANITE": {
+                "TILE": [
+                    "236"
+                ], 
+                "DISPLAY_COLOR": [
+                    "13", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "FIRE AGATE": {
+                "TILE": [
+                    "178"
+                ], 
+                "DISPLAY_COLOR": [
+                    "6", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "GREEN ZIRCON": {
+                "TILE": [
+                    "236"
+                ], 
+                "DISPLAY_COLOR": [
+                    "2", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "SARD": {
+                "TILE": [
+                    "178"
+                ], 
+                "DISPLAY_COLOR": [
+                    "4", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "LACE AGATE": {
+                "TILE": [
+                    "178"
+                ], 
+                "DISPLAY_COLOR": [
+                    "9", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "OPAL_PFIRE": {
+                "TILE": [
+                    "236"
+                ], 
+                "DISPLAY_COLOR": [
+                    "12", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "CARNELIAN": {
+                "TILE": [
+                    "178"
+                ], 
+                "DISPLAY_COLOR": [
+                    "4", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "AMETHYST": {
+                "TILE": [
+                    "236"
+                ], 
+                "DISPLAY_COLOR": [
+                    "13", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "YELLOW JASPER": {
+                "TILE": [
+                    "178"
+                ], 
+                "DISPLAY_COLOR": [
+                    "15", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "VARISCITE": {
+                "TILE": [
+                    "178"
+                ], 
+                "DISPLAY_COLOR": [
+                    "2", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "DIORITE": {
+                "TILE": [
+                    "35"
+                ], 
+                "DISPLAY_COLOR": [
+                    "8", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "ILMENITE": {
+                "TILE": [
+                    "9"
+                ], 
+                "DISPLAY_COLOR": [
+                    "0", 
+                    "8", 
+                    "0"
+                ]
+            }, 
+            "FIRE_CLAY": {
+                "TILE": [
+                    "176"
+                ], 
+                "DISPLAY_COLOR": [
+                    "12", 
+                    "6", 
+                    "0"
+                ]
+            }, 
+            "OPAL_BANDFIRE": {
+                "TILE": [
+                    "236"
+                ], 
+                "DISPLAY_COLOR": [
+                    "15", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "KUNZITE": {
+                "TILE": [
+                    "236"
+                ], 
+                "DISPLAY_COLOR": [
+                    "13", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "NATIVE_SILVER": {
+                "TILE": [
+                    "176"
+                ], 
+                "DISPLAY_COLOR": [
+                    "15", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "RED BERYL": {
+                "TILE": [
+                    "236"
+                ], 
+                "DISPLAY_COLOR": [
+                    "12", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "LAPIS LAZULI": {
+                "TILE": [
+                    "178"
+                ], 
+                "DISPLAY_COLOR": [
+                    "9", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "PRASE OPAL": {
+                "TILE": [
+                    "233"
+                ], 
+                "DISPLAY_COLOR": [
+                    "2", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "WOOD OPAL": {
+                "TILE": [
+                    "233"
+                ], 
+                "DISPLAY_COLOR": [
+                    "6", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "GRANITE": {
+                "TILE": [
+                    "35"
+                ], 
+                "DISPLAY_COLOR": [
+                    "8", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "SAND_YELLOW": {
+                "TILE": [
+                    "177"
+                ], 
+                "DISPLAY_COLOR": [
+                    "14", 
+                    "6", 
+                    "0"
+                ]
+            }, 
+            "BROWN JASPER": {
+                "TILE": [
+                    "178"
+                ], 
+                "DISPLAY_COLOR": [
+                    "6", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "GOLDEN BERYL": {
+                "TILE": [
+                    "236"
+                ], 
+                "DISPLAY_COLOR": [
+                    "14", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "CHRYSOCOLLA": {
+                "TILE": [
+                    "178"
+                ], 
+                "DISPLAY_COLOR": [
+                    "11", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "CALCAREOUS_OOZE": {
+                "TILE": [
+                    "7"
+                ], 
+                "DISPLAY_COLOR": [
+                    "15", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "CHRYSOPRASE": {
+                "TILE": [
+                    "178"
+                ], 
+                "DISPLAY_COLOR": [
+                    "10", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "SILTY_CLAY": {
+                "TILE": [
+                    "176"
+                ], 
+                "DISPLAY_COLOR": [
+                    "8", 
+                    "6", 
+                    "0"
+                ]
+            }, 
+            "PINK TOURMALINE": {
+                "TILE": [
+                    "236"
+                ], 
+                "DISPLAY_COLOR": [
+                    "12", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "GREEN JADE": {
+                "TILE": [
+                    "236"
+                ], 
+                "DISPLAY_COLOR": [
+                    "10", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "CINNAMON GROSSULAR": {
+                "TILE": [
+                    "236"
+                ], 
+                "DISPLAY_COLOR": [
+                    "6", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "MOSS AGATE": {
+                "TILE": [
+                    "178"
+                ], 
+                "DISPLAY_COLOR": [
+                    "2", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "JASPER OPAL": {
+                "TILE": [
+                    "233"
+                ], 
+                "DISPLAY_COLOR": [
+                    "15", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "BROWN ZIRCON": {
+                "TILE": [
+                    "236"
+                ], 
+                "DISPLAY_COLOR": [
+                    "6", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "CASSITERITE": {
+                "TILE": [
+                    "126"
+                ], 
+                "DISPLAY_COLOR": [
+                    "6", 
+                    "8", 
+                    "0"
+                ]
+            }, 
+            "SAPPHIRE_STAR": {
+                "TILE": [
+                    "247"
+                ], 
+                "DISPLAY_COLOR": [
+                    "9", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "CLAY_LOAM": {
+                "TILE": [
+                    "176"
+                ], 
+                "DISPLAY_COLOR": [
+                    "12", 
+                    "4", 
+                    "0"
+                ]
+            }, 
+            "REALGAR": {
+                "TILE": [
+                    "9"
+                ], 
+                "DISPLAY_COLOR": [
+                    "12", 
+                    "15", 
+                    "0"
+                ]
+            }, 
+            "GOSHENITE": {
+                "TILE": [
+                    "236"
+                ], 
+                "DISPLAY_COLOR": [
+                    "15", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "CHRYSOBERYL": {
+                "TILE": [
+                    "236"
+                ], 
+                "DISPLAY_COLOR": [
+                    "10", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "MILK OPAL": {
+                "TILE": [
+                    "233"
+                ], 
+                "DISPLAY_COLOR": [
+                    "15", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "DEMANTOID": {
+                "TILE": [
+                    "247"
+                ], 
+                "DISPLAY_COLOR": [
+                    "2", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "JELLY OPAL": {
+                "TILE": [
+                    "236"
+                ], 
+                "DISPLAY_COLOR": [
+                    "6", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "BASALT": {
+                "TILE": [
+                    "35"
+                ], 
+                "DISPLAY_COLOR": [
+                    "7", 
+                    "8", 
+                    "0"
+                ]
+            }, 
+            "SILICEOUS_OOZE": {
+                "TILE": [
+                    "7"
+                ], 
+                "DISPLAY_COLOR": [
+                    "14", 
+                    "6", 
+                    "0"
+                ]
+            }, 
+            "OBSIDIAN": {
+                "TILE": [
+                    "45"
+                ], 
+                "DISPLAY_COLOR": [
+                    "7", 
+                    "8", 
+                    "0"
+                ]
+            }, 
+            "GYPSUM": {
+                "TILE": [
+                    "111"
+                ], 
+                "DISPLAY_COLOR": [
+                    "14", 
+                    "15", 
+                    "0"
+                ]
+            }, 
+            "OLIVINE": {
+                "TILE": [
+                    "9"
+                ], 
+                "DISPLAY_COLOR": [
+                    "2", 
+                    "8", 
+                    "0"
+                ]
+            }, 
+            "GREEN TOURMALINE": {
+                "TILE": [
+                    "236"
+                ], 
+                "DISPLAY_COLOR": [
+                    "2", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "RED TOURMALINE": {
+                "TILE": [
+                    "236"
+                ], 
+                "DISPLAY_COLOR": [
+                    "4", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "RUBICELLE": {
+                "TILE": [
+                    "236"
+                ], 
+                "DISPLAY_COLOR": [
+                    "14", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "SPINEL_RED": {
+                "TILE": [
+                    "236"
+                ], 
+                "DISPLAY_COLOR": [
+                    "4", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "CALCITE": {
+                "TILE": [
+                    "36"
+                ], 
+                "DISPLAY_COLOR": [
+                    "15", 
+                    "8", 
+                    "0"
+                ]
+            }, 
+            "SILT_LOAM": {
+                "TILE": [
+                    "178"
+                ], 
+                "DISPLAY_COLOR": [
+                    "12", 
+                    "6", 
+                    "0"
+                ]
+            }, 
+            "FIRE OPAL": {
+                "TILE": [
+                    "236"
+                ], 
+                "DISPLAY_COLOR": [
+                    "12", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "WHITE JADE": {
+                "TILE": [
+                    "178"
+                ], 
+                "DISPLAY_COLOR": [
+                    "15", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "PUDDINGSTONE": {
+                "TILE": [
+                    "9"
+                ], 
+                "DISPLAY_COLOR": [
+                    "4", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "BLUE GARNET": {
+                "TILE": [
+                    "247"
+                ], 
+                "DISPLAY_COLOR": [
+                    "1", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "SPHALERITE": {
+                "TILE": [
+                    "126"
+                ], 
+                "DISPLAY_COLOR": [
+                    "8", 
+                    "8", 
+                    "0"
+                ]
+            }, 
+            "SANDY_CLAY_LOAM": {
+                "TILE": [
+                    "178"
+                ], 
+                "DISPLAY_COLOR": [
+                    "7", 
+                    "4", 
+                    "0"
+                ]
+            }, 
+            "BLUE JADE": {
+                "TILE": [
+                    "178"
+                ], 
+                "DISPLAY_COLOR": [
+                    "9", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "TOPAZ": {
+                "TILE": [
+                    "236"
+                ], 
+                "DISPLAY_COLOR": [
+                    "20", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "YELLOW GROSSULAR": {
+                "TILE": [
+                    "236"
+                ], 
+                "DISPLAY_COLOR": [
+                    "15", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "CHERT": {
+                "TILE": [
+                    "35"
+                ], 
+                "DISPLAY_COLOR": [
+                    "6", 
+                    "8", 
+                    "0"
+                ]
+            }, 
+            "DIAMOND_LY": {
+                "TILE": [
+                    "247"
+                ], 
+                "DISPLAY_COLOR": [
+                    "15", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "HELIODOR": {
+                "TILE": [
+                    "236"
+                ], 
+                "DISPLAY_COLOR": [
+                    "10", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "LIGNITE": {
+                "TILE": [
+                    "59"
+                ], 
+                "DISPLAY_COLOR": [
+                    "0", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "MORION": {
+                "TILE": [
+                    "178"
+                ], 
+                "DISPLAY_COLOR": [
+                    "8", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "OPAL_LEVIN": {
+                "TILE": [
+                    "236"
+                ], 
+                "DISPLAY_COLOR": [
+                    "14", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "STIBNITE": {
+                "TILE": [
+                    "9"
+                ], 
+                "DISPLAY_COLOR": [
+                    "7", 
+                    "15", 
+                    "0"
+                ]
+            }, 
+            "PERIDOT": {
+                "TILE": [
+                    "236"
+                ], 
+                "DISPLAY_COLOR": [
+                    "10", 
+                    "7", 
+                    "0"
+                ]
+            }, 
+            "DENDRITIC AGATE": {
+                "TILE": [
+                    "178"
+                ], 
+                "DISPLAY_COLOR": [
+                    "15", 
+                    "7", 
+                    "0"
+                ]
+            }
+        }, 
+        "PLANT": {
+            "BABY TOES SUCCULENT": {
+                "GRASS_COLORS": [
+                    "10", 
+                    "0", 
+                    "0", 
+                    "2", 
+                    "0", 
+                    "0", 
+                    "2", 
+                    "0", 
+                    "0", 
+                    "6", 
+                    "0", 
+                    "0"
+                ], 
+                "GRASS_TILES": [
+                    "'.'", 
+                    "44", 
+                    "'`'", 
+                    "39"
+                ]
+            }, 
+            "EYEBALL": {
+                "GRASS_COLORS": [
+                    "15", 
+                    "0", 
+                    "0", 
+                    "7", 
+                    "0", 
+                    "0", 
+                    "8", 
+                    "0", 
+                    "0", 
+                    "6", 
+                    "0", 
+                    "0"
+                ], 
+                "GRASS_TILES": [
+                    "'O'", 
+                    "'o'", 
+                    "9", 
+                    "248"
+                ]
+            }, 
+            "DOWNY GRASS": {
+                "GRASS_COLORS": [
+                    "15", 
+                    "0", 
+                    "0", 
+                    "7", 
+                    "0", 
+                    "0", 
+                    "8", 
+                    "0", 
+                    "0", 
+                    "6", 
+                    "0", 
+                    "0"
+                ], 
+                "GRASS_TILES": [
+                    "'.'", 
+                    "44", 
+                    "'`'", 
+                    "39"
+                ]
+            }, 
+            "BAMBOO, ARROW": {
+                "GRASS_COLORS": [
+                    "10", 
+                    "0", 
+                    "0", 
+                    "10", 
+                    "0", 
+                    "0", 
+                    "8", 
+                    "0", 
+                    "0", 
+                    "6", 
+                    "0", 
+                    "0"
+                ], 
+                "GRASS_TILES": [
+                    "231", 
+                    "159", 
+                    "231", 
+                    "159"
+                ]
+            }, 
+            "MEADOWSWEET": {
+                "GRASS_COLORS": [
+                    "10", 
+                    "0", 
+                    "0", 
+                    "2", 
+                    "0", 
+                    "0", 
+                    "14", 
+                    "0", 
+                    "0", 
+                    "6", 
+                    "0", 
+                    "0"
+                ], 
+                "GRASS_TILES": [
+                    "'.'", 
+                    "44", 
+                    "'`'", 
+                    "39"
+                ]
+            }, 
+            "CLOUDBERRY": {
+                "GRASS_COLORS": [
+                    "10", 
+                    "0", 
+                    "0", 
+                    "2", 
+                    "0", 
+                    "0", 
+                    "14", 
+                    "0", 
+                    "0", 
+                    "6", 
+                    "0", 
+                    "0"
+                ], 
+                "GRASS_TILES": [
+                    "'.'", 
+                    "44", 
+                    "'`'", 
+                    "39"
+                ]
+            }, 
+            "DOG'S TOOTH GRASS": {
+                "GRASS_COLORS": [
+                    "10", 
+                    "0", 
+                    "0", 
+                    "2", 
+                    "0", 
+                    "0", 
+                    "14", 
+                    "0", 
+                    "0", 
+                    "6", 
+                    "0", 
+                    "0"
+                ], 
+                "GRASS_TILES": [
+                    "'.'", 
+                    "44", 
+                    "'`'", 
+                    "39"
+                ]
+            }, 
+            "GRAMA": {
+                "GRASS_COLORS": [
+                    "10", 
+                    "0", 
+                    "0", 
+                    "2", 
+                    "0", 
+                    "0", 
+                    "14", 
+                    "0", 
+                    "0", 
+                    "6", 
+                    "0", 
+                    "0"
+                ], 
+                "GRASS_TILES": [
+                    "'.'", 
+                    "44", 
+                    "'`'", 
+                    "39"
+                ]
+            }, 
+            "MOUNTAIN AVENS": {
+                "GRASS_COLORS": [
+                    "10", 
+                    "0", 
+                    "0", 
+                    "2", 
+                    "0", 
+                    "0", 
+                    "14", 
+                    "0", 
+                    "0", 
+                    "6", 
+                    "0", 
+                    "0"
+                ], 
+                "GRASS_TILES": [
+                    "'.'", 
+                    "44", 
+                    "'`'", 
+                    "39"
+                ]
+            }, 
+            "ZOYSIA": {
+                "GRASS_COLORS": [
+                    "10", 
+                    "0", 
+                    "0", 
+                    "2", 
+                    "0", 
+                    "0", 
+                    "14", 
+                    "0", 
+                    "0", 
+                    "6", 
+                    "0", 
+                    "0"
+                ], 
+                "GRASS_TILES": [
+                    "'.'", 
+                    "44", 
+                    "'`'", 
+                    "39"
+                ]
+            }, 
+            "RYEGRASS": {
+                "GRASS_COLORS": [
+                    "10", 
+                    "0", 
+                    "0", 
+                    "2", 
+                    "0", 
+                    "0", 
+                    "14", 
+                    "0", 
+                    "0", 
+                    "6", 
+                    "0", 
+                    "0"
+                ], 
+                "GRASS_TILES": [
+                    "'.'", 
+                    "44", 
+                    "'`'", 
+                    "39"
+                ]
+            }, 
+            "FIELD SEDGE": {
+                "GRASS_COLORS": [
+                    "10", 
+                    "0", 
+                    "0", 
+                    "2", 
+                    "0", 
+                    "0", 
+                    "14", 
+                    "0", 
+                    "0", 
+                    "6", 
+                    "0", 
+                    "0"
+                ], 
+                "GRASS_TILES": [
+                    "'.'", 
+                    "44", 
+                    "'`'", 
+                    "39"
+                ]
+            }, 
+            "RUSH": {
+                "GRASS_COLORS": [
+                    "10", 
+                    "0", 
+                    "0", 
+                    "2", 
+                    "0", 
+                    "0", 
+                    "14", 
+                    "0", 
+                    "0", 
+                    "6", 
+                    "0", 
+                    "0"
+                ], 
+                "GRASS_TILES": [
+                    "'.'", 
+                    "44", 
+                    "'`'", 
+                    "39"
+                ]
+            }, 
+            "NEEDLE GRASS": {
+                "GRASS_COLORS": [
+                    "10", 
+                    "0", 
+                    "0", 
+                    "2", 
+                    "0", 
+                    "0", 
+                    "14", 
+                    "0", 
+                    "0", 
+                    "6", 
+                    "0", 
+                    "0"
+                ], 
+                "GRASS_TILES": [
+                    "'.'", 
+                    "44", 
+                    "'`'", 
+                    "39"
+                ]
+            }, 
+            "KNOTGRASS": {
+                "GRASS_COLORS": [
+                    "10", 
+                    "0", 
+                    "0", 
+                    "2", 
+                    "0", 
+                    "0", 
+                    "14", 
+                    "0", 
+                    "0", 
+                    "6", 
+                    "0", 
+                    "0"
+                ], 
+                "GRASS_TILES": [
+                    "'.'", 
+                    "44", 
+                    "'`'", 
+                    "39"
+                ]
+            }, 
+            "PURPLE MOOR GRASS": {
+                "GRASS_COLORS": [
+                    "10", 
+                    "0", 
+                    "0", 
+                    "2", 
+                    "0", 
+                    "0", 
+                    "14", 
+                    "0", 
+                    "0", 
+                    "6", 
+                    "0", 
+                    "0"
+                ], 
+                "GRASS_TILES": [
+                    "'.'", 
+                    "44", 
+                    "'`'", 
+                    "39"
+                ]
+            }, 
+            "BENTGRASS": {
+                "GRASS_COLORS": [
+                    "10", 
+                    "0", 
+                    "0", 
+                    "2", 
+                    "0", 
+                    "0", 
+                    "14", 
+                    "0", 
+                    "0", 
+                    "6", 
+                    "0", 
+                    "0"
+                ], 
+                "GRASS_TILES": [
+                    "'.'", 
+                    "44", 
+                    "'`'", 
+                    "39"
+                ]
+            }, 
+            "BAMBOO, HEDGE": {
+                "GRASS_COLORS": [
+                    "10", 
+                    "0", 
+                    "0", 
+                    "10", 
+                    "0", 
+                    "0", 
+                    "8", 
+                    "0", 
+                    "0", 
+                    "6", 
+                    "0", 
+                    "0"
+                ], 
+                "GRASS_TILES": [
+                    "231", 
+                    "159", 
+                    "231", 
+                    "159"
+                ]
+            }, 
+            "MEADOW-GRASS": {
+                "GRASS_COLORS": [
+                    "10", 
+                    "0", 
+                    "0", 
+                    "2", 
+                    "0", 
+                    "0", 
+                    "14", 
+                    "0", 
+                    "0", 
+                    "6", 
+                    "0", 
+                    "0"
+                ], 
+                "GRASS_TILES": [
+                    "'.'", 
+                    "44", 
+                    "'`'", 
+                    "39"
+                ]
+            }, 
+            "BUBBLE BULBS": {
+                "GRASS_COLORS": [
+                    "11", 
+                    "0", 
+                    "0", 
+                    "3", 
+                    "0", 
+                    "0", 
+                    "8", 
+                    "0", 
+                    "0", 
+                    "6", 
+                    "0", 
+                    "0"
+                ], 
+                "GRASS_TILES": [
+                    "'O'", 
+                    "'o'", 
+                    "9", 
+                    "248"
+                ]
+            }, 
+            "SATINTAIL": {
+                "GRASS_COLORS": [
+                    "10", 
+                    "0", 
+                    "0", 
+                    "2", 
+                    "0", 
+                    "0", 
+                    "14", 
+                    "0", 
+                    "0", 
+                    "6", 
+                    "0", 
+                    "0"
+                ], 
+                "GRASS_TILES": [
+                    "'.'", 
+                    "44", 
+                    "'`'", 
+                    "39"
+                ]
+            }, 
+            "WHITE MOUNTAIN HEATHER": {
+                "GRASS_COLORS": [
+                    "10", 
+                    "0", 
+                    "0", 
+                    "2", 
+                    "0", 
+                    "0", 
+                    "14", 
+                    "0", 
+                    "0", 
+                    "6", 
+                    "0", 
+                    "0"
+                ], 
+                "GRASS_TILES": [
+                    "'.'", 
+                    "44", 
+                    "'`'", 
+                    "39"
+                ]
+            }, 
+            "DALLISGRASS": {
+                "GRASS_COLORS": [
+                    "10", 
+                    "0", 
+                    "0", 
+                    "2", 
+                    "0", 
+                    "0", 
+                    "14", 
+                    "0", 
+                    "0", 
+                    "6", 
+                    "0", 
+                    "0"
+                ], 
+                "GRASS_TILES": [
+                    "'.'", 
+                    "44", 
+                    "'`'", 
+                    "39"
+                ]
+            }, 
+            "WORMY TENDRILS": {
+                "GRASS_COLORS": [
+                    "13", 
+                    "0", 
+                    "0", 
+                    "5", 
+                    "0", 
+                    "0", 
+                    "8", 
+                    "0", 
+                    "0", 
+                    "6", 
+                    "0", 
+                    "0"
+                ], 
+                "GRASS_TILES": [
+                    "242", 
+                    "243", 
+                    "169", 
+                    "170"
+                ]
+            }, 
+            "COTTONGRASS": {
+                "GRASS_COLORS": [
+                    "10", 
+                    "0", 
+                    "0", 
+                    "2", 
+                    "0", 
+                    "0", 
+                    "14", 
+                    "0", 
+                    "0", 
+                    "6", 
+                    "0", 
+                    "0"
+                ], 
+                "GRASS_TILES": [
+                    "'.'", 
+                    "44", 
+                    "'`'", 
+                    "39"
+                ]
+            }, 
+            "DROPSEED GRASS": {
+                "GRASS_COLORS": [
+                    "10", 
+                    "0", 
+                    "0", 
+                    "2", 
+                    "0", 
+                    "0", 
+                    "14", 
+                    "0", 
+                    "0", 
+                    "6", 
+                    "0", 
+                    "0"
+                ], 
+                "GRASS_TILES": [
+                    "'.'", 
+                    "44", 
+                    "'`'", 
+                    "39"
+                ]
+            }, 
+            "COMMON REED": {
+                "GRASS_COLORS": [
+                    "10", 
+                    "0", 
+                    "0", 
+                    "2", 
+                    "0", 
+                    "0", 
+                    "14", 
+                    "0", 
+                    "0", 
+                    "6", 
+                    "0", 
+                    "0"
+                ], 
+                "GRASS_TILES": [
+                    "'.'", 
+                    "44", 
+                    "'`'", 
+                    "39"
+                ]
+            }, 
+            "BLUE SEDGE": {
+                "GRASS_COLORS": [
+                    "10", 
+                    "0", 
+                    "0", 
+                    "2", 
+                    "0", 
+                    "0", 
+                    "14", 
+                    "0", 
+                    "0", 
+                    "6", 
+                    "0", 
+                    "0"
+                ], 
+                "GRASS_TILES": [
+                    "'.'", 
+                    "44", 
+                    "'`'", 
+                    "39"
+                ]
+            }, 
+            "BAMBOO, GOLDEN": {
+                "GRASS_COLORS": [
+                    "10", 
+                    "0", 
+                    "0", 
+                    "10", 
+                    "0", 
+                    "0", 
+                    "8", 
+                    "0", 
+                    "0", 
+                    "6", 
+                    "0", 
+                    "0"
+                ], 
+                "GRASS_TILES": [
+                    "231", 
+                    "159", 
+                    "231", 
+                    "159"
+                ]
+            }, 
+            "VELVET GRASS": {
+                "GRASS_COLORS": [
+                    "10", 
+                    "0", 
+                    "0", 
+                    "2", 
+                    "0", 
+                    "0", 
+                    "14", 
+                    "0", 
+                    "0", 
+                    "6", 
+                    "0", 
+                    "0"
+                ], 
+                "GRASS_TILES": [
+                    "'.'", 
+                    "44", 
+                    "'`'", 
+                    "39"
+                ]
+            }, 
+            "CATTAIL": {
+                "GRASS_COLORS": [
+                    "10", 
+                    "0", 
+                    "0", 
+                    "2", 
+                    "0", 
+                    "0", 
+                    "14", 
+                    "0", 
+                    "0", 
+                    "6", 
+                    "0", 
+                    "0"
+                ], 
+                "GRASS_TILES": [
+                    "'.'", 
+                    "44", 
+                    "'`'", 
+                    "39"
+                ]
+            }, 
+            "HAIR GRASS": {
+                "GRASS_COLORS": [
+                    "10", 
+                    "0", 
+                    "0", 
+                    "2", 
+                    "0", 
+                    "0", 
+                    "14", 
+                    "0", 
+                    "0", 
+                    "6", 
+                    "0", 
+                    "0"
+                ], 
+                "GRASS_TILES": [
+                    "'.'", 
+                    "44", 
+                    "'`'", 
+                    "39"
+                ]
+            }, 
+            "FESCUE GRASS": {
+                "GRASS_COLORS": [
+                    "10", 
+                    "0", 
+                    "0", 
+                    "2", 
+                    "0", 
+                    "0", 
+                    "14", 
+                    "0", 
+                    "0", 
+                    "6", 
+                    "0", 
+                    "0"
+                ], 
+                "GRASS_TILES": [
+                    "'.'", 
+                    "44", 
+                    "'`'", 
+                    "39"
+                ]
+            }, 
+            "REEDGRASS": {
+                "GRASS_COLORS": [
+                    "10", 
+                    "0", 
+                    "0", 
+                    "2", 
+                    "0", 
+                    "0", 
+                    "14", 
+                    "0", 
+                    "0", 
+                    "6", 
+                    "0", 
+                    "0"
+                ], 
+                "GRASS_TILES": [
+                    "'.'", 
+                    "44", 
+                    "'`'", 
+                    "39"
+                ]
+            }, 
+            "FLOOR FUNGI": {
+                "GRASS_COLORS": [
+                    "11", 
+                    "0", 
+                    "0", 
+                    "3", 
+                    "0", 
+                    "0", 
+                    "8", 
+                    "0", 
+                    "0", 
+                    "6", 
+                    "0", 
+                    "0"
+                ], 
+                "GRASS_TILES": [
+                    "252", 
+                    "253", 
+                    "252", 
+                    "253"
+                ]
+            }, 
+            "MARSH THISTLE": {
+                "GRASS_COLORS": [
+                    "10", 
+                    "0", 
+                    "0", 
+                    "2", 
+                    "0", 
+                    "0", 
+                    "14", 
+                    "0", 
+                    "0", 
+                    "6", 
+                    "0", 
+                    "0"
+                ], 
+                "GRASS_TILES": [
+                    "'.'", 
+                    "44", 
+                    "'`'", 
+                    "39"
+                ]
+            }, 
+            "PEBBLE PLANTS": {
+                "GRASS_COLORS": [
+                    "10", 
+                    "0", 
+                    "0", 
+                    "2", 
+                    "0", 
+                    "0", 
+                    "2", 
+                    "0", 
+                    "0", 
+                    "6", 
+                    "0", 
+                    "0"
+                ], 
+                "GRASS_TILES": [
+                    "'.'", 
+                    "44", 
+                    "'`'", 
+                    "39"
+                ]
+            }, 
+            "CARPETGRASS": {
+                "GRASS_COLORS": [
+                    "10", 
+                    "0", 
+                    "0", 
+                    "2", 
+                    "0", 
+                    "0", 
+                    "14", 
+                    "0", 
+                    "0", 
+                    "6", 
+                    "0", 
+                    "0"
+                ], 
+                "GRASS_TILES": [
+                    "'.'", 
+                    "44", 
+                    "'`'", 
+                    "39"
+                ]
+            }, 
+            "CAVE MOSS": {
+                "GRASS_COLORS": [
+                    "11", 
+                    "0", 
+                    "0", 
+                    "3", 
+                    "0", 
+                    "0", 
+                    "8", 
+                    "0", 
+                    "0", 
+                    "6", 
+                    "0", 
+                    "0"
+                ], 
+                "GRASS_TILES": [
+                    "252", 
+                    "253", 
+                    "252", 
+                    "253"
+                ]
+            }, 
+            "SAWGRASS": {
+                "GRASS_COLORS": [
+                    "10", 
+                    "0", 
+                    "0", 
+                    "2", 
+                    "0", 
+                    "0", 
+                    "14", 
+                    "0", 
+                    "0", 
+                    "6", 
+                    "0", 
+                    "0"
+                ], 
+                "GRASS_TILES": [
+                    "'.'", 
+                    "44", 
+                    "'`'", 
+                    "39"
+                ]
+            }
+        }, 
+        "CREATURE": {
+            "KESTREL_MAN": {
+                "CREATURE_TILE": [
+                    "75"
+                ]
+            }, 
+            "GIANT_JUMPING_SPIDER": {
+                "CREATURE_TILE": [
+                    "105"
+                ]
+            }, 
+            "AXOLOTL_MAN": {
+                "CREATURE_TILE": [
+                    "72"
+                ]
+            }, 
+            "GIANT_JACKAL": {
+                "CREATURE_TILE": [
+                    "77"
+                ]
+            }, 
+            "LION_TAMARIN": {
+                "CREATURE_TILE": [
+                    "84"
+                ]
+            }, 
+            "ANACONDA": {
+                "CREATURE_TILE": [
+                    "104"
+                ]
+            }, 
+            "GIANT_IMPALA": {
+                "CREATURE_TILE": [
+                    "77"
+                ]
+            }, 
+            "MOTH_MAN": {
+                "CREATURE_TILE": [
+                    "75"
+                ]
+            }, 
+            "TAPIR_MAN": {
+                "CREATURE_TILE": [
+                    "72"
+                ]
+            }, 
+            "GIANT_OSPREY": {
+                "CREATURE_TILE": [
+                    "97"
+                ]
+            }, 
+            "NARWHAL": {
+                "CREATURE_TILE": [
+                    "100"
+                ]
+            }, 
+            "BADGER": {
+                "CREATURE_TILE": [
+                    "76"
+                ]
+            }, 
+            "FISH_LOACH_CLOWN": {
+                "ALTTILE": [
+                    "122"
+                ], 
+                "CREATURE_TILE": [
+                    "121"
+                ]
+            }, 
+            "BIRD_HORNBILL": {
+                "CREATURE_TILE": [
+                    "89"
+                ]
+            }, 
+            "COATI_MAN": {
+                "CREATURE_TILE": [
+                    "72"
+                ]
+            }, 
+            "TAPIR": {
+                "CREATURE_TILE": [
+                    "77"
+                ]
+            }, 
+            "BIRD_OSTRICH": {
+                "CREATURE_TILE": [
+                    "97"
+                ]
+            }, 
+            "SHARK_FRILL": {
+                "CREATURE_TILE": [
+                    "104"
+                ]
+            }, 
+            "ALBATROSS_MAN": {
+                "CREATURE_TILE": [
+                    "75"
+                ]
+            }, 
+            "MOLE_DOG_NAKED": {
+                "CREATURE_TILE": [
+                    "76"
+                ]
+            }, 
+            "MONITOR_LIZARD": {
+                "CREATURE_TILE": [
+                    "81"
+                ]
+            }, 
+            "GIANT_WOLVERINE": {
+                "CREATURE_TILE": [
+                    "81"
+                ]
+            }, 
+            "CAPUCHIN_MAN": {
+                "CREATURE_TILE": [
+                    "72"
+                ]
+            }, 
+            "BIRD_CHICKEN": {
+                "CREATURE_TILE": [
+                    "89"
+                ]
+            }, 
+            "REPTILE_MAN": {
+                "CREATURE_TILE": [
+                    "72"
+                ]
+            }, 
+            "HORSESHOE_CRAB_MAN": {
+                "CREATURE_TILE": [
+                    "72"
+                ]
+            }, 
+            "FISH_STINGRAY": {
+                "CREATURE_TILE": [
+                    "99"
+                ]
+            }, 
+            "BIRD_GOOSE": {
+                "CREATURE_TILE": [
+                    "97"
+                ]
+            }, 
+            "BIRD_EMU": {
+                "CREATURE_TILE": [
+                    "97"
+                ]
+            }, 
+            "LION": {
+                "CREATURE_TILE": [
+                    "77"
+                ]
+            }, 
+            "BIRD_WREN": {
+                "ALTTILE": [
+                    "118"
+                ], 
+                "CREATURE_TILE": [
+                    "117"
+                ]
+            }, 
+            "COYOTE": {
+                "CREATURE_TILE": [
+                    "77"
+                ]
+            }, 
+            "GIANT_MASKED_LOVEBIRD": {
+                "CREATURE_TILE": [
+                    "89"
+                ]
+            }, 
+            "GIANT_CUTTLEFISH": {
+                "CREATURE_TILE": [
+                    "102"
+                ]
+            }, 
+            "LION_TAMARIN_MAN": {
+                "CREATURE_TILE": [
+                    "72"
+                ]
+            }, 
+            "BONOBO": {
+                "CREATURE_TILE": [
+                    "84"
+                ]
+            }, 
+            "CROCODILE_SALTWATER": {
+                "CREATURE_TILE": [
+                    "81"
+                ]
+            }, 
+            "GIANT_CASSOWARY": {
+                "CREATURE_TILE": [
+                    "97"
+                ]
+            }, 
+            "PLATYPUS MAN": {
+                "CREATURE_TILE": [
+                    "72"
+                ]
+            }, 
+            "CREEPY_CRAWLER": {
+                "ALTTILE": [
+                    "114"
+                ], 
+                "CREATURE_TILE": [
+                    "113"
+                ]
+            }, 
+            "UNICORN": {
+                "CREATURE_TILE": [
+                    "77"
+                ]
+            }, 
+            "SHARK_BLUE": {
+                "CREATURE_TILE": [
+                    "101"
+                ]
+            }, 
+            "BIRD_TURKEY": {
+                "CREATURE_TILE": [
+                    "97"
+                ]
+            }, 
+            "GIANT_COCKATIEL": {
+                "CREATURE_TILE": [
+                    "89"
+                ]
+            }, 
+            "MANTIS_MAN": {
+                "CREATURE_TILE": [
+                    "71"
+                ]
+            }, 
+            "RED PANDA MAN": {
+                "CREATURE_TILE": [
+                    "72"
+                ]
+            }, 
+            "MOOSE MAN": {
+                "CREATURE_TILE": [
+                    "71"
+                ]
+            }, 
+            "OGRE": {
+                "CREATURE_TILE": [
+                    "70"
+                ]
+            }, 
+            "JAGUAR_GIANT": {
+                "CREATURE_TILE": [
+                    "77"
+                ]
+            }, 
+            "GIANT_GREAT_HORNED_OWL": {
+                "CREATURE_TILE": [
+                    "89"
+                ]
+            }, 
+            "GIANT_RATTLESNAKE": {
+                "CREATURE_TILE": [
+                    "104"
+                ]
+            }, 
+            "GREEN_TREE_FROG": {
+                "ALTTILE": [
+                    "114"
+                ], 
+                "CREATURE_TILE": [
+                    "113"
+                ]
+            }, 
+            "KING_COBRA_MAN": {
+                "CREATURE_TILE": [
+                    "74"
+                ]
+            }, 
+            "LOUSE_MAN": {
+                "CREATURE_TILE": [
+                    "71"
+                ]
+            }, 
+            "GIANT_GILA_MONSTER": {
+                "CREATURE_TILE": [
+                    "81"
+                ]
+            }, 
+            "MOON_SNAIL": {
+                "ALTTILE": [
+                    "120"
+                ], 
+                "CREATURE_TILE": [
+                    "119"
+                ]
+            }, 
+            "ELK_BIRD": {
+                "CREATURE_TILE": [
+                    "97"
+                ]
+            }, 
+            "ANACONDA_MAN": {
+                "CREATURE_TILE": [
+                    "74"
+                ]
+            }, 
+            "GIANT_SLUG": {
+                "CREATURE_TILE": [
+                    "107"
+                ]
+            }, 
+            "GIANT_SPIDER_MONKEY": {
+                "CREATURE_TILE": [
+                    "84"
+                ]
+            }, 
+            "ELEMENTMAN_IRON": {
+                "CREATURE_TILE": [
+                    "67"
+                ]
+            }, 
+            "CENTAUR": {
+                "CREATURE_TILE": [
+                    "80"
+                ]
+            }, 
+            "CUTTLEFISH": {
+                "CREATURE_TILE": [
+                    "102"
+                ]
+            }, 
+            "GIBBON_GRAY": {
+                "CREATURE_TILE": [
+                    "84"
+                ]
+            }, 
+            "FISH_KNIFEFISH_BANDED": {
+                "ALTTILE": [
+                    "122"
+                ], 
+                "CREATURE_TILE": [
+                    "121"
+                ]
+            }, 
+            "WOLF": {
+                "CREATURE_TILE": [
+                    "77"
+                ]
+            }, 
+            "YETI": {
+                "CREATURE_TILE": [
+                    "70"
+                ]
+            }, 
+            "ARMADILLO": {
+                "CREATURE_TILE": [
+                    "81"
+                ]
+            }, 
+            "GIANT_CHINCHILLA": {
+                "CREATURE_TILE": [
+                    "81"
+                ]
+            }, 
+            "FISH_BARRACUDA_GREAT": {
+                "ALTTILE": [
+                    "122"
+                ], 
+                "CREATURE_TILE": [
+                    "121"
+                ]
+            }, 
+            "COLOSSUS_BRONZE": {
+                "CREATURE_TILE": [
+                    "70"
+                ]
+            }, 
+            "SPERM_WHALE_MAN": {
+                "CREATURE_TILE": [
+                    "74"
+                ]
+            }, 
+            "GIANT_HORNBILL": {
+                "CREATURE_TILE": [
+                    "89"
+                ]
+            }, 
+            "DINGO": {
+                "CREATURE_TILE": [
+                    "77"
+                ]
+            }, 
+            "DRAGONFLY": {
+                "ALTTILE": [
+                    "118"
+                ], 
+                "CREATURE_TILE": [
+                    "117"
+                ]
+            }, 
+            "ARMADILLO MAN": {
+                "CREATURE_TILE": [
+                    "72"
+                ]
+            }, 
+            "TIGER_GIANT": {
+                "CREATURE_TILE": [
+                    "77"
+                ]
+            }, 
+            "MAGGOT_PURRING": {
+                "ALTTILE": [
+                    "120"
+                ], 
+                "CREATURE_TILE": [
+                    "119"
+                ]
+            }, 
+            "BIRD_OWL_SNOWY": {
+                "CREATURE_TILE": [
+                    "89"
+                ]
+            }, 
+            "GORLAK": {
+                "CREATURE_TILE": [
+                    "67"
+                ]
+            }, 
+            "FISH_RAY_THORNBACK": {
+                "ALTTILE": [
+                    "122"
+                ], 
+                "CREATURE_TILE": [
+                    "121"
+                ]
+            }, 
+            "RUTHERER": {
+                "CREATURE_TILE": [
+                    "78"
+                ]
+            }, 
+            "GROUNDHOG": {
+                "CREATURE_TILE": [
+                    "82"
+                ]
+            }, 
+            "ANT_MAN": {
+                "CREATURE_TILE": [
+                    "71"
+                ]
+            }, 
+            "FISH_BLUEFISH": {
+                "ALTTILE": [
+                    "122"
+                ], 
+                "CREATURE_TILE": [
+                    "121"
+                ]
+            }, 
+            "GAZELLE": {
+                "CREATURE_TILE": [
+                    "77"
+                ]
+            }, 
+            "TERMITE": {
+                "ALTTILE": [
+                    "116"
+                ], 
+                "CREATURE_TILE": [
+                    "115"
+                ]
+            }, 
+            "JACKAL_MAN": {
+                "CREATURE_TILE": [
+                    "72"
+                ]
+            }, 
+            "SPIDER_CAVE": {
+                "ALTTILE": [
+                    "116"
+                ], 
+                "CREATURE_TILE": [
+                    "115"
+                ]
+            }, 
+            "WARTHOG": {
+                "CREATURE_TILE": [
+                    "77"
+                ]
+            }, 
+            "PANDA MAN": {
+                "CREATURE_TILE": [
+                    "71"
+                ]
+            }, 
+            "BIRD_DUCK": {
+                "CREATURE_TILE": [
+                    "89"
+                ]
+            }, 
+            "GIANT_MOON_SNAIL": {
+                "CREATURE_TILE": [
+                    "107"
+                ]
+            }, 
+            "FISH_CONGER_EEL": {
+                "ALTTILE": [
+                    "122"
+                ], 
+                "CREATURE_TILE": [
+                    "104"
+                ]
+            }, 
+            "BIRD_RAVEN": {
+                "CREATURE_TILE": [
+                    "89"
+                ]
+            }, 
+            "GIANT_WEASEL": {
+                "CREATURE_TILE": [
+                    "81"
+                ]
+            }, 
+            "KANGAROO": {
+                "CREATURE_TILE": [
+                    "82"
+                ]
+            }, 
+            "BIRD_PENGUIN_GIANT": {
+                "CREATURE_TILE": [
+                    "98"
+                ]
+            }, 
+            "DOG": {
+                "CREATURE_TILE": [
+                    "77"
+                ]
+            }, 
+            "GIANT_WOMBAT": {
+                "CREATURE_TILE": [
+                    "76"
+                ]
+            }, 
+            "CRAB_MAN": {
+                "CREATURE_TILE": [
+                    "71"
+                ]
+            }, 
+            "GIANT_STOAT": {
+                "CREATURE_TILE": [
+                    "81"
+                ]
+            }, 
+            "OCTOPUS_MAN": {
+                "CREATURE_TILE": [
+                    "74"
+                ]
+            }, 
+            "TICK": {
+                "ALTTILE": [
+                    "116"
+                ], 
+                "CREATURE_TILE": [
+                    "115"
+                ]
+            }, 
+            "CRUNDLE": {
+                "CREATURE_TILE": [
+                    "72"
+                ]
+            }, 
+            "KINGSNAKE": {
+                "CREATURE_TILE": [
+                    "104"
+                ]
+            }, 
+            "BIRD_CARDINAL": {
+                "ALTTILE": [
+                    "118"
+                ], 
+                "CREATURE_TILE": [
+                    "117"
+                ]
+            }, 
+            "GIANT_AARDVARK": {
+                "CREATURE_TILE": [
+                    "76"
+                ]
+            }, 
+            "SPIDER_BROWN_RECLUSE": {
+                "ALTTILE": [
+                    "116"
+                ], 
+                "CREATURE_TILE": [
+                    "115"
+                ]
+            }, 
+            "TROGLODYTE": {
+                "CREATURE_TILE": [
+                    "67"
+                ]
+            }, 
+            "FISH_CAVE": {
+                "ALTTILE": [
+                    "122"
+                ], 
+                "CREATURE_TILE": [
+                    "121"
+                ]
+            }, 
+            "FISH_PIKE": {
+                "ALTTILE": [
+                    "122"
+                ], 
+                "CREATURE_TILE": [
+                    "121"
+                ]
+            }, 
+            "SERPENT_MAN": {
+                "CREATURE_TILE": [
+                    "71"
+                ]
+            }, 
+            "NAUTILUS": {
+                "CREATURE_TILE": [
+                    "102"
+                ]
+            }, 
+            "RODENT MAN": {
+                "CREATURE_TILE": [
+                    "72"
+                ]
+            }, 
+            "BIRD_CASSOWARY": {
+                "CREATURE_TILE": [
+                    "97"
+                ]
+            }, 
+            "FOXSQUIRREL": {
+                "ALTTILE": [
+                    "114"
+                ], 
+                "CREATURE_TILE": [
+                    "113"
+                ]
+            }, 
+            "BIRD_OWL_GREAT_HORNED": {
+                "CREATURE_TILE": [
+                    "89"
+                ]
+            }, 
+            "GIANT_OPOSSUM": {
+                "CREATURE_TILE": [
+                    "76"
+                ]
+            }, 
+            "PANGOLIN_MAN": {
+                "CREATURE_TILE": [
+                    "71"
+                ]
+            }, 
+            "SNAIL_MAN": {
+                "CREATURE_TILE": [
+                    "74"
+                ]
+            }, 
+            "RAT_GIANT": {
+                "CREATURE_TILE": [
+                    "76"
+                ]
+            }, 
+            "GIANT_LYNX": {
+                "CREATURE_TILE": [
+                    "77"
+                ]
+            }, 
+            "SPIDER_MONKEY_MAN": {
+                "CREATURE_TILE": [
+                    "72"
+                ]
+            }, 
+            "GIANT_HARP_SEAL": {
+                "CREATURE_TILE": [
+                    "100"
+                ]
+            }, 
+            "TIGERMAN": {
+                "CREATURE_TILE": [
+                    "72"
+                ]
+            }, 
+            "PEACH-FACED_LOVEBIRD_MAN": {
+                "CREATURE_TILE": [
+                    "75"
+                ]
+            }, 
+            "GIANT_PEACH-FACED_LOVEBIRD": {
+                "CREATURE_TILE": [
+                    "89"
+                ]
+            }, 
+            "COUGAR": {
+                "CREATURE_TILE": [
+                    "77"
+                ]
+            }, 
+            "BIRD_PENGUIN_LITTLE": {
+                "CREATURE_TILE": [
+                    "98"
+                ]
+            }, 
+            "GIANT_LOUSE": {
+                "CREATURE_TILE": [
+                    "105"
+                ]
+            }, 
+            "GIANT_SPERM_WHALE": {
+                "CREATURE_TILE": [
+                    "101"
+                ]
+            }, 
+            "BAT": {
+                "CREATURE_TILE": [
+                    "118"
+                ]
+            }, 
+            "GIANT_PUFFIN": {
+                "CREATURE_TILE": [
+                    "89"
+                ]
+            }, 
+            "MOTH": {
+                "ALTTILE": [
+                    "118"
+                ], 
+                "CREATURE_TILE": [
+                    "117"
+                ]
+            }, 
+            "BIRD_SWAN": {
+                "CREATURE_TILE": [
+                    "97"
+                ]
+            }, 
+            "GIANT_SPONGE": {
+                "CREATURE_TILE": [
+                    "112"
+                ]
+            }, 
+            "CAT": {
+                "CREATURE_TILE": [
+                    "77"
+                ]
+            }, 
+            "GIANT_WHITE_STORK": {
+                "CREATURE_TILE": [
+                    "97"
+                ]
+            }, 
+            "GILA_MONSTER": {
+                "CREATURE_TILE": [
+                    "81"
+                ]
+            }, 
+            "CYCLOPS": {
+                "CREATURE_TILE": [
+                    "70"
+                ]
+            }, 
+            "BEAVER": {
+                "CREATURE_TILE": [
+                    "82"
+                ]
+            }, 
+            "GIANT_SNAPPING_TURTLE": {
+                "CREATURE_TILE": [
+                    "83"
+                ]
+            }, 
+            "GIANT_GRASSHOPPER": {
+                "CREATURE_TILE": [
+                    "105"
+                ]
+            }, 
+            "SLUG": {
+                "ALTTILE": [
+                    "120"
+                ], 
+                "CREATURE_TILE": [
+                    "119"
+                ]
+            }, 
+            "RED PANDA": {
+                "CREATURE_TILE": [
+                    "76"
+                ]
+            }, 
+            "FLY_ACORN": {
+                "ALTTILE": [
+                    "118"
+                ], 
+                "CREATURE_TILE": [
+                    "117"
+                ]
+            }, 
+            "TICK_MAN": {
+                "CREATURE_TILE": [
+                    "71"
+                ]
+            }, 
+            "GIANT_COYOTE": {
+                "CREATURE_TILE": [
+                    "77"
+                ]
+            }, 
+            "SQUID": {
+                "ALTTILE": [
+                    "120"
+                ], 
+                "CREATURE_TILE": [
+                    "119"
+                ]
+            }, 
+            "GIANT_LEOPARD_SEAL": {
+                "CREATURE_TILE": [
+                    "100"
+                ]
+            }, 
+            "BIRD_KESTREL": {
+                "CREATURE_TILE": [
+                    "97"
+                ]
+            }, 
+            "REACHER": {
+                "CREATURE_TILE": [
+                    "67"
+                ]
+            }, 
+            "IMP_FIRE": {
+                "CREATURE_TILE": [
+                    "72"
+                ]
+            }, 
+            "LLAMA": {
+                "CREATURE_TILE": [
+                    "80"
+                ]
+            }, 
+            "WOLF_ICE": {
+                "CREATURE_TILE": [
+                    "77"
+                ]
+            }, 
+            "HUNGRY_HEAD": {
+                "CREATURE_TILE": [
+                    "85"
+                ]
+            }, 
+            "BIRD_RW_BLACKBIRD": {
+                "CREATURE_TILE": [
+                    "89"
+                ]
+            }, 
+            "NARWHAL, GIANT": {
+                "CREATURE_TILE": [
+                    "100"
+                ]
+            }, 
+            "GIBBON_SIAMANG": {
+                "CREATURE_TILE": [
+                    "84"
+                ]
+            }, 
+            "CAVE_FISH_MAN": {
+                "CREATURE_TILE": [
+                    "71"
+                ]
+            }, 
+            "GIANT_TICK": {
+                "CREATURE_TILE": [
+                    "105"
+                ]
+            }, 
+            "ELEMENTMAN_MAGMA": {
+                "CREATURE_TILE": [
+                    "67"
+                ]
+            }, 
+            "BUSHTIT_MAN": {
+                "CREATURE_TILE": [
+                    "75"
+                ]
+            }, 
+            "GIANT_KANGAROO": {
+                "CREATURE_TILE": [
+                    "82"
+                ]
+            }, 
+            "GNOME_MOUNTAIN": {
+                "CREATURE_TILE": [
+                    "66"
+                ]
+            }, 
+            "WILD_BOAR": {
+                "CREATURE_TILE": [
+                    "77"
+                ]
+            }, 
+            "BIRD_LOVEBIRD_MASKED": {
+                "ALTTILE": [
+                    "118"
+                ], 
+                "CREATURE_TILE": [
+                    "117"
+                ]
+            }, 
+            "MINK_MAN": {
+                "CREATURE_TILE": [
+                    "72"
+                ]
+            }, 
+            "ELEMENTMAN_FIRE": {
+                "CREATURE_TILE": [
+                    "67"
+                ]
+            }, 
+            "GRASSHOPPER_MAN": {
+                "CREATURE_TILE": [
+                    "71"
+                ]
+            }, 
+            "WOMBAT_MAN": {
+                "CREATURE_TILE": [
+                    "71"
+                ]
+            }, 
+            "CRAB": {
+                "CREATURE_TILE": [
+                    "103"
+                ]
+            }, 
+            "DESERT TORTOISE": {
+                "CREATURE_TILE": [
+                    "83"
+                ]
+            }, 
+            "JABBERER": {
+                "CREATURE_TILE": [
+                    "97"
+                ]
+            }, 
+            "RAT_DEMON": {
+                "ALTTILE": [
+                    "114"
+                ], 
+                "CREATURE_TILE": [
+                    "113"
+                ]
+            }, 
+            "CAMEL_1_HUMP": {
+                "CREATURE_TILE": [
+                    "77"
+                ]
+            }, 
+            "GIANT_DAMSELFLY": {
+                "CREATURE_TILE": [
+                    "106"
+                ]
+            }, 
+            "WOMBAT": {
+                "CREATURE_TILE": [
+                    "76"
+                ]
+            }, 
+            "SNAPPING TURTLE": {
+                "CREATURE_TILE": [
+                    "83"
+                ]
+            }, 
+            "GIANT_LEECH": {
+                "CREATURE_TILE": [
+                    "104"
+                ]
+            }, 
+            "ELEMENTMAN_MUD": {
+                "CREATURE_TILE": [
+                    "67"
+                ]
+            }, 
+            "KIWI MAN": {
+                "CREATURE_TILE": [
+                    "75"
+                ]
+            }, 
+            "COATI": {
+                "CREATURE_TILE": [
+                    "81"
+                ]
+            }, 
+            "GIANT_FLYING_SQUIRREL": {
+                "CREATURE_TILE": [
+                    "82"
+                ]
+            }, 
+            "FISH_HAKE": {
+                "ALTTILE": [
+                    "122"
+                ], 
+                "CREATURE_TILE": [
+                    "121"
+                ]
+            }, 
+            "PARAKEET_MAN": {
+                "CREATURE_TILE": [
+                    "75"
+                ]
+            }, 
+            "FISH_GAR_LONGNOSE": {
+                "ALTTILE": [
+                    "122"
+                ], 
+                "CREATURE_TILE": [
+                    "121"
+                ]
+            }, 
+            "CAMEL_2_HUMP": {
+                "CREATURE_TILE": [
+                    "77"
+                ]
+            }, 
+            "ELEPHANT_SEAL_MAN": {
+                "CREATURE_TILE": [
+                    "74"
+                ]
+            }, 
+            "MOOSE": {
+                "CREATURE_TILE": [
+                    "77"
+                ]
+            }, 
+            "LEOPARD_SEAL_MAN": {
+                "CREATURE_TILE": [
+                    "74"
+                ]
+            }, 
+            "SNAIL": {
+                "ALTTILE": [
+                    "120"
+                ], 
+                "CREATURE_TILE": [
+                    "119"
+                ]
+            }, 
+            "CAPYBARA, GIANT": {
+                "CREATURE_TILE": [
+                    "76"
+                ]
+            }, 
+            "DAMSELFLY": {
+                "ALTTILE": [
+                    "118"
+                ], 
+                "CREATURE_TILE": [
+                    "117"
+                ]
+            }, 
+            "AARDVARK": {
+                "CREATURE_TILE": [
+                    "76"
+                ]
+            }, 
+            "FISH_COELACANTH": {
+                "ALTTILE": [
+                    "122"
+                ], 
+                "CREATURE_TILE": [
+                    "121"
+                ]
+            }, 
+            "THRIPS_MAN": {
+                "CREATURE_TILE": [
+                    "71"
+                ]
+            }, 
+            "RAT": {
+                "ALTTILE": [
+                    "114"
+                ], 
+                "CREATURE_TILE": [
+                    "113"
+                ]
+            }, 
+            "TOAD_GIANT": {
+                "CREATURE_TILE": [
+                    "76"
+                ]
+            }, 
+            "BIRD_CROW": {
+                "CREATURE_TILE": [
+                    "89"
+                ]
+            }, 
+            "FLOATING_GUTS": {
+                "CREATURE_TILE": [
+                    "112"
+                ]
+            }, 
+            "FISH_HALIBUT": {
+                "ALTTILE": [
+                    "122"
+                ], 
+                "CREATURE_TILE": [
+                    "121"
+                ]
+            }, 
+            "SPIDER_JUMPING": {
+                "ALTTILE": [
+                    "116"
+                ], 
+                "CREATURE_TILE": [
+                    "115"
+                ]
+            }, 
+            "GIANT_LEOPARD_GECKO": {
+                "CREATURE_TILE": [
+                    "81"
+                ]
+            }, 
+            "HELMET_SNAKE": {
+                "CREATURE_TILE": [
+                    "104"
+                ]
+            }, 
+            "BIRD_OWL_BARN": {
+                "CREATURE_TILE": [
+                    "89"
+                ]
+            }, 
+            "BIRD_GRACKLE": {
+                "ALTTILE": [
+                    "118"
+                ], 
+                "CREATURE_TILE": [
+                    "117"
+                ]
+            }, 
+            "HYENA": {
+                "CREATURE_TILE": [
+                    "77"
+                ]
+            }, 
+            "BIRD_LOON": {
+                "CREATURE_TILE": [
+                    "89"
+                ]
+            }, 
+            "FISH_ANCHOVY": {
+                "ALTTILE": [
+                    "122"
+                ], 
+                "CREATURE_TILE": [
+                    "121"
+                ]
+            }, 
+            "GREAT_HORNED_OWL_MAN": {
+                "CREATURE_TILE": [
+                    "75"
+                ]
+            }, 
+            "GIANT_OCELOT": {
+                "CREATURE_TILE": [
+                    "77"
+                ]
+            }, 
+            "GIBBON_WHITE_HANDED": {
+                "CREATURE_TILE": [
+                    "84"
+                ]
+            }, 
+            "GIANT_HARE": {
+                "CREATURE_TILE": [
+                    "76"
+                ]
+            }, 
+            "HARP_SEAL": {
+                "CREATURE_TILE": [
+                    "100"
+                ]
+            }, 
+            "PLUMP_HELMET_MAN": {
+                "CREATURE_TILE": [
+                    "66"
+                ]
+            }, 
+            "MERPERSON": {
+                "CREATURE_TILE": [
+                    "74"
+                ]
+            }, 
+            "GIANT_MANTIS": {
+                "CREATURE_TILE": [
+                    "103"
+                ]
+            }, 
+            "ALLIGATOR SNAPPING TURTLE": {
+                "CREATURE_TILE": [
+                    "83"
+                ]
+            }, 
+            "GIANT_SKUNK": {
+                "CREATURE_TILE": [
+                    "76"
+                ]
+            }, 
+            "FISH_CLOWNFISH": {
+                "ALTTILE": [
+                    "122"
+                ], 
+                "CREATURE_TILE": [
+                    "121"
+                ]
+            }, 
+            "GIANT_EARTHWORM": {
+                "CREATURE_TILE": [
+                    "104"
+                ]
+            }, 
+            "HORSE": {
+                "CREATURE_TILE": [
+                    "77"
+                ]
+            }, 
+            "SHARK_WOBBEGONG_SPOTTED": {
+                "CREATURE_TILE": [
+                    "99"
+                ]
+            }, 
+            "KAKAPO_MAN": {
+                "CREATURE_TILE": [
+                    "75"
+                ]
+            }, 
+            "TOAD": {
+                "ALTTILE": [
+                    "114"
+                ], 
+                "CREATURE_TILE": [
+                    "113"
+                ]
+            }, 
+            "AYE-AYE_MAN": {
+                "CREATURE_TILE": [
+                    "72"
+                ]
+            }, 
+            "MOLEMARIAN": {
+                "CREATURE_TILE": [
+                    "80"
+                ]
+            }, 
+            "GIANT_LION_TAMARIN": {
+                "CREATURE_TILE": [
+                    "84"
+                ]
+            }, 
+            "GIANT_MAGPIE": {
+                "CREATURE_TILE": [
+                    "89"
+                ]
+            }, 
+            "GIANT_GRAY_LANGUR": {
+                "CREATURE_TILE": [
+                    "84"
+                ]
+            }, 
+            "RIVER OTTER": {
+                "CREATURE_TILE": [
+                    "81"
+                ]
+            }, 
+            "COPPERHEAD_SNAKE_MAN": {
+                "CREATURE_TILE": [
+                    "74"
+                ]
+            }, 
+            "ANT": {
+                "ALTTILE": [
+                    "116"
+                ], 
+                "CREATURE_TILE": [
+                    "115"
+                ]
+            }, 
+            "BIRD_PUFFIN": {
+                "CREATURE_TILE": [
+                    "89"
+                ]
+            }, 
+            "BIRD_PARAKEET": {
+                "ALTTILE": [
+                    "118"
+                ], 
+                "CREATURE_TILE": [
+                    "117"
+                ]
+            }, 
+            "GNOME_DARK": {
+                "CREATURE_TILE": [
+                    "66"
+                ]
+            }, 
+            "SEA_SERPENT": {
+                "CREATURE_TILE": [
+                    "104"
+                ]
+            }, 
+            "BLACK_MAMBA_MAN": {
+                "CREATURE_TILE": [
+                    "74"
+                ]
+            }, 
+            "BIRD_BUSHTIT": {
+                "ALTTILE": [
+                    "118"
+                ], 
+                "CREATURE_TILE": [
+                    "117"
+                ]
+            }, 
+            "LYNX": {
+                "CREATURE_TILE": [
+                    "77"
+                ]
+            }, 
+            "GIANT_EAGLE": {
+                "CREATURE_TILE": [
+                    "97"
+                ]
+            }, 
+            "BIRD_KAKAPO": {
+                "CREATURE_TILE": [
+                    "89"
+                ]
+            }, 
+            "GIANT_ECHIDNA": {
+                "CREATURE_TILE": [
+                    "76"
+                ]
+            }, 
+            "GIANT_GREY_PARROT": {
+                "CREATURE_TILE": [
+                    "89"
+                ]
+            }, 
+            "SHARK_BASKING": {
+                "CREATURE_TILE": [
+                    "101"
+                ]
+            }, 
+            "CHIMPANZEE": {
+                "CREATURE_TILE": [
+                    "84"
+                ]
+            }, 
+            "GIANT_RAVEN": {
+                "CREATURE_TILE": [
+                    "89"
+                ]
+            }, 
+            "GIANT_WILD_BOAR": {
+                "CREATURE_TILE": [
+                    "77"
+                ]
+            }, 
+            "FISH_SWORDFISH": {
+                "ALTTILE": [
+                    "122"
+                ], 
+                "CREATURE_TILE": [
+                    "121"
+                ]
+            }, 
+            "FISH_SUNFISH_OCEAN": {
+                "ALTTILE": [
+                    "122"
+                ], 
+                "CREATURE_TILE": [
+                    "121"
+                ]
+            }, 
+            "GIBBON_BLACK_HANDED": {
+                "CREATURE_TILE": [
+                    "84"
+                ]
+            }, 
+            "FISH_CARP": {
+                "ALTTILE": [
+                    "122"
+                ], 
+                "CREATURE_TILE": [
+                    "121"
+                ]
+            }, 
+            "WOLVERINE": {
+                "CREATURE_TILE": [
+                    "81"
+                ]
+            }, 
+            "MONGOOSE_MAN": {
+                "CREATURE_TILE": [
+                    "72"
+                ]
+            }, 
+            "LIZARD_RHINO_TWO_LEGGED": {
+                "ALTTILE": [
+                    "114"
+                ], 
+                "CREATURE_TILE": [
+                    "113"
+                ]
+            }, 
+            "GIANT_ORCA": {
+                "CREATURE_TILE": [
+                    "101"
+                ]
+            }, 
+            "PANDA": {
+                "CREATURE_TILE": [
+                    "78"
+                ]
+            }, 
+            "WEASEL_MAN": {
+                "CREATURE_TILE": [
+                    "72"
+                ]
+            }, 
+            "CHIMERA": {
+                "CREATURE_TILE": [
+                    "109"
+                ]
+            }, 
+            "MOSQUITO": {
+                "ALTTILE": [
+                    "118"
+                ], 
+                "CREATURE_TILE": [
+                    "117"
+                ]
+            }, 
+            "SHARK_HAMMERHEAD": {
+                "CREATURE_TILE": [
+                    "101"
+                ]
+            }, 
+            "IMPALA": {
+                "CREATURE_TILE": [
+                    "77"
+                ]
+            }, 
+            "THRIPS": {
+                "ALTTILE": [
+                    "116"
+                ], 
+                "CREATURE_TILE": [
+                    "115"
+                ]
+            }, 
+            "GIANT_CAPUCHIN": {
+                "CREATURE_TILE": [
+                    "84"
+                ]
+            }, 
+            "PANGOLIN": {
+                "CREATURE_TILE": [
+                    "76"
+                ]
+            }, 
+            "SQUID MAN": {
+                "CREATURE_TILE": [
+                    "74"
+                ]
+            }, 
+            "SPONGE": {
+                "CREATURE_TILE": [
+                    "112"
+                ]
+            }, 
+            "GIANT_LORIKEET": {
+                "CREATURE_TILE": [
+                    "89"
+                ]
+            }, 
+            "OTTER_MAN": {
+                "CREATURE_TILE": [
+                    "81"
+                ]
+            }, 
+            "GIANT_ELEPHANT_SEAL": {
+                "CREATURE_TILE": [
+                    "100"
+                ]
+            }, 
+            "GIANT_PARAKEET": {
+                "CREATURE_TILE": [
+                    "89"
+                ]
+            }, 
+            "SHARK_ANGEL": {
+                "CREATURE_TILE": [
+                    "101"
+                ]
+            }, 
+            "GIANT TORTOISE": {
+                "CREATURE_TILE": [
+                    "83"
+                ]
+            }, 
+            "JELLYFISH_SEA_NETTLE": {
+                "ALTTILE": [
+                    "120"
+                ], 
+                "CREATURE_TILE": [
+                    "119"
+                ]
+            }, 
+            "GIANT_MOTH": {
+                "CREATURE_TILE": [
+                    "106"
+                ]
+            }, 
+            "HARE_MAN": {
+                "CREATURE_TILE": [
+                    "71"
+                ]
+            }, 
+            "WHITE_STORK_MAN": {
+                "CREATURE_TILE": [
+                    "75"
+                ]
+            }, 
+            "SPARROW": {
+                "ALTTILE": [
+                    "118"
+                ], 
+                "CREATURE_TILE": [
+                    "117"
+                ]
+            }, 
+            "FISH_HERRING": {
+                "ALTTILE": [
+                    "122"
+                ], 
+                "CREATURE_TILE": [
+                    "121"
+                ]
+            }, 
+            "WORM": {
+                "ALTTILE": [
+                    "120"
+                ], 
+                "CREATURE_TILE": [
+                    "119"
+                ]
+            }, 
+            "GIANT_KAKAPO": {
+                "CREATURE_TILE": [
+                    "89"
+                ]
+            }, 
+            "BLIND_CAVE_BEAR": {
+                "CREATURE_TILE": [
+                    "78"
+                ]
+            }, 
+            "SPERM_WHALE": {
+                "CREATURE_TILE": [
+                    "101"
+                ]
+            }, 
+            "GIANT_POND_TURTLE": {
+                "CREATURE_TILE": [
+                    "83"
+                ]
+            }, 
+            "BIRD_BUZZARD": {
+                "CREATURE_TILE": [
+                    "97"
+                ]
+            }, 
+            "CHINCHILLA_MAN": {
+                "CREATURE_TILE": [
+                    "72"
+                ]
+            }, 
+            "SHARK_WHALE": {
+                "CREATURE_TILE": [
+                    "101"
+                ]
+            }, 
+            "GIANT_EMU": {
+                "CREATURE_TILE": [
+                    "97"
+                ]
+            }, 
+            "BUMBLEBEE": {
+                "ALTTILE": [
+                    "118"
+                ], 
+                "CREATURE_TILE": [
+                    "117"
+                ]
+            }, 
+            "GIANT_ALBATROSS": {
+                "CREATURE_TILE": [
+                    "97"
+                ]
+            }, 
+            "GIANT_ADDER": {
+                "CREATURE_TILE": [
+                    "104"
+                ]
+            }, 
+            "SKUNK_MAN": {
+                "CREATURE_TILE": [
+                    "72"
+                ]
+            }, 
+            "BARK_SCORPION": {
+                "ALTTILE": [
+                    "116"
+                ], 
+                "CREATURE_TILE": [
+                    "115"
+                ]
+            }, 
+            "POND_TURTLE_MAN": {
+                "CREATURE_TILE": [
+                    "71"
+                ]
+            }, 
+            "IMPALA_MAN": {
+                "CREATURE_TILE": [
+                    "71"
+                ]
+            }, 
+            "YAK": {
+                "CREATURE_TILE": [
+                    "78"
+                ]
+            }, 
+            "MUSSEL": {
+                "ALTTILE": [
+                    "120"
+                ], 
+                "CREATURE_TILE": [
+                    "119"
+                ]
+            }, 
+            "RACCOON": {
+                "CREATURE_TILE": [
+                    "77"
+                ]
+            }, 
+            "HORNBILL_MAN": {
+                "CREATURE_TILE": [
+                    "75"
+                ]
+            }, 
+            "GIANT_HYENA": {
+                "CREATURE_TILE": [
+                    "77"
+                ]
+            }, 
+            "MAGPIE_MAN": {
+                "CREATURE_TILE": [
+                    "75"
+                ]
+            }, 
+            "BIRD_ROC": {
+                "CREATURE_TILE": [
+                    "97"
+                ]
+            }, 
+            "STOAT_MAN": {
+                "CREATURE_TILE": [
+                    "72"
+                ]
+            }, 
+            "SEA_MONSTER": {
+                "CREATURE_TILE": [
+                    "102"
+                ]
+            }, 
+            "BROWN_RECLUSE_SPIDER_MAN": {
+                "CREATURE_TILE": [
+                    "71"
+                ]
+            }, 
+            "PIXIE": {
+                "CREATURE_TILE": [
+                    "118"
+                ]
+            }, 
+            "GIANT_ANACONDA": {
+                "CREATURE_TILE": [
+                    "104"
+                ]
+            }, 
+            "HEDGEHOG_MAN": {
+                "CREATURE_TILE": [
+                    "71"
+                ]
+            }, 
+            "EMU_MAN": {
+                "CREATURE_TILE": [
+                    "75"
+                ]
+            }, 
+            "HAMSTER": {
+                "ALTTILE": [
+                    "114"
+                ], 
+                "CREATURE_TILE": [
+                    "113"
+                ]
+            }, 
+            "POND_GRABBER": {
+                "CREATURE_TILE": [
+                    "102"
+                ]
+            }, 
+            "LORIKEET_MAN": {
+                "CREATURE_TILE": [
+                    "75"
+                ]
+            }, 
+            "GIANT_PYTHON": {
+                "CREATURE_TILE": [
+                    "104"
+                ]
+            }, 
+            "SWAN_MAN": {
+                "CREATURE_TILE": [
+                    "75"
+                ]
+            }, 
+            "SQUIRREL_RED": {
+                "ALTTILE": [
+                    "114"
+                ], 
+                "CREATURE_TILE": [
+                    "113"
+                ]
+            }, 
+            "IBEX_MAN": {
+                "CREATURE_TILE": [
+                    "71"
+                ]
+            }, 
+            "FISH_PUFFER_WHITE_SPOTTED": {
+                "ALTTILE": [
+                    "122"
+                ], 
+                "CREATURE_TILE": [
+                    "121"
+                ]
+            }, 
+            "CUTTLEFISH_MAN": {
+                "CREATURE_TILE": [
+                    "74"
+                ]
+            }, 
+            "POND_TURTLE": {
+                "ALTTILE": [
+                    "114"
+                ], 
+                "CREATURE_TILE": [
+                    "113"
+                ]
+            }, 
+            "BIRD_EAGLE": {
+                "CREATURE_TILE": [
+                    "97"
+                ]
+            }, 
+            "AARDVARK_MAN": {
+                "CREATURE_TILE": [
+                    "72"
+                ]
+            }, 
+            "BIRD_KIWI_GIANT": {
+                "CREATURE_TILE": [
+                    "89"
+                ]
+            }, 
+            "BIRD_LOVEBIRD_PEACH-FACED": {
+                "ALTTILE": [
+                    "118"
+                ], 
+                "CREATURE_TILE": [
+                    "117"
+                ]
+            }, 
+            "PYTHON_MAN": {
+                "CREATURE_TILE": [
+                    "74"
+                ]
+            }, 
+            "DRUNIAN": {
+                "CREATURE_TILE": [
+                    "77"
+                ]
+            }, 
+            "BADGER MAN": {
+                "CREATURE_TILE": [
+                    "72"
+                ]
+            }, 
+            "LEOPARD": {
+                "CREATURE_TILE": [
+                    "77"
+                ]
+            }, 
+            "MAGMA_CRAB": {
+                "CREATURE_TILE": [
+                    "83"
+                ]
+            }, 
+            "ELEPHANT": {
+                "CREATURE_TILE": [
+                    "78"
+                ]
+            }, 
+            "GIANT TORTOISE MAN": {
+                "CREATURE_TILE": [
+                    "71"
+                ]
+            }, 
+            "GIANT_OCTOPUS": {
+                "CREATURE_TILE": [
+                    "102"
+                ]
+            }, 
+            "RAVEN_MAN": {
+                "CREATURE_TILE": [
+                    "75"
+                ]
+            }, 
+            "GIANT_KOALA": {
+                "CREATURE_TILE": [
+                    "82"
+                ]
+            }, 
+            "LOUSE": {
+                "ALTTILE": [
+                    "116"
+                ], 
+                "CREATURE_TILE": [
+                    "115"
+                ]
+            }, 
+            "OSTRICH MAN": {
+                "CREATURE_TILE": [
+                    "75"
+                ]
+            }, 
+            "SKUNK": {
+                "CREATURE_TILE": [
+                    "76"
+                ]
+            }, 
+            "SNAKE_FIRE": {
+                "CREATURE_TILE": [
+                    "104"
+                ]
+            }, 
+            "MOON_SNAIL_MAN": {
+                "CREATURE_TILE": [
+                    "74"
+                ]
+            }, 
+            "BIRD_ORIOLE": {
+                "ALTTILE": [
+                    "118"
+                ], 
+                "CREATURE_TILE": [
+                    "117"
+                ]
+            }, 
+            "ETTIN": {
+                "CREATURE_TILE": [
+                    "70"
+                ]
+            }, 
+            "AYE-AYE": {
+                "CREATURE_TILE": [
+                    "76"
+                ]
+            }, 
+            "ECHIDNA_MAN": {
+                "CREATURE_TILE": [
+                    "71"
+                ]
+            }, 
+            "ALPACA": {
+                "CREATURE_TILE": [
+                    "80"
+                ]
+            }, 
+            "REINDEER": {
+                "CREATURE_TILE": [
+                    "77"
+                ]
+            }, 
+            "BLACK_MAMBA": {
+                "CREATURE_TILE": [
+                    "104"
+                ]
+            }, 
+            "FISH_SALMON": {
+                "ALTTILE": [
+                    "122"
+                ], 
+                "CREATURE_TILE": [
+                    "121"
+                ]
+            }, 
+            "GRIMELING": {
+                "CREATURE_TILE": [
+                    "67"
+                ]
+            }, 
+            "FISH_PERCH": {
+                "ALTTILE": [
+                    "122"
+                ], 
+                "CREATURE_TILE": [
+                    "121"
+                ]
+            }, 
+            "HARP_SEAL_MAN": {
+                "CREATURE_TILE": [
+                    "74"
+                ]
+            }, 
+            "GIANT_BROWN_RECLUSE_SPIDER": {
+                "CREATURE_TILE": [
+                    "105"
+                ]
+            }, 
+            "GIANT_GREEN_TREE_FROG": {
+                "CREATURE_TILE": [
+                    "76"
+                ]
+            }, 
+            "GILA_MONSTER_MAN": {
+                "CREATURE_TILE": [
+                    "72"
+                ]
+            }, 
+            "GIANT_HAMSTER": {
+                "CREATURE_TILE": [
+                    "76"
+                ]
+            }, 
+            "OPOSSUM_MAN": {
+                "CREATURE_TILE": [
+                    "72"
+                ]
+            }, 
+            "FISH_MARLIN": {
+                "ALTTILE": [
+                    "122"
+                ], 
+                "CREATURE_TILE": [
+                    "121"
+                ]
+            }, 
+            "WEASEL": {
+                "CREATURE_TILE": [
+                    "81"
+                ]
+            }, 
+            "WATER_BUFFALO": {
+                "CREATURE_TILE": [
+                    "78"
+                ]
+            }, 
+            "GIANT_AYE-AYE": {
+                "CREATURE_TILE": [
+                    "76"
+                ]
+            }, 
+            "KOBOLD": {
+                "CREATURE_TILE": [
+                    "67"
+                ]
+            }, 
+            "FAIRY": {
+                "CREATURE_TILE": [
+                    "118"
+                ]
+            }, 
+            "GIANT_NAUTILUS": {
+                "CREATURE_TILE": [
+                    "102"
+                ]
+            }, 
+            "OCTOPUS": {
+                "CREATURE_TILE": [
+                    "102"
+                ]
+            }, 
+            "KING_COBRA": {
+                "CREATURE_TILE": [
+                    "104"
+                ]
+            }, 
+            "GIBBON_SILVERY": {
+                "CREATURE_TILE": [
+                    "84"
+                ]
+            }, 
+            "HONEY_BEE": {
+                "ALTTILE": [
+                    "118"
+                ], 
+                "CREATURE_TILE": [
+                    "117"
+                ]
+            }, 
+            "BEAR_GRIZZLY": {
+                "CREATURE_TILE": [
+                    "78"
+                ]
+            }, 
+            "CAVE_SWALLOW_MAN": {
+                "CREATURE_TILE": [
+                    "75"
+                ]
+            }, 
+            "LOON_MAN": {
+                "CREATURE_TILE": [
+                    "75"
+                ]
+            }, 
+            "BIRD_OSPREY": {
+                "CREATURE_TILE": [
+                    "97"
+                ]
+            }, 
+            "VORACIOUS_CAVE_CRAWLER": {
+                "CREATURE_TILE": [
+                    "78"
+                ]
+            }, 
+            "MASKED_LOVEBIRD_MAN": {
+                "CREATURE_TILE": [
+                    "75"
+                ]
+            }, 
+            "BIRD_BLUEJAY": {
+                "ALTTILE": [
+                    "118"
+                ], 
+                "CREATURE_TILE": [
+                    "117"
+                ]
+            }, 
+            "CHIPMUNK": {
+                "ALTTILE": [
+                    "114"
+                ], 
+                "CREATURE_TILE": [
+                    "113"
+                ]
+            }, 
+            "HARPY": {
+                "CREATURE_TILE": [
+                    "75"
+                ]
+            }, 
+            "ROACH_LARGE": {
+                "ALTTILE": [
+                    "116"
+                ], 
+                "CREATURE_TILE": [
+                    "115"
+                ]
+            }, 
+            "BLENDEC_FOUL": {
+                "CREATURE_TILE": [
+                    "71"
+                ]
+            }, 
+            "CASSOWARY_MAN": {
+                "CREATURE_TILE": [
+                    "75"
+                ]
+            }, 
+            "FISH_BULLHEAD_BLACK": {
+                "ALTTILE": [
+                    "122"
+                ], 
+                "CREATURE_TILE": [
+                    "121"
+                ]
+            }, 
+            "BIRD_KIWI": {
+                "CREATURE_TILE": [
+                    "89"
+                ]
+            }, 
+            "GIGANTIC SQUID": {
+                "CREATURE_TILE": [
+                    "102"
+                ]
+            }, 
+            "COCKATIEL_MAN": {
+                "CREATURE_TILE": [
+                    "75"
+                ]
+            }, 
+            "MINOTAUR": {
+                "CREATURE_TILE": [
+                    "70"
+                ]
+            }, 
+            "FISH_TROUT_RAINBOW": {
+                "ALTTILE": [
+                    "122"
+                ], 
+                "CREATURE_TILE": [
+                    "121"
+                ]
+            }, 
+            "HIPPO": {
+                "CREATURE_TILE": [
+                    "78"
+                ]
+            }, 
+            "FISH_GROUPER_GIANT": {
+                "ALTTILE": [
+                    "122"
+                ], 
+                "CREATURE_TILE": [
+                    "121"
+                ]
+            }, 
+            "FISH_CHAR": {
+                "ALTTILE": [
+                    "122"
+                ], 
+                "CREATURE_TILE": [
+                    "121"
+                ]
+            }, 
+            "OLM_GIANT": {
+                "CREATURE_TILE": [
+                    "81"
+                ]
+            }, 
+            "GIANT_KEA": {
+                "CREATURE_TILE": [
+                    "89"
+                ]
+            }, 
+            "GIBBON_BILOU": {
+                "CREATURE_TILE": [
+                    "84"
+                ]
+            }, 
+            "MARMOT_HOARY": {
+                "CREATURE_TILE": [
+                    "76"
+                ]
+            }, 
+            "BLIZZARD_MAN": {
+                "CREATURE_TILE": [
+                    "70"
+                ]
+            }, 
+            "AXOLOTL": {
+                "ALTTILE": [
+                    "114"
+                ], 
+                "CREATURE_TILE": [
+                    "113"
+                ]
+            }, 
+            "EAGLE_MAN": {
+                "CREATURE_TILE": [
+                    "75"
+                ]
+            }, 
+            "BARN_OWL_MAN": {
+                "CREATURE_TILE": [
+                    "75"
+                ]
+            }, 
+            "IBEX": {
+                "CREATURE_TILE": [
+                    "77"
+                ]
+            }, 
+            "CAVY": {
+                "CREATURE_TILE": [
+                    "76"
+                ]
+            }, 
+            "AMPHIBIAN_MAN": {
+                "CREATURE_TILE": [
+                    "71"
+                ]
+            }, 
+            "HORSESHOE_CRAB": {
+                "CREATURE_TILE": [
+                    "99"
+                ]
+            }, 
+            "FISH_BULLHEAD_BROWN": {
+                "ALTTILE": [
+                    "122"
+                ], 
+                "CREATURE_TILE": [
+                    "121"
+                ]
+            }, 
+            "GIANT_SPARROW": {
+                "CREATURE_TILE": [
+                    "89"
+                ]
+            }, 
+            "KOALA": {
+                "CREATURE_TILE": [
+                    "82"
+                ]
+            }, 
+            "DRALTHA": {
+                "CREATURE_TILE": [
+                    "78"
+                ]
+            }, 
+            "MONITOR_LIZARD_MAN": {
+                "CREATURE_TILE": [
+                    "72"
+                ]
+            }, 
+            "CAVE_DRAGON": {
+                "CREATURE_TILE": [
+                    "108"
+                ]
+            }, 
+            "GIANT_MOSQUITO": {
+                "CREATURE_TILE": [
+                    "106"
+                ]
+            }, 
+            "GIANT_KINGSNAKE": {
+                "CREATURE_TILE": [
+                    "104"
+                ]
+            }, 
+            "HYENA_MAN": {
+                "CREATURE_TILE": [
+                    "72"
+                ]
+            }, 
+            "OCELOT": {
+                "CREATURE_TILE": [
+                    "77"
+                ]
+            }, 
+            "GIANT_DESERT_TORTOISE": {
+                "CREATURE_TILE": [
+                    "83"
+                ]
+            }, 
+            "BUSHMASTER": {
+                "CREATURE_TILE": [
+                    "104"
+                ]
+            }, 
+            "FISH_GUPPY": {
+                "ALTTILE": [
+                    "122"
+                ], 
+                "CREATURE_TILE": [
+                    "121"
+                ]
+            }, 
+            "BOBCAT_MAN": {
+                "CREATURE_TILE": [
+                    "71"
+                ]
+            }, 
+            "ADDER_MAN": {
+                "CREATURE_TILE": [
+                    "74"
+                ]
+            }, 
+            "GIANT_PORCUPINE": {
+                "CREATURE_TILE": [
+                    "76"
+                ]
+            }, 
+            "CAPUCHIN": {
+                "CREATURE_TILE": [
+                    "84"
+                ]
+            }, 
+            "GIANT_OTTER": {
+                "CREATURE_TILE": [
+                    "72"
+                ]
+            }, 
+            "HAMSTER_MAN": {
+                "CREATURE_TILE": [
+                    "71"
+                ]
+            }, 
+            "WALRUS": {
+                "CREATURE_TILE": [
+                    "100"
+                ]
+            }, 
+            "SHARK_BULL": {
+                "CREATURE_TILE": [
+                    "101"
+                ]
+            }, 
+            "GIANT_DINGO": {
+                "CREATURE_TILE": [
+                    "77"
+                ]
+            }, 
+            "GIANT_MONGOOSE": {
+                "CREATURE_TILE": [
+                    "81"
+                ]
+            }, 
+            "CREEPING_EYE": {
+                "CREATURE_TILE": [
+                    "76"
+                ]
+            }, 
+            "FOX": {
+                "CREATURE_TILE": [
+                    "77"
+                ]
+            }, 
+            "GIANT_IBEX": {
+                "CREATURE_TILE": [
+                    "77"
+                ]
+            }, 
+            "BEAVER_MAN": {
+                "CREATURE_TILE": [
+                    "72"
+                ]
+            }, 
+            "GIANT_HEDGEHOG": {
+                "CREATURE_TILE": [
+                    "76"
+                ]
+            }, 
+            "BIRD_PEAFOWL_BLUE": {
+                "CREATURE_TILE": [
+                    "97"
+                ]
+            }, 
+            "FISH_COD": {
+                "ALTTILE": [
+                    "122"
+                ], 
+                "CREATURE_TILE": [
+                    "121"
+                ]
+            }, 
+            "FISH_MILKFISH": {
+                "ALTTILE": [
+                    "122"
+                ], 
+                "CREATURE_TILE": [
+                    "121"
+                ]
+            }, 
+            "MANTIS": {
+                "ALTTILE": [
+                    "116"
+                ], 
+                "CREATURE_TILE": [
+                    "115"
+                ]
+            }, 
+            "DRAGON": {
+                "CREATURE_TILE": [
+                    "108"
+                ]
+            }, 
+            "SLUG_MAN": {
+                "CREATURE_TILE": [
+                    "74"
+                ]
+            }, 
+            "GIGANTIC TORTOISE": {
+                "CREATURE_TILE": [
+                    "83"
+                ]
+            }, 
+            "BUTTERFLY_MONARCH": {
+                "ALTTILE": [
+                    "118"
+                ], 
+                "CREATURE_TILE": [
+                    "117"
+                ]
+            }, 
+            "KOALA_MAN": {
+                "CREATURE_TILE": [
+                    "71"
+                ]
+            }, 
+            "HEDGEHOG": {
+                "ALTTILE": [
+                    "114"
+                ], 
+                "CREATURE_TILE": [
+                    "113"
+                ]
+            }, 
+            "DINGO_MAN": {
+                "CREATURE_TILE": [
+                    "72"
+                ]
+            }, 
+            "COW": {
+                "CREATURE_TILE": [
+                    "78"
+                ]
+            }, 
+            "HARE": {
+                "CREATURE_TILE": [
+                    "76"
+                ]
+            }, 
+            "SHARK_REEF_BLACKTIP": {
+                "CREATURE_TILE": [
+                    "101"
+                ]
+            }, 
+            "SLOTH_MAN": {
+                "CREATURE_TILE": [
+                    "71"
+                ]
+            }, 
+            "FISH_RATFISH_SPOTTED": {
+                "ALTTILE": [
+                    "122"
+                ], 
+                "CREATURE_TILE": [
+                    "121"
+                ]
+            }, 
+            "BEAK_DOG": {
+                "CREATURE_TILE": [
+                    "77"
+                ]
+            }, 
+            "GIANT_BEAVER": {
+                "CREATURE_TILE": [
+                    "82"
+                ]
+            }, 
+            "JACKAL": {
+                "CREATURE_TILE": [
+                    "77"
+                ]
+            }, 
+            "FISH_MOLLY_SAILFIN": {
+                "ALTTILE": [
+                    "122"
+                ], 
+                "CREATURE_TILE": [
+                    "121"
+                ]
+            }, 
+            "GIANT_MINK": {
+                "CREATURE_TILE": [
+                    "81"
+                ]
+            }, 
+            "CROCODILE_CAVE": {
+                "CREATURE_TILE": [
+                    "81"
+                ]
+            }, 
+            "BIRD_COCKATIEL": {
+                "ALTTILE": [
+                    "118"
+                ], 
+                "CREATURE_TILE": [
+                    "117"
+                ]
+            }, 
+            "GIANT_THRIPS": {
+                "CREATURE_TILE": [
+                    "105"
+                ]
+            }, 
+            "GIBBON_PILEATED": {
+                "CREATURE_TILE": [
+                    "84"
+                ]
+            }, 
+            "TIGER": {
+                "CREATURE_TILE": [
+                    "77"
+                ]
+            }, 
+            "ELEMENTMAN_AMETHYST": {
+                "CREATURE_TILE": [
+                    "67"
+                ]
+            }, 
+            "FISH_STURGEON": {
+                "ALTTILE": [
+                    "122"
+                ], 
+                "CREATURE_TILE": [
+                    "121"
+                ]
+            }, 
+            "LEECH_MAN": {
+                "CREATURE_TILE": [
+                    "74"
+                ]
+            }, 
+            "CAP_HOPPER": {
+                "ALTTILE": [
+                    "114"
+                ], 
+                "CREATURE_TILE": [
+                    "113"
+                ]
+            }, 
+            "FISH_SKATE_COMMON": {
+                "ALTTILE": [
+                    "122"
+                ], 
+                "CREATURE_TILE": [
+                    "121"
+                ]
+            }, 
+            "FISH_RAY_BAT": {
+                "ALTTILE": [
+                    "122"
+                ], 
+                "CREATURE_TILE": [
+                    "121"
+                ]
+            }, 
+            "FISH_FLOUNDER": {
+                "ALTTILE": [
+                    "122"
+                ], 
+                "CREATURE_TILE": [
+                    "121"
+                ]
+            }, 
+            "BIRD_KEA": {
+                "CREATURE_TILE": [
+                    "89"
+                ]
+            }, 
+            "BIRD_VULTURE": {
+                "CREATURE_TILE": [
+                    "97"
+                ]
+            }, 
+            "GIANT_TAPIR": {
+                "CREATURE_TILE": [
+                    "77"
+                ]
+            }, 
+            "BEAR_BLACK": {
+                "CREATURE_TILE": [
+                    "78"
+                ]
+            }, 
+            "MONGOOSE": {
+                "CREATURE_TILE": [
+                    "81"
+                ]
+            }, 
+            "MULE": {
+                "CREATURE_TILE": [
+                    "77"
+                ]
+            }, 
+            "GREMLIN": {
+                "CREATURE_TILE": [
+                    "66"
+                ]
+            }, 
+            "MOGHOPPER": {
+                "ALTTILE": [
+                    "114"
+                ], 
+                "CREATURE_TILE": [
+                    "113"
+                ]
+            }, 
+            "HYDRA": {
+                "CREATURE_TILE": [
+                    "109"
+                ]
+            }, 
+            "PLATYPUS": {
+                "CREATURE_TILE": [
+                    "76"
+                ]
+            }, 
+            "BEAR_SLOTH": {
+                "CREATURE_TILE": [
+                    "78"
+                ]
+            }, 
+            "GIANT_COATI": {
+                "CREATURE_TILE": [
+                    "81"
+                ]
+            }, 
+            "BIRD_OSTRICH_GIANT": {
+                "CREATURE_TILE": [
+                    "97"
+                ]
+            }, 
+            "FISH_RAY_MANTA": {
+                "CREATURE_TILE": [
+                    "99"
+                ]
+            }, 
+            "GOAT": {
+                "CREATURE_TILE": [
+                    "77"
+                ]
+            }, 
+            "SQUIRREL_GRAY": {
+                "ALTTILE": [
+                    "114"
+                ], 
+                "CREATURE_TILE": [
+                    "113"
+                ]
+            }, 
+            "WAMBLER_FLUFFY": {
+                "ALTTILE": [
+                    "114"
+                ], 
+                "CREATURE_TILE": [
+                    "113"
+                ]
+            }, 
+            "MANERA": {
+                "CREATURE_TILE": [
+                    "102"
+                ]
+            }, 
+            "PYTHON": {
+                "CREATURE_TILE": [
+                    "104"
+                ]
+            }, 
+            "FISH_LAMPREY_BROOK": {
+                "ALTTILE": [
+                    "120"
+                ], 
+                "CREATURE_TILE": [
+                    "119"
+                ]
+            }, 
+            "FISH_SHAD": {
+                "ALTTILE": [
+                    "122"
+                ], 
+                "CREATURE_TILE": [
+                    "121"
+                ]
+            }, 
+            "DESERT_TORTOISE_MAN": {
+                "CREATURE_TILE": [
+                    "71"
+                ]
+            }, 
+            "GRIFFON": {
+                "CREATURE_TILE": [
+                    "78"
+                ]
+            }, 
+            "KINGSNAKE_MAN": {
+                "CREATURE_TILE": [
+                    "74"
+                ]
+            }, 
+            "PORCUPINE": {
+                "CREATURE_TILE": [
+                    "76"
+                ]
+            }, 
+            "BADGER, GIANT": {
+                "CREATURE_TILE": [
+                    "76"
+                ]
+            }, 
+            "GIANT_CRAB": {
+                "CREATURE_TILE": [
+                    "103"
+                ]
+            }, 
+            "KEA_MAN": {
+                "CREATURE_TILE": [
+                    "75"
+                ]
+            }, 
+            "DWARF": {
+                "CREATURE_TILE": [
+                    "67"
+                ]
+            }, 
+            "PLATYPUS, GIANT": {
+                "CREATURE_TILE": [
+                    "76"
+                ]
+            }, 
+            "STRANGLER": {
+                "CREATURE_TILE": [
+                    "67"
+                ]
+            }, 
+            "SHARK_TIGER": {
+                "CREATURE_TILE": [
+                    "101"
+                ]
+            }, 
+            "FISH_SOLE": {
+                "ALTTILE": [
+                    "122"
+                ], 
+                "CREATURE_TILE": [
+                    "121"
+                ]
+            }, 
+            "CHINCHILLA": {
+                "CREATURE_TILE": [
+                    "81"
+                ]
+            }, 
+            "ARMADILLO, GIANT": {
+                "CREATURE_TILE": [
+                    "81"
+                ]
+            }, 
+            "ORCA_MAN": {
+                "CREATURE_TILE": [
+                    "74"
+                ]
+            }, 
+            "BIRD_GUINEAFOWL": {
+                "CREATURE_TILE": [
+                    "97"
+                ]
+            }, 
+            "GOAT_MOUNTAIN": {
+                "CREATURE_TILE": [
+                    "78"
+                ]
+            }, 
+            "SLOTH_BEAR_MAN": {
+                "CREATURE_TILE": [
+                    "71"
+                ]
+            }, 
+            "LEOPARD_GIANT": {
+                "CREATURE_TILE": [
+                    "77"
+                ]
+            }, 
+            "SHARK_MAKO_LONGFIN": {
+                "CREATURE_TILE": [
+                    "101"
+                ]
+            }, 
+            "LOBSTER_CAVE": {
+                "ALTTILE": [
+                    "116"
+                ], 
+                "CREATURE_TILE": [
+                    "115"
+                ]
+            }, 
+            "OLM_MAN": {
+                "CREATURE_TILE": [
+                    "72"
+                ]
+            }, 
+            "LEOPARD_SEAL": {
+                "CREATURE_TILE": [
+                    "100"
+                ]
+            }, 
+            "GIANT_BARN_OWL": {
+                "CREATURE_TILE": [
+                    "89"
+                ]
+            }, 
+            "STOAT": {
+                "CREATURE_TILE": [
+                    "81"
+                ]
+            }, 
+            "COYOTE_MAN": {
+                "CREATURE_TILE": [
+                    "71"
+                ]
+            }, 
+            "MANDRILL": {
+                "CREATURE_TILE": [
+                    "84"
+                ]
+            }, 
+            "GIANT_HORSESHOE_CRAB": {
+                "CREATURE_TILE": [
+                    "99"
+                ]
+            }, 
+            "BIRD_SWALLOW_CAVE_GIANT": {
+                "CREATURE_TILE": [
+                    "89"
+                ]
+            }, 
+            "MACAQUE_RHESUS": {
+                "CREATURE_TILE": [
+                    "84"
+                ]
+            }, 
+            "GIANT_AXOLOTL": {
+                "CREATURE_TILE": [
+                    "81"
+                ]
+            }, 
+            "SPARROW_MAN": {
+                "CREATURE_TILE": [
+                    "75"
+                ]
+            }, 
+            "GIANT_SWAN": {
+                "CREATURE_TILE": [
+                    "97"
+                ]
+            }, 
+            "GIBBON_BLACK_CRESTED": {
+                "CREATURE_TILE": [
+                    "84"
+                ]
+            }, 
+            "NARWHAL MAN": {
+                "CREATURE_TILE": [
+                    "74"
+                ]
+            }, 
+            "SHARK_NURSE": {
+                "CREATURE_TILE": [
+                    "101"
+                ]
+            }, 
+            "FISH_GLASSEYE": {
+                "ALTTILE": [
+                    "122"
+                ], 
+                "CREATURE_TILE": [
+                    "121"
+                ]
+            }, 
+            "BIRD_SWALLOW_CAVE": {
+                "CREATURE_TILE": [
+                    "118"
+                ]
+            }, 
+            "GIANT_BOBCAT": {
+                "CREATURE_TILE": [
+                    "77"
+                ]
+            }, 
+            "ORANGUTAN": {
+                "CREATURE_TILE": [
+                    "84"
+                ]
+            }, 
+            "SNOWY_OWL_MAN": {
+                "CREATURE_TILE": [
+                    "75"
+                ]
+            }, 
+            "GIANT_BLACK_MAMBA": {
+                "CREATURE_TILE": [
+                    "104"
+                ]
+            }, 
+            "GIANT_CROW": {
+                "CREATURE_TILE": [
+                    "89"
+                ]
+            }, 
+            "FIREFLY": {
+                "ALTTILE": [
+                    "118"
+                ], 
+                "CREATURE_TILE": [
+                    "117"
+                ]
+            }, 
+            "SLOTH": {
+                "CREATURE_TILE": [
+                    "84"
+                ]
+            }, 
+            "GRAY_LANGUR": {
+                "CREATURE_TILE": [
+                    "84"
+                ]
+            }, 
+            "GNAT_BLOOD": {
+                "ALTTILE": [
+                    "118"
+                ], 
+                "CREATURE_TILE": [
+                    "117"
+                ]
+            }, 
+            "SQUIRREL_FLYING": {
+                "ALTTILE": [
+                    "114"
+                ], 
+                "CREATURE_TILE": [
+                    "113"
+                ]
+            }, 
+            "PIG": {
+                "CREATURE_TILE": [
+                    "77"
+                ]
+            }, 
+            "RHINOCEROS": {
+                "CREATURE_TILE": [
+                    "78"
+                ]
+            }, 
+            "LEECH": {
+                "ALTTILE": [
+                    "120"
+                ], 
+                "CREATURE_TILE": [
+                    "119"
+                ]
+            }, 
+            "HUMAN": {
+                "CREATURE_TILE": [
+                    "67"
+                ]
+            }, 
+            "GIANT_SNOWY_OWL": {
+                "CREATURE_TILE": [
+                    "89"
+                ]
+            }, 
+            "BEAR_POLAR": {
+                "CREATURE_TILE": [
+                    "78"
+                ]
+            }, 
+            "GIANT_BUSHMASTER": {
+                "CREATURE_TILE": [
+                    "104"
+                ]
+            }, 
+            "TROLL": {
+                "CREATURE_TILE": [
+                    "70"
+                ]
+            }, 
+            "CAPYBARA MAN": {
+                "CREATURE_TILE": [
+                    "71"
+                ]
+            }, 
+            "JAGUAR": {
+                "CREATURE_TILE": [
+                    "77"
+                ]
+            }, 
+            "FISH_LAMPREY_SEA": {
+                "CREATURE_TILE": [
+                    "104"
+                ]
+            }, 
+            "PUFFIN_MAN": {
+                "CREATURE_TILE": [
+                    "75"
+                ]
+            }, 
+            "SPONGE_MAN": {
+                "CREATURE_TILE": [
+                    "71"
+                ]
+            }, 
+            "BAT_GIANT": {
+                "CREATURE_TILE": [
+                    "85"
+                ]
+            }, 
+            "BIRD_MAGPIE": {
+                "ALTTILE": [
+                    "118"
+                ], 
+                "CREATURE_TILE": [
+                    "117"
+                ]
+            }, 
+            "GIANT_SNAIL": {
+                "CREATURE_TILE": [
+                    "107"
+                ]
+            }, 
+            "ECHIDNA": {
+                "CREATURE_TILE": [
+                    "76"
+                ]
+            }, 
+            "SHARK_SPINY_DOGFISH": {
+                "CREATURE_TILE": [
+                    "101"
+                ]
+            }, 
+            "BIRD_STORK_WHITE": {
+                "CREATURE_TILE": [
+                    "97"
+                ]
+            }, 
+            "FLYING_SQUIRREL_MAN": {
+                "CREATURE_TILE": [
+                    "72"
+                ]
+            }, 
+            "FLY": {
+                "ALTTILE": [
+                    "118"
+                ], 
+                "CREATURE_TILE": [
+                    "117"
+                ]
+            }, 
+            "MOLE_GIANT": {
+                "CREATURE_TILE": [
+                    "76"
+                ]
+            }, 
+            "RABBIT": {
+                "CREATURE_TILE": [
+                    "76"
+                ]
+            }, 
+            "FISH_TIGERFISH": {
+                "ALTTILE": [
+                    "122"
+                ], 
+                "CREATURE_TILE": [
+                    "121"
+                ]
+            }, 
+            "SPIDER_PHANTOM": {
+                "ALTTILE": [
+                    "116"
+                ], 
+                "CREATURE_TILE": [
+                    "115"
+                ]
+            }, 
+            "LION_GIANT": {
+                "CREATURE_TILE": [
+                    "77"
+                ]
+            }, 
+            "FISH_BULLHEAD_YELLOW": {
+                "ALTTILE": [
+                    "122"
+                ], 
+                "CREATURE_TILE": [
+                    "121"
+                ]
+            }, 
+            "GORILLA": {
+                "CREATURE_TILE": [
+                    "84"
+                ]
+            }, 
+            "BEETLE": {
+                "ALTTILE": [
+                    "116"
+                ], 
+                "CREATURE_TILE": [
+                    "115"
+                ]
+            }, 
+            "CHEETAH": {
+                "CREATURE_TILE": [
+                    "77"
+                ]
+            }, 
+            "HONEY BADGER": {
+                "CREATURE_TILE": [
+                    "76"
+                ]
+            }, 
+            "WREN_MAN": {
+                "CREATURE_TILE": [
+                    "75"
+                ]
+            }, 
+            "PORCUPINE_MAN": {
+                "CREATURE_TILE": [
+                    "71"
+                ]
+            }, 
+            "SPIDER_MONKEY": {
+                "CREATURE_TILE": [
+                    "84"
+                ]
+            }, 
+            "ELEPHANT_SEAL": {
+                "CREATURE_TILE": [
+                    "100"
+                ]
+            }, 
+            "FISH_HAGFISH": {
+                "ALTTILE": [
+                    "120"
+                ], 
+                "CREATURE_TILE": [
+                    "119"
+                ]
+            }, 
+            "ADDER": {
+                "CREATURE_TILE": [
+                    "104"
+                ]
+            }, 
+            "GREY_PARROT_MAN": {
+                "CREATURE_TILE": [
+                    "75"
+                ]
+            }, 
+            "SHARK_MAKO_SHORTFIN": {
+                "CREATURE_TILE": [
+                    "101"
+                ]
+            }, 
+            "SASQUATCH": {
+                "CREATURE_TILE": [
+                    "70"
+                ]
+            }, 
+            "PENGUIN MAN": {
+                "CREATURE_TILE": [
+                    "75"
+                ]
+            }, 
+            "SHEEP": {
+                "CREATURE_TILE": [
+                    "77"
+                ]
+            }, 
+            "GIANT_SLOTH_BEAR": {
+                "CREATURE_TILE": [
+                    "78"
+                ]
+            }, 
+            "ELEMENTMAN_GABBRO": {
+                "CREATURE_TILE": [
+                    "67"
+                ]
+            }, 
+            "JUMPING_SPIDER_MAN": {
+                "CREATURE_TILE": [
+                    "71"
+                ]
+            }, 
+            "CROW_MAN": {
+                "CREATURE_TILE": [
+                    "75"
+                ]
+            }, 
+            "WILD_BOAR_MAN": {
+                "CREATURE_TILE": [
+                    "71"
+                ]
+            }, 
+            "SCORPION_DESERT_GIANT": {
+                "CREATURE_TILE": [
+                    "103"
+                ]
+            }, 
+            "MUSKOX": {
+                "CREATURE_TILE": [
+                    "78"
+                ]
+            }, 
+            "BOBCAT": {
+                "CREATURE_TILE": [
+                    "77"
+                ]
+            }, 
+            "GIANT_MONITOR_LIZARD": {
+                "CREATURE_TILE": [
+                    "81"
+                ]
+            }, 
+            "GIANT PEREGRINE FALCON": {
+                "CREATURE_TILE": [
+                    "89"
+                ]
+            }, 
+            "RED PANDA, GIANT": {
+                "CREATURE_TILE": [
+                    "76"
+                ]
+            }, 
+            "BIRD_ALBATROSS": {
+                "CREATURE_TILE": [
+                    "97"
+                ]
+            }, 
+            "CAPYBARA": {
+                "CREATURE_TILE": [
+                    "76"
+                ]
+            }, 
+            "GREEN_DEVOURER": {
+                "CREATURE_TILE": [
+                    "109"
+                ]
+            }, 
+            "EQUIPMENT_WAGON": {
+                "CREATURE_TILE": [
+                    "8"
+                ]
+            }, 
+            "GIANT_PANGOLIN": {
+                "CREATURE_TILE": [
+                    "76"
+                ]
+            }, 
+            "BIRD_PENGUIN_EMPEROR": {
+                "CREATURE_TILE": [
+                    "98"
+                ]
+            }, 
+            "BUSHMASTER_MAN": {
+                "CREATURE_TILE": [
+                    "74"
+                ]
+            }, 
+            "FISH_SEAHORSE": {
+                "ALTTILE": [
+                    "120"
+                ], 
+                "CREATURE_TILE": [
+                    "119"
+                ]
+            }, 
+            "OCELOT_MAN": {
+                "CREATURE_TILE": [
+                    "72"
+                ]
+            }, 
+            "BARK_SCORPION_MAN": {
+                "CREATURE_TILE": [
+                    "72"
+                ]
+            }, 
+            "DEER": {
+                "CREATURE_TILE": [
+                    "77"
+                ]
+            }, 
+            "RATTLESNAKE": {
+                "CREATURE_TILE": [
+                    "104"
+                ]
+            }, 
+            "FISH_LUNGFISH": {
+                "ALTTILE": [
+                    "122"
+                ], 
+                "CREATURE_TILE": [
+                    "121"
+                ]
+            }, 
+            "OLM": {
+                "CREATURE_TILE": [
+                    "114"
+                ]
+            }, 
+            "OPOSSUM": {
+                "CREATURE_TILE": [
+                    "76"
+                ]
+            }, 
+            "BAT_MAN": {
+                "CREATURE_TILE": [
+                    "75"
+                ]
+            }, 
+            "NIGHTWING": {
+                "CREATURE_TILE": [
+                    "75"
+                ]
+            }, 
+            "FLESH_BALL": {
+                "CREATURE_TILE": [
+                    "112"
+                ]
+            }, 
+            "MOOSE, GIANT": {
+                "CREATURE_TILE": [
+                    "77"
+                ]
+            }, 
+            "CAVE_FLOATER": {
+                "CREATURE_TILE": [
+                    "112"
+                ]
+            }, 
+            "GRAY_LANGUR_MAN": {
+                "CREATURE_TILE": [
+                    "71"
+                ]
+            }, 
+            "GRASSHOPPER": {
+                "ALTTILE": [
+                    "116"
+                ], 
+                "CREATURE_TILE": [
+                    "115"
+                ]
+            }, 
+            "NAUTILUS_MAN": {
+                "CREATURE_TILE": [
+                    "74"
+                ]
+            }, 
+            "ALLIGATOR": {
+                "CREATURE_TILE": [
+                    "81"
+                ]
+            }, 
+            "CAVE_BLOB": {
+                "CREATURE_TILE": [
+                    "112"
+                ]
+            }, 
+            "BLIND_CAVE_OGRE": {
+                "CREATURE_TILE": [
+                    "70"
+                ]
+            }, 
+            "GIANT_SLOTH": {
+                "CREATURE_TILE": [
+                    "84"
+                ]
+            }, 
+            "WOLVERINE_MAN": {
+                "CREATURE_TILE": [
+                    "72"
+                ]
+            }, 
+            "ELK": {
+                "CREATURE_TILE": [
+                    "77"
+                ]
+            }, 
+            "DONKEY": {
+                "CREATURE_TILE": [
+                    "77"
+                ]
+            }, 
+            "MINK": {
+                "CREATURE_TILE": [
+                    "81"
+                ]
+            }, 
+            "PEREGRINE FALCON MAN": {
+                "CREATURE_TILE": [
+                    "75"
+                ]
+            }, 
+            "LEOPARD_GECKO_MAN": {
+                "CREATURE_TILE": [
+                    "72"
+                ]
+            }, 
+            "ELF": {
+                "CREATURE_TILE": [
+                    "67"
+                ]
+            }, 
+            "BIRD_PARROT_GREY": {
+                "CREATURE_TILE": [
+                    "89"
+                ]
+            }, 
+            "SATYR": {
+                "CREATURE_TILE": [
+                    "67"
+                ]
+            }, 
+            "WORM_KNUCKLE": {
+                "ALTTILE": [
+                    "120"
+                ], 
+                "CREATURE_TILE": [
+                    "119"
+                ]
+            }, 
+            "MOSQUITO_MAN": {
+                "CREATURE_TILE": [
+                    "75"
+                ]
+            }, 
+            "FISH_TUNA_BLUEFIN": {
+                "ALTTILE": [
+                    "122"
+                ], 
+                "CREATURE_TILE": [
+                    "121"
+                ]
+            }, 
+            "SNAPPING_TURTLE_MAN": {
+                "CREATURE_TILE": [
+                    "72"
+                ]
+            }, 
+            "OYSTER": {
+                "ALTTILE": [
+                    "120"
+                ], 
+                "CREATURE_TILE": [
+                    "119"
+                ]
+            }, 
+            "FISH_OPAH": {
+                "ALTTILE": [
+                    "122"
+                ], 
+                "CREATURE_TILE": [
+                    "121"
+                ]
+            }, 
+            "FISH_MACKEREL": {
+                "ALTTILE": [
+                    "122"
+                ], 
+                "CREATURE_TILE": [
+                    "121"
+                ]
+            }, 
+            "DAMSELFLY_MAN": {
+                "CREATURE_TILE": [
+                    "75"
+                ]
+            }, 
+            "GIANT_LOON": {
+                "CREATURE_TILE": [
+                    "89"
+                ]
+            }, 
+            "BUGBAT": {
+                "CREATURE_TILE": [
+                    "85"
+                ]
+            }, 
+            "GIANT_BUSHTIT": {
+                "CREATURE_TILE": [
+                    "89"
+                ]
+            }, 
+            "GIBBON_WHITE_BROWED": {
+                "CREATURE_TILE": [
+                    "84"
+                ]
+            }, 
+            "RATTLESNAKE_MAN": {
+                "CREATURE_TILE": [
+                    "74"
+                ]
+            }, 
+            "GECKO_LEOPARD": {
+                "ALTTILE": [
+                    "114"
+                ], 
+                "CREATURE_TILE": [
+                    "113"
+                ]
+            }, 
+            "SEA OTTER": {
+                "CREATURE_TILE": [
+                    "72"
+                ]
+            }, 
+            "GREEN_TREE_FROG_MAN": {
+                "CREATURE_TILE": [
+                    "71"
+                ]
+            }, 
+            "COPPERHEAD_SNAKE": {
+                "CREATURE_TILE": [
+                    "104"
+                ]
+            }, 
+            "BIRD_LORIKEET": {
+                "ALTTILE": [
+                    "118"
+                ], 
+                "CREATURE_TILE": [
+                    "117"
+                ]
+            }, 
+            "RAT_LARGE": {
+                "CREATURE_TILE": [
+                    "76"
+                ]
+            }, 
+            "BIRD_FALCON_PEREGRINE": {
+                "CREATURE_TILE": [
+                    "89"
+                ]
+            }, 
+            "SPIDER_CAVE_GIANT": {
+                "CREATURE_TILE": [
+                    "105"
+                ]
+            }, 
+            "CHEETAH_GIANT": {
+                "CREATURE_TILE": [
+                    "77"
+                ]
+            }, 
+            "LYNX_MAN": {
+                "CREATURE_TILE": [
+                    "71"
+                ]
+            }, 
+            "GIANT_WREN": {
+                "CREATURE_TILE": [
+                    "89"
+                ]
+            }, 
+            "FISH_TROUT_STEELHEAD": {
+                "ALTTILE": [
+                    "122"
+                ], 
+                "CREATURE_TILE": [
+                    "121"
+                ]
+            }, 
+            "PANDA, GIGANTIC": {
+                "CREATURE_TILE": [
+                    "78"
+                ]
+            }, 
+            "GOBLIN": {
+                "CREATURE_TILE": [
+                    "67"
+                ]
+            }, 
+            "BLOOD_MAN": {
+                "CREATURE_TILE": [
+                    "67"
+                ]
+            }, 
+            "LIZARD": {
+                "ALTTILE": [
+                    "114"
+                ], 
+                "CREATURE_TILE": [
+                    "113"
+                ]
+            }, 
+            "GIRAFFE": {
+                "CREATURE_TILE": [
+                    "80"
+                ]
+            }, 
+            "OSPREY_MAN": {
+                "CREATURE_TILE": [
+                    "75"
+                ]
+            }, 
+            "ORCA": {
+                "CREATURE_TILE": [
+                    "101"
+                ]
+            }, 
+            "GIANT": {
+                "CREATURE_TILE": [
+                    "70"
+                ]
+            }, 
+            "GIANT_BARK_SCORPION": {
+                "CREATURE_TILE": [
+                    "103"
+                ]
+            }, 
+            "SHARK_GREAT_WHITE": {
+                "CREATURE_TILE": [
+                    "101"
+                ]
+            }, 
+            "GIANT_KESTREL": {
+                "CREATURE_TILE": [
+                    "97"
+                ]
+            }, 
+            "BIRD_PENGUIN": {
+                "CREATURE_TILE": [
+                    "98"
+                ]
+            }, 
+            "GIANT_KING_COBRA": {
+                "CREATURE_TILE": [
+                    "104"
+                ]
+            }, 
+            "KANGAROO_MAN": {
+                "CREATURE_TILE": [
+                    "72"
+                ]
+            }, 
+            "GIANT_COPPERHEAD_SNAKE": {
+                "CREATURE_TILE": [
+                    "104"
+                ]
+            }, 
+            "SHARK_REEF_WHITETIP": {
+                "CREATURE_TILE": [
+                    "101"
+                ]
+            }
+        }
+    }
+}
