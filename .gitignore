@@ -6,7 +6,8 @@
 # Manager logs go here
 logs/*
 
-# Outputted raws go here (for my personal testing and stuff anyway)
+# Raws go here (for my personal testing and stuff anyway)
+df/*
 output/*
 backup/*
 
