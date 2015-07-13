@@ -103,11 +103,11 @@ queryable.all
 queryableobj.getobj tokenlist.each
 >>> dwarven = df.getobj('TRANSLATION:DWARF')
 >>> print dwarven.all(exact_value='T_WORD', re_arg=(0, 'AL.*'))
-    [T_WORD:ALE:mabdug]
-    [T_WORD:ALCHEMY:anzish]
-    [T_WORD:ALLY:astel]
-    [T_WORD:ALLIANCE:boshut]
-    [T_WORD:ALLEGIANCE:uzan]
+[T_WORD:ALE:mabdug]
+[T_WORD:ALCHEMY:anzish]
+[T_WORD:ALLY:astel]
+[T_WORD:ALLIANCE:boshut]
+[T_WORD:ALLEGIANCE:uzan]
 >>> intelligence = df.all('INTELLIGENT')
 >>> print intelligence.each(lambda token: token.get('CREATURE', reverse=True)) # Get the creature token most immediately preceding each intelligent token
 [CREATURE:DWARF]
@@ -121,9 +121,9 @@ queryableobj.getobj tokenlist.each
 
 queryable.get
 
->>> print df.get(exact_value='TRANSLATION')
+>>> print df.get(exact_value='TRANSLATION', exact_args=['HUMAN'])
 [TRANSLATION:HUMAN]
->>> print df.get(exact_args=['6', '0', '1'])
+>>> print df.get(value_in=('EXAMPLE', 'ALSO_NOT_A_REAL_TOKEN', 'PICKED_COLOR'), exact_args=['6', '0', '1'])
 [PICKED_COLOR:6:0:1]
 >>> bear = df.get(match_token=raws.token('CREATURE:BEAR_GRIZZLY'))
 >>> print bear
@@ -152,7 +152,7 @@ queryableobj.getobj queryable.get token.__getitem__ token.add
     [TRANSLATION:ELF]
     [WEAPON:ITEM_WEAPON_SPEAR]
     [WEAPON:ITEM_WEAPON_BOW]
->>> forest[2].add(sword)
+>>> added = forest[2].add(sword)
 >>> print forest.list(range=5, include_self=True)
 [ENTITY:FOREST]
     [CREATURE:ELF]
