@@ -3,8 +3,6 @@ import copy
 
 import token
 
-rawstoken = token.token
-
 
 
 class rawsbasefilter:
@@ -120,7 +118,7 @@ class rawstokenfilter(rawsbasefilter):
         self.pretty = pretty
         
         if pretty:
-            prettytoken = rawstoken.parseone(pretty)
+            prettytoken = token.token.parseone(pretty)
             exact_value = prettytoken.value
             if prettytoken.nargs(): exact_args = prettytoken.args
             

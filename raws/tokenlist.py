@@ -1,14 +1,8 @@
 import queryable
-import token
-
-token = token.token
-
-rawsqueryable = queryable.rawsqueryable
 
 
 
-
-class tokenlist(list, rawsqueryable):
+class tokenlist(list, queryable.rawsqueryable):
     '''Extends builtin list with token querying functionality.'''
     
     def tokens(self, range=None, reverse=False):
@@ -37,7 +31,7 @@ class tokenlist(list, rawsqueryable):
         if shallow:
             return tokenlist(token for token in self)
         else:
-            return token.copytokens(self)
+            return token.token.copytokens(self)
     
     def __str__(self):
         if len(self) == 0:

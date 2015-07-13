@@ -2,12 +2,9 @@ import objects
 import queryable
 import token
 
-rawsqueryable = queryable.rawsqueryable
-token = token.token
 
 
-
-class rawsqueryableadd(rawsqueryable):
+class rawsqueryableadd(queryable.rawsqueryable):
     
     # Inheriting classes must implement an add method
     
@@ -43,6 +40,6 @@ class rawsqueryableadd(rawsqueryable):
         
     @staticmethod
     def argsset(*args, **kwargs):
-        settoken = token.autosingular(*args, **kwargs)
+        settoken = token.token.autosingular(*args, **kwargs)
         return settoken.value, settoken.args
     

@@ -1,13 +1,11 @@
 import os
 
-from basefile import basefile
+import basefile
 import rawfile
 
-rawfile = rawfile.rawfile
 
 
-
-class binfile(basefile):
+class binfile(basefile.basefile):
     def __init__(self, content=None, path=None, dir=None, **kwargs):
         self.dir = None
         self.setpath(path, **kwargs)
@@ -26,7 +24,7 @@ class binfile(basefile):
         return self
     def raw(self, **kwargs):
         self.kind = 'raw'
-        self.__class__ = rawfile
+        self.__class__ = rawfile.rawfile
         for key, value in kwargs.iteritems(): self.__dict__[key] = value
         self.read(content=self.content)
         return self

@@ -6,8 +6,6 @@ import objects
 import filters
 import tokenlist
 
-tokenlist = tokenlist.tokenlist
-
 
 
 class rawsqueryable(object):
@@ -80,7 +78,7 @@ class rawsqueryable(object):
         return result
         
     def slice(self, slice):
-        return tokenlist(self.islice(slice))
+        return tokenlist.tokenlist(self.islice(slice))
         
     def islice(self, slice):
         root = self.index(slice.start)
@@ -150,7 +148,7 @@ class rawsqueryable(object):
         if tokeniter is None: tokeniter = self.tokens(**kwargs)
         filteriter = (filters.itervalues() if isinstance(filters, dict) else filters)
         limit = False
-        for filter in filteriter: filter.result = tokenlist() # TODO: don't do this
+        for filter in filteriter: filter.result = tokenlist.tokenlist() # TODO: don't do this
         for token in tokeniter:
             for filter in filteriter:
                 if (not filter.limit) or len(filter.result) < filter.limit:
@@ -304,7 +302,7 @@ class rawsqueryable(object):
                 if key is not None:
                     if key not in pdict:
                         if always_list:
-                            pdict[key] = tokenlist()
+                            pdict[key] = tokenlist.tokenlist()
                             pdict[key].append(prop)
                         else:
                             pdict[key] = prop
@@ -312,15 +310,15 @@ class rawsqueryable(object):
                         if isinstance(pdict[key], list):
                             pdict[key].append(prop)
                         else:
-                            pdict[key] = tokenlist()
+                            pdict[key] = tokenlist.tokenlist()
                             pdict[key].append(prop)
                             pdict[key].append(pdict[key], prop)
         return pdict
         
     def list(self, *args, **kwargs):
-        '''Convenience method acts as a shortcut for raws.tokenlist(obj.tokens(*args, **kwargs)).
+        '''Convenience method acts as a shortcut for raws.tokenlist.tokenlist(obj.tokens(*args, **kwargs)).
         '''
-        return tokenlist(self.tokens(*args, **kwargs))
+        return tokenlist.tokenlist(self.tokens(*args, **kwargs))
     
     def argsuntil(self, kwargs):
         '''Internal: Utility function for handling arguments of getuntil and alluntil methods.'''

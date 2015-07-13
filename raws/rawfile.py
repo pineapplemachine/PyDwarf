@@ -1,16 +1,14 @@
 import os
 
-from queryableobj import rawsqueryableobj
-from queryableadd import rawsqueryableadd
-from basefile import basefile
+import queryableobj
+import queryableadd
+import basefile
 from token import rawstoken
 import binfile
 
-binfile = binfile.binfile
 
 
-
-class rawfile(basefile, rawsqueryableobj, rawsqueryableadd):
+class rawfile(basefile.basefile, queryableobj.rawsqueryableobj, queryableadd.rawsqueryableadd):
     '''Represents a single file within a raws directory.'''
     
     def __init__(self, name=None, file=None, path=None, root=None, content=None, tokens=None, dir=None, readpath=True, noheader=False, **kwargs):
@@ -79,7 +77,7 @@ class rawfile(basefile, rawsqueryableobj, rawsqueryableadd):
         raise ValueError('Failed to cast rawfile %s to reffile because it is an invalid conversion.' % self)
     def bin(self, **kwargs):
         self.kind = 'bin'
-        self.__class__ =  binfile
+        self.__class__ =  binfile.binfile
         content = kwargs.get('content', self.content()) # TODO: rename method to getcontent for sake of consistency
         for key, value in kwargs.iteritems(): self.__dict__[key] = value
         self.content = content

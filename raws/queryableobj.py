@@ -2,8 +2,6 @@ import objects
 from queryable import rawsqueryable
 import tokenlist
 
-tokenlist = tokenlist.tokenlist
-
 
 
 class rawsqueryableobj(rawsqueryable):
@@ -98,7 +96,7 @@ class rawsqueryableobj(rawsqueryable):
         '''
         
         type, exact_id = rawsqueryableobj.objpretty(pretty, type, exact_id)
-        results = tokenlist()
+        results = tokenlist.tokenlist()
         headers = self.headersfortype(type, type_in)
         if type is None and type_in is None: type_in = objects.objects()
         for objecttoken in headers:

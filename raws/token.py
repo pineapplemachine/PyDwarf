@@ -2,17 +2,13 @@ import itertools
 import inspect
 
 from tokenargs import tokenargs
-import queryable
-import queryableadd
 import tokenlist
-
-rawsqueryable = queryable.rawsqueryable
-rawsqueryableadd = queryableadd.rawsqueryableadd
-tokenlist = tokenlist.tokenlist
+import queryableadd
+import queryable
 
 
 
-class token(rawsqueryableadd):
+class rawstoken(queryableadd.rawsqueryableadd):
     
     '''Internal: Recurring piece of docstrings.'''
     auto_arg_docstring = '''
@@ -116,15 +112,15 @@ class token(rawsqueryableadd):
         return self is other or self.__gt__(other)
         
     def __add__(self, other):
-        '''Concatenates and returns a raws.tokenlist object.
+        '''Concatenates and returns a raws.tokenlist.tokenlist object.
         '''
         if isinstance(other, rawstoken):
-            tokens = tokenlist()
+            tokens = tokenlist.tokenlist()
             tokens.append(self)
             tokens.append(other)
             return tokens
-        elif isinstance(other, rawsqueryable):
-            tokens = tokenlist()
+        elif isinstance(other, queryable.rawsqueryable):
+            tokens = tokenlist.tokenlist()
             tokens.append(self)
             tokens.extend(other)
             return tokens
@@ -134,12 +130,12 @@ class token(rawsqueryableadd):
     def __radd__(self, other):
         '''Internal: Same as __add__ except reversed.'''
         if isinstance(other, rawstoken):
-            tokens = tokenlist()
+            tokens = tokenlist.tokenlist()
             tokens.append(other)
             tokens.append(self)
             return tokens
-        elif isinstance(other, rawsqueryable):
-            tokens = tokenlist()
+        elif isinstance(other, queryable.rawsqueryable):
+            tokens = tokenlist.tokenlist()
             tokens.extend(other)
             tokens.append(self)
             return tokens
@@ -149,7 +145,7 @@ class token(rawsqueryableadd):
     def __mul__(self, value):
         '''Concatenates copies of this token the number of times specified.
         '''
-        tokens = tokenlist()
+        tokens = tokenlist.tokenlist()
         for i in xrange(0, int(value)):
             tokens.append(rawstoken.copy(self))
         return tokens
@@ -189,7 +185,7 @@ class token(rawsqueryableadd):
         '''Internal: Convenience function for handling method arguments when a list of tokens is expected.'''
         token, tokens = rawstoken.autovariable(*args, implicit=kwargs.get('implicit', False), **kwargs)
         if token is not None:
-            tokens = tokenlist()
+            tokens = tokenlist.tokenlist()
             tokens.append(token)
         return tokens
         
@@ -201,7 +197,7 @@ class token(rawsqueryableadd):
                 pretty = auto
             elif isinstance(auto, rawstoken):
                 token = auto
-            elif isinstance(auto, rawsqueryable):
+            elif isinstance(auto, queryable.rawsqueryable):
                 tokens = auto.tokens()
             else:
                 tokens = auto
@@ -450,7 +446,7 @@ class token(rawsqueryableadd):
     
     @staticmethod
     def copytokens(tokens):
-        copiedtokens = tokenlist()
+        copiedtokens = tokenlist.tokenlist()
         prevtoken = None
         for token in tokens:
             copytoken = rawstoken(copy=token)
@@ -492,15 +488,15 @@ class token(rawsqueryableadd):
             [HI]
             >>> print last_token
             [?]
-            >>> print raws.tokenlist(first_token.tokens()) # Construct a raws.tokenlist object using the generator returned by the tokens method
+            >>> print raws.tokenlist.tokenlist(first_token.tokens()) # Construct a raws.tokenlist.tokenlist object using the generator returned by the tokens method
             [HOW][ARE][YOU][?]
-            >>> print raws.tokenlist(first_token.tokens(include_self=True))
+            >>> print raws.tokenlist.tokenlist(first_token.tokens(include_self=True))
             [HI][HOW][ARE][YOU][?]
-            >>> print raws.tokenlist(first_token.tokens(range=1))
+            >>> print raws.tokenlist.tokenlist(first_token.tokens(range=1))
             [HOW]
-            >>> print raws.tokenlist(first_token.tokens(until_token=tokens[3]))
+            >>> print raws.tokenlist.tokenlist(first_token.tokens(until_token=tokens[3]))
             [HOW][ARE][YOU]
-            >>> print raws.tokenlist(last_token.tokens(reverse=True))
+            >>> print raws.tokenlist.tokenlist(last_token.tokens(reverse=True))
             [YOU][ARE][HOW][HI]
         '''
         count = 0
@@ -678,7 +674,7 @@ class token(rawsqueryableadd):
             rawstoken is distinguished and created.
         '''
 
-        tokens = tokenlist()    # maintain a sequential list of tokens
+        tokens = tokenlist.tokenlist()    # maintain a sequential list of tokens
         pos = 0                     # byte position in data
         if data.find('[') == -1 and data.find(']') == -1:
             if implicit_braces:
@@ -757,4 +753,4 @@ class token(rawsqueryableadd):
                 **kwargs
             )
 
-rawstoken = token
+token = rawstoken
