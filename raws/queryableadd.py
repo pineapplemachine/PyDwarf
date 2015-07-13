@@ -1,11 +1,12 @@
 import objects
-from queryable import rawsqueryable
+import queryable
+import token
 
-import forward
+rawsqueryable = queryable.rawsqueryable
+token = token.token
 
 
 
-@forward.declare
 class rawsqueryableadd(rawsqueryable):
     
     # Inheriting classes must implement an add method
@@ -42,6 +43,6 @@ class rawsqueryableadd(rawsqueryable):
         
     @staticmethod
     def argsset(*args, **kwargs):
-        token = forward.declare.token.autosingular(*args, **kwargs)
-        return token.value, token.args
+        settoken = token.autosingular(*args, **kwargs)
+        return settoken.value, settoken.args
     

@@ -1,10 +1,13 @@
-from queryable import rawsqueryable
+import queryable
+import token
 
-import forward
+token = token.token
+
+rawsqueryable = queryable.rawsqueryable
 
 
 
-@forward.declare
+
 class tokenlist(list, rawsqueryable):
     '''Extends builtin list with token querying functionality.'''
     
@@ -30,8 +33,11 @@ class tokenlist(list, rawsqueryable):
             (func(token) if func is not None else token) for token in self if (filter is None or filter(token))
         )
         
-    def copy(self):
-        return forward.declare.token.copytokens(self)
+    def copy(self, shallow=False):
+        if shallow:
+            return tokenlist(token for token in self)
+        else:
+            return token.copytokens(self)
     
     def __str__(self):
         if len(self) == 0:

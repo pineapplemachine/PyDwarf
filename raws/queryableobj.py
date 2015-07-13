@@ -1,11 +1,11 @@
 import objects
 from queryable import rawsqueryable
+import tokenlist
 
-import forward
+tokenlist = tokenlist.tokenlist
 
 
 
-@forward.declare
 class rawsqueryableobj(rawsqueryable):
     
     # Inheriting classes must implement a getobjheaders method
@@ -98,7 +98,7 @@ class rawsqueryableobj(rawsqueryable):
         '''
         
         type, exact_id = rawsqueryableobj.objpretty(pretty, type, exact_id)
-        results = forward.declare.tokenlist()
+        results = tokenlist()
         headers = self.headersfortype(type, type_in)
         if type is None and type_in is None: type_in = objects.objects()
         for objecttoken in headers:

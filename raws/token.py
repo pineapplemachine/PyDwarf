@@ -1,16 +1,17 @@
 import itertools
 import inspect
 
-import forward
-
 from tokenargs import tokenargs
-from queryable import rawsqueryable
-from queryableadd import rawsqueryableadd
-from tokenlist import tokenlist
+import queryable
+import queryableadd
+import tokenlist
+
+rawsqueryable = queryable.rawsqueryable
+rawsqueryableadd = queryableadd.rawsqueryableadd
+tokenlist = tokenlist.tokenlist
 
 
 
-@forward.declare
 class token(rawsqueryableadd):
     
     '''Internal: Recurring piece of docstrings.'''

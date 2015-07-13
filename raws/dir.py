@@ -1,8 +1,6 @@
 import os
 import shutil
 
-import forward
-
 from copytree import copytree
 from queryable import rawsqueryable
 from tokenlist import tokenlist
@@ -15,7 +13,6 @@ from filefactory import filefactory
 
 
 
-@forward.declare
 class rawsdir(rawsqueryableobj):
     '''Represents as a whole all the raws contained within a directory.'''
     

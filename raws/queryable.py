@@ -3,13 +3,13 @@
 import inspect
 
 import objects
-from filters import rawstokenfilter
+import filters
+import tokenlist
 
-import forward
+tokenlist = tokenlist.tokenlist
 
 
 
-@forward.declare
 class rawsqueryable(object):
     '''Classes which contain raws tokens should inherit from this in order to provide querying functionality.'''
     
@@ -80,7 +80,7 @@ class rawsqueryable(object):
         return result
         
     def slice(self, slice):
-        return forward.declare.tokenlist(self.islice(slice))
+        return tokenlist(self.islice(slice))
         
     def islice(self, slice):
         root = self.index(slice.start)
@@ -150,7 +150,7 @@ class rawsqueryable(object):
         if tokeniter is None: tokeniter = self.tokens(**kwargs)
         filteriter = (filters.itervalues() if isinstance(filters, dict) else filters)
         limit = False
-        for filter in filteriter: filter.result = forward.declare.tokenlist() # TODO: don't do this
+        for filter in filteriter: filter.result = tokenlist() # TODO: don't do this
         for token in tokeniter:
             for filter in filteriter:
                 if (not filter.limit) or len(filter.result) < filter.limit:
@@ -166,10 +166,10 @@ class rawsqueryable(object):
         ''' % rawsqueryable.quick_query_args_docstring
         
         filter_args, tokens_args = self.argstokens(tokeniter, kwargs)
-        filters = (
-            rawstokenfilter(pretty=pretty, limit=1, **filter_args)
+        queryfilters = (
+            filters.rawstokenfilter(pretty=pretty, limit=1, **filter_args)
         ,)
-        result = self.query(filters, tokeniter, **tokens_args)[0].result
+        result = self.query(queryfilters, tokeniter, **tokens_args)[0].result
         return result[0] if result and len(result) else None
     
     def getlast(self, pretty=None, tokeniter=None, **kwargs):
@@ -179,10 +179,10 @@ class rawsqueryable(object):
         ''' % rawsqueryable.quick_query_args_docstring
         
         filter_args, tokens_args = self.argstokens(tokeniter, kwargs)
-        filters = (
-            rawstokenfilter(pretty=pretty, **filter_args)
+        queryfilters = (
+            filters.rawstokenfilter(pretty=pretty, **filter_args)
         ,)
-        result = self.query(filters, tokeniter, **tokens_args)[0].result
+        result = self.query(queryfilters, tokeniter, **tokens_args)[0].result
         return result[-1] if result and len(result) else None
     
     def all(self, pretty=None, tokeniter=None, **kwargs):
@@ -192,10 +192,10 @@ class rawsqueryable(object):
         ''' % rawsqueryable.quick_query_args_docstring
         
         filter_args, tokens_args = self.argstokens(tokeniter, kwargs)
-        filters = (
-            rawstokenfilter(pretty=pretty, **filter_args)
+        queryfilters = (
+            filters.rawstokenfilter(pretty=pretty, **filter_args)
         ,)
-        return self.query(filters, tokeniter, **tokens_args)[0].result
+        return self.query(queryfilters, tokeniter, **tokens_args)[0].result
     
     def until(self, pretty=None, tokeniter=None, **kwargs):
         '''Get a list of all tokens up to a match.
@@ -204,11 +204,11 @@ class rawsqueryable(object):
         ''' % rawsqueryable.quick_query_args_docstring
         
         filter_args, tokens_args = self.argstokens(tokeniter, kwargs)
-        filters = (
-            rawstokenfilter(pretty=pretty, limit=1, **filter_args),
-            rawstokenfilter()
+        queryfilters = (
+            filters.rawstokenfilter(pretty=pretty, limit=1, **filter_args),
+            filters.rawstokenfilter()
         )
-        return self.query(filters, tokeniter, **tokens_args)[1].result
+        return self.query(queryfilters, tokeniter, **tokens_args)[1].result
         
     def getuntil(self, pretty=None, until=None, tokeniter=None, **kwargs):
         '''Get the first matching token, but abort when a token matching arguments prepended with 'until_' is encountered.
@@ -218,11 +218,11 @@ class rawsqueryable(object):
         
         filter_args, tokens_args = self.argstokens(tokeniter, kwargs)
         until_args, condition_args = self.argsuntil(filter_args)
-        filters = (
-            rawstokenfilter(pretty=until, limit=1, **until_args),
-            rawstokenfilter(pretty=pretty, limit=1, **condition_args)
+        queryfilters = (
+            filters.rawstokenfilter(pretty=until, limit=1, **until_args),
+            filters.rawstokenfilter(pretty=pretty, limit=1, **condition_args)
         )
-        result = self.query(filters, tokeniter, **tokens_args)[1].result
+        result = self.query(queryfilters, tokeniter, **tokens_args)[1].result
         return result[0] if result and len(result) else None
     
     def getlastuntil(self, pretty=None, until=None, tokeniter=None, **kwargs):
@@ -233,11 +233,11 @@ class rawsqueryable(object):
         
         filter_args, tokens_args = self.argstokens(tokeniter, kwargs)
         until_args, condition_args = self.argsuntil(filter_args)
-        filters = (
-            rawstokenfilter(pretty=until, limit=1, **until_args),
-            rawstokenfilter(pretty=pretty, **condition_args)
+        queryfilters = (
+            filters.rawstokenfilter(pretty=until, limit=1, **until_args),
+            filters.rawstokenfilter(pretty=pretty, **condition_args)
         )
-        result = self.query(filters, tokeniter, **tokens_args)[1].result
+        result = self.query(queryfilters, tokeniter, **tokens_args)[1].result
         return result[-1] if result and len(result) else None
      
     def alluntil(self, pretty=None, until=None, tokeniter=None, **kwargs):
@@ -249,11 +249,11 @@ class rawsqueryable(object):
         
         filter_args, tokens_args = self.argstokens(tokeniter, kwargs)
         until_args, condition_args = self.argsuntil(filter_args)
-        filters = (
-            rawstokenfilter(pretty=until, limit=1, **until_args),
-            rawstokenfilter(pretty=pretty, **condition_args)
+        queryfilters = (
+            filters.rawstokenfilter(pretty=until, limit=1, **until_args),
+            filters.rawstokenfilter(pretty=pretty, **condition_args)
         )
-        return self.query(filters, tokeniter, **tokens_args)[1].result
+        return self.query(queryfilters, tokeniter, **tokens_args)[1].result
     
     def getprop(self, *args, **kwargs):
         '''Gets the first token matching the arguments, but stops at the next
@@ -304,7 +304,7 @@ class rawsqueryable(object):
                 if key is not None:
                     if key not in pdict:
                         if always_list:
-                            pdict[key] = forward.declare.tokenlist()
+                            pdict[key] = tokenlist()
                             pdict[key].append(prop)
                         else:
                             pdict[key] = prop
@@ -312,7 +312,7 @@ class rawsqueryable(object):
                         if isinstance(pdict[key], list):
                             pdict[key].append(prop)
                         else:
-                            pdict[key] = forward.declare.tokenlist()
+                            pdict[key] = tokenlist()
                             pdict[key].append(prop)
                             pdict[key].append(pdict[key], prop)
         return pdict
@@ -320,7 +320,7 @@ class rawsqueryable(object):
     def list(self, *args, **kwargs):
         '''Convenience method acts as a shortcut for raws.tokenlist(obj.tokens(*args, **kwargs)).
         '''
-        return forward.declare.tokenlist(self.tokens(*args, **kwargs))
+        return tokenlist(self.tokens(*args, **kwargs))
     
     def argsuntil(self, kwargs):
         '''Internal: Utility function for handling arguments of getuntil and alluntil methods.'''

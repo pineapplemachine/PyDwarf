@@ -35,22 +35,39 @@ raws.parseone: A convenience alias for raws.token.parseone, which acts like raws
 
 
 
-# TODO: rename classes internally to reflect what they're exported as here e.g. binfile -> binfile
-from filters import rawstokenfilter as tokenfilter
-from filters import rawsboolfilter as boolfilter
-from queryable import rawsqueryable as queryable
-from queryableobj import rawsqueryableobj as queryableobj
-from tokenlist import tokenlist
-from token import token
-from filefactory import filefactory
-from basefile import basefile
-from reffile import reffile
-from binfile import binfile
-from rawfile import rawfile
-from dir import rawsdir as dir
-from copytree import copytree
+# TODO: rename classes internally to reflect what they're exported as here e.g. rawsdir -> dir
+import queryable
+import queryableobj
+import queryableadd
+import token
+import basefile
+import reffile
+import binfile
+import rawfile
+import filefactory
+import tokenlist
+import dir
+import filters
+
+import copytree
 import objects
 import color
+
+basefilter = filters.rawsbasefilter
+tokenfilter = filters.rawstokenfilter
+boolfilter = filters.rawsboolfilter
+queryable = queryable.rawsqueryable
+queryableobj = queryableobj.rawsqueryableobj
+queryableadd = queryableadd.rawsqueryableadd
+tokenlist = tokenlist.tokenlist
+token = token.token
+filefactory = filefactory.filefactory
+basefile = basefile.basefile
+reffile = reffile.reffile
+binfile = binfile.binfile
+rawfile = rawfile.rawfile
+dir = dir.rawsdir
+copytree = copytree.copytree
 
 filter = tokenfilter
 parse = token.parse

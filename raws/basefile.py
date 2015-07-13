@@ -1,11 +1,8 @@
 import os
 import traceback
 
-import forward
 
 
-
-@forward.declare
 class basefile(object):
     '''Base class for file objects.'''
     

@@ -1,12 +1,12 @@
 import os
 
-import forward
-
 from basefile import basefile
+import rawfile
+
+rawfile = rawfile.rawfile
 
 
 
-@forward.declare
 class binfile(basefile):
     def __init__(self, content=None, path=None, dir=None, **kwargs):
         self.dir = None
@@ -26,7 +26,7 @@ class binfile(basefile):
         return self
     def raw(self, **kwargs):
         self.kind = 'raw'
-        self.__class__ = foward.declare.rawfile
+        self.__class__ = rawfile
         for key, value in kwargs.iteritems(): self.__dict__[key] = value
         self.read(content=self.content)
         return self

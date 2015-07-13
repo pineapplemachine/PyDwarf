@@ -1,15 +1,15 @@
 import os
 
-import forward
-
 from queryableobj import rawsqueryableobj
 from queryableadd import rawsqueryableadd
 from basefile import basefile
 from token import rawstoken
+import binfile
+
+binfile = binfile.binfile
 
 
 
-@forward.declare
 class rawfile(basefile, rawsqueryableobj, rawsqueryableadd):
     '''Represents a single file within a raws directory.'''
     
@@ -80,7 +80,7 @@ class rawfile(basefile, rawsqueryableobj, rawsqueryableadd):
     def bin(self, **kwargs):
         self.kind = 'bin'
         self.__class__ =  binfile
-        content = kwargs.get('content', self.content())
+        content = kwargs.get('content', self.content()) # TODO: rename method to getcontent for sake of consistency
         for key, value in kwargs.iteritems(): self.__dict__[key] = value
         self.content = content
         return self

@@ -1,11 +1,12 @@
 import re
 import copy
 
-import forward
+import token
+
+rawstoken = token.token
 
 
 
-@forward.declare
 class rawsbasefilter:
     def __init__(self, invert=False):
         self.inv = invert
@@ -43,7 +44,6 @@ class rawsbasefilter:
 
 
 
-@forward.declare
 class rawstokenfilter(rawsbasefilter):
     '''Basic filter class for applying to rawstoken objects.'''
     
@@ -120,9 +120,9 @@ class rawstokenfilter(rawsbasefilter):
         self.pretty = pretty
         
         if pretty:
-            token = forward.declare.token.parseone(pretty)
-            exact_value = token.value
-            if token.nargs(): exact_args = token.args
+            prettytoken = rawstoken.parseone(pretty)
+            exact_value = prettytoken.value
+            if prettytoken.nargs(): exact_args = prettytoken.args
             
         if match_token:
             exact_value = match_token.value
@@ -214,7 +214,6 @@ class rawstokenfilter(rawsbasefilter):
         
 
 
-@forward.declare
 class rawsboolfilter(rawsbasefilter):
     '''Logical filter class for combining other filters.'''
     
@@ -251,3 +250,4 @@ class rawsboolfilter(rawsbasefilter):
     def __str__(self):
         return '%s of (%s)' % (self.operand, ', '.join(self.subs))
     
+

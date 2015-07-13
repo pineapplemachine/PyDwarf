@@ -1,14 +1,16 @@
 import os
 import shutil
 
-import forward
-
 from basefile import basefile
 from copytree import copytree
+import binfile
+import rawfile
+
+binfile = binfile.binfile
+rawfile = rawfile.rawfile
 
 
 
-@forward.declare
 class reffile(basefile):
     def __init__(self, path=None, dir=None, root=None, **kwargs):
         self.dir = dir
@@ -30,13 +32,13 @@ class reffile(basefile):
         return self
     def bin(self, **kwargs):
         self.kind = 'bin'
-        self.__class__ = forward.declare.binfile
+        self.__class__ = binfile
         for key, value in kwargs.iteritems(): self.__dict__[key] = value
         self.read()
         return self
     def raw(self, **kwargs):
         self.kind = 'raw'
-        self.__class__ = forward.declare.rawfile
+        self.__class__ = rawfile
         for key, value in kwargs.iteritems(): self.__dict__[key] = value
         self.read()
         return self
