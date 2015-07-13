@@ -52,7 +52,7 @@ class rawstoken(queryableadd.queryableadd):
         self.file = None
         
         if pretty is not None:
-            copy = rawstoken.parseone(pretty, apply=self)
+            copy = rawstoken.parsesingular(pretty, apply=self)
             
         if copy is not None:
             value = copy.value
@@ -63,7 +63,7 @@ class rawstoken(queryableadd.queryableadd):
         if arg is not None:
             args = [arg]
         
-        if args is not None or self.args is None: self.setargs(args)
+        if self.args is None or args is not None: self.setargs(args)
         if value is not None: self.setvalue(value)
         if prefix is not None: self.setprefix(prefix)
         if suffix is not None: self.setsuffix(suffix)
@@ -200,7 +200,11 @@ class rawstoken(queryableadd.queryableadd):
             else:
                 tokens = auto
         if pretty is not None:
-            tokens = rawstoken.parse(pretty, implicit_braces=implicit)
+            parsed = rawstoken.parsevariable(pretty, implicit_braces=implicit)
+            if isinstance(parsed, rawstoken):
+                token = parsed
+            else:
+                tokens = parsed
         if kwargs:
             token = rawstoken.autosingular(**kwargs)
         if token is not None and tokens is not None:
@@ -238,11 +242,15 @@ class rawstoken(queryableadd.queryableadd):
 
     def setargs(self, args=None):
         if args is None:
-            self.clearargs()
-        elif self.args is None:
-            self.args = tokenargs.tokenargs(args)
+            if self.args is None:
+                self.args = tokenargs.tokenargs()
+            else:
+                self.args.clear()
         else:
-            self.args.reset(args)
+            if self.args is None:
+                self.args = tokenargs.tokenargs(args)
+            else:
+                self.args.reset(args)
         
     def getvalue(self):
         '''Get the token's value.
@@ -382,10 +390,12 @@ class rawstoken(queryableadd.queryableadd):
         '''
         return(
             other is not None and
+            other is not rawstoken.nulltoken and
+            self is not rawstoken.nulltoken and
             self.value == other.value and
             self.args == other.args
         )
-        
+    
     @staticmethod
     def tokensequal(atokens, btokens):
         '''Determine whether two iterables containing tokens contain equivalent tokens.
@@ -401,9 +411,7 @@ class rawstoken(queryableadd.queryableadd):
             >>> print raws.token.tokensequal(a, b)
             True
         '''
-        for atoken, btoken in itertools.izip(atokens, btokens):
-            if not atoken.equals(btoken): return False
-        return True
+        return all(atoken.equals(btoken) for atoken, btoken in itertools.izip_longest(atokens, btokens, fillvalue=rawstoken.nulltoken))
     
     @staticmethod
     def copy(*args, **kwargs):
@@ -462,7 +470,7 @@ class rawstoken(queryableadd.queryableadd):
             copytoken.prev = prevtoken
             if prevtoken is not None: prevtoken.next = copytoken
             prevtoken = copytoken
-            yield token
+            yield copytoken
         
     def tokens(self, range=None, include_self=False, reverse=False, until_token=None, step=None):
         '''Iterate through successive tokens starting with this one.
@@ -617,7 +625,7 @@ class rawstoken(queryableadd.queryableadd):
         '''Internal: Utility method called by add when adding multiple tokens'''
         
         first, last = rawstoken.firstandlast(tokens, setfile=self.file)
-        if token.prev is not None or token.next is not None:
+        if first.prev is not None or last.next is not None:
             if knit:
                 if first.prev is not None: first.prev.next = last.next
                 if last.next is not None: last.next.prev = first.prev
@@ -654,6 +662,8 @@ class rawstoken(queryableadd.queryableadd):
         if left: left.next = right
         if right: right.prev = left
         self.file = None
+        self.prev = None
+        self.next = None
         
     def removeselfandprops(self, *args, **kwargs):
         tokens = [self] + self.removeallprop(*args, **kwargs)
@@ -661,7 +671,7 @@ class rawstoken(queryableadd.queryableadd):
         return tokens
     
     @staticmethod
-    def parse(data, implicit_braces=False, **kwargs):
+    def parseplural(data, implicit_braces=False, **kwargs):
         '''Parses a string, turns it into a list of tokens.
 
         data: The string to be parsed.
@@ -714,7 +724,7 @@ class rawstoken(queryableadd.queryableadd):
             return tokens
             
     @staticmethod
-    def parseone(data, implicit_braces=True, fail_on_multiple=True, apply=None, **kwargs):
+    def parsesingular(data, implicit_braces=True, fail_on_multiple=True, apply=None, **kwargs):
         '''Parses a string containing exactly one token. **kwargs are passed on to the parse static method.
         '''
         if data.count('[') > 1:
@@ -750,6 +760,15 @@ class rawstoken(queryableadd.queryableadd):
                 suffix = suffix,
                 **kwargs
             )
+            
+    @staticmethod
+    def parsevariable(*args, **kwargs):
+        tokens = rawstoken.parseplural(*args, **kwargs)
+        return tokens[0] if tokens and len(tokens) == 1 else tokens
+        
+    parse = parsevariable
+
+rawstoken.nulltoken = rawstoken()
 
 token = rawstoken
 

@@ -28,8 +28,7 @@ raws.binfile: A file stored in a string, as its binary content.
 raws.basefile: A base class which other file types inherit from.
 
 raws.filter: A convenience alias for raws.tokenfilter.
-raws.parse: A convenience alias for raws.token.parse, which accepts an input string and parses it into a tokenlist.
-raws.parseone: A convenience alias for raws.token.parseone, which acts like raws.token.parse but expects a single token instead of a list of them.
+raws.parse: A convenience alias for raws.token.parse, which accepts an input string and parses it into a token or tokenlist.
 
 '''
 
@@ -70,4 +69,3 @@ copytree = copytree.copytree
 
 filter = tokenfilter
 parse = token.parse
-parseone = token.parseone

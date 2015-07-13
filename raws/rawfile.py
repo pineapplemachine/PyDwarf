@@ -109,7 +109,7 @@ class rawfile(basefile.basefile, queryableobj.queryableobj, queryableadd.queryab
         copy.ext = self.ext
         copy.loc = self.loc
         copy.noheader = self.noheader
-        copy.settokens(rawstoken.token.copy(self.tokens()))
+        copy.settokens(rawstoken.token.icopytokens(self.tokens()))
         return copy
         
     def equals(self, other):
@@ -172,7 +172,7 @@ class rawfile(basefile.basefile, queryableobj.queryableobj, queryableadd.queryab
             if self.name:
                 if header != self.name: self.noheader = True
             if data:
-                self.settokens(rawstoken.token.parse(data, file=self))
+                self.settokens(rawstoken.token.parseplural(data, file=self))
         else:
             self.noheader = True
             self.data = None
