@@ -6,6 +6,7 @@ sys.path.append(pydwarf_root)
 
 import inspect
 import doctest
+import re
 
 import raws
 import pydwarf
@@ -60,6 +61,8 @@ def verify(examples, **globs):
 
 
 
+doctest_result_re = re.compile(r'\*+\n(?s)Line (\d+), in (.*)\nFailed example:\n(.*)\nExpected:\n(.*)\nGot:(.*?)\s*$')
+
 if __name__ == '__main__':
     print 'Initializing session.'
     conf = pydwarf.config.load(root=pydwarf_root, args={
@@ -77,8 +80,14 @@ if __name__ == '__main__':
         conf = conf
     )
     
-    if results:
-        resultstext = '\n\n'.join(results)
+    realresults = []
+    for result in results:
+        match = doctest_result_re.match(result.expandtabs(4))
+        if match.group(4).strip() != match.group(5).strip():
+            realresults.append(result)
+    
+    if realresults:
+        resultstext = '\n\n'.join(reversed(realresults))
         print resultstext
     else:
         print 'All examples ran successfully.'
