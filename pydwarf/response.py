@@ -1,10 +1,20 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+
+
 class response:
     def __init__(self, success, status):
         self.success = success
         self.status = status
         
     def __str__(self):
-        return '%s: %s' % ('SUCCESS' if self.success else 'FAILURE', self.status if self.status else ('Ran %ssuccessfully.' % ('' if self.success else 'un')))
+        return '%s: %s' % (
+            'SUCCESS' if self.success else 'FAILURE',
+            self.status if self.status else (
+                'Ran %ssuccessfully.' % ('' if self.success else 'un')
+            )
+        )
         
     def __nonzero__(self):
         return self.success
@@ -15,6 +25,8 @@ class response:
     @staticmethod
     def failure(status=None):
         return response(False, status)
+    
+    
     
 # Convenience functions which scripts can use for returning success/failure responses
 def success(status=None): return response.success(status)

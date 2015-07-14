@@ -1,3 +1,13 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+'''
+    Poor man's unit test which goes through each of the example doctests in
+    docs/examples/ and makes sure they actually work as advertised.
+'''
+
+
+
 import sys
 import os
 
@@ -61,7 +71,10 @@ def verify(examples, **globs):
 
 
 
-doctest_result_re = re.compile(r'\*+\n(?s)Line (\d+), in (.*)\nFailed example:\n(.*)\nExpected:\n(.*)\nGot:(.*?)\s*$')
+doctest_pattern = r'\*+\n(?s)Line (\d+), in (.*)\nFailed example:\n(.*)\nExpected:\n(.*)\nGot:(.*?)\s*$'
+doctest_result_re = re.compile(doctest_pattern)
+
+
 
 if __name__ == '__main__':
     print 'Initializing session.'

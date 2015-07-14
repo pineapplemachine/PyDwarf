@@ -1,5 +1,9 @@
+#!/usr/bin/env python
+# coding: utf-8
+
 import os
 import textwrap
+
 
 
 def __main__():

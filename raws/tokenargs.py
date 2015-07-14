@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# coding: utf-8
+
 class tokenargs(list):
     
     # Disallow these characters inside token arguments

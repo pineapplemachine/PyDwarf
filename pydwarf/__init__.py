@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# coding: utf-8
 
 __author__ = 'Sophie Kirschner'
 __license__ = 'zlib/libpng'

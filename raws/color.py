@@ -1,12 +1,18 @@
-# A bit of clever hackishness to make it possible to do things like:
-# raws.color.blue == 1
-# raws.color.lred == 12
-# raws.color.blue() = (1, 0, 0)
-# raws.color.lred() == (4, 0, 1)
-# raws.color.blue.bg() = (0, 1, 0)
-# raws.color.lred.bg() = (0, 12, 0)
-# raws.color.lblue(pydwarf.color.red) == (1, 4, 1)
-# raws.color.lblue(pydwarf.color.lred) == (1, 12, 1)
+#!/usr/bin/env python
+# coding: utf-8
+
+'''
+    A bit of clever hackishness to make it possible to do things like:
+    
+    raws.color.blue == 1
+    raws.color.lred == 12
+    raws.color.blue() == (1, 0, 0)
+    raws.color.lred() == (4, 0, 1)
+    raws.color.blue.bg() == (0, 1, 0)
+    raws.color.lred.bg() == (0, 12, 0)
+    raws.color.lblue(pydwarf.color.red) == (1, 4, 1)
+    raws.color.lblue(pydwarf.color.lred) == (1, 12, 1)
+'''
 
 class color:
     def __init__(self, value):

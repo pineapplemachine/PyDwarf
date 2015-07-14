@@ -1,3 +1,8 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+
+
 def getoption(version, *options):
     '''Internal: Used by objects functions to get an option corresponding to some Dwarf Fortress version.'''
     if version:
