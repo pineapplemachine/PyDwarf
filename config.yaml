@@ -1,0 +1,38 @@
+# Before running the manager you will need to change the
+# provided paths to better suit your particular setup.
+    
+# Dwarf Fortress file are read from here,
+input: 'E:/Sophie/Desktop/Files/Games/Dwarf Fortress/df_40_24_win_original/'
+# Are outputted here,
+output: 'E:/Sophie/Desktop/Files/Games/Dwarf Fortress/df_40_24_win/'
+# And are backed up to here.
+backup: 'E:/Sophie/Desktop/Files/Games/Dwarf Fortress/df_40_24_win_backup/'
+
+# Tells PyDwarf which files in the DF directory are important.
+# Set to auto for automatic detection.
+paths: auto
+
+# Tells PyDwarf the current DF version and DFHack version.
+# Set to auto for automatic detection.
+version: auto
+hackversion: auto
+
+# Which packages to import. (Mainly to register the scripts indicated below.) Most users shouldn't need to worry about this setting.
+packages:
+  - scripts
+
+# Which scripts to run, and in what order.
+scripts:
+  # Run a script by full name.
+  - pineapple.noexotic
+  - putnam.materialsplus
+  - dragondeplatino.gemset.full
+  - smeeprocket.transgender
+  - witty.restrictednobles
+  # Run a script with arguments.
+  - name: pineapple.deerappear
+    args: {tile: "'d'", color: [6, 0, 1]}
+  # Run a script by partial name. (Automatically expands to pineapple.boneflux.)
+  - boneflux
+  # Run all scripts under the umiman.smallthings namespace.
+  - umiman.smallthings.*

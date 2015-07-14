@@ -8,14 +8,19 @@ __version__ = '1.0.2'
 
 
 
-import re
-import os
-import shutil
-import json
-import argparse
-import importlib
-import pydwarf
+import sys
 import raws
+import pydwarf
+
+sys.path.append(pydwarf.rel(__file__))
+sys.path.append(pydwarf.rel(__file__, 'lib'))
+
+import os
+import re
+import shutil
+import importlib
+import argparse
+import json
 
 
 
@@ -65,7 +70,7 @@ def parseargs():
     parser.add_argument('-t', '--paths', help='which paths relative to input to store in memory and allow access to', nargs='+', type=str)
     parser.add_argument('-s', '--scripts', help='run scripts by name or namespace', nargs='+', type=str)
     parser.add_argument('-p', '--packages', help='import packages containing PyDwarf scripts', nargs='+', type=str)
-    parser.add_argument('-c', '--config', help='run with json config file if the extension is json, otherwise treat as a Python package, import, and override settings using export dict', type=str)
+    parser.add_argument('-c', '--config', help='indicate json files, yaml files, or python modules to use for settings', nargs='+', type=str)
     parser.add_argument('-v', '--verbose', help='set stdout logging level to DEBUG', action='store_true')
     parser.add_argument('-hver', '--hackversion', help='indicate DFHack version', type=str)
     parser.add_argument('--log', help='output log file to path', type=str)

@@ -4,18 +4,16 @@
 import os
 import logging
 import json
+import yaml
 import importlib
-from datetime import datetime
+import imp
+import traceback
 
-from log import log
+from log import log, stdouthandler, logfilehandler, timestamp
 from version import detectversion
 from helpers import findfile
 
 
-
-# Used in some file paths and such
-datetimeformat = '%Y.%m.%d.%H.%M.%S'
-timestamp = datetime.now().strftime(datetimeformat)
 
 auto_paths = [
     'gamelog.txt', 'errorlog.txt',
@@ -31,7 +29,11 @@ auto_paths = [
 
 
 class config:
-    def __init__(self, version=None, paths=None, hackversion=None, input=None, output=None, backup=None, scripts=[], packages=[], verbose=False, log='logs/%s.txt' % timestamp):
+    def __init__(
+        self,
+        version=None, paths=None, hackversion=None, input=None, output=None, backup=None,
+        scripts=[], packages=[], verbose=False, log='logs/%s.txt' % timestamp,
+    ):
         self.version = version          # Dwarf Fortress version, for handling script compatibility metadata
         self.hackversion = hackversion  # DFHack version
         self.input = input              # Raws are loaded from this input directory
@@ -44,42 +46,42 @@ class config:
         self.log = log                  # Log file goes here
         
     @staticmethod
-    def load(root=None, json='config.json', override='config_override', args=None):
+    def load(root=None, json='config.json', yaml='config.yaml', override='config.py', args=None):
         conf = config()
         
-        # Load json config
+        # Load default config files with the precedence: python override > json > yaml
+        if yaml:
+            if root: yaml = os.path.join(root, yaml)
+            if os.path.isfile(yaml): conf.yaml(yaml)
         if json:
             if root: json = os.path.join(root, json)
             if os.path.isfile(json): conf.json(json)
+        if override:
+            if root and override.endswith('.py'): override = os.path.join(root, override)
+            try:
+                conf.override(override)
+            except:
+                log.debug('Tried and failed to apply default override from module %s. (But that\'s okay! It\'s just a default.)' % override)
+                log.debug(traceback.format_exc())
         
         # Handle --config argument
         if args and args.get('config'):
-            if args['config'].endswith('.json'):
-                conf.json(args['config'])
-            else:
-                override = args['config']
-        
-        # Handle config override
-        if override:
-            #if root: override = os.path.join(root, override)
-            overrideexception = None
-            try:
-                package = importlib.import_module(override)
-                conf.apply(package.export)
-            except Exception as e:
-                overrideexception = e
+            argsconf = args['config']
+            if isinstance(argsconf, basestring): argsconf = (argsconf,)
+            for applyconf in argsconf:
+                try:
+                    if applyconf.endswith('.json'):
+                        conf.json(applyconf)
+                    elif applyconf.endswith('.yaml'):
+                        conf.yaml(applyconf)
+                    else:
+                        conf.override(applyconf)
+                except:
+                    log.exception('Failed to load configuration from %s.' % applyconf)
                 
         # Apply other command line arguments
         if args: conf.apply(args)
         
-        # Setup logger
-        conf.setuplogger()
-        
-        # If there was an exception when reading the overridename package, report it now
-        # Don't report it earlier because the logger wasn't set up yet
-        if overrideexception:
-            log.error('Failed to override configuration using %s.\n%s' % (overridename, overrideexception))
-            
         # Handle things like automatic version detection, package importing
         conf.setup()
         
@@ -113,6 +115,7 @@ class config:
         return config.intersect(self, other)
         
     def json(self, path, *args, **kwargs):
+        log.debug('Applying json configuration from %s.' % path)
         try:
             with open(path, 'rb') as jsonfile:
                 jsondata = json.load(jsonfile)
@@ -120,9 +123,29 @@ class config:
         except ValueError as error:
             strerror = str(error)
             if strerror.startswith('Invalid \\escape'):
-                raise ValueError('Failed to load json because of a misplaced backslash at %s. Perhaps you meant to use a forward slash instead?' % strerror[17:])
+                raise ValueError('Failed to load json from %s because of a misplaced backslash at %s. Perhaps you meant to use a forward slash instead?' % (path, strerror[17:]))
             else:
                 raise error
+                
+    def yaml(self, path, *args, **kwargs):
+        log.debug('Applying yaml configuration from %s.' % path)
+        with open(path, 'rb') as yamlfile:
+            yamldata = yaml.load(yamlfile)
+            return self.apply(yamldata, *args, **kwargs)
+            
+    def override(self, module, *args, **kwargs):
+        log.debug('Applying python configuration from %s.' % module)
+        if module.endswith('.py'):
+            modulename = os.path.splitext(os.path.basename(module))[0]
+            with open(module, 'U') as modulefile:
+                package = imp.load_module(modulename, modulefile, module, ('.py', 'U', imp.PY_SOURCE))
+        else:
+            package = importlib.import_module(module)
+        try:
+            export = package.export
+        except:
+            log.exception('Failed to load override module %s because it has no export attribute.' % module)
+        self.apply(export)
     
     def apply(self, data, applynone=False):
         if data:
@@ -152,7 +175,7 @@ class config:
                 result[attr] = value
         return result
         
-    def setup(self, logger=False):
+    def setup(self, logger=True):
         # Set up the pydwarf logger
         if logger: self.setuplogger()
         # Handle paths == 'auto' or ['auto']
@@ -165,20 +188,13 @@ class config:
         self.setuppackages()
         
     def setuplogger(self):
-        # Set up the logger (And it should be done first thing!)
-        log.setLevel(logging.DEBUG)
         # Handler for console output
-        stdouthandler = logging.StreamHandler(sys.stdout)
         stdouthandler.setLevel(logging.DEBUG if self.verbose else logging.INFO)
-        stdouthandler.setFormatter(logging.Formatter('%(asctime)s: %(levelname)s: %(message)s', datetimeformat))
-        log.addHandler(stdouthandler)
         # Handler for log file output
         if self.log:
             logdir = os.path.dirname(self.log)
             if not os.path.exists(logdir): os.makedirs(logdir)
-            logfilehandler = logging.FileHandler(self.log)
-            logfilehandler.setLevel(logging.DEBUG)
-            logfilehandler.setFormatter(logging.Formatter('%(asctime)s: %(filename)s[%(lineno)s]: %(levelname)s: %(message)s', datetimeformat))
+            logfilehandler.__init__(self.log) # Call the constructor given a filepath, now that we actually have one to give
             log.addHandler(logfilehandler)
         
     def setuppackages(self):
