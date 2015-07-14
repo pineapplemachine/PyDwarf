@@ -40,6 +40,25 @@ class tokenlist(list, queryable.queryable):
     def remove(self, *args, **kwargs):
         for token in self: token.remove(*args, **kwargs)
     
+    def __add__(self, other):
+        return self.copy().add(other)
+        
+    def __mul__(self, count):
+        result = tokenlist()
+        for i in xrange(0, count): result.add(self.copy())
+        return result
+        
+    def __iadd__(self, other):
+        self.add(other)
+    
+    def __getitem__(self, *args, **kwargs):
+        result = list.__getitem__(self, *args, **kwargs)
+        if isinstance(result, list): result = tokenlist(result)
+        return result
+    
+    def __getslice__(self, *args, **kwargs):
+        return tokenlist(list.__getslice__(self, *args, **kwargs))
+    
     def __str__(self):
         if len(self) == 0:
             return ''
