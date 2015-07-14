@@ -203,7 +203,7 @@ class rawstoken(queryableadd.queryableadd):
             else:
                 tokens = auto
         if pretty is not None:
-            parsed = rawstoken.parsevariable(pretty, implicit_braces=implicit)
+            parsed = rawstoken.parsevariable(pretty, implicit=implicit)
             if isinstance(parsed, rawstoken):
                 token = parsed
             else:
@@ -373,23 +373,6 @@ class rawstoken(queryableadd.queryableadd):
         
     def equals(self, other):
         '''Returns True if two tokens have identical values and arguments, False otherwise.
-        
-        other: The other raws.token object.
-        
-        Example usage:
-            >>> token_a = raws.token('EXAMPLE:hi!')
-            >>> token_b = raws.token('EXAMPLE:hello there')
-            >>> token_c = raws.token('EXAMPLE:hi!')
-            >>> print token_a, token_b, token_c
-            [EXAMPLE:hi!] [EXAMPLE:hello there] [EXAMPLE:hi!]
-            >>> print token_a.equals(token_b) # Same as token_a == token_b
-            False
-            >>> print token_b.equals(token_c)
-            False
-            >>> print token_c.equals(token_a)
-            True
-            >>> print token_c is token_a
-            False
         '''
         return(
             other is not None and
@@ -674,11 +657,11 @@ class rawstoken(queryableadd.queryableadd):
         return tokens
     
     @staticmethod
-    def parseplural(data, implicit_braces=False, **kwargs):
+    def parseplural(data, implicit=False, **kwargs):
         '''Parses a string, turns it into a list of tokens.
 
         data: The string to be parsed.
-        implicit_braces: Determines behavior when there are no opening or closing braces.
+        implicit: Determines behavior when there are no opening or closing braces.
             If True, then the input is assumed to be the contents of a token, e.g. [input].
             If False, an exception is raised.
         **kwargs: Extra named arguments are passed to the constructor each time a new
@@ -688,7 +671,7 @@ class rawstoken(queryableadd.queryableadd):
         tokens = tokenlist.tokenlist()    # maintain a sequential list of tokens
         pos = 0                     # byte position in data
         if data.find('[') == -1 and data.find(']') == -1:
-            if implicit_braces:
+            if implicit:
                 tokenparts = data.split(':')
                 token = rawstoken(
                     value = tokenparts[0],
@@ -698,7 +681,7 @@ class rawstoken(queryableadd.queryableadd):
                 tokens.append(token)
                 return tokens
             else:
-                raise ValueError('Failed to parse data string because it had no braces and because implicit_braces was set to False.')
+                raise ValueError('Failed to parse data string because it had no braces and because implicit was set to False.')
         else:
             while pos < len(data):
                 token = None
@@ -727,7 +710,7 @@ class rawstoken(queryableadd.queryableadd):
             return tokens
             
     @staticmethod
-    def parsesingular(data, implicit_braces=True, fail_on_multiple=True, apply=None, **kwargs):
+    def parsesingular(data, implicit=True, fail_on_multiple=True, apply=None, **kwargs):
         '''Parses a string containing exactly one token. **kwargs are passed on to the parse static method.
         '''
         if data.count('[') > 1:
@@ -740,7 +723,7 @@ class rawstoken(queryableadd.queryableadd):
         prefix = None
         suffix = None
         tokenparts = None
-        if open == -1 and close == -1 and implicit_braces:
+        if open == -1 and close == -1 and implicit:
             pass
         elif open >= 0 and close >= 0:
             prefix = data[:open]
