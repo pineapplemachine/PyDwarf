@@ -3,9 +3,9 @@
 
 import os
 
-from reffile import reffile
-from binfile import binfile
-from rawfile import rawfile
+import reffile
+import binfile
+import rawfile
 
 
 
@@ -33,15 +33,15 @@ def filefactory(path, log=None, **kwargs): # TODO: move this elsewhere and make 
             with open(path, 'rb') as txt:
                 if txt.readline().strip() == os.path.splitext(basename)[0]:
                     txt.seek(0)
-                    return rawfile(path=path, file=txt, **kwargs)
+                    return rawfile.rawfile(path=path, file=txt, **kwargs)
         elif basename in binnames:
-            return binfile(path=path, **kwargs)
+            return binfile.binfile(path=path, **kwargs)
         elif basename in rawnames:
-            return rawfile(path=path, file=txt, **kwargs)
+            return rawfile.rawfile(path=path, file=txt, **kwargs)
     
     except Exception as e:
         if log:
             log.warning('Failed to read file from path %s. Defauling to reading as a reffile, which should (hopefully) work despite.' % path)
             log.debug(traceback.format_exc())
     
-    return reffile(path=path, **kwargs)
+    return reffile.reffile(path=path, **kwargs)
