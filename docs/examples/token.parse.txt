@@ -26,9 +26,9 @@ token.parse token.parsesingular
 Traceback (most recent call last):
   File "<stdin>", line 1, in <module>
   File "raws/token.py", line 713, in parse
-    raise ValueError('Failed to parse data string because it had no braces and because implicit_braces was set to False.')
-ValueError: Failed to parse data string because it had no braces and because implicit_braces was set to False.
->>> print raws.token.parse(nobraces, implicit_braces=True)
+    raise ValueError('Failed to parse data string because it had no braces and because implicit was set to False.')
+ValueError: Failed to parse data string because it had no braces and because implicit was set to False.
+>>> print raws.token.parse(nobraces, implicit=True)
 [EXAMPLE:TOKEN]
 >>> print raws.token.parsesingular(braces)
 [EXAMPLE:TOKEN]
