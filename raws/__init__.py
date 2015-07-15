@@ -35,14 +35,9 @@ raws.parse: A convenience alias for raws.token.parse, which accepts an input str
 
 
 
-import queryable
-import queryableobj
-import queryableadd
+import queryable, queryableobj, queryableadd
 import token
-import basefile
-import reffile
-import binfile
-import rawfile
+import basefile, reffile, binfile, rawfile
 import filefactory
 import tokenlist
 import dir

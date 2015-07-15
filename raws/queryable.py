@@ -85,62 +85,15 @@ class queryable(object):
                 yield token
         else:
             return
-            
-    def removefirst(self, *args, **kwargs):
-        token = self.get(*args, **kwargs)
-        if token is not None: token.remove()
-        return token
-    def removelast(self, *args, **kwargs):
-        token = self.getlast(*args, **kwargs)
-        if token is not None: token.remove()
-        return token
-    def removeuntil(self, *args, **kwargs):
-        token = self.until(*args, **kwargs)
-        if token is not None: token.remove()
-        return token
-    def removefirstuntil(self, *args, **kwargs):
-        token = self.getuntil(*args, **kwargs)
-        if token is not None: token.remove()
-        return token
-    def removelastuntil(self, *args, **kwargs):
-        token = self.getlastuntil(*args, **kwargs)
-        if token is not None: token.remove()
-        return token
-        
-    def removeall(self, *args, **kwargs):
-        tokens = self.all(*args, **kwargs)
-        for token in tokens: token.remove()
-        return tokens
-    def removeuntil(self, *args, **kwargs):
-        tokens = self.until(*args, **kwargs)
-        for token in tokens: token.remove()
-        return tokens
-    def removealluntil(self, *args, **kwargs):
-        tokens = self.alluntil(*args, **kwargs)
-        for token in tokens: token.remove()
-        return tokens
-        
-    def removeprop(self, *args, **kwargs):
-        token = self.getprop(*args, **kwargs)
-        if token is not None: token.remove()
-        return token
-    def removelastprop(self, *args, **kwargs):
-        token = self.getlastprop(*args, **kwargs)
-        if token is not None: token.remove()
-        return token
-    def removeallprop(self, *args, **kwargs):
-        tokens = self.allprop(*args, **kwargs)
-        for token in tokens: token.remove()
-        return tokens
     
-    def query(self, filters, tokeniter=None, **kwargs): # TODO: make it possible to use an iterable also
-        '''Executes a query on some iterable containing tokens.
-        
-        filters: A dict or other iterable containing tokenfilter-like objects.
-        %s
-        **kwargs: If tokeniter is not given, then the object's token method will be
-            called with these arguments and used instead.
-        ''' % queryable.query_tokeniter_docstring
+    def oldquery(self, filters, tokeniter=None, **kwargs): # TODO: make it possible to use an iterable also
+        '''
+            Executes a query on some iterable containing tokens.
+            Filters are called with the token as the first argument and the number of matches so far for the second argument.
+            Each filter should return a tuple with two elements.
+                The first element: True if it matches, False if it doesn't.
+                The second element: True if the query should be terminated, False to continue.
+        '''
         
         if tokeniter is None: tokeniter = self.tokens(**kwargs)
         filteriter = (filters.itervalues() if isinstance(filters, dict) else filters)
@@ -153,7 +106,61 @@ class queryable(object):
                     if filter.limit_terminates and len(filter.result) == filter.limit: limit = True; break
             if limit: break
         return filters
+     
+    def query(self, filters, tokens=None, iter=False, **kwargs):
+        return self.iquery(filters, tokens, **kwargs) if iter else self.lquery(filters, tokens, **kwargs)
+     
+    def lquery(self, filters, tokens=None, **kwargs):
+        if tokens is None: tokens = self.tokens(**kwargs)
+        if callable(filters): filters = (filters,)
         
+        try:
+            results = {filterkey: tokenlist.tokenlist() for filterkey in filters.iterkeys()}
+            filteriter = filters.items()
+        except:
+            results = [tokenlist.tokenlist() for i in filters]
+            filteriter = tuple(enumerate(filters))
+        
+        limit = False    
+        for token in tokens:
+            for key, filter in filteriter:
+                matches, terminate = filter(token, len(results[key]))
+                if matches:
+                    results[key].append(token)
+                if terminate:
+                    limit = True
+                    break
+            if limit: break
+            
+        return results
+        
+    def iquery(self, filters, tokens=None, **kwargs):
+        if tokens is None: tokens = self.tokens(**kwargs)
+        if callable(filters): filters = (filters,)
+            
+        try:
+            count = {filterkey: 0 for filterkey in filters.iterkeys()}
+            filteriter = filters.items()
+            newresult = lambda: {}
+        except:
+            count = [0 for i in filters]
+            filteriter = tuple(enumerate(filters))
+            newresult = lambda: [None for i in filters]
+            
+        limit = False
+        for token in tokens:
+            result = newresult()
+            for key, filter in filteriter:
+                matches, terminate = filter(token, count[key])
+                if matches:
+                    result[key] = token
+                    count[key] += 1
+                if terminate:
+                    limit = True
+                    break
+            yield result
+            if limit: break
+    
     def get(self, pretty=None, tokeniter=None, **kwargs):
         '''Get the first matching token.
         
@@ -164,8 +171,8 @@ class queryable(object):
         queryfilters = (
             filters.tokenfilter(pretty=pretty, limit=1, **filter_args)
         ,)
-        result = self.query(queryfilters, tokeniter, **tokens_args)[0].result
-        return result[0] if result and len(result) else None
+        result = self.query(queryfilters, tokeniter, **tokens_args)[0]
+        return result[0] if result else None
     
     def getlast(self, pretty=None, tokeniter=None, **kwargs):
         '''Get the last matching token.
@@ -177,8 +184,8 @@ class queryable(object):
         queryfilters = (
             filters.tokenfilter(pretty=pretty, **filter_args)
         ,)
-        result = self.query(queryfilters, tokeniter, **tokens_args)[0].result
-        return result[-1] if result and len(result) else None
+        result = self.query(queryfilters, tokeniter, **tokens_args)[0]
+        return result[-1] if result else None
     
     def all(self, pretty=None, tokeniter=None, **kwargs):
         '''Get a list of all matching tokens.
@@ -190,7 +197,7 @@ class queryable(object):
         queryfilters = (
             filters.tokenfilter(pretty=pretty, **filter_args)
         ,)
-        return self.query(queryfilters, tokeniter, **tokens_args)[0].result
+        return self.query(queryfilters, tokeniter, **tokens_args)[0]
     
     def until(self, pretty=None, tokeniter=None, **kwargs):
         '''Get a list of all tokens up to a match.
@@ -203,7 +210,7 @@ class queryable(object):
             filters.tokenfilter(pretty=pretty, limit=1, **filter_args),
             filters.tokenfilter()
         )
-        return self.query(queryfilters, tokeniter, **tokens_args)[1].result
+        return self.query(queryfilters, tokeniter, **tokens_args)[1]
         
     def getuntil(self, pretty=None, until=None, tokeniter=None, **kwargs):
         '''Get the first matching token, but abort when a token matching arguments prepended with 'until_' is encountered.
@@ -217,8 +224,8 @@ class queryable(object):
             filters.tokenfilter(pretty=until, limit=1, **until_args),
             filters.tokenfilter(pretty=pretty, limit=1, **condition_args)
         )
-        result = self.query(queryfilters, tokeniter, **tokens_args)[1].result
-        return result[0] if result and len(result) else None
+        result = self.query(queryfilters, tokeniter, **tokens_args)[1]
+        return result[0] if result else None
     
     def getlastuntil(self, pretty=None, until=None, tokeniter=None, **kwargs):
         '''Get the last matching token, up until a token matching arguments prepended with 'until_' is encountered.
@@ -232,8 +239,8 @@ class queryable(object):
             filters.tokenfilter(pretty=until, limit=1, **until_args),
             filters.tokenfilter(pretty=pretty, **condition_args)
         )
-        result = self.query(queryfilters, tokeniter, **tokens_args)[1].result
-        return result[-1] if result and len(result) else None
+        result = self.query(queryfilters, tokeniter, **tokens_args)[1]
+        return result[-1] if result else None
      
     def alluntil(self, pretty=None, until=None, tokeniter=None, **kwargs):
         '''Get a list of all matching tokens, but abort when a token matching
@@ -248,7 +255,7 @@ class queryable(object):
             filters.tokenfilter(pretty=until, limit=1, **until_args),
             filters.tokenfilter(pretty=pretty, **condition_args)
         )
-        return self.query(queryfilters, tokeniter, **tokens_args)[1].result
+        return self.query(queryfilters, tokeniter, **tokens_args)[1]
     
     def getprop(self, *args, **kwargs):
         '''Gets the first token matching the arguments, but stops at the next
@@ -316,6 +323,53 @@ class queryable(object):
         '''Convenience method acts as a shortcut for raws.tokenlist.tokenlist(obj.tokens(*args, **kwargs)).
         '''
         return tokenlist.tokenlist(self.tokens(*args, **kwargs))
+            
+    def removefirst(self, *args, **kwargs):
+        token = self.get(*args, **kwargs)
+        if token is not None: token.remove()
+        return token
+    def removelast(self, *args, **kwargs):
+        token = self.getlast(*args, **kwargs)
+        if token is not None: token.remove()
+        return token
+    def removeuntil(self, *args, **kwargs):
+        token = self.until(*args, **kwargs)
+        if token is not None: token.remove()
+        return token
+    def removefirstuntil(self, *args, **kwargs):
+        token = self.getuntil(*args, **kwargs)
+        if token is not None: token.remove()
+        return token
+    def removelastuntil(self, *args, **kwargs):
+        token = self.getlastuntil(*args, **kwargs)
+        if token is not None: token.remove()
+        return token
+        
+    def removeall(self, *args, **kwargs):
+        tokens = self.all(*args, **kwargs)
+        for token in tokens: token.remove()
+        return tokens
+    def removeuntil(self, *args, **kwargs):
+        tokens = self.until(*args, **kwargs)
+        for token in tokens: token.remove()
+        return tokens
+    def removealluntil(self, *args, **kwargs):
+        tokens = self.alluntil(*args, **kwargs)
+        for token in tokens: token.remove()
+        return tokens
+        
+    def removeprop(self, *args, **kwargs):
+        token = self.getprop(*args, **kwargs)
+        if token is not None: token.remove()
+        return token
+    def removelastprop(self, *args, **kwargs):
+        token = self.getlastprop(*args, **kwargs)
+        if token is not None: token.remove()
+        return token
+    def removeallprop(self, *args, **kwargs):
+        tokens = self.allprop(*args, **kwargs)
+        for token in tokens: token.remove()
+        return tokens
     
     def argsuntil(self, kwargs):
         '''Internal: Utility function for handling arguments of getuntil and alluntil methods.'''
@@ -332,6 +386,7 @@ class queryable(object):
         if tokeniter is None and hasattr(self, 'tokens'):
             filter_args, tokens_args = {}, {}
             args = inspect.getargspec(self.tokens)[0]
+            args.append('iter')
             for argname, argvalue in kwargs.iteritems():
                 (tokens_args if argname in args else filter_args)[argname] = argvalue
             return filter_args, tokens_args

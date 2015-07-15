@@ -7,8 +7,11 @@ import copy
 
 
 class basefilter:
-    def __init__(self, invert=False):
+    def __init__(self, invert=False, limit=None, limit_terminates=True):
         self.inv = invert
+        self.limit = limit
+        self.limit_terminates = limit_terminates
+        
     def invert(self):
         self.inv = not self.inv
     def match(self, token):
@@ -38,9 +41,19 @@ class basefilter:
     def __contains__(self, token):
         return self.match(token)
         
-    def __call__(self, *args, **kwargs):
-        return self.match(*args, **kwargs)
-
+    def __call__(self, token, count):
+        matches = False
+        terminate = False
+        if self.limit is None:
+            matches = self.match(token)
+        else:
+            if count < self.limit:
+                matches = self.match(token)
+                if matches: count += 1
+            if self.limit_terminates and count >= self.limit:
+                terminate = True
+        return matches, terminate
+            
 
 
 class tokenfilter(basefilter):
@@ -116,6 +129,9 @@ class tokenfilter(basefilter):
             set to False, then this filter will only cease to accumulate results. Defaults to
             True.
         '''
+        
+        basefilter.__init__(self, invert, limit, limit_terminates)
+        
         self.pretty = pretty
         
         if pretty:
@@ -146,9 +162,6 @@ class tokenfilter(basefilter):
         self.args_count = args_count
         self.args_count_at_least = args_count_at_least
         self.args_count_no_more = args_count_no_more
-        self.inv = invert
-        self.limit = limit
-        self.limit_terminates = limit_terminates
         
         # Make exact_arg, re_arg, and arg_in easier: Allow a single iterable with index and value, don't always require an iterable of them.
         if self.exact_arg and isinstance(self.exact_arg[0], int): self.exact_arg = (self.exact_arg,)
@@ -216,11 +229,13 @@ class tokenfilter(basefilter):
 class boolfilter(basefilter):
     '''Logical filter class for combining other filters.'''
     
-    def __init__(self, subs, operand=None, invert=None):
+    def __init__(self, 
+        subs, operand=None, invert=None,
+        limit=None, limit_terminates=True
+    ):
+        basefilter.__init__(self, invert, limit, limit_terminates)
         self.subs = subs
         self.operand = operand
-        self.inv = invert
-        self.args = args
         
     def basematch(self, token):
         if self.operand == 'one':

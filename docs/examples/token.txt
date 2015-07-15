@@ -96,8 +96,3 @@ Traceback (most recent call last):
   File "raws/token.py", line 462, in setsuffix
     return copiedtokens
 ValueError: Failed to set token suffix to "bad string [ braces not allowed here" because the string contains illegal characters.
-
----
-
-
-

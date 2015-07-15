@@ -126,7 +126,7 @@ class rawstoken(queryableadd.queryableadd):
             tokens.extend(other)
             return tokens
         else:
-            raise ValueError('Failed to perform concatenation because the type of the other operand was unrecognized.')
+            raise ValueError('Failed to perform concatenation because the type %s of the other operand was unrecognized.' % type(other))
         
     def __radd__(self, other):
         '''Internal: Same as __add__ except reversed.'''
@@ -141,7 +141,7 @@ class rawstoken(queryableadd.queryableadd):
             tokens.append(self)
             return tokens
         else:
-            raise ValueError('Failed to perform concatenation because the type of the other operand was unrecognized.')
+            raise ValueError('Failed to perform concatenation because the type %s of the other operand was unrecognized.' % type(other))
             
     def __mul__(self, value):
         '''Concatenates copies of this token the number of times specified.
