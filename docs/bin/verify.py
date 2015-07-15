@@ -13,6 +13,7 @@ import os
 
 pydwarf_root = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '../..'))
 sys.path.append(pydwarf_root)
+sys.path.append(os.path.join(pydwarf_root, 'lib'))
 
 import inspect
 import doctest
@@ -96,8 +97,11 @@ if __name__ == '__main__':
     realresults = []
     for result in results:
         match = doctest_result_re.match(result.expandtabs(4))
-        if match.group(4).strip() != match.group(5).strip():
-            realresults.append(result)
+        try:
+            ignore = match.group(4).strip() == match.group(5).strip()
+        except:
+            ignore = False
+        if not ignore: realresults.append(result)
     
     if realresults:
         resultstext = '\n\n'.join(reversed(realresults))
