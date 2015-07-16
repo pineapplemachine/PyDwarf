@@ -69,7 +69,7 @@ def prefstring(df):
             pydwarf.log.debug('Found prefstrings for %s but there was no corresponding creature in the DF raws. Skipping.' % smallcreature)
             failedcreatures += 1
         else:
-            prefs = smallcreature.alluntil(exact_value='PREFSTRING', args_count=1, until_exact_value='CREATURE')
+            prefs = smallcreature.allprop(exact_value='PREFSTRING', args_count=1)
             dfcreature.add(tokens=raws.token.copy(prefs))
             pydwarf.log.debug('Added %d prefstrings to %s.' % (len(prefs), dfcreature))
             

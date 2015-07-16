@@ -67,6 +67,158 @@ class queryable(object):
         else:
             raise ValueError('Failed to get item because the argument was of an unrecognized type.')
             
+            
+            
+    builders = {
+        'get': (
+            # The method's docstring
+            'Get the first matching token.',
+            
+            # Use a generator query by default? Otherwise a list.
+            True,
+            
+            # The first item is for queries without "until" arguments
+            (
+                # This is the filter index we care about
+                0,
+                # This is the result index we care about
+                # Should be either 0 (the first result), -1 (the last result), or None (all results).
+                0,
+                # And this function returns the filters to be used with a query
+                lambda pretty, conditionargs: (
+                    filters.tokenfilter(pretty=pretty, limit=1, **conditionargs),
+                ),
+            ),
+            
+            # The second item is for queries which do have "until" arguments
+            (
+                1, 0, lambda pretty, until, conditionargs, untilargs: (
+                    filters.tokenfilter(pretty=until, limit=1, **untilargs),
+                    filters.tokenfilter(pretty=pretty, limit=1, **conditionargs)
+                ),
+            ),
+        ),
+        
+        'last': (
+            'Get the last matching token.', True,
+            (
+                0, -1, lambda pretty, conditionargs: (
+                    filters.tokenfilter(pretty=pretty, **conditionargs),
+                ),
+            ),
+            (
+                1, -1, lambda pretty, until, conditionargs, untilargs: (
+                    filters.tokenfilter(pretty=until, limit=1, **untilargs),
+                    filters.tokenfilter(pretty=pretty, **conditionargs)
+                ),
+            ),
+        ),
+        
+        'all': (
+            'Get all matching tokens.', False,
+            (
+                0, None, lambda pretty, conditionargs: (
+                    filters.tokenfilter(pretty=pretty, **conditionargs),
+                ),
+            ),
+            (
+                1, None, lambda pretty, until, conditionargs, untilargs: (
+                    filters.tokenfilter(pretty=until, limit=1, **untilargs),
+                    filters.tokenfilter(pretty=pretty, **conditionargs)
+                ),
+            ),
+        ),
+    }
+    
+    @staticmethod
+    def buildqueries():
+        '''Internal: Dynamically builds convenience query methods.'''
+        
+        for queryname, queryproperties in queryable.builders.iteritems():
+            docstring, defaultiter, normalfilters, untilfilters = queryproperties
+            
+            if normalfilters[1] not in (0, -1, None) or untilfilters[1] not in (0, -1, None):
+                raise ValueError('Encountered invalid result index %d for convenience query "%s". The accepted values are 0, -1, and None.' % (resultindex, queryname))
+            
+            querymethod = queryable.buildquerymethod(queryname, docstring, defaultiter, normalfilters, untilfilters)
+            setattr(queryable, queryname, querymethod)
+        
+    @staticmethod
+    def buildquerymethod(queryname, docstring, defaultiter, normalfilters, untilfilters):
+        def querymethod(self, pretty=None, until=None, tokens=None, iter=None, **kwargs):
+            '''%s''' % docstring
+            
+            tokens, conditionargs, untilargs = self.argstokens(tokens, kwargs)
+            
+            if iter is None:
+                iter = defaultiter
+            
+            if until or untilargs:
+                filterindex, resultindex, filterfunc = untilfilters
+                queryfilters = filterfunc(pretty, until, conditionargs, untilargs)
+            else:
+                filterindex, resultindex, filterfunc = normalfilters
+                queryfilters = filterfunc(pretty, conditionargs)
+                
+            result = self.query(
+                filters = queryfilters,
+                tokens = tokens, 
+                iter = iter
+            )
+            
+            if iter:
+                if resultindex is None:
+                    return (
+                        resulttokens[filterindex] for resulttokens in result if resulttokens[filterindex] is not None
+                    )
+                        
+                elif resultindex == -1:
+                    lastresulttoken = None
+                    for resulttokens in result:
+                        resulttoken = resulttokens[filterindex]
+                        if resulttoken is not None: lastresulttoken = resulttoken
+                    return lastresulttoken
+                        
+                else: # resultindex == 0
+                    for resulttokens in result:
+                        resulttoken = resulttokens[filterindex]
+                        if resulttoken is not None: return resulttoken
+                    return None
+                
+            else:
+                useresults = result[filterindex]
+                if resultindex is None:
+                    return useresults
+                elif useresults:
+                    return result[filterindex][resultindex]
+                else:
+                    return None
+        return querymethod
+        
+    def argstokens(self, tokens, kwargs):
+        '''Internal: Utility function for separating arguments to pass on to a tokens iterator from arguments to pass to filters.'''
+        
+        conditionargs = kwargs
+        untilargs = {}
+        tokens = tokens
+        
+        if tokens is None:
+            if hasattr(self, 'tokens') and callable(self.tokens):
+                conditionargs, tokensargs = {}, {}
+                possibletokensargs = inspect.getargspec(self.tokens)[0]
+                for argname, argvalue in kwargs.iteritems():
+                    if argname in possibletokensargs:
+                        tokensargs[argname] = argvalue
+                    elif argname.startswith('until_'):
+                        untilargs[argname[6:]] = argvalue
+                    else:
+                        conditionargs[argname] = argvalue
+                tokens = self.tokens(**tokensargs)
+            else:
+                raise ValueError('Failed to understand query arguments because no tokens iterator could be found or constructed.')
+        
+        return tokens, conditionargs, untilargs
+            
     def getitems(self, items):
         result = []
         for item in items:
@@ -85,33 +237,19 @@ class queryable(object):
                 yield token
         else:
             return
-    
-    def oldquery(self, filters, tokeniter=None, **kwargs): # TODO: make it possible to use an iterable also
+
+    def query(self, filters, tokens=None, iter=False, **kwargs):
         '''
             Executes a query on some iterable containing tokens.
             Filters are called with the token as the first argument and the number of matches so far for the second argument.
             Each filter should return a tuple with two elements.
-                The first element: True if it matches, False if it doesn't.
-                The second element: True if the query should be terminated, False to continue.
+            The first element: True if it matches, False if it doesn't.
+            The second element: True if the query should be terminated, False to continue.
         '''
-        
-        if tokeniter is None: tokeniter = self.tokens(**kwargs)
-        filteriter = (filters.itervalues() if isinstance(filters, dict) else filters)
-        limit = False
-        for filter in filteriter: filter.result = tokenlist.tokenlist() # TODO: don't do this
-        for token in tokeniter:
-            for filter in filteriter:
-                if (not filter.limit) or len(filter.result) < filter.limit:
-                    if filter(token): filter.result.append(token)
-                    if filter.limit_terminates and len(filter.result) == filter.limit: limit = True; break
-            if limit: break
-        return filters
-     
-    def query(self, filters, tokens=None, iter=False, **kwargs):
-        return self.iquery(filters, tokens, **kwargs) if iter else self.lquery(filters, tokens, **kwargs)
-     
-    def lquery(self, filters, tokens=None, **kwargs):
         if tokens is None: tokens = self.tokens(**kwargs)
+        return self.iquery(filters, tokens) if iter else self.lquery(filters, tokens)
+     
+    def lquery(self, filters, tokens):
         if callable(filters): filters = (filters,)
         
         try:
@@ -134,8 +272,7 @@ class queryable(object):
             
         return results
         
-    def iquery(self, filters, tokens=None, **kwargs):
-        if tokens is None: tokens = self.tokens(**kwargs)
+    def iquery(self, filters, tokens):
         if callable(filters): filters = (filters,)
             
         try:
@@ -163,11 +300,9 @@ class queryable(object):
     
     def get(self, pretty=None, tokeniter=None, **kwargs):
         '''Get the first matching token.
+        '''
         
-        %s
-        ''' % queryable.quick_query_args_docstring
-        
-        filter_args, tokens_args = self.argstokens(tokeniter, kwargs)
+        filter_args, tokens_args = self.oldargstokens(tokeniter, kwargs)
         queryfilters = (
             filters.tokenfilter(pretty=pretty, limit=1, **filter_args)
         ,)
@@ -176,11 +311,9 @@ class queryable(object):
     
     def getlast(self, pretty=None, tokeniter=None, **kwargs):
         '''Get the last matching token.
+        '''
         
-        %s
-        ''' % queryable.quick_query_args_docstring
-        
-        filter_args, tokens_args = self.argstokens(tokeniter, kwargs)
+        filter_args, tokens_args = self.oldargstokens(tokeniter, kwargs)
         queryfilters = (
             filters.tokenfilter(pretty=pretty, **filter_args)
         ,)
@@ -189,11 +322,9 @@ class queryable(object):
     
     def all(self, pretty=None, tokeniter=None, **kwargs):
         '''Get a list of all matching tokens.
+        '''
         
-        %s
-        ''' % queryable.quick_query_args_docstring
-        
-        filter_args, tokens_args = self.argstokens(tokeniter, kwargs)
+        filter_args, tokens_args = self.oldargstokens(tokeniter, kwargs)
         queryfilters = (
             filters.tokenfilter(pretty=pretty, **filter_args)
         ,)
@@ -201,11 +332,9 @@ class queryable(object):
     
     def until(self, pretty=None, tokeniter=None, **kwargs):
         '''Get a list of all tokens up to a match.
+        '''
         
-        %s
-        ''' % queryable.quick_query_args_docstring
-        
-        filter_args, tokens_args = self.argstokens(tokeniter, kwargs)
+        filter_args, tokens_args = self.oldargstokens(tokeniter, kwargs)
         queryfilters = (
             filters.tokenfilter(pretty=pretty, limit=1, **filter_args),
             filters.tokenfilter()
@@ -214,11 +343,9 @@ class queryable(object):
         
     def getuntil(self, pretty=None, until=None, tokeniter=None, **kwargs):
         '''Get the first matching token, but abort when a token matching arguments prepended with 'until_' is encountered.
+        '''
         
-        %s
-        ''' % queryable.quick_query_args_docstring
-        
-        filter_args, tokens_args = self.argstokens(tokeniter, kwargs)
+        filter_args, tokens_args = self.oldargstokens(tokeniter, kwargs)
         until_args, condition_args = self.argsuntil(filter_args)
         queryfilters = (
             filters.tokenfilter(pretty=until, limit=1, **until_args),
@@ -229,11 +356,9 @@ class queryable(object):
     
     def getlastuntil(self, pretty=None, until=None, tokeniter=None, **kwargs):
         '''Get the last matching token, up until a token matching arguments prepended with 'until_' is encountered.
+        '''
         
-        %s
-        ''' % queryable.quick_query_args_docstring
-        
-        filter_args, tokens_args = self.argstokens(tokeniter, kwargs)
+        filter_args, tokens_args = self.oldargstokens(tokeniter, kwargs)
         until_args, condition_args = self.argsuntil(filter_args)
         queryfilters = (
             filters.tokenfilter(pretty=until, limit=1, **until_args),
@@ -245,11 +370,9 @@ class queryable(object):
     def alluntil(self, pretty=None, until=None, tokeniter=None, **kwargs):
         '''Get a list of all matching tokens, but abort when a token matching
         arguments prepended with 'until_' is encountered.
+        '''
         
-        %s
-        ''' % queryable.quick_query_args_docstring
-        
-        filter_args, tokens_args = self.argstokens(tokeniter, kwargs)
+        filter_args, tokens_args = self.oldargstokens(tokeniter, kwargs)
         until_args, condition_args = self.argsuntil(filter_args)
         queryfilters = (
             filters.tokenfilter(pretty=until, limit=1, **until_args),
@@ -266,7 +389,7 @@ class queryable(object):
         '''
         
         until_exact_value, until_re_value, until_value_in = self.argsprops()
-        return self.getuntil(*args, until_exact_value=until_exact_value, until_re_value=until_re_value, until_value_in=until_value_in, **kwargs)
+        return self.get(*args, until_exact_value=until_exact_value, until_re_value=until_re_value, until_value_in=until_value_in, **kwargs)
         
     def getlastprop(self, *args, **kwargs):
         '''Gets the last token matching the arguments, but stops at the next
@@ -277,7 +400,7 @@ class queryable(object):
         '''
         
         until_exact_value, until_re_value, until_value_in = self.argsprops()
-        return self.getlastuntil(*args, until_exact_value=until_exact_value, until_re_value=until_re_value, until_value_in=until_value_in, **kwargs)
+        return self.last(*args, until_exact_value=until_exact_value, until_re_value=until_re_value, until_value_in=until_value_in, **kwargs)
             
     def allprop(self, *args, **kwargs):
         '''Gets the all tokens matching the arguments, but stops at the next
@@ -288,7 +411,7 @@ class queryable(object):
         '''
         
         until_exact_value, until_re_value, until_value_in = self.argsprops()
-        return self.alluntil(*args, until_exact_value=until_exact_value, until_re_value=until_re_value, until_value_in=until_value_in, **kwargs)
+        return self.all(*args, until_exact_value=until_exact_value, until_re_value=until_re_value, until_value_in=until_value_in, **kwargs)
             
     def propdict(self, always_list=True, value_keys=True, full_keys=True, **kwargs):
         '''Returns a dictionary with token values mapped as keys to the tokens
@@ -299,7 +422,7 @@ class queryable(object):
         '''
         
         until_exact_value, until_re_value, until_value_in = self.argsprops()
-        props = self.alluntil(until_exact_value=until_exact_value, until_re_value=until_re_value, until_value_in=until_value_in, **kwargs)
+        props = self.all(until_exact_value=until_exact_value, until_re_value=until_re_value, until_value_in=until_value_in, **kwargs)
         pdict = {}
         for prop in props:
             for key in (prop.value if value_keys else None, str(prop)[1:-1] if full_keys else None):
@@ -329,32 +452,11 @@ class queryable(object):
         if token is not None: token.remove()
         return token
     def removelast(self, *args, **kwargs):
-        token = self.getlast(*args, **kwargs)
+        token = self.last(*args, **kwargs)
         if token is not None: token.remove()
         return token
-    def removeuntil(self, *args, **kwargs):
-        token = self.until(*args, **kwargs)
-        if token is not None: token.remove()
-        return token
-    def removefirstuntil(self, *args, **kwargs):
-        token = self.getuntil(*args, **kwargs)
-        if token is not None: token.remove()
-        return token
-    def removelastuntil(self, *args, **kwargs):
-        token = self.getlastuntil(*args, **kwargs)
-        if token is not None: token.remove()
-        return token
-        
     def removeall(self, *args, **kwargs):
         tokens = self.all(*args, **kwargs)
-        for token in tokens: token.remove()
-        return tokens
-    def removeuntil(self, *args, **kwargs):
-        tokens = self.until(*args, **kwargs)
-        for token in tokens: token.remove()
-        return tokens
-    def removealluntil(self, *args, **kwargs):
-        tokens = self.alluntil(*args, **kwargs)
         for token in tokens: token.remove()
         return tokens
         
@@ -381,7 +483,7 @@ class queryable(object):
                 condition_args[arg] = value
         return until_args, condition_args
         
-    def argstokens(self, tokeniter, kwargs):
+    def oldargstokens(self, tokeniter, kwargs):
         '''Internal: Utility function for separating arguments to pass on to a tokens iterator from arguments to pass to filters.'''
         if tokeniter is None and hasattr(self, 'tokens'):
             filter_args, tokens_args = {}, {}
@@ -400,6 +502,8 @@ class queryable(object):
         until_re_value = None
         until_value_in = objects.objectsforheader(objects.headerforobject(self.value))
         return until_exact_value, until_re_value, until_value_in
+
+queryable.buildqueries()
 
 
 

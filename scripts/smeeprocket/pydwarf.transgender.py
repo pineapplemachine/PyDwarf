@@ -73,7 +73,7 @@ def trans(dfraws, species=default_species, beards=True, frequency=500):
         pydwarf.log.debug('Handling creature %s...' % creature)
         creaturetoken = creaturetokendict.get(creature)
         if creaturetoken:
-            castes = creaturetoken.alluntil(exact_value='CASTE', args_count=1, until_exact_value='CREATURE')
+            castes = creaturetoken.allprop(exact_value='CASTE', args_count=1)
             if len(castes) == 2 and ((castes[0].args[0] == 'MALE' and castes[1].args[0] == 'FEMALE') or (castes[1].args[0] == 'MALE' and castes[0].args[0] == 'FEMALE')):
                 
                 # Remove DESCRIPTION token from the creature and add it to each caste

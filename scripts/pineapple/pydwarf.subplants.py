@@ -14,7 +14,7 @@ def subterraneanplants(df):
     # Get subterranean plants
     subplants = []
     for plant in df.allobj('PLANT'):
-        if plant.getuntil(pretty='BIOME:SUBTERRANEAN_WATER', until_exact_value='PLANT'):
+        if plant.getprop('BIOME:SUBTERRANEAN_WATER'):
             subplants.append(plant)
     if not len(subplants): return pydwarf.failure('Found no subterranean plants.')
     

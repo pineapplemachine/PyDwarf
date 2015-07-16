@@ -107,13 +107,13 @@ def autofuels(dfraws, log=None):
     for reaction in dfraws.all(exact_value='REACTION'): # For each reaction:
         # Does this reaction produce coke?
         reactionmakescoke = False
-        for product in reaction.alluntil(exact_value='PRODUCT', until_exact_value='REACTION'):
+        for product in reaction.allprop(exact_value='PRODUCT'):
             if product.args[-1] == 'COKE':
                 if log: log.debug('Found coke-producing reaction %s with product %s.' % (reaction, product))
                 reactionmakescoke = True
                 break
         if reactionmakescoke:
-            for reagent in reaction.alluntil(exact_value='REAGENT', until_exact_value='REACTION'):
+            for reagent in reaction.allprop(exact_value='REAGENT'):
                 if log: pydwarf.log.debug('Identified reagent %s as referring to a fuel.' % (reagent))
                 fuels.append(reagent.args[-1])
     if log: log.info('Finished detecting fuels! These are the ones I found: %s' % fuels)
@@ -129,8 +129,7 @@ def builddicts(query, dfraws, fuels, log=None):
     if log: log.info('I found %d inorganics. Processing...' % len(inorganics))
     for token in inorganics:
         # Get results of query
-        query = token.query(query)
-        token.stoneclarity = {i: j.result for i, j in query.iteritems()}
+        token.stoneclarity = token.query(query)
         # Handle the simpler groups, 1:1 correspondence between whether some property was found and whether the inorganic belongs in some group
         for groupname in token.stoneclarity:
             if len(token.stoneclarity[groupname]):

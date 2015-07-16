@@ -46,7 +46,7 @@ def restrictnobles(raws, onlydwarves=False):
 def restrictnobles_custom(raws, inclusions=None, exclusions=None):
     mountain = raws.get('ENTITY:MOUNTAIN')
     if mountain:
-        positions = mountain.alluntil(exact_value='POSITION', until_exact_value='ENTITY')
+        positions = mountain.allprop(exact_value='POSITION')
         if inclusions:
             pydwarf.log.debug('Handling position inclusions %s...' % inclusions)
             for inclusion in inclusions:
