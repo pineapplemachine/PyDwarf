@@ -175,7 +175,7 @@ class rawfile(basefile.basefile, queryableobj.queryableobj, queryableadd.queryab
             if self.name:
                 if header != self.name: self.noheader = True
             if data:
-                self.settokens(rawstoken.token.parseplural(data, file=self))
+                self.settokens(tokenparse.parseplural(data, file=self))
         else:
             self.noheader = True
             self.data = None
@@ -241,4 +241,5 @@ class rawfile(basefile.basefile, queryableobj.queryableobj, queryableadd.queryab
 
 
 import token as rawstoken
+import tokenparse
 import binfile

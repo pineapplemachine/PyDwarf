@@ -135,7 +135,7 @@ class tokenfilter(basefilter):
         self.pretty = pretty
         
         if pretty:
-            prettytoken = token.token.parsesingular(pretty)
+            prettytoken = tokenparse.parsesingular(pretty)
             exact_value = prettytoken.value
             if prettytoken.nargs(): exact_args = prettytoken.args
             
@@ -266,4 +266,4 @@ class boolfilter(basefilter):
     
 
 
-import token
+import tokenparse

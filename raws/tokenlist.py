@@ -11,7 +11,7 @@ class tokenlist(list, queryable.queryable):
     '''Extends builtin list with token querying functionality.'''
     
     def __init__(self, *args, **kwargs):
-        if args and args[0] and isinstance(args[0], basestring): args = (token.token.parseplural(args[0]),) + args[1:]
+        if args and args[0] and isinstance(args[0], basestring): args = (tokenparse.parseplural(args[0]),) + args[1:]
         list.__init__(self, *args, **kwargs)
     
     def tokens(self, range=None, reverse=False):
@@ -25,7 +25,7 @@ class tokenlist(list, queryable.queryable):
         elif isinstance(item, queryable.queryable):
             self.extend(item.tokens())
         elif isinstance(item, basestring):
-            self.append(token.token.parsevariable(item))
+            self.append(tokenparse.parsevariable(item))
         else:
             try:
                 self.extend(item)
@@ -92,4 +92,5 @@ class tokenlist(list, queryable.queryable):
 
 
 
+import tokenparse
 import token

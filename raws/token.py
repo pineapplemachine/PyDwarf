@@ -55,7 +55,7 @@ class rawstoken(queryableadd.queryableadd):
         self.file = None
         
         if pretty is not None:
-            copy = rawstoken.parsesingular(pretty, apply=self)
+            copy = tokenparse.parsesingular(pretty, apply=self)
             
         if copy is not None:
             value = copy.value
@@ -203,7 +203,7 @@ class rawstoken(queryableadd.queryableadd):
             else:
                 tokens = auto
         if pretty is not None:
-            parsed = rawstoken.parsevariable(pretty, implicit=implicit)
+            parsed = tokenparse.parsevariable(pretty, implicit=implicit)
             if isinstance(parsed, rawstoken):
                 token = parsed
             else:
@@ -235,11 +235,10 @@ class rawstoken(queryableadd.queryableadd):
         self.suffix = None
         
     def nargs(self, count=None):
-        '''When count is None, returns the number of arguments the token has. (Length of
-        arguments list.) Otherwise, returns True if the number of arguments is equal to the
-        given count and False if not.
-        
-        count: The number of arguments to match.
+        '''
+            When count is None, returns the number of arguments the token has. (Length of
+            arguments list.) Otherwise, returns True if the number of arguments is equal to the
+            given count and False if not.
         '''
         return len(self.args) if (count is None) else (len(self.args) == count)
 
@@ -762,3 +761,4 @@ token = rawstoken
 
 import queryable
 import tokenlist
+import tokenparse

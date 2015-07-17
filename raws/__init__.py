@@ -40,6 +40,7 @@ import token
 import basefile, reffile, binfile, rawfile
 import filefactory
 import tokenlist
+import tokenparse
 import dir
 import filters
 
@@ -62,6 +63,9 @@ binfile = binfile.binfile
 rawfile = rawfile.rawfile
 dir = dir.dir
 copytree = copytree.copytree
+parseplural = tokenparse.parseplural
+parsesingular = tokenparse.parsesingular
+parsevariable = tokenparse.parsevariable
 
 filter = tokenfilter
-parse = token.parse
+parse = parsevariable
