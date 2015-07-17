@@ -312,7 +312,7 @@ class rawsdir(queryableobj.queryableobj):
             if isinstance(file, queryable.queryable):
                 for token in file.tokens(*args, **kwargs): yield token
                 
-    def getobjheaders(self, type):
+    def getobjheaders(self, type=None):
         '''Gets OBJECT:X tokens where X is type. Is also prepared for special cases
         like type=ITEM_PANTS matching OBJECT:ITEM.
         

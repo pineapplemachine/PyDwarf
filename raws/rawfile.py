@@ -233,7 +233,7 @@ class rawfile(basefile.basefile, queryableobj.queryableobj, queryableadd.queryab
         self.roottoken = None
         self.tailtoken = None
         
-    def getobjheaders(self, type):
+    def getobjheaders(self, type=None):
         match_types = self.getobjheadername(type)
         root = self.root()
         return (root,) if root is not None and root.value == 'OBJECT' and root.nargs(1) and root.args[0] in match_types else tuple()
