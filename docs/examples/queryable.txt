@@ -1,88 +1,43 @@
-queryable.propdict
+queryable.get
 queryableobj.getobj
+
 >>> hematite = df.getobj('INORGANIC:HEMATITE')
->>> props = hematite.propdict()
->>> print props.get('ENVIRONMENT')
-[ENVIRONMENT:SEDIMENTARY:VEIN:100]
-[ENVIRONMENT:IGNEOUS_EXTRUSIVE:VEIN:100]
->>> print props.get('IS_STONE')
-[IS_STONE]
->>> print props.get('TILE:156')
-[TILE:156]
->>> print props.get('NOT_A_TOKEN')
+>>> print hematite.get('METAL_ORE:GOLD:100') # Get the last token in the entire file
+[METAL_ORE:GOLD:100]
+>>> print hematite.get('METAL_ORE:GOLD:100', 'INORGANIC') # Stop at the next INORGANIC token
 None
 
 ---
 
-queryable.all queryable.allprop
+queryable.last
 queryableobj.getobj
+
 >>> hematite = df.getobj('INORGANIC:HEMATITE')
->>> print len(hematite.all('ENVIRONMENT')) # Gets all ENVIRONMENT tokens following hematite
-38
->>> print hematite.allprop('ENVIRONMENT') # Gets only the ENVIRONMENT tokens belonging to hematite
-[ENVIRONMENT:SEDIMENTARY:VEIN:100]
-[ENVIRONMENT:IGNEOUS_EXTRUSIVE:VEIN:100]
-
----
-
-queryable.getlast queryable.getlastprop
-queryableobj.getobj
->>> iron = df.getobj('INORGANIC:IRON')
->>> print iron.getlast(re_value='ITEMS_.+') # Gets the property of adamantite, the last ITEMS_ token in the file
-[ITEMS_SOFT]
->>> print iron.getlastprop(re_value='ITEMS_.+') # Gets the last ITEMS_ token which belongs to iron
-[ITEMS_SCALED]
-
----
-
-queryable.get queryable.getprop
-queryableobj.getobj
->>> iron = df.getobj('INORGANIC:IRON')
->>> print iron.get(exact_value='USE_MATERIAL_TEMPLATE')
-[USE_MATERIAL_TEMPLATE:METAL_TEMPLATE]
->>> print iron.get('WAFERS') # Gets the WAFERS token that's a property of adamantite
-[WAFERS]
->>> print iron.getprop('WAFERS') # Stops at the next INORGANIC token, doesn't pick up adamantine's WAFERS token
-None
-
----
-
-queryable.all queryable.alluntil
-queryableobj.getobj tokenlist.__len__
->>> dwarf = df.getobj('CREATURE:DWARF')
->>> print len(dwarf.all('INTELLIGENT')) # Gets all INTELLIGENT tokens following CREATURE:DWARF, including those belonging to other creatures
-6
->>> print len(dwarf.alluntil('INTELLIGENT', 'CREATURE')) # Gets only the dwarf's INTELLIGENT token
-1
->>> print len(dwarf.alluntil('INTELLIGENT', 'CREATURE:GOBLIN'))
-3
-
----
-
-queryable.getlast queryable.getlastuntil
-queryableobj.getobj
->>> hematite = df.getobj('INORGANIC:HEMATITE')
->>> print hematite.getlast('STATE_NAME_ADJ')
+>>> print hematite.last('STATE_NAME_ADJ') # Get the last token in the entire file
 [STATE_NAME_ADJ:ALL_SOLID:slade]
->>> print hematite.getlastuntil('STATE_NAME_ADJ', 'INORGANIC')
+>>> print hematite.last('STATE_NAME_ADJ', 'INORGANIC') # Stop at the next INORGANIC token
 [STATE_NAME_ADJ:ALL_SOLID:hematite]
 
 ---
 
-queryable.get queryable.getuntil
-queryableobj.getobj
->>> hematite = df.getobj('INORGANIC:HEMATITE')
->>> print hematite.get('METAL_ORE:GOLD:100')
-[METAL_ORE:GOLD:100]
->>> print hematite.getuntil('METAL_ORE:GOLD:100', 'INORGANIC')
-None
+queryable.all
+queryableobj.getobj tokenlist.__len__
+
+>>> dwarf = df.getobj('CREATURE:DWARF')
+>>> print len(dwarf.all('INTELLIGENT')) # Gets all INTELLIGENT tokens following CREATURE:DWARF, including those belonging to other creatures
+6
+>>> print len(dwarf.all('INTELLIGENT', 'CREATURE')) # Gets only the dwarf's INTELLIGENT token
+1
+>>> print len(dwarf.all('INTELLIGENT', 'CREATURE:GOBLIN'))
+3
 
 ---
 
-queryable.until
+queryable.all
 queryableobj.getobj
+
 >>> hematite = df.getobj('INORGANIC:HEMATITE')
->>> print hematite.until('INORGANIC')
+>>> print hematite.all(until='INORGANIC')
 [USE_MATERIAL_TEMPLATE:STONE_TEMPLATE]
 [STATE_NAME_ADJ:ALL_SOLID:hematite][DISPLAY_COLOR:4:7:0][TILE:156]
 [ENVIRONMENT:SEDIMENTARY:VEIN:100]
@@ -93,7 +48,7 @@ queryableobj.getobj
 [MATERIAL_VALUE:8]
 [IS_STONE]
 [MELTING_POINT:12736]
->>> print hematite.until('ENVIRONMENT')
+>>> print hematite.all(until='ENVIRONMENT')
 [USE_MATERIAL_TEMPLATE:STONE_TEMPLATE]
 [STATE_NAME_ADJ:ALL_SOLID:hematite][DISPLAY_COLOR:4:7:0][TILE:156]
 
@@ -101,6 +56,7 @@ queryableobj.getobj
 
 queryable.all
 queryableobj.getobj tokenlist.each
+
 >>> dwarven = df.getobj('TRANSLATION:DWARF')
 >>> print dwarven.all(exact_value='T_WORD', re_arg=(0, 'AL.*'))
 [T_WORD:ALE:mabdug]
@@ -121,6 +77,7 @@ queryableobj.getobj tokenlist.each
 
 queryable.get
 
+
 >>> print df.get(exact_value='TRANSLATION', exact_args=['HUMAN'])
 [TRANSLATION:HUMAN]
 >>> print df.get(value_in=('EXAMPLE', 'ALSO_NOT_A_REAL_TOKEN', 'PICKED_COLOR'), exact_args=['6', '0', '1'])
@@ -136,7 +93,8 @@ queryable.get
 ---
 
 queryable.list
-queryableobj.getobj queryable.get token.__getitem__ token.add
+queryableobj.getobj queryable.get
+reset
 >>> forest = df.getobj('ENTITY:FOREST')
 >>> print forest.list(range=5, include_self=True)
 [ENTITY:FOREST]
@@ -152,10 +110,3 @@ queryableobj.getobj queryable.get token.__getitem__ token.add
     [TRANSLATION:ELF]
     [WEAPON:ITEM_WEAPON_SPEAR]
     [WEAPON:ITEM_WEAPON_BOW]
->>> added = forest[2].add(sword)
->>> print forest.list(range=5, include_self=True)
-[ENTITY:FOREST]
-    [CREATURE:ELF]
-    [TRANSLATION:ELF]
-    [WEAPON:ITEM_WEAPON_SWORD_SHORT]
-    [WEAPON:ITEM_WEAPON_SPEAR]

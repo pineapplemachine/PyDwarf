@@ -1,5 +1,6 @@
 token.__init__
 
+
 >>> print raws.token('DISPLAY_COLOR:6:0:1')
 [DISPLAY_COLOR:6:0:1]
 >>> print raws.token(value='DISPLAY_COLOR', args=['6', '0', '1'])
@@ -11,6 +12,7 @@ token.__init__
 
 token.__str__ token.__repr__
 token.__init__
+
 >>> token = raws.token('prefix [HI] suffix')
 >>> print str(token)
 [HI]
@@ -21,6 +23,7 @@ prefix [HI] suffix
 
 token.__eq__ token.__ne__
 token.__init__
+
 >>> example_a = raws.token('EXAMPLE')
 >>> example_b = raws.token('EXAMPLE')
 >>> example_c = raws.token('ANOTHER_EXAMPLE')
@@ -46,6 +49,7 @@ False
 
 token.__gt__ token.__lt__ token.__ge__ token.__le__
 queryableobj.getobj
+
 >>> elf = df.getobj('CREATURE:ELF')
 >>> goblin = df.getobj('CREATURE:GOBLIN') # goblins are defined after elves in creature_standard
 >>> print elf > goblin
@@ -65,6 +69,7 @@ True
 
 token.__add__ token.__radd__
 token.__init__
+
 >>> one = raws.token('NUMBER:ONE')
 >>> two = raws.token('NUMBER:TWO')
 >>> three = raws.token('NUMBER:THREE')
@@ -79,6 +84,7 @@ token.__init__
 
 token.getprefix token.getsuffix token.setprefix token.setsuffic
 token.__init__
+
 >>> token = raws.token('This is a comment [EXAMPLE] so is this')
 >>> print token
 [EXAMPLE]
@@ -86,6 +92,7 @@ token.__init__
 This is a comment 
 >>> print token.getsuffix()
  so is this
+
 >>> token.setprefix('Hi ')
 >>> token.setsuffix(' there')
 >>> print repr(token)

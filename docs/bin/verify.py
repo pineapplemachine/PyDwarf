@@ -6,6 +6,8 @@
     docs/examples/ and makes sure they actually work as advertised.
 '''
 
+# import raws, pydwarf; df = pydwarf.df(raws)
+
 
 
 import sys
@@ -36,10 +38,11 @@ for filename in os.listdir(examples_dir):
             examplebodies = [body.strip() for body in examplefile.read().split('---')]
             for index, body in enumerate(examplebodies):
                 try:
-                    high, low, text = body.split('\n', 2)
+                    high, low, flags, text = body.split('\n', 3)
                     examples.append({
                         'high': high.split(' '),
                         'low': low.split(' '),
+                        'flags': flags.split(' '),
                         'text': text,
                         'name': '%s #%d' % (filename, index+1)
                     })
@@ -53,9 +56,14 @@ def verify(examples, **globs):
     docrunner = doctest.DocTestRunner()
     results = []
     testnum = 0
+    
+    df = globs['df']
+    
     for example in examples:
         print 'Running example %s' % example['name']
         testnum += 1
+        
+        # Create the doctest object
         test = docparser.get_doctest(
             string = example['text'],
             globs = globs,
@@ -63,16 +71,40 @@ def verify(examples, **globs):
             filename = None,
             lineno = None
         )
+        
+        # Actually run the test
+        resultcount = len(results)
         docrunner.run(
             test = test,
             out = lambda result: results.append(result),
             clear_globs = False
         )
+        
+        # Handle flags
+        if 'reset' in example['flags']:
+            print 'Resetting df raws.'
+            df.reset()
+        
     return results
 
 
 
-doctest_pattern = r'\*+\n(?s)Line (\d+), in (.*)\nFailed example:\n(.*)\nExpected:\n(.*)\nGot:(.*?)\s*$'
+doctest_pattern = (
+    '(?s)\*+\n'
+    'Line (?P<line>\d+), in (?P<name>.*)\n'
+    'Failed example:\n'
+        '(?P<text>.*)\n'
+    '('
+        'Expected:\n'
+            '(?P<expected>.*)\n'
+        'Got:\n'
+            '(?P<got>.*?)'
+    '|'
+        'Exception raised:\n'
+            '(?P<exception>.*)'
+    ')'
+    '\s*$'
+)
 doctest_result_re = re.compile(doctest_pattern)
 
 
@@ -95,12 +127,18 @@ if __name__ == '__main__':
     )
     
     realresults = []
+    lastfailurein = None
     for result in results:
         match = doctest_result_re.match(result.expandtabs(4))
-        try:
-            ignore = match.group(4).strip() == match.group(5).strip()
-        except:
+        groups = match.groupdict()
+        if groups['got'] and groups['expected']:
+            ignore = groups['got'].strip() == groups['expected'].strip()
+        else:
             ignore = False
+        if groups['name'] == lastfailurein:
+            ignore = True
+        else:
+            lastfailurein = groups['name']
         if not ignore: realresults.append(result)
     
     if realresults:

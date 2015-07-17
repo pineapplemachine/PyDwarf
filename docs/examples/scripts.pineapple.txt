@@ -1,0 +1,53 @@
+pydwarf.scripts.pineapple.flybears
+pydwarf.urist.getfn raws.queryableobj.allobj raws.tokenlist.each raws.queryableprop.getprop raws.token.arg
+reset
+>>> print pydwarf.urist.getfn('pineapple.flybears')(df)
+SUCCESS: Made 4 bear species fliers.
+>>> creatures = df.allobj('CREATURE')
+>>> print creatures.each(filter=lambda token: 'BEAR' in token.arg() and token.getprop('FLIER') is not None)
+[CREATURE:BEAR_SLOTH]
+[CREATURE:BEAR_GRIZZLY]
+[CREATURE:BEAR_BLACK]
+[CREATURE:BEAR_POLAR]
+
+---
+
+pydwarf.scripts.pineapple.noaquifers
+pydwarf.urist.getfn raws.queryable.all raws.tokenlist.__len__
+reset
+>>> print pydwarf.urist.getfn('pineapple.noaquifers')(df)
+SUCCESS: Removed 19 AQUIFER tokens.
+>>> print len(df.all('AQUIFER'))
+0
+
+---
+
+pydwarf.scripts.pineapple.noexotic
+raws.queryableobj.getobj raws.queryable.all raws.tokenlist.__len__ pydwarf.registrar.__getattr__
+reset
+>>> print df.getobj('CREATURE:TIGER').list(range=12, include_self=True)
+[CREATURE:TIGER]
+    [DESCRIPTION:A huge, striped predator.  It is found in almost any climate on a lone hunt for its prey.]
+    [NAME:tiger:tigers:tiger]
+    [CASTE_NAME:tiger:tigers:tiger]
+    [CHILD:3][GENERAL_CHILD_NAME:tiger cub:tiger cubs]
+    [CREATURE_TILE:'T'][COLOR:6:0:1]
+    [PETVALUE:200]
+    [PET_EXOTIC]
+    [MOUNT_EXOTIC]
+    [TRAINABLE]
+>>> print pydwarf.scripts.pineapple.noexotic(df)
+SUCCESS: Replaced 303 PET_EXOTIC and 150 MOUNT_EXOTIC tokens.
+>>> print len(df.all(value_in=['PET_EXOTIC', 'MOUNT_EXOTIC']))
+0
+>>> print df.getobj('CREATURE:TIGER').list(range=12, include_self=True)
+[CREATURE:TIGER]
+    [DESCRIPTION:A huge, striped predator.  It is found in almost any climate on a lone hunt for its prey.]
+    [NAME:tiger:tigers:tiger]
+    [CASTE_NAME:tiger:tigers:tiger]
+    [CHILD:3][GENERAL_CHILD_NAME:tiger cub:tiger cubs]
+    [CREATURE_TILE:'T'][COLOR:6:0:1]
+    [PETVALUE:200]
+    [PET]
+    [MOUNT]
+    [TRAINABLE]

@@ -1,0 +1,27 @@
+pydwarf.registrar.__iter__ pydwarf.registrar.__getattr__
+pydwarf.scripts.umiman.smallthings pydwarf.uristscript.__str__
+
+>>> smallthings = pydwarf.scripts.umiman.smallthings
+>>> print '\n'.join(str(script) for script in smallthings)
+umiman.smallthings.engraving
+umiman.smallthings.prefstring
+umiman.smallthings.speech.threats
+umiman.smallthings.speech.nofamily
+
+---
+
+
+pydwarf.registrar.__getattr__ pydwarf.response.__str__
+reset
+>>> print len(df['data/speech/threat.txt'].bin())
+15
+>>> print len(df['data/speech/no_family.txt'].bin())
+28
+>>> responses = pydwarf.scripts.umiman.smallthings.speech(df)
+>>> print '\n'.join('%s: %s' % (key, value) for key, value in responses.iteritems())
+threats: SUCCESS: Ran successfully.
+nofamily: SUCCESS: Ran successfully.
+>>> print len(df['data/speech/threat.txt'])
+8953
+>>> print len(df['data/speech/no_family.txt'])
+1720

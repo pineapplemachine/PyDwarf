@@ -1,0 +1,33 @@
+queryable.get queryable.getprop
+queryableobj.getobj
+
+>>> iron = df.getobj('INORGANIC:IRON')
+>>> print iron.get(exact_value='USE_MATERIAL_TEMPLATE')
+[USE_MATERIAL_TEMPLATE:METAL_TEMPLATE]
+>>> print iron.get('WAFERS') # Gets the WAFERS token that's a property of adamantite
+[WAFERS]
+>>> print iron.getprop('WAFERS') # Stops at the next INORGANIC token, doesn't pick up adamantine's WAFERS token
+None
+
+---
+
+queryable.last queryable.lastprop
+queryableobj.getobj
+
+>>> iron = df.getobj('INORGANIC:IRON')
+>>> print iron.last(re_value='ITEMS_.+') # Gets the property of adamantite, the last ITEMS_ token in the file
+[ITEMS_SOFT]
+>>> print iron.lastprop(re_value='ITEMS_.+') # Gets the last ITEMS_ token which belongs to iron
+[ITEMS_SCALED]
+
+---
+
+queryable.all queryable.allprop
+queryableobj.getobj tokenlist.__len__
+
+>>> hematite = df.getobj('INORGANIC:HEMATITE')
+>>> print len(hematite.all('ENVIRONMENT')) # Gets all ENVIRONMENT tokens following hematite
+38
+>>> print hematite.allprop('ENVIRONMENT') # Gets only the ENVIRONMENT tokens belonging to hematite
+[ENVIRONMENT:SEDIMENTARY:VEIN:100]
+[ENVIRONMENT:IGNEOUS_EXTRUSIVE:VEIN:100]

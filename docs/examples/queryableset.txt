@@ -1,0 +1,30 @@
+queryableadd.set
+parse
+
+>>> tokens = raws.parse('[PROPERTY_ONE:HI][PROPERTY_TWO:WORLD]')
+>>> settoken = tokens.set('PROPERTY_ONE:HELLO')
+>>> print tokens
+[PROPERTY_ONE:HELLO][PROPERTY_TWO:WORLD]
+>>> print settoken
+[PROPERTY_ONE:HELLO]
+>>> settoken = tokens.set('PROPERTY_TWO', 'WHIRL')
+>>> print tokens
+[PROPERTY_ONE:HELLO][PROPERTY_TWO:WHIRL]
+>>> settoken = tokens.set('PROPERTY_THREE:HOW DO YOU DO?')
+>>> print tokens
+[PROPERTY_ONE:HELLO][PROPERTY_TWO:WHIRL][PROPERTY_THREE:HOW DO YOU DO?]
+>>> settoken = tokens.set(value='PROPERTY_ONE', args=['HI', 'THERE'])
+>>> print tokens
+[PROPERTY_ONE:HI:THERE][PROPERTY_TWO:WHIRL][PROPERTY_THREE:HOW DO YOU DO?]
+
+---
+
+queryable.setall
+parse
+
+>>> tokens = raws.parse('[X:1][X:2][Y:3][Y:4]')
+>>> settokens = tokens.setall('Y', 5)
+>>> print tokens
+[X:1][X:2][Y:5][Y:5]
+>>> print settokens
+[Y:5][Y:5]

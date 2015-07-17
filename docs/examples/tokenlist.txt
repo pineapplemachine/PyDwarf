@@ -1,0 +1,48 @@
+tokenlist.__init__ queryable.all queryable.get queryable.last
+
+
+>>> tokens = raws.tokenlist('[A:1][B:2][C:1][D:2]')
+>>> print tokens.all()
+[A:1][B:2][C:1][D:2]
+>>> print tokens.get()
+[A:1]
+>>> print tokens.last()
+[D:2]
+>>> print tokens.all(exact_arg=(0, 1))
+[A:1][C:1]
+>>> print tokens.get(exact_arg=(0, 1))
+[A:1]
+>>> print tokens.last(exact_arg=(0, 1))
+[C:1]
+
+---
+
+tokenlist.each
+tokenlist.__init__ token.__init__ token.arg
+
+>>> tokens = raws.tokenlist('[A:1][B:2][C:1][D:2]')
+>>> print tokens.each(lambda token: raws.token(value=token.arg(), arg=token.value))
+[1:A][2:B][1:C][2:D]
+>>> print tokens.each(lambda token: token.value + token.arg(), output=list)
+['A1', 'B2', 'C1', 'D2']
+
+---
+
+tokenlist.append
+tokenlist.__init__ token.__init__
+
+>>> tokens = raws.tokenlist('[ONE][TWO][THREE]')
+>>> print tokens
+[ONE][TWO][THREE]
+>>> tokens.append('[FOUR]')
+>>> print tokens
+[ONE][TWO][THREE][FOUR]
+>>> tokens.append('[FIVE][SIX][SEVEN]')
+>>> print tokens
+[ONE][TWO][THREE][FOUR][FIVE][SIX][SEVEN]
+>>> tokens.append(raws.token('EIGHT'))
+>>> print tokens
+[ONE][TWO][THREE][FOUR][FIVE][SIX][SEVEN][EIGHT]
+>>> tokens.append(tokens)
+>>> print tokens
+[ONE][TWO][THREE][FOUR][FIVE][SIX][SEVEN][EIGHT][ONE][TWO][THREE][FOUR][FIVE][SIX][SEVEN][EIGHT]

@@ -1,5 +1,6 @@
 tokenargs.set tokenargs.clear tokenargs.add
 token.__init__
+
 >>> token = raws.token('EXAMPLE:a:b:c')
 >>> print token
 [EXAMPLE:a:b:c]
@@ -23,6 +24,7 @@ token.__init__
 
 tokenargs.contains
 token.__init__
+
 >>> token = raws.token('EXAMPLE:ONE:TWO:FOUR')
 >>> print 'ONE' in token.args
 True
@@ -33,6 +35,7 @@ False
 
 tokenargs.__str__
 token.__init__
+
 >>> token = raws.token('EXAMPLE:a:b:c')
 >>> print str(token.args)
 a:b:c
