@@ -284,11 +284,26 @@ class rawsdir(queryableobj.queryableobj):
             elif os.path.isdir(path):
                 shutil.rmtree(path)
             
+    def clear(self):
+        for file in self.files.values(): self.remove(file)
+        self.files = {}
+        self.filenames = {}
+        
+    def reset(self):
+        '''
+            Reload the dir object from its associated directory, consequently
+            discarding all changes.
+        '''
+        self.clear()
+        self.read()
+            
     def getdestforfileop(self, dest, exception=True):
         '''Internal'''
         if dest is None:
             dest = self.dest if self.dest else self.root
-            if exception and dest is None: raise ValueError('Failed to write dir because no destination path was specified.')
+            if exception and dest is None: raise ValueError(
+                'Failed to write dir because no destination path was specified.'
+            )
         return dest
     
     def tokens(self, *args, **kwargs):
