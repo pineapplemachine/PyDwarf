@@ -3,11 +3,11 @@
 
 import textwrap
 
-import queryable
+import queryableadd
 
 
 
-class tokenlist(list, queryable.queryable):
+class tokenlist(list, queryableadd.queryableadd):
     '''Extends builtin list with token querying functionality.'''
     
     def __init__(self, *args, **kwargs):
@@ -30,12 +30,23 @@ class tokenlist(list, queryable.queryable):
             try:
                 self.extend(item)
             except:
-                raise ValueError('Failed to append item because it was of unrecognized type %s.' % type(item))
+                raise TypeError('Failed to append item because it was of unrecognized type %s.' % type(item))
+                
+    def add(self, *args, **kwargs):
+        if len(self):
+            added = self[-1].add(*args, **kwargs)
+            self.append(added)
+            return added
+        else:
+            raise ValueError('Failed to add tokens to tokenlist because the list was already empty.')
     
-    def each(self, func=None, filter=None):
-        '''Calls a function for each entry in the list with that entry as the argument, and
-        appends each result to a returned tokenlist.'''
-        return tokenlist(
+    def each(self, func=None, filter=None, output=None):
+        '''
+            Calls a function for each entry in the list with that entry as the argument, and
+            appends each result to a returned tokenlist.
+        '''
+        if output is None: output = tokenlist
+        return output(
             (func(token) if func is not None else token) for token in self if (filter is None or filter(token))
         )
         
@@ -92,5 +103,6 @@ class tokenlist(list, queryable.queryable):
 
 
 
+import queryable
 import tokenparse
 import token

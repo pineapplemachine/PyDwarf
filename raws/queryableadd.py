@@ -9,40 +9,43 @@ class queryableadd(queryable.queryable):
     
     # Inheriting classes must implement an add method
     
-    def set(self, *args, **kwargs):
-        value, args = queryableadd.argsset(*args, **kwargs)
-        settoken = self.get(exact_value=value)
-        if settoken is None:
-            return self.add(value=value, args=args)
+    def setsingular(self, getmethod, addmethod, *args, **kwargs):
+        setvalue, setargs = queryableadd.argsset(*args, **kwargs)
+        applytoken = getmethod(exact_value=setvalue)
+        if applytoken is None:
+            return addmethod(value=setvalue, args=setargs)
         else:
-            settoken.args.reset(args)
-            return settoken
+            applytoken.args.reset(setargs)
+            return applytoken
             
-    def setprop(self, *args, **kwargs):
-        value, args = queryableadd.argsset(*args, **kwargs)
-        settoken = self.getprop(exact_value=value)
-        if settoken is None:
-            return self.addprop(value=value, args=args)
-        else:
-            settoken.args.reset(args)
-            return settoken
-            
-    def setall(self, *args, **kwargs):
-        value, args = queryableadd.argsset(*args, **kwargs)
-        settokens = self.all(exact_value=value)
-        settokens.each(lambda token: token.args.reset(args))
-        return settokens
-            
-    def setallprop(self, *args, **kwargs):
-        value, args = queryableadd.argsset(*args, **kwargs)
-        settokens = self.allprop(exact_value=value)
-        settokens.each(lambda token: token.args.reset(args))
-        return settokens
+    def setplural(self, getmethod, *args, **kwargs):
+        setvalue, setargs = queryableadd.argsset(*args, **kwargs)
+        settoken = token.token.autosingular(*args, **kwargs)
+        applytokens = getmethod(exact_value=setvalue)
+        for applytoken in applytokens: applytoken.args.reset(setargs)
+        return applytokens
         
     @staticmethod
     def argsset(*args, **kwargs):
-        settoken = token.token.autosingular(*args, **kwargs)
-        return settoken.value, settoken.args
+        if len(args) == 2:
+            setvalue = args[0]
+            setargs = args[1]
+            if isinstance(setargs, basestring) or not (hasattr(setargs, '__iter__') or hasattr(setargs, '__getitem__')):
+                setargs = (setargs,)
+        else:
+            settoken = token.token.autosingular(*args, **kwargs)
+            setvalue = settoken.value
+            setargs = settoken.args
+        return setvalue, setargs
+            
+    def set(self, *args, **kwargs):
+        return self.setsingular(self.get, self.add, *args, **kwargs)
+        
+    def setlast(self, *args, **kwargs):
+        return self.setsingular(self.last, self.add, *args, **kwargs)
+            
+    def setall(self, *args, **kwargs):
+        return self.setplural(self.all, *args, **kwargs)
 
 
 

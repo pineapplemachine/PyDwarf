@@ -4,12 +4,12 @@
 import itertools
 import inspect
 
-import queryableadd
+import queryableaddprop
 import tokenargs
 
 
 
-class rawstoken(queryableadd.queryableadd):
+class rawstoken(queryableaddprop.queryableaddprop):
     
     '''Internal: Recurring piece of docstrings.'''
     auto_arg_docstring = '''
@@ -44,7 +44,7 @@ class rawstoken(queryableadd.queryableadd):
             elif isinstance(auto, rawstoken):
                 copy = auto
             else:
-                raise ValueError('Failed to recognize argument of type %s.' % str(type(auto)))
+                raise TypeError('Failed to recognize argument of type %s.' % str(type(auto)))
         
         self.value = None
         self.args = None
@@ -126,7 +126,7 @@ class rawstoken(queryableadd.queryableadd):
             tokens.extend(other)
             return tokens
         else:
-            raise ValueError('Failed to perform concatenation because the type %s of the other operand was unrecognized.' % type(other))
+            raise TypeError('Failed to perform concatenation because the type %s of the other operand was unrecognized.' % type(other))
         
     def __radd__(self, other):
         '''Internal: Same as __add__ except reversed.'''
@@ -141,7 +141,7 @@ class rawstoken(queryableadd.queryableadd):
             tokens.append(self)
             return tokens
         else:
-            raise ValueError('Failed to perform concatenation because the type %s of the other operand was unrecognized.' % type(other))
+            raise TypeError('Failed to perform concatenation because the type %s of the other operand was unrecognized.' % type(other))
             
     def __mul__(self, value):
         '''Concatenates copies of this token the number of times specified.
@@ -178,7 +178,7 @@ class rawstoken(queryableadd.queryableadd):
             elif isinstance(auto, rawstoken):
                 return auto
             else:
-                raise ValueError('Failed to recognize argument of type %s as valid.' % str(type(auto)))
+                raise TypeError('Failed to recognize argument of type %s as valid.' % str(type(auto)))
         return rawstoken(**kwargs)
         
     @staticmethod
@@ -559,9 +559,24 @@ class rawstoken(queryableadd.queryableadd):
         elif self.value == 'CREATURE':
             aftervalues.extend(('APPLY_CREATURE_VARIATION', 'APPLY_CURRENT_CREATURE_VARIATION'))
             beforevalues,extend(('CASTE', 'SELECT_CASTE'))
-        addafter = self.getlastprop(value_in=aftervalues, until_value_in=beforevalues)
+        addafter = self.lastprop(value_in=aftervalues, until_value_in=beforevalues)
         if not addafter: addafter = self
         addafter.add(*args, **kwargs)
+        
+    def propterminationfilter(self, naive=True):
+        if self.file is not None:
+            # Smartest: Base it off file header and objects knowledge if possible.
+            header = self.file.getobjheaders()[0]
+        
+        elif naive:
+            # Naive: If the information for smart isn't available, assume this token itself is the root object token.
+            header = objects.headerforobject(self)
+        
+        else:
+            raise ValueError('Failed to get termination filter for token because there wasn\'t enough information and because the naive filter was disallowed.')
+            
+        terminators = objects.objectsforheader(header)
+        return lambda token, count: (False, token.value in terminators and token.nargs(1))
     
     @staticmethod
     def firstandlast(tokens, setfile=None):
@@ -654,104 +669,6 @@ class rawstoken(queryableadd.queryableadd):
         tokens = [self] + self.removeallprop(*args, **kwargs)
         self.remove()
         return tokens
-    
-    @staticmethod
-    def parseplural(data, implicit=False, **kwargs):
-        '''Parses a string, turns it into a list of tokens.
-
-        data: The string to be parsed.
-        implicit: Determines behavior when there are no opening or closing braces.
-            If True, then the input is assumed to be the contents of a token, e.g. [input].
-            If False, an exception is raised.
-        **kwargs: Extra named arguments are passed to the constructor each time a new
-            rawstoken is distinguished and created.
-        '''
-
-        tokens = tokenlist.tokenlist()    # maintain a sequential list of tokens
-        pos = 0                     # byte position in data
-        if data.find('[') == -1 and data.find(']') == -1:
-            if implicit:
-                tokenparts = data.split(':')
-                token = rawstoken(
-                    value = tokenparts[0],
-                    args = tokenparts[1:],
-                    **kwargs
-                )
-                tokens.append(token)
-                return tokens
-            else:
-                raise ValueError('Failed to parse data string because it had no braces and because implicit was set to False.')
-        else:
-            while pos < len(data):
-                token = None
-                open = data.find('[', pos)
-                if open >= 0 and open < len(data):
-                    close = data.find(']', open)
-                    if close >= 0 and close < len(data):
-                        prefix = data[pos:open]
-                        tokentext = data[open+1:close]
-                        tokenparts = tokentext.split(':')
-                        token = rawstoken(
-                            value = tokenparts[0],
-                            args = tokenparts[1:],
-                            prefix = prefix,
-                            prev = tokens[-1] if len(tokens) else None,
-                            **kwargs
-                        )
-                        pos = close+1
-                if token is not None:
-                    if len(tokens): tokens[-1].next = token
-                    tokens.append(token)
-                else:
-                    break
-            if len(tokens) and pos<len(data):
-                tokens[-1].suffix = data[pos:]
-            return tokens
-            
-    @staticmethod
-    def parsesingular(data, implicit=True, fail_on_multiple=True, apply=None, **kwargs):
-        '''Parses a string containing exactly one token. **kwargs are passed on to the parse static method.
-        '''
-        if data.count('[') > 1:
-            if fail_on_multiple:
-                raise ValueError('Failed to parse token because there was more than one open bracket in the data string.')
-            else:
-                data = data[:data.find('[', data.find('[')+1)]
-        open = data.find('[')
-        close = data.find(']')
-        prefix = None
-        suffix = None
-        tokenparts = None
-        if open == -1 and close == -1 and implicit:
-            pass
-        elif open >= 0 and close >= 0:
-            prefix = data[:open]
-            suffix = data[close+1:]
-            data = data[open+1:close]
-        else:
-            raise ValueError('Failed to parse token because data string contained mismatched brackets.')
-        tokenparts = data.split(':')
-        if apply:
-            apply.setvalue(tokenparts[0])
-            apply.setargs(tokenparts[1:])
-            if prefix is not None: apply.setprefix(prefix)
-            if suffix is not None: apply.setsuffix(suffix)
-            return apply
-        else:
-            return rawstoken(
-                value = tokenparts[0],
-                args = tokenparts[1:],
-                prefix = prefix,
-                suffix = suffix,
-                **kwargs
-            )
-            
-    @staticmethod
-    def parsevariable(*args, **kwargs):
-        tokens = rawstoken.parseplural(*args, **kwargs)
-        return tokens[0] if tokens and len(tokens) == 1 else tokens
-        
-    parse = parsevariable
 
 rawstoken.nulltoken = rawstoken()
 
@@ -761,4 +678,5 @@ token = rawstoken
 
 import queryable
 import tokenlist
+import objects
 import tokenparse
