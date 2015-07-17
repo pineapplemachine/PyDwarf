@@ -4,7 +4,7 @@
 import os
 import re
 
-from log import log
+from logger import log
 from helpers import findfile
 
 

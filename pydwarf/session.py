@@ -5,7 +5,7 @@ import os
 import shutil
 
 from urist import urist
-from log import log
+from logger import log
 from config import config
 
 

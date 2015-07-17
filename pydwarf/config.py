@@ -9,7 +9,7 @@ import importlib
 import imp
 import traceback
 
-from log import log, stdouthandler, logfilehandler, timestamp
+from logger import log, stdouthandler, logfilehandler, timestamp
 from version import detectversion
 from helpers import findfile
 

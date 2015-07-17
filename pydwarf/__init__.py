@@ -24,34 +24,41 @@ pydwarf.helpers: Contains some miscellaneous utility functions.
 
 
 
-from log import log
-from response import response, failure, success
-from urist import urist
-from session import session
-from config import config
-from helpers import rel, findfile
-from version import *
+import logger
+import response
+import helpers
+import quick
+import urist
+import uristscript
+import registrar
+import session
+import config
+from version import * # TODO: do this better
 
 
 
-def quick(raws, root=None, **kwargs):
-    se = session()
-    if root is not None: kwargs['root'] = root
-    args = {
-        'input': 'df',
-        'paths': 'auto',
-        'version': 'auto',
-        'hackversion': 'auto',
-        'output': 'output/',
-        'backup': None,
-        'packages': 'scripts',
-        'verbose': True,
-        'log': '',
-    }
-    args.update(kwargs)
-    se.load(raws, args=args)
-    return se
+timestamp = logger.timestamp
+datetimeformat = logger.datetimeformat
+stdouthandler = logger.stdouthandler
+logfilehandler = logger.logfilehandler
+log = logger.log
 
-def df(*args, **kwargs):
-    se = quick(*args, **kwargs)
-    return se.df
+success = response.success
+failure = response.failure
+response = response.response
+
+df = quick.df
+quick = quick.quick
+
+rel = helpers.rel
+findfile = helpers.findfile
+
+urist = urist.urist
+uristscript = uristscript.uristscript
+registrar = registrar.registrar
+session = session.session
+config = config.config
+
+
+
+scripts = urist.registrar

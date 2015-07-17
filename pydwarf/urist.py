@@ -1,94 +1,56 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-import os
-import shutil
-import textwrap
-
-import version as versionutils
-from log import log
-import uristdoc
+import registrar
 
 
 
 # Functions in scripts must be decorated with this in order to be made available to PyDwarf
 class urist:
-    '''Decorates a function as being an urist. Keyword arguments are treated as metadata.
-    
-    Special metadata - these are given special handling:
-        name: If name is not specified, then the function name is used to refer to the script.
-            If specified, this is used instead.
-        compatibility: Informs PyDwarf, using a regular expression, which Dwarf Fortress
-            versions a script is compatible with. If this is an iterable, later patterns
-            should describe versions that the plugin is partially compatible with, or that
-            it ought to be compatible with but that hasn't been tested. This way, a version
-            with a more confident compatibility indicator can be chosen over one with a less
-            confident indicator.
-        namespace: Should correspond to an author or authors, groups of mods, or anything
-            really. When specified, it becomes possible for a user to conveniently reference
-            a particular one of multiple identically-named mods by a namespace. If there is
-            a period in a script name, the text preceding the last period is assumed to be
-            namespace and the text after the name.
-        dependency: Will cause an error to be logged when running a script without having
-            run all of its dependencies first.
-            
-    Standard metadata - PyDwarf does nothing special with these, but for the sake of standardization they ought to be included:
-        author: Indicates who created the script. In the case of multiple authors, an
-            iterable such as a tuple or list should be used to enumerate them.
-        version: Indicates the script version.
-        description: Describes the script's purpose and functioning.
-        arguments: Should be a dict with argument names as keys corresponding to strings which
-            explain their purpose.
+    '''
+        Decorates a function as being an urist. Keyword arguments are treated as metadata.
+        
+        Special metadata - these are given special handling:
+            name: If name is not specified, then the function name is used to refer to the script.
+                If specified, this is used instead.
+            compatibility: Informs PyDwarf, using a regular expression, which Dwarf Fortress
+                versions a script is compatible with. If this is an iterable, later patterns
+                should describe versions that the plugin is partially compatible with, or that
+                it ought to be compatible with but that hasn't been tested. This way, a version
+                with a more confident compatibility indicator can be chosen over one with a less
+                confident indicator.
+            namespace: Should correspond to an author or authors, groups of mods, or anything
+                really. When specified, it becomes possible for a user to conveniently reference
+                a particular one of multiple identically-named mods by a namespace. If there is
+                a period in a script name, the text preceding the last period is assumed to be
+                namespace and the text after the name.
+            dependency: Will cause an error to be logged when running a script without having
+                run all of its dependencies first.
+                
+        Standard metadata - PyDwarf does nothing special with these, but for the sake of standardization they ought to be included:
+            author: Indicates who created the script. In the case of multiple authors, an
+                iterable such as a tuple or list should be used to enumerate them.
+            version: Indicates the script version.
+            description: Describes the script's purpose and functioning.
+            arguments: Should be a dict with argument names as keys corresponding to strings which
+                explain their purpose.
     '''
     
     # Track registered functions
-    registered = {}
+    registrar = registrar.registrar()
     
     # Decorator handling
     def __init__(self, **kwargs):
-        self.namespace = ''
         self.metadata = kwargs
-    def __call__(self, fn):
-        self.fn = fn
-        if 'name' in self.metadata:
-            self.name, self.namespace = urist.splitname(self.metadata['name'])
-        else:
-            self.name = fn.__name__
-        if self.name not in urist.registered: urist.registered[self.name] = []
-        urist.registered[self.name].append(self)
-        log.debug('Registered script %s.' % self.getname())
-        return fn
+    def __call__(self, func):
+        script = uristscript.uristscript(func, **self.metadata)
+        urist.register(script)
+        return script
         
-    def __str__(self):
-        return self.getname()
-        
-    def __hash__(self):
-        return hash(';'.join((self.getname(), str(self.meta('version')), str(self.meta('author')))))
-        
-    def getname(self):
-        return '.'.join((self.namespace, self.name)) if self.namespace else self.name
-    
-    def meta(self, key, default=None):
-        return self.metadata.get(key, default)
-    
-    def matches(self, match):
-        return all([self.meta(i) == j for i, j in match.iteritems()]) if match else True
-    
-    def depsatisfied(self, session):
-        deps = self.meta('dependency')
-        if deps is not None:
-            # Allow single dependencies to be indicated without being inside an iterable
-            if isinstance(deps, basestring) or isinstance(deps, dict): deps = (deps,)
-            # Check each dependency
-            satisfied = 0
-            for dep in deps:
-                log.debug('Checking for dependency %s...' % dep)
-                satisfied += session.successful(dep)
-            # All done
-            log.debug('Satisifed %d of %d dependencies.' % (satisfied, len(deps)))
-            return satisfied == len(deps)
-        else:
-            return True
+    @staticmethod
+    def register(script):
+        urist.registrar.__register__(script)
+        log.debug('Registered script %s.' % script.getname())
     
     @staticmethod
     def info(script, version=None):
@@ -96,11 +58,10 @@ class urist:
         uristinstance, scriptname, scriptfunc, scriptargs, scriptmatch = None, None, None, None, None
         scriptignoreversion = None
         
-        if isinstance(script, urist):
+        if isinstance(script, uristscript.uristscript):
             uristinstance = script
         elif callable(script):
             scriptfunc = script
-            uristinstance = urist.forfunc(scriptfunc)
         elif isinstance(script, basestring):
             scriptname = script
         elif isinstance(script, dict):
@@ -114,7 +75,7 @@ class urist:
         
         if uristinstance is not None:
             scriptname = uristinstance.name
-            scriptfunc = uristinstance.fn
+            scriptfunc = uristinstance.func
             
         if scriptname is None and scriptfunc is not None:
             scriptname = scriptfunc.__name__
@@ -122,38 +83,58 @@ class urist:
         return uristinstance, scriptname, scriptfunc, scriptargs, scriptmatch, checkversion
         
     @staticmethod
-    def getregistered(name, namespace=None):
-        named = urist.allregistered() if name == '*' else urist.registered.get(name)
-        if named and namespace:
-            return [ur for ur in named if ur.namespace == namespace or ur.namespace.startswith(namespace+'.')]
-        else:
-            return named
-        
-    @staticmethod
-    def allregistered():
-        results = []
-        for rlist in urist.registered.itervalues():
-            for r in rlist: results.append(r)
-        return results
-    
-    @staticmethod
     def get(name, version=None, match=None, session=None):
         # Reduce list based on matching the match dict, version compatibility, dependencies, etc
+        
+        candidates = urist.registrar[name]
+        if isinstance(candidates, registrar.registrar):
+            candidates = list(candidates)
+        else:
+            candidates = [candidates]
+        
         return urist.cullcandidates(
             version = version, 
             match = match, 
             session = session, 
-            candidates = urist.getregistered(*urist.splitname(name))
+            candidates = candidates
         )
         
     @staticmethod
     def getfn(name, **kwargs):
+        # TODO: deprecate
         candidates, original, culled = urist.get(name, **kwargs)
         if len(candidates):
-            return candidates[0].fn
+            return candidates[0]
         else:
             return None
-        
+            
+    @staticmethod
+    def list():
+        names = {}
+        total = 0
+        for uristlist in urist.registered.itervalues():
+            for uristinstance in uristlist:
+                uname = uristinstance.getname()
+                if uname not in names: names[uname] = []
+                names[uname].append(uristinstance)
+                total += 1
+        return sorted(names.keys())
+            
+    @staticmethod
+    def doclist(names=[], delimiter='\n\n', format=None):
+        urists = []
+        if len(names):
+            for name in names: urists += urist.getregistered(*urist.splitname(name))
+        else:
+            urists = urist.allregistered()
+        items = sorted(ur.doc(format=format) for ur in urists)
+        template = uristdoc.template.format.get(format if format else 'txt')
+        if items and template:
+            text = template.concat(items)
+        else:
+            text = delimiter.join(items)
+        return text
+    
     @staticmethod
     def cullcandidates(version, match, session, candidates):
         if candidates and len(candidates):
@@ -218,66 +199,9 @@ class urist:
             else:
                 pass # conflicting names in different namespaces, do nothing
         return names.values()
-    
-    @staticmethod
-    def forfunc(func):
-        for uristlist in registered:
-            for urist in uristlist:
-                if urist.fn == func: return urist
-        return None
-            
-    @staticmethod
-    def splitname(name):
-        if '.' in name:
-            nameparts = name.split('.')
-            name = nameparts[-1]
-            namespace = '.'.join(nameparts[:-1])
-            return name, namespace
-        else:
-            return name, None
-            
-    @staticmethod
-    def list():
-        names = {}
-        total = 0
-        for uristlist in urist.registered.itervalues():
-            for uristinstance in uristlist:
-                uname = uristinstance.getname()
-                if uname not in names: names[uname] = []
-                names[uname].append(uristinstance)
-                total += 1
-        return sorted(names.keys())
 
-    def doc(self, format=None):
-        '''Make a pretty metadata string.'''
-        
-        template = uristdoc.template.format.get(format if format else 'txt')
-        if template is None: raise KeyError('Failed to create documentation string because the format %s was unrecognized.' % format)
-        
-        handled_metadata_keys = ('name', 'namespace', 'author', 'version', 'description', 'arguments', 'dependency', 'compatibility')
-        
-        return template.full(
-            name = self.getname(),
-            version = self.meta('version'),
-            author = self.meta('author'),
-            description = self.meta('description'),
-            compatibility = self.meta('compatibility'),
-            dependencies = self.meta('dependency'),
-            arguments = self.meta('arguments'),
-            metadata = {key: value for key, value in self.metadata.iteritems() if key not in handled_metadata_keys}
-        )
 
-    @staticmethod
-    def doclist(names=[], delimiter='\n\n', format=None):
-        urists = []
-        if len(names):
-            for name in names: urists += urist.getregistered(*urist.splitname(name))
-        else:
-            urists = urist.allregistered()
-        items = sorted(ur.doc(format=format) for ur in urists)
-        template = uristdoc.template.format.get(format if format else 'txt')
-        if items and template:
-            text = template.concat(items)
-        else:
-            text = delimiter.join(items)
-        return text
+
+import uristscript
+import version as versionutils
+from logger import log

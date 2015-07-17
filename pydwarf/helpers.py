@@ -2,7 +2,7 @@
 # coding: utf-8
 
 import os
-from log import log
+from logger import log
 
 
 
