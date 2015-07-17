@@ -15,7 +15,7 @@ class reffile(basefile.basefile):
         self.kind = 'ref'
     
     def copy(self):
-        copy = rawsotherfile()
+        copy = reffile()
         copy.path = self.path
         copy.rootpath = self.rootpath
         copy.name = self.name
