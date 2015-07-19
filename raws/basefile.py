@@ -7,7 +7,10 @@ import traceback
 
 
 class basefile(object):
-    '''Base class for file objects.'''
+    '''
+        Base abstract class for file objects. The files which belong to dir
+        objects inherit from this class.
+    '''
     
     def __init__(self):
         self.dir = None
@@ -19,7 +22,10 @@ class basefile(object):
         self.kind = None
     
     def __str__(self):
-        name = ''.join((self.name, self.ext)) if self.ext and self.name else self.name
+        if self.name and self.ext:
+            name = ''.join((self.name, self.ext))
+        else:
+            name = self.name
         path = os.path.join(self.loc, name) if self.loc and name else name
         return path.replace('\\', '/') if path else ''
     def __repr__(self):
@@ -43,10 +49,15 @@ class basefile(object):
         return str(self) <= str(other)
         
     def getpath(self):
+        '''Get the path of where the file is located.'''
         return self.path
         
     def setpath(self, path, root=None, loc=None, name=None, ext=None):
-        if self.dir and self.dir.root and (not root): root = self.dir.root
+        '''
+            Set path for file, and set other important attributes like name,
+            extension, location while we're at it.
+        '''
+        if self.dir and self.dir.root and (not root): roo, = self.dir.root
         path = os.path.abspath(path) if path else None
         root = os.path.abspath(root) if root else None
         self.path = path
@@ -75,46 +86,43 @@ class basefile(object):
         self.name = name
         
     def getext(self):
+        '''Get the file extension.'''
         return self.ext
         
     def setext(self, ext):
-        if '.' in ext: raise ValueError('Failed to set file extension to "%s" because the string contains a period.')
+        '''Set the file extension.'''
+        if '.' in ext: raise ValueError(
+            'Failed to set file extension to "%s" because the string contains a period.'
+        )
         self.ext = ext
         
     def getloc(self):
+        '''Get the file location relative to a dir object's root.'''
         return self.loc
     
     def setloc(self, loc):
+        '''Set the file location relative to a dir object's root.'''
         self.loc = loc
         
     def reloc(self, loc):
+        '''Set the file location relative to its current location.'''
         if loc and self.loc:
             self.loc = os.path.join(loc, self.loc)
         elif loc:
             self.loc = loc
         
     def dest(self, path, makedir=False):
-        '''Internal: Given a root directory that this file would be written to, get the full path of where this file belongs.'''
+        '''
+            Internal: Given a root directory that this file would be written to,
+            get the full path of where this file belongs.
+        '''
         dest = os.path.join(path, str(self))
         dir = os.path.dirname(dest)
         if makedir and not os.path.isdir(dir): os.makedirs(dir)
         return dest
                 
     def remove(self):
-        '''Remove this file from the raws.dir object to which it belongs.
-        
-        Example usage:
-            >>> dwarf = df.getobj('CREATURE:DWARF')
-            >>> print dwarf
-            [CREATURE:DWARF]
-            >>> print dwarf.file
-            creature_standard
-            >>> dwarf.file.remove()
-            >>> print df.getobj('CREATURE:DWARF')
-            None
-            >>> print df.getfile('creature_standard')
-            None
-        '''
+        '''Remove this file from the dir object to which it belongs.'''
         if self.dir is not None:
             self.dir.remove(self)
         else:

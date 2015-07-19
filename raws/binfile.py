@@ -3,11 +3,17 @@
 
 import os
 
-import basefile
+import contentfile
 
 
 
-class binfile(basefile.basefile):
+class binfile(contentfile.contentfile):
+    '''
+        File class which is represented by a string containing its binary
+        contents. Good for files which must have their content exposed or be
+        manipulated but don't have their own specialized class.
+    '''
+    
     def __init__(self, content=None, path=None, dir=None, **kwargs):
         self.dir = None
         self.setpath(path, **kwargs)
@@ -15,6 +21,12 @@ class binfile(basefile.basefile):
         self.content = content
         if self.content is None and self.path is not None and os.path.isfile(self.path): self.read(self.path)
         self.kind = 'bin'
+        
+    def __repr__(self):
+        return str(self.content)
+        
+    def __len__(self):
+        return len(self.content)
         
     def read(self, path=None):
         with open(path if path else self.path, 'rb') as binfile: self.content = binfile.read()
@@ -41,12 +53,6 @@ class binfile(basefile.basefile):
         copy.content = self.content
         return copy
     
-    def __repr__(self):
-        return str(self.content)
-        
-    def __len__(self):
-        return len(self.content)
-        
     def write(self, path):
         dest = self.dest(path, makedir=True)
         with open(dest, 'wb') as file:

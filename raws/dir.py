@@ -210,7 +210,12 @@ class rawsdir(queryableobj.queryableobj):
         if file.dir is not self: raise KeyError('Failed to remove file because it belongs to a different dir.')
         if not any(file is f for f in self.iterfiles()): raise KeyError('Failed to remove file because it doesn\'t belong to this dir.')
         
-        self.filenames[file.name].remove(file)
+        filenamelist = self.filenames[file.name]
+        for index, filenameentry in enumerate(filenamelist):
+            if file is filenameentry:
+                del filenamelist[index]
+                break
+        
         self.files[str(file)].dir = None
         del self.files[str(file)]
         

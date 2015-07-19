@@ -3,13 +3,13 @@
 
 import os
 
-import basefile
+import contentfile
 import queryableobj
 import queryableadd
 
 
 
-class rawfile(basefile.basefile, queryableobj.queryableobj, queryableadd.queryableadd):
+class rawfile(contentfile.contentfile, queryableobj.queryableobj, queryableadd.queryableadd):
     '''Represents a single file within a raws directory.'''
     
     def __init__(self, name=None, file=None, path=None, root=None, content=None, tokens=None, dir=None, readpath=True, noheader=False, **kwargs):
@@ -39,7 +39,7 @@ class rawfile(basefile.basefile, queryableobj.queryableobj, queryableadd.queryab
         if name is not None: self.name = name
         
         if content is not None:
-            self.read(content=content)
+            self.setcontent(content)
         elif tokens is not None:
             self.settokens(tokens, setfile=True)
         
@@ -67,21 +67,23 @@ class rawfile(basefile.basefile, queryableobj.queryableobj, queryableadd.queryab
     def __repr__(self):
         return self.content()
         
-    def content(self):
+    def getcontent(self):
         tokencontent = ''.join([repr(o) for o in self.tokens()])
         if self.noheader:
             return tokencontent
         else:
             return '%s\n%s' %(self.name, tokencontent)
+            
+    def setcontent(self, content):
+        self.read(content=content)
         
     def ref(self, **kwargs):
         raise ValueError('Failed to cast rawfile %s to reffile because it is an invalid conversion.' % self)
     def bin(self, **kwargs):
         self.kind = 'bin'
         self.__class__ =  binfile.binfile
-        content = kwargs.get('content', self.content()) # TODO: rename method to getcontent for sake of consistency
+        self.content = self.getcontent()
         for key, value in kwargs.iteritems(): self.__dict__[key] = value
-        self.content = content
         return self
     def raw(self, **kwargs):
         for key, value in kwargs.iteritems(): self.__dict__[key] = value
