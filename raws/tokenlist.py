@@ -54,7 +54,10 @@ class tokenlist(list, queryableadd.queryableadd):
         if shallow:
             return tokenlist(token for token in self)
         else:
-            return token.token.copytokens(self)
+            return helpers.lcopytokens(self)
+            
+    def equals(self, other):
+        return list.__eq__(self, other)
             
     def remove(self, *args, **kwargs):
         for token in self: token.remove(*args, **kwargs)
@@ -106,3 +109,4 @@ class tokenlist(list, queryableadd.queryableadd):
 import queryable
 import tokenparse
 import token
+import helpers
