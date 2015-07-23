@@ -16,18 +16,18 @@ import filefactory
 
 
 
-class rawsdir(queryableobj.queryableobj):
+class dir(queryableobj.queryableobj):
     '''Represents as a whole all the raws contained within a directory.'''
     
     def __init__(self, root=None, dest=None, paths=None, version=None, log=None, **kwargs):
-        '''Constructor for rawsdir object.'''
+        '''Constructor for dir object.'''
         self.files = {}
         self.filenames = {}
         self.root = root    # Root input directory
         self.dest = dest    # Root output directory
         self.paths = paths  # Only worry about these file paths in input/output directories
         self.version = version
-        self.log = log
+        self.log = log # TODO: take this out, it doesn't belong here. move logging statements to session or get rid of them entirely.
         if root: self.read(**kwargs)
         
     def __str__(self):
@@ -58,6 +58,29 @@ class rawsdir(queryableobj.queryableobj):
             return item in self.files.itervalues()
         else:
             return str(item) in self.files or str(item) in self.filenames
+            
+    def __len__(self):
+        return len(self.files)
+        
+    def __nonzero__(self):
+        return True
+            
+    def __eq__(self, other):
+        return self.equals(other)
+    def __ne__(self, other):
+        return not self.equals(other)
+        
+    def __iadd__(self, file):
+        self.add(file=file)
+        
+    def equals(self, other):
+        if len(self.files) == len(other.files):
+            for file in self.iterfiles():
+                matchingfile = other.getfile(str(file))
+                if not(matchingfile and file == matchingfile): return False
+            return True
+        else:
+            return False
         
     def getfile(self, name, create=None, conflicts=False, **kwargs):
         '''Gets the file with a given name. If no file by that name is found,
@@ -129,7 +152,7 @@ class rawsdir(queryableobj.queryableobj):
                 return self.addbydirpath(auto, **kwargs)
             else:
                 return self.addbyname(auto, **kwargs)
-        elif isinstance(auto, rawsdir):
+        elif isinstance(auto, dir):
             return self.addbydir(auto, **kwargs)
             
     def addbyfile(self, file, **kwargs):
@@ -288,6 +311,17 @@ class rawsdir(queryableobj.queryableobj):
                 os.remove(path)
             elif os.path.isdir(path):
                 shutil.rmtree(path)
+                
+    def copy(self):
+        copy = dir()
+        copy.root = self.root
+        copy.dest = self.dest
+        copy.paths = self.paths
+        copy.version = self.version
+        copy.log = self.log
+        for file in self.iterfiles():
+            copy.add(file=file.copy())
+        return copy
             
     def clear(self):
         for file in self.files.values(): self.remove(file)
@@ -347,5 +381,3 @@ class rawsdir(queryableobj.queryableobj):
                 if root is not None and root.value == 'OBJECT' and root.nargs() == 1 and root.args[0] in match_types:
                     results.append(root)
         return results
-
-dir = rawsdir
