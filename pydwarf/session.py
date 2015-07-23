@@ -5,6 +5,7 @@ import os
 import shutil
 
 from urist import urist
+from uristscript import uristscript
 from logger import log
 from config import config
 
@@ -64,9 +65,9 @@ class session:
     def eval(self, func, args=None):
         # If the function is actually an urist, make sure we know that
         uristinstance = None
-        if isinstance(func, urist): 
+        if isinstance(func, uristscript): 
             uristinstance = func
-            func = uristinstance.fn
+            func = uristinstance.func
             name = uristinstance.getname()
         else:
             name = func.__name__
