@@ -65,7 +65,7 @@ class rawfile(contentfile.contentfile, queryableobj.queryableobj, queryableadd.q
         return True
         
     def __repr__(self):
-        return self.content()
+        return self.getcontent()
         
     def getcontent(self):
         tokencontent = ''.join([repr(o) for o in self.tokens()])
@@ -102,7 +102,7 @@ class rawfile(contentfile.contentfile, queryableobj.queryableobj, queryableadd.q
         
     def settokens(self, tokens, setfile=True):
         '''Internal: Utility method for setting the root and tail tokens given an iterable.'''
-        self.roottoken, self.tailtoken = rawstoken.token.firstandlast(tokens, self if setfile else None)
+        self.roottoken, self.tailtoken = helpers.ends(tokens, self if setfile else None)
     
     def copy(self):
         '''Makes a copy of a file and its contents.
@@ -114,11 +114,11 @@ class rawfile(contentfile.contentfile, queryableobj.queryableobj, queryableadd.q
         copy.ext = self.ext
         copy.loc = self.loc
         copy.noheader = self.noheader
-        copy.settokens(rawstoken.token.icopytokens(self.tokens()))
+        copy.settokens(helpers.icopytokens(self.tokens()))
         return copy
         
     def equals(self, other):
-        return rawstoken.token.tokensequal(self.tokens(), other.tokens())
+        return helpers.tokensequal(self.tokens(), other.tokens())
         
     def root(self):
         '''Gets the first token in the file.
@@ -186,9 +186,9 @@ class rawfile(contentfile.contentfile, queryableobj.queryableobj, queryableadd.q
         '''Given a path to a directory or a file-like object, writes the file's contents to that file.'''
         if isinstance(file, basestring):
             with open(self.dest(file, makedir=True), 'wb') as dest:
-                dest.write(self.content())
+                dest.write(self.getcontent())
         else:
-            file.write(self.content())
+            file.write(self.getcontent())
     
     def add(self, *args, **kwargs):
         '''Adds tokens to the end of a file.
@@ -245,3 +245,4 @@ class rawfile(contentfile.contentfile, queryableobj.queryableobj, queryableadd.q
 import token as rawstoken
 import tokenparse
 import binfile
+import helpers
