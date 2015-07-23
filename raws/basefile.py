@@ -57,7 +57,7 @@ class basefile(object):
             Set path for file, and set other important attributes like name,
             extension, location while we're at it.
         '''
-        if self.dir and self.dir.root and (not root): roo, = self.dir.root
+        if self.dir and self.dir.root and (not root): root = self.dir.root
         path = os.path.abspath(path) if path else None
         root = os.path.abspath(root) if root else None
         self.path = path
