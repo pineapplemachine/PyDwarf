@@ -92,6 +92,7 @@ def parsesingular(data, implicit=True, fail_on_multiple=True, apply=None, **kwar
         
         
 def parsevariable(*args, **kwargs):
+    kwargs['implicit'] = kwargs.get('implicit', True)
     tokens = parseplural(*args, **kwargs)
     return tokens[0] if tokens and len(tokens) == 1 else tokens
     
