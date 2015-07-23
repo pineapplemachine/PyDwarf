@@ -46,7 +46,7 @@ class config:
         self.log = log                  # Log file goes here
         
     @staticmethod
-    def load(root=None, json='config.json', yaml='config.yaml', override='config.py', args=None):
+    def load(root=None, json='config.json', yaml='config.yaml', override='config.py', logoverridefailure=False, args=None):
         conf = config()
         
         # Load default config files with the precedence: python override > json > yaml
@@ -61,8 +61,9 @@ class config:
             try:
                 conf.override(override)
             except:
-                log.debug('Tried and failed to apply default override from module %s. (But that\'s okay! It\'s just a default.)' % override)
-                log.debug(traceback.format_exc())
+                if logoverridefailure:
+                    log.debug('Tried and failed to apply default override from module %s. (But that\'s okay! It\'s just a default.)' % override)
+                    log.debug(traceback.format_exc())
         
         # Handle --config argument
         if args and args.get('config'):
@@ -115,7 +116,7 @@ class config:
         return config.intersect(self, other)
         
     def json(self, path, *args, **kwargs):
-        log.debug('Applying json configuration from %s.' % path)
+        log.info('Applying json configuration from %s.' % path)
         try:
             with open(path, 'rb') as jsonfile:
                 jsondata = json.load(jsonfile)
@@ -128,13 +129,13 @@ class config:
                 raise error
                 
     def yaml(self, path, *args, **kwargs):
-        log.debug('Applying yaml configuration from %s.' % path)
+        log.info('Applying yaml configuration from %s.' % path)
         with open(path, 'rb') as yamlfile:
             yamldata = yaml.load(yamlfile)
             return self.apply(yamldata, *args, **kwargs)
             
     def override(self, module, *args, **kwargs):
-        log.debug('Applying python configuration from %s.' % module)
+        log.info('Applying python configuration from %s.' % module)
         if module.endswith('.py'):
             modulename = os.path.splitext(os.path.basename(module))[0]
             with open(module, 'U') as modulefile:
