@@ -51,3 +51,14 @@ SUCCESS: Replaced 303 PET_EXOTIC and 150 MOUNT_EXOTIC tokens.
     [PET]
     [MOUNT]
     [TRAINABLE]
+
+---
+
+pydwarf.uristscript.within
+pydwarf.registrar.__getattr__
+
+>>> noexotic = pydwarf.scripts.pineapple.noexotic
+>>> noexotic.within('example.namespace')
+False
+>>> noexotic.within('pineapple')
+True

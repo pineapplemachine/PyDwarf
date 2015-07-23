@@ -7,6 +7,7 @@ import textwrap
 
 
 def __main__():
+    '''Internal: Set up default templates.'''
     template.format['txt'] = txttemplate()
     template.format['md'] = mdtemplate()
     template.format['html'] = htmltemplate()

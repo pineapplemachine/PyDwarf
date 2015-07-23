@@ -1,5 +1,5 @@
-tokenargs.set tokenargs.clear tokenargs.add
-token.__init__
+raws.tokenargs.set raws.tokenargs.clear raws.tokenargs.add
+raws.token.__init__
 
 >>> token = raws.token('EXAMPLE:a:b:c')
 >>> print token
@@ -22,8 +22,8 @@ token.__init__
 
 ---
 
-tokenargs.contains
-token.__init__
+raws.tokenargs.contains
+raws.token.__init__
 
 >>> token = raws.token('EXAMPLE:ONE:TWO:FOUR')
 >>> print 'ONE' in token.args
@@ -33,8 +33,8 @@ False
 
 ---
 
-tokenargs.__str__
-token.__init__
+raws.tokenargs.__str__
+raws.token.__init__
 
 >>> token = raws.token('EXAMPLE:a:b:c')
 >>> print str(token.args)

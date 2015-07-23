@@ -1,7 +1,7 @@
-parse
-tokenlist.__getitem__
+raws.tokenparse.parsevariable
+raws.tokenlist.__getitem__
 
->>> token = raws.parse('[HELLO:THERE]') # Same as raws.parsevariable
+>>> token = raws.parse('[HELLO:THERE]') # Same as raws.tokenparse.parsevariable
 >>> print token
 [HELLO:THERE]
 >>> tokens = raws.parse('[WHAT] a [BEAUTIFUL][DAY]')
@@ -14,7 +14,7 @@ tokenlist.__getitem__
 
 ---
 
-parsevariable
+raws.tokenparse.parsevariable
 
 
 >>> token = raws.parsevariable('[SINGLE:TOKEN]')
@@ -26,7 +26,7 @@ parsevariable
 
 ---
 
-parseplural parsesingular
+raws.tokenparse.parseplural parsesingular
 
 
 >>> braces = '[EXAMPLE:TOKEN]'

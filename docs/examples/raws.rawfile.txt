@@ -1,5 +1,5 @@
-basefile.getname basefile.setname
-queryableobj.getobj
+raws.basefile.getname raws.basefile.setname
+raws.queryableobj.getobj
 
 >>> dwarf = df.getobj('CREATURE:DWARF')
 >>> creature_standard = dwarf.file
@@ -14,8 +14,8 @@ creature_standard
 
 ---
 
-rawfile.copy rawfile.add rawfile.__eq__
-dir.__getitem__ queryable.list
+raws.rawfile.copy raws.rawfile.add raws.rawfile.__eq__
+raws.dir.__getitem__ raws.queryable.list
 
 >>> item_food = df['item_food']
 >>> food_copy = item_food.copy()
@@ -41,8 +41,8 @@ False
 
 ---
 
-rawfile.root rawfile.tail
-dir.__getitem__
+raws.rawfile.root raws.rawfile.tail
+raws.dir.__getitem__
 
 >>> creature_standard = df['creature_standard']
 >>> print creature_standard.root()
@@ -52,8 +52,8 @@ dir.__getitem__
 
 ---
 
-rawfile.add
-dir.__getitem__ queryable.list
+raws.rawfile.add
+raws.dir.__getitem__ raws.queryable.list
 reset
 >>> item_food = df['item_food']
 >>> print item_food.list()

@@ -1,0 +1,239 @@
+raws.token.__init__
+
+
+>>> print raws.token('DISPLAY_COLOR:6:0:1')
+[DISPLAY_COLOR:6:0:1]
+>>> print raws.token(value='DISPLAY_COLOR', args=['6', '0', '1'])
+[DISPLAY_COLOR:6:0:1]
+>>> print repr(raws.token(value='EXAMPLE', arg='TOKEN', suffix=' hiya'))
+[EXAMPLE:TOKEN] hiya
+
+---
+
+raws.token.__str__ raws.token.__repr__
+raws.token.__init__
+
+>>> token = raws.token('prefix [HI] suffix')
+>>> print str(token)
+[HI]
+>>> print repr(token)
+prefix [HI] suffix
+
+---
+
+raws.token.__eq__ raws.token.__ne__
+raws.token.__init__
+
+>>> example_a = raws.token('EXAMPLE')
+>>> example_b = raws.token('EXAMPLE')
+>>> example_c = raws.token('ANOTHER_EXAMPLE')
+>>> example_d = raws.token('ANOTHER_EXAMPLE')
+>>> example_a == example_a
+True
+>>> example_a == example_b
+True
+>>> example_a == example_c
+False
+>>> example_c == example_d
+True
+>>> print example_a != example_b
+False
+>>> print example_a != example_c
+True
+>>> example_a is example_a
+True
+>>> example_a is example_b
+False
+
+---
+
+raws.token.__gt__ raws.token.__lt__ raws.token.__ge__ raws.token.__le__
+raws.queryableobj.getobj
+
+>>> elf = df.getobj('CREATURE:ELF')
+>>> goblin = df.getobj('CREATURE:GOBLIN') # goblins are defined after elves in creature_standard
+>>> print elf > goblin
+False
+>>> print elf < goblin
+True
+>>> print elf > elf
+False
+>>> print elf >= elf
+True
+>>> print elf < elf
+False
+>>> print elf <= elf
+True
+
+---
+
+raws.token.__add__ raws.token.__radd__
+raws.token.__init__
+
+>>> one = raws.token('NUMBER:ONE')
+>>> two = raws.token('NUMBER:TWO')
+>>> three = raws.token('NUMBER:THREE')
+>>> tokens = one + two + three
+>>> print tokens
+[NUMBER:ONE][NUMBER:TWO][NUMBER:THREE]
+>>> zero = raws.token('NUMBER:ZERO')
+>>> print zero + tokens
+[NUMBER:ZERO][NUMBER:ONE][NUMBER:TWO][NUMBER:THREE]
+
+---
+
+raws.token.getprefix raws.token.getsuffix raws.token.setprefix raws.token.setsuffic
+raws.token.__init__
+
+>>> token = raws.token('This is a comment [EXAMPLE] so is this')
+>>> print token
+[EXAMPLE]
+>>> print token.getprefix()
+This is a comment 
+>>> print token.getsuffix()
+ so is this
+>>> token.setprefix('Hi ')
+>>> token.setsuffix(' there')
+>>> print repr(token)
+Hi [EXAMPLE] there
+>>> token.setsuffix('bad string [ braces not allowed here')
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "raws/token.py", line 462, in setsuffix
+    return copiedtokens
+ValueError: Failed to set token suffix to "bad string [ braces not allowed here" because the string contains illegal characters.
+
+---
+
+raws.token.setvalue
+raws.token.__init__
+
+>>> token = raws.token()
+>>> token.setvalue('EXAMPLE')
+>>> print token
+[EXAMPLE]
+>>> token.setvalue('BRACES ]]')
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "raws/token.py", line 279, in setvalue
+    return self.prefix
+ValueError: Failed to set token value to "BRACES ]]" because the string contains illegal characters.
+
+---
+
+raws.token.add
+raws.token.__init__
+
+>>> token = raws.token('ZERO')
+>>> token.add('ONE')
+[ONE]
+>>> print token.list(include_self=True)
+[ZERO][ONE]
+>>> token.add('HALF')
+[HALF]
+>>> print token.list(include_self=True)
+[ZERO][HALF][ONE]
+
+---
+
+raws.token.copy
+raws.token.__init__ raws.token.__eq__
+
+>>> token = raws.token('EXAMPLE:TOKEN')
+>>> copy = token.copy()
+>>> print token == copy
+True
+>>> print token is copy
+False
+>>> copy.args[0] = 'COPIED'
+>>> print copy
+[EXAMPLE:COPIED]
+>>> print token == copy
+False
+
+---
+
+raws.token.setvalue raws.token.getvalue
+raws.token.__init__
+
+>>> token = raws.token('EXAMPLE:a:b:c')
+>>> print token.getvalue()
+EXAMPLE
+>>> token.setvalue('NEW_VALUE')
+>>> print token
+[NEW_VALUE:a:b:c]
+
+---
+
+raws.token.tokens
+raws.tokenlist.__init__ raws.tokenparse.parsevariable
+
+>>> tokens = raws.token.parse('[HI][HOW][ARE][YOU][?]')
+>>> first = tokens[0]
+>>> last = tokens[-1]
+>>> print first
+[HI]
+>>> print last
+[?]
+>>> print raws.tokenlist(first.tokens()) # Construct a raws.tokenlist object using the generator returned by the tokens method
+[HOW][ARE][YOU][?]
+>>> print raws.tokenlist(first.tokens(include_self=True))
+[HI][HOW][ARE][YOU][?]
+>>> print raws.tokenlist(first.tokens(range=1))
+[HOW]
+>>> print raws.tokenlist(first.tokens(until=tokens[3]))
+[HOW][ARE][YOU]
+>>> print raws.tokenlist(last.tokens(reverse=True))
+[YOU][ARE][HOW][HI]
+
+---
+
+raws.token.__mul__
+raws.token.__init__ raws.token.__eq__
+
+>>> token = raws.token('EXAMPLE:TOKEN')
+>>> print token * 2
+[EXAMPLE:TOKEN][EXAMPLE:TOKEN]
+>>> print token * 6
+[EXAMPLE:TOKEN][EXAMPLE:TOKEN][EXAMPLE:TOKEN][EXAMPLE:TOKEN][EXAMPLE:TOKEN][EXAMPLE:TOKEN]
+>>> tokens = token * 4
+>>> print tokens[0] == tokens[1]
+True
+>>> print tokens[0] is tokens[1]
+False
+
+---
+
+raws.token.__iter__
+raws.token.__init__
+
+>>> token = raws.token('VALUE:ARG0:ARG1:ARG2')
+>>> print [i for i in token]
+['VALUE', 'ARG0', 'ARG1', 'ARG2']
+
+---
+
+raws.token.__iter__
+raws.token.__init__
+
+>>> token = raws.token('EXAMPLE:OBJECT')
+>>> value, arg = token
+>>> print value
+EXAMPLE
+>>> print arg
+OBJECT
+
+---
+
+raws.token.__len__
+raws.token.__init__
+
+>>> example = raws.token('EXAMPLE')
+>>> print len(example)
+0
+>>> another = raws.token('ANOTHER:EXAMPLE')
+>>> print len(another)
+1
+>>> behold = raws.token('BEHOLD:IT:IS:YET:ANOTHER:EXAMPLE')
+>>> print len(behold)
+5

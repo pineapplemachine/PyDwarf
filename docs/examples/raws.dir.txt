@@ -1,0 +1,23 @@
+raws.dir.copy raws.dir.__eq__
+raws.queryableobj.getobj raws.token.add
+
+>>> dfcopy = df.copy()
+>>> print dfcopy == df
+True
+>>> dwarf = dfcopy.getobj('CREATURE:DWARF')
+>>> token = dwarf.add('MAKE:THE:COPY:DIFFERENT')
+>>> print dfcopy == df
+False
+
+---
+
+raws.dir.reset
+raws.queryableobj.getobj raws.token.remove
+
+>>> dwarf = df.getobj('CREATURE:DWARF')
+>>> dwarf.remove()
+>>> print df.getobj('CREATURE:DWARF')
+None
+>>> df.reset()
+>>> print df.getobj('CREATURE:DWARF')
+[CREATURE:DWARF]

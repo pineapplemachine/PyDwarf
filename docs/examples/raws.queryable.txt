@@ -1,5 +1,5 @@
-queryable.get
-queryableobj.getobj
+raws.queryable.get
+raws.queryableobj.getobj
 
 >>> hematite = df.getobj('INORGANIC:HEMATITE')
 >>> print hematite.get('METAL_ORE:GOLD:100') # Get the last token in the entire file
@@ -9,8 +9,8 @@ None
 
 ---
 
-queryable.last
-queryableobj.getobj
+raws.queryable.last
+raws.queryableobj.getobj
 
 >>> hematite = df.getobj('INORGANIC:HEMATITE')
 >>> print hematite.last('STATE_NAME_ADJ') # Get the last token in the entire file
@@ -20,8 +20,8 @@ queryableobj.getobj
 
 ---
 
-queryable.all
-queryableobj.getobj tokenlist.__len__
+raws.queryable.all
+raws.queryableobj.getobj raws.tokenlist.__len__
 
 >>> dwarf = df.getobj('CREATURE:DWARF')
 >>> print len(dwarf.all('INTELLIGENT')) # Gets all INTELLIGENT tokens following CREATURE:DWARF, including those belonging to other creatures
@@ -33,8 +33,8 @@ queryableobj.getobj tokenlist.__len__
 
 ---
 
-queryable.all
-queryableobj.getobj
+raws.queryable.all
+raws.queryableobj.getobj
 
 >>> hematite = df.getobj('INORGANIC:HEMATITE')
 >>> print hematite.all(until='INORGANIC')
@@ -54,8 +54,8 @@ queryableobj.getobj
 
 ---
 
-queryable.all
-queryableobj.getobj tokenlist.each
+raws.queryable.all
+raws.queryableobj.getobj raws.tokenlist.each
 
 >>> dwarven = df.getobj('TRANSLATION:DWARF')
 >>> print dwarven.all(exact_value='T_WORD', re_arg=(0, 'AL.*'))
@@ -75,7 +75,7 @@ queryableobj.getobj tokenlist.each
 
 ---
 
-queryable.get
+raws.queryable.get
 
 
 >>> print df.get(exact_value='TRANSLATION', exact_args=['HUMAN'])
@@ -92,8 +92,8 @@ queryable.get
 
 ---
 
-queryable.list
-queryableobj.getobj queryable.get
+raws.queryable.list
+raws.queryableobj.getobj raws.queryable.get
 reset
 >>> forest = df.getobj('ENTITY:FOREST')
 >>> print forest.list(range=5, include_self=True)

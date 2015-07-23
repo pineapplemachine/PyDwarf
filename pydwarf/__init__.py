@@ -61,4 +61,6 @@ config = config.config
 
 
 
+script = uristscript
+
 scripts = urist.registrar

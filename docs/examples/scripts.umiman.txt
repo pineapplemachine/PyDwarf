@@ -11,7 +11,7 @@ umiman.smallthings.speech.nofamily
 ---
 
 
-pydwarf.registrar.__getattr__ pydwarf.response.__str__
+pydwarf.registrar.__getattr__ pydwarf.response.__str__ raws.binfile.__len__
 reset
 >>> print len(df['data/speech/threat.txt'].bin())
 15
@@ -25,3 +25,12 @@ nofamily: SUCCESS: Ran successfully.
 8953
 >>> print len(df['data/speech/no_family.txt'])
 1720
+
+---
+
+pydwarf.urist.list
+pydwarf.uristscript.__str__ pydwarf.uristscript.within
+
+>>> scripts = pydwarf.urist.list()
+>>> print [str(script) for script in scripts if script.within('umiman')]
+['umiman.smallthings.engraving', 'umiman.smallthings.prefstring', 'umiman.smallthings.speech.nofamily', 'umiman.smallthings.speech.threats']

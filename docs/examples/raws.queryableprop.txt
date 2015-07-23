@@ -1,5 +1,5 @@
-queryable.get queryable.getprop
-queryableobj.getobj
+raws.queryable.get raws.queryable.getprop
+raws.queryableobj.getobj
 
 >>> iron = df.getobj('INORGANIC:IRON')
 >>> print iron.get(exact_value='USE_MATERIAL_TEMPLATE')
@@ -11,8 +11,8 @@ None
 
 ---
 
-queryable.last queryable.lastprop
-queryableobj.getobj
+raws.queryable.last raws.queryable.lastprop
+raws.queryableobj.getobj
 
 >>> iron = df.getobj('INORGANIC:IRON')
 >>> print iron.last(re_value='ITEMS_.+') # Gets the property of adamantite, the last ITEMS_ token in the file
@@ -22,8 +22,8 @@ queryableobj.getobj
 
 ---
 
-queryable.all queryable.allprop
-queryableobj.getobj tokenlist.__len__
+raws.queryable.all raws.queryable.allprop
+raws.queryableobj.getobj raws.tokenlist.__len__
 
 >>> hematite = df.getobj('INORGANIC:HEMATITE')
 >>> print len(hematite.all('ENVIRONMENT')) # Gets all ENVIRONMENT tokens following hematite

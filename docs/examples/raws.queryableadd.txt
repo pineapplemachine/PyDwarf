@@ -1,5 +1,5 @@
-queryableadd.set
-parse
+raws.queryableadd.set
+raws.tokenparse.parsevariable
 
 >>> tokens = raws.parse('[PROPERTY_ONE:HI][PROPERTY_TWO:WORLD]')
 >>> settoken = tokens.set('PROPERTY_ONE:HELLO')
@@ -19,8 +19,8 @@ parse
 
 ---
 
-queryable.setall
-parse
+raws.queryableadd.setall
+raws.tokenparse.parsevariable
 
 >>> tokens = raws.parse('[X:1][X:2][Y:3][Y:4]')
 >>> settokens = tokens.setall('Y', 5)
