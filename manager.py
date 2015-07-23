@@ -40,8 +40,8 @@ def __main__(args=None):
     specialtext = None
     
     if args.list:
-        items = pydwarf.urist.list()
-        specialtext = '\n'.join(items)
+        scripts = pydwarf.urist.list()
+        specialtext = '\n'.join(str(script) for script in scripts)
     elif args.meta is not None:
         specialtext = pydwarf.urist.doclist(args.meta, format=args.metaformat)
     

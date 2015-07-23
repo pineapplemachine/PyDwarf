@@ -110,15 +110,7 @@ class urist:
             
     @staticmethod
     def list():
-        names = {}
-        total = 0
-        for uristlist in urist.registered.itervalues():
-            for uristinstance in uristlist:
-                uname = uristinstance.getname()
-                if uname not in names: names[uname] = []
-                names[uname].append(uristinstance)
-                total += 1
-        return sorted(names.keys())
+        return sorted((script for script in urist.registrar), key=lambda script: str(script))
             
     @staticmethod
     def doclist(names=[], delimiter='\n\n', format=None):
