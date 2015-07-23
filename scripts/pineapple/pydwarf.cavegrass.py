@@ -147,7 +147,7 @@ def cavegrass(df, grasses=default_grasses, add_file='plant_grasses_cavegrass_pin
                     failures += 1
                 else:
                     props = templatetoken.allprop(value_not_in=('ALL_NAMES', 'NAME', 'NAME_PLURAL', 'ADJ'))
-                    grasstoken.add(raws.token.copy(props))
+                    grasstoken.add(props.copy())
             added += 1
         else:
             changed += 1

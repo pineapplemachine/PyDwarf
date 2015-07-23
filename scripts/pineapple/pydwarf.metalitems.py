@@ -38,8 +38,10 @@ def metalitems(df, metals=default_metals, items=default_item_tokens):
     # Apply to each metal
     affected = df.allobj(type='INORGANIC', id_in=metals).each(
         lambda token: (
-            token.removeallprop(value_in=items),        # Remove existing tokens first to prevent duplicates when adding
-            token.addprop(raws.token.copy(itemtokens))  # And now add the specified tokens
+            # Remove existing tokens first to prevent duplicates when adding
+            token.removeallprop(value_in=items),
+            # And now add the specified tokens
+            token.addprop(raws.helpers.copytokens(itemtokens))
         )
     )
     

@@ -99,7 +99,7 @@ def diff(df, paths):
                     # Replacements overlap?
                     if (jrecord.bpath is not irecord.bpath) and (irecord.afrom <= jrecord.auntil and jrecord.afrom <= irecord.auntil):
                         jrecord.ignore = True
-                        if not raws.token.tokensequal(irecord.btokens(), jrecord.btokens()):
+                        if not raws.helpers.tokensequal(irecord.btokens(), jrecord.btokens()):
                             # Replacements aren't identical (this means there's a conflict)
                             if not irecord.conflicts: irecord.conflicts = []
                             irecord.conflicts.append(jrecord)
@@ -123,11 +123,11 @@ def diff(df, paths):
                     tokens[0].prefix = '\n<<<<<<diff potential conflict! block modified by %d files %s;\n%s' % (len(record.conflicts)+1, ', '.join([r.bpath for r in record.conflicts] + [record.bpath]), tokens[0].prefix if tokens[0].prefix else '')
                     lasttoken.suffix = '%s\n>>>>>>\n\n' % (lasttoken.suffix if lasttoken.suffix else '')
                     conflicts += 1
-                tokens = record.alower.add(tokens=raws.token.copy(tokens=tokens))
+                tokens = record.alower.add(tokens=raws.helpers.copytokens(tokens))
                 
         # Make insertions
         for record in fileops['insert']:
-            record.alower.add(raws.token.copy(tokens=record.btokens()))
+            record.alower.add(raws.helpers.copytokens(tokens=record.btokens()))
             
         # Make deletions
         for record in fileops['delete']:

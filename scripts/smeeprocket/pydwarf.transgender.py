@@ -80,7 +80,7 @@ def trans(dfraws, species=default_species, beards=True, frequency=500):
                 descriptiontoken = creaturetoken.get(exact_value='DESCRIPTION', args_count=1)
                 if descriptiontoken:
                     descriptiontoken.remove()
-                    for castetoken in castes: castetoken.add(token=raws.token.copy(descriptiontoken))
+                    for castetoken in castes: castetoken.add(token=descriptiontoken.copy())
                 
                 # Handle existing castes
                 for caste in castes:

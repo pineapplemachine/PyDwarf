@@ -21,7 +21,7 @@ def addtoentity(df, entities, tokens):
     
     for entitytoken in entitytokens:
         entitytoken.addprop(tokens)
-        if isinstance(tokens, raws.queryable): tokens = raws.token.copy(tokens) # TODO: What about other iterables containing token objects, e.g. lists and tuples?
+        if isinstance(tokens, raws.queryable): tokens = raws.helpers.copytokens(tokens) # TODO: What about other iterables containing token objects, e.g. lists and tuples?
         
     if len(entitytokens) != len(entities):
         return pydwarf.failure('Failed to add tokens to all given entities because only %d of %d exist.' % (len(entitytokens), len(entities)))
