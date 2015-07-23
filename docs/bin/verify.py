@@ -24,30 +24,7 @@ import re
 import raws
 import pydwarf
 
-
-
-examples = []
-examples_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../examples')
-
-
-
-for filename in os.listdir(examples_dir):
-    if filename.endswith('.txt'):
-        path = os.path.join(examples_dir, filename)
-        with open(path, 'rb') as examplefile:
-            examplebodies = [body.strip() for body in examplefile.read().split('---')]
-            for index, body in enumerate(examplebodies):
-                try:
-                    high, low, flags, text = body.split('\n', 3)
-                    examples.append({
-                        'high': high.split(' '),
-                        'low': low.split(' '),
-                        'flags': flags.split(' '),
-                        'text': text,
-                        'name': '%s #%d' % (filename, index+1)
-                    })
-                except:
-                    pass
+from examples import examples
                     
 
     
@@ -58,6 +35,7 @@ def verify(examples, **globs):
     testnum = 0
     
     df = globs['df']
+    dfcopy = df.copy()
     
     for example in examples:
         print 'Running example %s' % example['name']
@@ -83,7 +61,8 @@ def verify(examples, **globs):
         # Handle flags
         if 'reset' in example['flags']:
             print 'Resetting df raws.'
-            df.reset()
+            df = dfcopy
+            dfcopy = df.copy()
         
     return results
 
