@@ -1,21 +1,12 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-import itertools
-import inspect
-
 import queryableaddprop
 import tokenargs
 
 
 
-class rawstoken(queryableaddprop.queryableaddprop):
-    
-    '''Internal: Recurring piece of docstrings.'''
-    auto_arg_docstring = '''
-        auto: When the first argument is specified the intended assignment will be
-            detected automatically. If a rawstoken is specified it will be treated
-            as a token argument. If a string, pretty. If anything else, tokens.'''
+class token(queryableaddprop.queryableaddprop):
     
     illegal_internal_chars = tokenargs.tokenargs.illegal # TODO: make this better
     
@@ -23,20 +14,7 @@ class rawstoken(queryableaddprop.queryableaddprop):
     illegal_external_chars = '['
     
     def __init__(self, auto=None, pretty=None, copy=None, value=None, args=None, arg=None, prefix=None, suffix=None, prev=None, next=None, file=None):
-        '''Constructs a token object.
-
-        pretty: Parses the token's text from a string. A string without opening
-            and closing braces is considered to have them implicitly.
-        token: Copies this token's attributes from another.
-        value: The leftmost string between a token's brackets, where strings are
-            delimited by colons.
-        args: All except the leftmost string between a token's brackets.
-        prefix: Comment or formatting text preceding a token.
-        suffix: Comment or formatting text following a token.
-        prev: The previous token.
-        next: The following token.
-        file: Indicates the raws.file object to which this token belongs, if any.
-        '''
+        '''Constructs a token object.'''
         
         if auto is not None:
             if isinstance(auto, basestring):
@@ -74,16 +52,18 @@ class rawstoken(queryableaddprop.queryableaddprop):
         if next is not None: self.next = next
         if file is not None: self.file = file
         
-    def __hash__(self): # Not that this class is immutable, just means you'll need to be careful about when you're using token hashes
+    def __hash__(self):
+        '''
+            Not that this class is immutable, just means you'll need to be
+            careful about when you're using token hashes.
+        '''
         return hash('%s:%s' % (self.value, self.argsstr()) if self.nargs() else self.value)
     
     def __str__(self):
-        '''Get a concise string representation.
-        '''
+        '''Get a concise string representation.'''
         return '[%s%s]' %(self.value, (':%s' % self.args) if self.args else '')
     def __repr__(self):
-        '''Get a full string representation.
-        '''
+        '''Get a full string representation.'''
         return '%s%s%s' % (self.prefix if self.prefix else '', str(self), self.suffix if self.suffix else '')
         
     def __eq__(self, other):
@@ -113,7 +93,7 @@ class rawstoken(queryableaddprop.queryableaddprop):
         return self is other or self.__gt__(other)
         
     def __add__(self, other):
-        '''Concatenates and returns a raws.tokenlist.tokenlist object.
+        '''Concatenates and returns a tokenlist object.
         '''
         if isinstance(other, rawstoken):
             tokens = tokenlist.tokenlist()
@@ -148,25 +128,31 @@ class rawstoken(queryableaddprop.queryableaddprop):
         '''
         tokens = tokenlist.tokenlist()
         for i in xrange(0, int(value)):
-            tokens.append(rawstoken.copy(self))
+            tokens.append(self.copy())
         return tokens
     
     def __iter__(self):
+        '''Yields the tokens value and then each of its arguments.'''
         yield self.value
         for arg in self.args: yield arg
     def __len__(self):
+        '''Returns the number of arguments.'''
         return self.nargs()
     def __contains__(self, value):
+        '''Determine whether an argument is present within the token's argument list.'''
         return self.containsarg(value)
         
     def __iadd__(self, value):
+        '''Append to the token's argument list.'''
         self.args.add(value)
         return self
     def __isub__(self, value):
+        '''Remove the last value from the token's argument list.'''
         self.args.sub(value)
         return self
             
     def __nonzero__(self):
+        '''Always returns True.'''
         return True
         
     @staticmethod
@@ -255,115 +241,41 @@ class rawstoken(queryableaddprop.queryableaddprop):
                 self.args.reset(args)
         
     def getvalue(self):
-        '''Get the token's value.
-        
-        Example usage:
-            >>> token = raws.token('EXAMPLE:a:b:c')
-            >>> print token.getvalue()
-            EXAMPLE
-        '''
+        '''Get the token's value.'''
         return self.value
         
     def setvalue(self, value):
-        '''Set the token's value.
-        
-        value: The value to be set.
-        
-        Example usage:
-            >>> token = raws.token('EXAMPLE:a:b:c')
-            >>> token.setvalue('JUST KIDDING')
-            >>> print token
-            [JUST KIDDING:a:b:c]
-        '''
+        '''Set the token's value.'''
         valuestr = str(value)
         if any([char in valuestr for char in rawstoken.illegal_internal_chars]): raise ValueError('Failed to set token value to "%s" because the string contains illegal characters.' % valuestr)
         self.value = value
         
     def getprefix(self):
-        '''Get the comment text preceding a token.
-        
-        Example usage:
-
-        '''
+        '''Get the comment text preceding a token.'''
         return self.prefix
     
     def setprefix(self, value):
-        '''Set the comment text preceding a token.
-        
-        value: The value to be set.
-        
-        Example usage:
-            >>> token = raws.token('EXAMPLE')
-            >>> print token
-            [EXAMPLE]
-            >>> token.setprefix('hello ')
-            >>> print repr(token)
-            hello [EXAMPLE]
-        '''
+        '''Set the comment text preceding a token.'''
         valuestr = str(value)
         if any([char in valuestr for char in rawstoken.illegal_external_chars]): raise ValueError('Failed to set token prefix to "%s" because the string contains illegal characters.' % valuestr)
         self.prefix = value
         
     def getsuffix(self):
-        '''Get the comment text following a token.
-        
-        Example usage:
-            >>> token = raws.token('This is a comment [EXAMPLE] so is this')
-            >>> print token
-            [EXAMPLE]
-            >>> print token.getsuffix()
-             so is this
-            >>> print token.getprefix()
-            This is a comment
-        '''
+        '''Get the comment text following a token.'''
         return self.suffix
     
     def setsuffix(self, value):
-        '''Set the comment text following a token.
-        
-        value: The value to be set.
-        
-        Example usage:
-            >>> token = raws.token('EXAMPLE')
-            >>> print token
-            [EXAMPLE]
-            >>> token.setsuffix(' world')
-            >>> print repr(token)
-            [EXAMPLE] world
-        '''
+        '''Set the comment text following a token.'''
         valuestr = str(value)
         if any([char in valuestr for char in rawstoken.illegal_external_chars]): raise ValueError('Failed to set token suffix to "%s" because the string contains illegal characters.' % valuestr)
         self.suffix = value
         
     def arg(self, index=None):
-        '''When an index is given, the argument at that index is returned. If left
-        set to None then the first argument is returned if the token has exactly one
-        argument, otherwise an exception is raised.
-        
-        Example usage:
-            >>> token = raws.token('EXAMPLE:argument 0:argument 1')
-            >>> print token.getarg(0)
-            argument 0
-            >>> print token.getarg(1)
-            argument 1
-            >>> print token.getarg(2)
-            None
-            >>> print token.getarg(-1)
-            argument 1
-            >>> print token.getarg(-2)
-            argument 0
-            >>> print token.getarg(-3)
-            None
-            >>> token_a = raws.token('EXAMPLE:x')
-            >>> token_b = raws.token('EXAMPLE:x:y:z')
-            >>> print token_a.arg()
-            x
-            >>> try:
-            ...     print token_b.arg()
-            ... except:
-            ...     print 'token_b doesn\'t have the correct number of arguments!'
-            ...
-            token_b doesn't have the correct number of arguments!'''
+        '''
+            When an index is given, the argument at that index is returned. If left
+            set to None then the first argument is returned if the token has exactly one
+            argument, otherwise an exception is raised.
+        '''
         if index is None:
             if len(self.args) != 1: raise ValueError('Failed to retrieve token argument because it doesn\'t have exactly one.')
             return self.args[0]
@@ -371,8 +283,7 @@ class rawstoken(queryableaddprop.queryableaddprop):
             return self.args[index]
         
     def equals(self, other):
-        '''Returns True if two tokens have identical values and arguments, False otherwise.
-        '''
+        '''Returns True if two tokens have identical values and arguments, False otherwise.'''
         return(
             other is not None and
             other is not rawstoken.nulltoken and
@@ -381,118 +292,15 @@ class rawstoken(queryableaddprop.queryableaddprop):
             self.args == other.args
         )
     
-    @staticmethod
-    def tokensequal(atokens, btokens):
-        '''Determine whether two iterables containing tokens contain equivalent tokens.
+    def copy(self):
+        '''Returns a copy of this token.'''
+        return rawstoken(copy=self)
         
-        atokens: The first iterable.
-        btokens: The second iterable.
-        
-        Example usage:
-            >>> a = raws.token.parse('[A][B][C]')
-            >>> b = raws.token.parse('[A][B][C]')
-            >>> print a is b
-            False
-            >>> print raws.token.tokensequal(a, b)
-            True
-        '''
-        return all(atoken.equals(btoken) for atoken, btoken in itertools.izip_longest(atokens, btokens, fillvalue=rawstoken.nulltoken))
-    
-    @staticmethod
-    def copy(*args, **kwargs):
-        '''Copies some token or iterable collection of tokens.
-        
-        Example usage:
-            >>> token = raws.token('EXAMPLE:a:b:c')
-            >>> print token
-            [EXAMPLE:a:b:c]
-            >>> copied_token = raws.token.copy(token)
-            >>> print copied_token
-            [EXAMPLE:a:b:c]
-            >>> print token is copied_token
-            False
-            >>> tokens = raws.token.parse('[HELLO][WORLD]')
-            >>> print tokens
-            [HELLO][WORLD]
-            >>> print tokens[0]
-            [HELLO]
-            >>> print tokens[1]
-            [WORLD]
-            >>> copied_tokens = raws.token.copy(tokens)
-            >>> print copied_tokens
-            [HELLO][WORLD]
-            >>> print tokens == copied_tokens
-            True
-            >>> print tokens is copied_tokens
-            False
-        '''
-        token, tokens = rawstoken.autovariable(*args, **kwargs)
-        if token is not None:
-            return rawstoken(copy=token)
-        elif tokens is not None:
-            if inspect.isgenerator(tokens) or inspect.isgeneratorfunction(tokens):
-                return rawstoken.icopytokens(tokens=tokens)
-            else:
-                return rawstoken.copytokens(tokens=tokens)
-    
-    @staticmethod
-    def copytokens(tokens):
-        copiedtokens = tokenlist.tokenlist()
-        prevtoken = None
-        for token in tokens:
-            copytoken = rawstoken(copy=token)
-            copiedtokens.append(copytoken)
-            copytoken.prev = prevtoken
-            if prevtoken is not None: prevtoken.next = copytoken
-            prevtoken = copytoken
-        return copiedtokens
-        
-    @staticmethod
-    def icopytokens(tokens):
-        prevtoken = None
-        for token in tokens:
-            copytoken = rawstoken(copy=token)
-            copytoken.prev = prevtoken
-            if prevtoken is not None: prevtoken.next = copytoken
-            prevtoken = copytoken
-            yield copytoken
-        
-    def tokens(self, range=None, include_self=False, reverse=False, until_token=None, step=None):
-        '''Iterate through successive tokens starting with this one.
-        
-        range: If defined as an integer, then iteration stops when this many tokens
-            have been iterated over.
-        include_self: If True, iteration includes this token. Otherwise, iteration
-            starts with the immediately following or preceding token.
-        reverse: If False, iteration goes forward through the sequence of tokens. If
-            True, it goes backwards.
-        until_token: Iteration stops if/when the current token matches this exact
-            object.
-        step: Increment by this many tokens each step. Defaults to None, which means
-            that every token is yielded.
-            
-        Example usage:
-            >>> tokens = raws.token.parse('[HI][HOW][ARE][YOU][?]')
-            >>> first_token = tokens[0]
-            >>> last_token = tokens[-1]
-            >>> print first_token
-            [HI]
-            >>> print last_token
-            [?]
-            >>> print raws.tokenlist.tokenlist(first_token.tokens()) # Construct a raws.tokenlist.tokenlist object using the generator returned by the tokens method
-            [HOW][ARE][YOU][?]
-            >>> print raws.tokenlist.tokenlist(first_token.tokens(include_self=True))
-            [HI][HOW][ARE][YOU][?]
-            >>> print raws.tokenlist.tokenlist(first_token.tokens(range=1))
-            [HOW]
-            >>> print raws.tokenlist.tokenlist(first_token.tokens(until_token=tokens[3]))
-            [HOW][ARE][YOU]
-            >>> print raws.tokenlist.tokenlist(last_token.tokens(reverse=True))
-            [YOU][ARE][HOW][HI]
-        '''
+    def tokens(self, range=None, include_self=False, reverse=False, until=None, step=None):
+        '''Iterate through successive tokens starting with this one.'''
         count = 0
         itertoken = self if include_self else (self.prev if reverse else self.next)
-        while itertoken is not None and (range is None or range > count) and (until_token is None or itertoken is not until_token.next):
+        while itertoken is not None and (range is None or range > count) and (until is None or itertoken is not until.next):
             if (step is None) or (count % step == 0): yield itertoken
             itertoken = itertoken.prev if reverse else itertoken.next
             count += 1
@@ -501,25 +309,7 @@ class rawstoken(queryableaddprop.queryableaddprop):
         '''
             Adds a token or tokens nearby this one. If reverse is False the token 
             or tokens are added immediately after. If it's True, they are added before.
-            
-            %s
-            pretty: Parses the string and adds the tokens within it.
-            token: Adds this one token.
-            tokens: Adds all of these tokens.
-            reverse: If True, the tokens are added before instead of after.
-            
-            Example usage:
-                >>> two = raws.token('TWO')
-                >>> two.add('THREE')
-                [THREE]
-                >>> print two.list(include_self=True)
-                [TWO][THREE]
-                >>> three = two.next
-                >>> three.add('[TWO AND A HALF][TWO AND THREE QUARTERS]', reverse=True)
-                [[TWO AND A HALF], [TWO AND THREE QUARTERS]]
-                >>> print two.list(include_self=True)
-                [TWO][TWO AND A HALF][TWO AND THREE QUARTERS][THREE]
-        ''' % rawstoken.auto_arg_docstring
+        '''
         reverse = kwargs.get('reverse', False)
         knit = kwargs.get('knit', False)
         token, tokens = rawstoken.autovariable(*args, **kwargs)
@@ -527,41 +317,6 @@ class rawstoken(queryableaddprop.queryableaddprop):
             return self.addone(token, reverse=reverse, knit=knit)
         elif tokens is not None:
             return self.addall(tokens, reverse=reverse, knit=knit)
-            
-    def addprop(self, *args, **kwargs):
-        '''When this token is an object token like CREATURE:X or INORGANIC:X, a
-        new token is usually added immediately afterwards. However, if a token like
-        COPY_TAGS_FROM or USE_MATERIAL_TEMPLATE exists underneath the object, then
-        the specified tag is only added after that. **kwargs are passed on to the
-        add method.
-        
-        Example usage:
-            >>> panda = df.getobj('CREATURE:PANDA, GIGANTIC')
-            >>> print panda.tokens(range=4, include_self=True)
-            <generator object tokens at 0x10c28f3c0>
-            >>> print panda.list(range=4, include_self=True)
-            [CREATURE:PANDA, GIGANTIC]
-                [COPY_TAGS_FROM:PANDA]
-                [APPLY_CREATURE_VARIATION:GIANT]
-                [CV_REMOVE_TAG:CHANGE_BODY_SIZE_PERC]
-            >>> panda.addprop('FLIER')
-            >>> print panda.list(range=5, include_self=True)
-            [CREATURE:PANDA, GIGANTIC]
-                [COPY_TAGS_FROM:PANDA][FLIER]
-                [APPLY_CREATURE_VARIATION:GIANT]
-                [CV_REMOVE_TAG:CHANGE_BODY_SIZE_PERC]
-        '''
-        
-        aftervalues = ['COPY_TAGS_FROM', 'CV_REMOVE_TAG']
-        beforevalues = ['SELECT_MATERIAL']
-        if self.value == 'INORGANIC':
-            aftervalues.append('USE_MATERIAL_TEMPLATE')
-        elif self.value == 'CREATURE':
-            aftervalues.extend(('APPLY_CREATURE_VARIATION', 'APPLY_CURRENT_CREATURE_VARIATION'))
-            beforevalues,extend(('CASTE', 'SELECT_CASTE'))
-        addafter = self.lastprop(value_in=aftervalues, until_value_in=beforevalues)
-        if not addafter: addafter = self
-        addafter.add(*args, **kwargs)
         
     def propterminationfilter(self, naive=True):
         if self.file is not None:
@@ -580,13 +335,7 @@ class rawstoken(queryableaddprop.queryableaddprop):
     
     @staticmethod
     def firstandlast(tokens, setfile=None):
-        '''Utility method for getting the first and last items of some iterable
-        
-        Example usage:
-            >>> tokens = raws.token.parse('[ONE][TWO][THREE][FOUR]')
-            >>> print raws.token.firstandlast(tokens)
-            ([ONE], [FOUR])
-        '''
+        '''Utility method for getting the first and last items of some iterable.'''
         try:
             if setfile is not None: raise ValueError
             return tokens[0], tokens[-1]
@@ -599,7 +348,7 @@ class rawstoken(queryableaddprop.queryableaddprop):
             return first, last            
         
     def addone(self, token, reverse=False, knit=True):
-        '''Internal: Utility method called by add when adding a single token'''
+        '''Internal: Utility method called by add when adding a single token.'''
         
         token.file = self.file
         if token.prev is not None or token.next is not None:
@@ -622,9 +371,9 @@ class rawstoken(queryableaddprop.queryableaddprop):
         return token
     
     def addall(self, tokens, reverse=False, knit=True):
-        '''Internal: Utility method called by add when adding multiple tokens'''
+        '''Internal: Utility method called by add when adding multiple tokens.'''
         
-        first, last = rawstoken.firstandlast(tokens, setfile=self.file)
+        first, last = helpers.ends(tokens, setfile=self.file)
         if first.prev is not None or last.next is not None:
             if knit:
                 if first.prev is not None: first.prev.next = last.next
@@ -645,8 +394,7 @@ class rawstoken(queryableaddprop.queryableaddprop):
         return tokens
     
     def remove(self, count=0, reverse=False):
-        '''Removes this token and the next count tokens in the direction indicated by reverse.
-        '''
+        '''Removes this token and the next count tokens in the direction indicated by reverse.'''
         left = self.prev
         right = self.next
         if count:
@@ -670,9 +418,9 @@ class rawstoken(queryableaddprop.queryableaddprop):
         self.remove()
         return tokens
 
-rawstoken.nulltoken = rawstoken()
+token.nulltoken = token()
 
-token = rawstoken
+rawstoken = token
 
 
 
