@@ -1,15 +1,16 @@
 import inspect
 import itertools
+import textwrap
 
 
 
-def copy(item):
+def copy(item, *args, **kwargs):
     if hasattr(item, 'copy'):
-        return item.copy()
+        return item.copy(*args, **kwargs)
     elif inspect.isgenerator(item) or inspect.isgeneratorfunction(item):
-        return icopytokens(item)
+        return icopytokens(item, *args, **kwargs)
     else:
-        return lcopytokens(item)
+        return lcopytokens(item, *args, **kwargs)
         
 def equal(a, b): 
     if hasattr(a, 'equals'):
@@ -32,7 +33,28 @@ def ends(tokens, setfile=None):
             if first is None: first = token
             last = token
             if setfile is not None: token.file = setfile
-        return first, last     
+        return first, last
+        
+def tokensstring(tokens, dedent=True):
+        if len(tokens) == 0:
+            return ''
+        elif len(tokens) == 1:
+            return str(tokens[0])
+        else:
+            parts = []
+            minindent = None
+            for token in tokens:
+                prefix = ''
+                text = str(token)
+                suffix = ''
+                if ((token.prefix and '\n' in token.prefix)): prefix += '\n'
+                if token.prefix: prefix += token.prefix.split('\n')[-1]
+                if token.suffix: suffix += token.suffix.split('\n')[0]
+                if ((token.suffix and '\n' in token.suffix)): suffix += '\n'
+                parts.extend((prefix, text, suffix))
+            fulltext = ''.join(parts).strip('\n')
+            if dedent: fulltext = textwrap.dedent(fulltext)
+            return fulltext
         
 
 
