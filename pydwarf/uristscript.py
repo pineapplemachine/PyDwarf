@@ -17,6 +17,15 @@ class uristscript:
     def __hash__(self):
         return hash(';'.join((self.getname(), str(self.meta('version')), str(self.meta('author')))))
         
+    def within(self, namespace):
+        if isinstance(namespace, basestring): namespace = namespace.split('.')
+        if self.namespace is None:
+            return not namespace
+        elif len(namespace) > len(self.namespace):
+            return False
+        else:
+            return all(space == self.namespace[index] for index, space in enumerate(namespace))
+        
     def setname(self, name):
         self.name, self.namespace = uristscript.splitname(name)
         
