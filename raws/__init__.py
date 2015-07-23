@@ -43,29 +43,45 @@ import tokenlist
 import tokenparse
 import dir
 import filters
+import helpers
 
 import copytree
 import objects
 import color
 
+
+
 basefilter = filters.basefilter
 tokenfilter = filters.tokenfilter
 boolfilter = filters.boolfilter
+
 queryable = queryable.queryable
 queryableobj = queryableobj.queryableobj
 queryableadd = queryableadd.queryableadd
+
 tokenlist = tokenlist.tokenlist
+
 token = token.token
-filefactory = filefactory.filefactory
+
 basefile = basefile.basefile
 reffile = reffile.reffile
 binfile = binfile.binfile
 rawfile = rawfile.rawfile
+filefactory = filefactory.filefactory
+
 dir = dir.dir
+
 copytree = copytree.copytree
+
 parseplural = tokenparse.parseplural
 parsesingular = tokenparse.parsesingular
 parsevariable = tokenparse.parsevariable
+
+copy = helpers.copy
+equal = helpers.equal
+ends = helpers.ends
+
+
 
 filter = tokenfilter
 parse = parsevariable
