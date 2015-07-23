@@ -146,6 +146,8 @@ class queryable(object):
         
     @staticmethod
     def buildquerymethod(queryname, docstring, defaultiter, normalfilters, untilfilters):
+        '''Internal: Dynamically builds convenience query methods.'''
+        
         def querymethod(self, pretty=None, until=None, tokens=None, iter=None, filters=None, **kwargs):
             '''%s''' % docstring
             
@@ -240,7 +242,7 @@ class queryable(object):
         root = self.index(slice.start)
         tail = self.index(slice.stop)
         if root is not None and tail is not None:
-            for token in root.tokens(include_self=True, step=slice.step, until_token=tail, reverse=root.follows(tail)):
+            for token in root.tokens(include_self=True, step=slice.step, until=tail, reverse=root.follows(tail)):
                 yield token
         else:
             return
