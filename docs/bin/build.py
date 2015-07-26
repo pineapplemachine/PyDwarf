@@ -163,7 +163,7 @@ documented = {}
 def htmldoc(docs, h=1):
     bodies = []
     for name, item, itemexamples, subs in docs:
-        header = '<h%d id="%s" class="title">%s</h%d>' % (h, name, name, h)
+        header = '<h%d id="%s">%s</h%d>' % (h, name, name, h)
         
         docbody = ''
         argsbody = ''
@@ -175,9 +175,9 @@ def htmldoc(docs, h=1):
         except:
             args = None
         if item.__doc__:
-            docbody = '<div class="indent docstring documented">%s</div>' % item.__doc__
+            docbody = '<div class="docstring documented">%s</div>' % item.__doc__
         if args:
-            outer = '<div class="indent arguments">Arguments: %s</div>'
+            outer = '<div class="arguments">Arguments: %s</div>'
             delim = '<span class="argument-separator">,</span>'
             item = '<span class="%s">%s</span>'
             inner = []
@@ -185,13 +185,18 @@ def htmldoc(docs, h=1):
             for index, arg in enumerate(args.args):
                 if args.defaults and index >= len(args.args) - len(args.defaults):
                     default = args.defaults[index - (len(args.args) - len(args.defaults))]
+                    if isinstance(default, basestring):
+                        defaultfmt = '"%s"' % default
+                    else:
+                        defaultfmt = default
                     itemtext = item % (
                         'argument has-default',
-                        '<span class="argument-name %s">%s</span><span class="argument-equals">=</span><span class="argument-default %s">%s</span>' % (
+                        '<span class="argument-name %s">%s</span><span class="argument-equals">=</span><span class="argument-default %s %s">%s</span>' % (
                             arg,
                             arg,
+                            type(default).__name__,
                             default,
-                            default
+                            defaultfmt
                         )
                     )
                 else:
@@ -201,27 +206,34 @@ def htmldoc(docs, h=1):
                     )
                 inner.append(itemtext)
             if args.varargs:
-                itemtext = item % ('varargs', '*args')
+                itemtext = item % ('argument varargs', '*args')
                 inner.append(itemtext)
             if args.keywords:
-                itemtext = item % ('keywords', '**kwargs')
+                itemtext = item % ('argument keywords', '**kwargs')
                 inner.append(itemtext)
             
             argsbody = outer % delim.join(inner)
             
         if itemexamples:
-            examplesbody = '<div class="indent examples">%s</div>' % ''.join(('<pre class="example">%s</pre>' % example['text']) for example in itemexamples)
+            examplesbody = (
+                '<div class="examples">%s</div>' %
+                '<div class="example-separator"></div>'.join(
+                    (
+                        '<pre class="example">%s</pre>' % example['text']
+                    ) for example in itemexamples
+                )
+            )
             
         if not(examplesbody or docbody):
-            docbody = '<div class="indent docstring undocumented">Undocumented</div>'
+            docbody = '<div class="docstring undocumented">Undocumented</div>'
             documented[name] = False
         else:
             documented[name] = True
         
         if subs:
-            subsbody = '<div class="indent subs">%s</div>' % htmldoc(subs, h+1)
+            subsbody = '<div class="subs">%s</div>' % htmldoc(subs, h+1)
         
-        body = header + docbody + argsbody + examplesbody + subsbody
+        body = '<div class="item-header">%s</div><div class="item-body">%s</div>' % (header, docbody + argsbody + examplesbody + subsbody)
         bodies.append('<div class="item">%s</div>' % body)
     bodiestext = '<div class="level level-%d">%s</div>' % (h, '\n'.join(sorted(bodies)))
     return bodiestext
@@ -254,11 +266,19 @@ css = '''
         padding: 2%;
     }
     
-    pre {
+    .example {
         background-color: #060606;
         color: #3c1;
-        margins: 0px 8px;
         padding: 8px;
+        margins: 0;
+        white-space: pre-wrap;       /* CSS 3 */
+        white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+        white-space: -pre-wrap;      /* Opera 4-6 */
+        white-space: -o-pre-wrap;    /* Opera 7 */
+        word-wrap: break-word;       /* Internet Explorer 5.5+ */
+    }
+    .example-separator {
+        margins: 0;
     }
     
     ul {
@@ -274,7 +294,6 @@ css = '''
     }
     
     .docstring {
-        padding-top: 2px;
         padding-bottom: 16px;
         font-style: italic;
         color: #bbb;
@@ -299,8 +318,17 @@ css = '''
     .argument-default {
         color: #555;
     }
-    .argument-name.self {
-        color: #863;
+    .argument-default.str {
+        color: #474;
+    }
+    .argument-default.int {
+        color: #356;
+    }
+    .argument-name.self, .argument-default.bool, .argument-default.NoneType {
+        color: #742;
+    }
+    .argument.varargs, .argument.keywords {
+        color: #555;
     }
     
     .contents-undocumented {
@@ -310,8 +338,14 @@ css = '''
     .item {
         padding: 6px;
     }
-    .indent {
+    .item-body {
         margin-left: 16px;
+        border-top-style: solid;
+        border-bottom-style: solid;
+        border-width: 1px;
+        border-color: #282828;
+        padding-top: 6px;
+        padding-bottom: 6px;
     }
     .level {
         margin-top: 16px;
