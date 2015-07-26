@@ -31,6 +31,12 @@ class session:
         else:
             log.error('Specified input directory %s does not exist.' % conf.input)
             
+    def __enter__(self):
+        if self.conf.backup: self.backup()
+        return self
+    def __exit__(self, type, value, traceback):
+        if traceback is None: self.write(self.outputdir())
+            
     def load(self, raws, *args, **kwargs):
         self.configure(raws, config.load(*args, **kwargs))
             
@@ -47,8 +53,10 @@ class session:
         self.handleall()
         
         # Write output
-        outputdir = self.conf.output if self.conf.output else self.conf.input
-        self.write(outputdir)
+        self.write(self.outputdir())
+        
+    def outputdir(self):
+        return self.conf.output if self.conf.output else self.conf.input
     
     def successful(self, info):
         return self.inlist(info, self.successes)
