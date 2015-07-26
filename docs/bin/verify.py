@@ -109,16 +109,17 @@ if __name__ == '__main__':
     lastfailurein = None
     for result in results:
         match = doctest_result_re.match(result.expandtabs(4))
-        groups = match.groupdict()
-        if groups['got'] and groups['expected']:
-            ignore = groups['got'].strip() == groups['expected'].strip()
-        else:
-            ignore = False
-        if groups['name'] == lastfailurein:
-            ignore = True
-        else:
-            lastfailurein = groups['name']
-        if not ignore: realresults.append(result)
+        if match:
+            groups = match.groupdict()
+            if groups['got'] and groups['expected']:
+                ignore = groups['got'].strip() == groups['expected'].strip()
+            else:
+                ignore = False
+            if groups['name'] == lastfailurein:
+                ignore = True
+            else:
+                lastfailurein = groups['name']
+            if not ignore: realresults.append(result)
     
     if realresults:
         resultstext = '\n\n'.join(reversed(realresults))
