@@ -168,7 +168,7 @@ EXAMPLE
 raws.token.tokens
 raws.tokenlist.__init__ raws.tokenparse.parsevariable
 
->>> tokens = raws.token.parse('[HI][HOW][ARE][YOU][?]')
+>>> tokens = raws.parse('[HI][HOW][ARE][YOU][?]')
 >>> first = tokens[0]
 >>> last = tokens[-1]
 >>> print first

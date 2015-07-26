@@ -20,7 +20,7 @@ raws.tokenparse.parsevariable
 >>> token = raws.parsevariable('[SINGLE:TOKEN]')
 >>> tokens = raws.parsevariable('[TWO][TOKENS]')
 >>> print type(token)
-<class 'raws.token.rawstoken'>
+<class 'raws.token.token'>
 >>> print type(tokens)
 <class 'raws.tokenlist.tokenlist'>
 

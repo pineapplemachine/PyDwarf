@@ -110,3 +110,107 @@ reset
     [TRANSLATION:ELF]
     [WEAPON:ITEM_WEAPON_SPEAR]
     [WEAPON:ITEM_WEAPON_BOW]
+
+---
+
+raws.queryable.__getitem__
+raws.dir.__getitem__
+
+>>> food = df['item_food']
+>>> print food[...]
+[OBJECT:ITEM]
+[ITEM_FOOD:ITEM_FOOD_BISCUITS]
+[NAME:biscuits]
+[LEVEL:2]
+[ITEM_FOOD:ITEM_FOOD_STEW]
+[NAME:stew]
+[LEVEL:3]
+[ITEM_FOOD:ITEM_FOOD_ROAST]
+[NAME:roast]
+[LEVEL:4]
+>>> print food[0]
+[OBJECT:ITEM]
+>>> print food[-1]
+[LEVEL:4]
+>>> print food['NAME']
+[NAME:biscuits]
+>>> token = raws.token('NAME:biscuits')
+>>> print food[token]
+[NAME:biscuits]
+>>> print food[lambda token, count: (token.value == 'NAME', False)]
+[NAME:biscuits]
+[NAME:stew]
+[NAME:roast]
+>>> print food[1:4]
+[ITEM_FOOD:ITEM_FOOD_BISCUITS]
+[NAME:biscuits]
+[LEVEL:2]
+[ITEM_FOOD:ITEM_FOOD_STEW]
+>>> print food[0, 'NAME']
+[OBJECT:ITEM]
+[NAME:biscuits]
+>>> print food[0, 2:3, 'OBJECT', None]
+[OBJECT:ITEM]
+[NAME:biscuits]
+[LEVEL:2][OBJECT:ITEM]
+
+---
+
+raws.queryable.__getitem__
+raws.dir.__getitem__
+
+>>> food = df['item_food']
+>>> print food[raws]
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "raws/queryable.py", line 43, in __getitem__
+    return self.getitem(*args, **kwargs)
+  File "raws/queryable.py", line 85, in getitem
+    raise TypeError('Failed to get item because the argument was of an unrecognized type %s.' % type(item))
+TypeError: Failed to get item because the argument was of an unrecognized type <type 'module'>.
+
+---
+
+raws.queryable.itokens raws.queryable.tokens raws.queryable.list
+raws.dir.__getitem__ raws.tokenlist.__eq__ raws.tokengenerator.__eq__
+
+>>> food = df['item_food']  
+>>> print type(food.itokens()) # Get tokens as a generator
+<type 'generator'>
+>>> print type(food.tokens()) # Get tokens as a regenerator
+<class 'raws.tokengenerator.tokengenerator'>
+>>> print type(food.list()) # Get tokens as a list
+<class 'raws.tokenlist.tokenlist'>
+>>> print food.itokens() == food.tokens()
+True
+>>> print food.itokens() == food.list()
+True
+>>> print food.tokens() == food.itokens()
+True
+>>> print food.tokens() == food.list()
+True
+>>> print food.list() == food.itokens()
+True
+>>> print food.list() == food.tokens()
+True
+
+---
+
+raws.queryable.itokens raws.queryable.tokens
+raws.dir.__getitem__
+
+>>> food = df['item_food']
+>>> print food.itokens()
+<generator object itokens at 0x100526d20>
+>>> print food.tokens()
+[OBJECT:ITEM]
+[ITEM_FOOD:ITEM_FOOD_BISCUITS]
+[NAME:biscuits]
+[LEVEL:2]
+[ITEM_FOOD:ITEM_FOOD_STEW]
+[NAME:stew]
+[LEVEL:3]
+[ITEM_FOOD:ITEM_FOOD_ROAST]
+[NAME:roast]
+[LEVEL:4]
+
