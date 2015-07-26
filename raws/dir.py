@@ -36,7 +36,7 @@ class dir(queryableobj.queryableobj):
     def __enter__(self):
         return self
     def __exit__(self, type, value, traceback):
-        if traceback is None and self.path is not None: self.write(path=self.path)
+        if traceback is None and self.root is not None: self.write(self.root)
         
     def __getitem__(self, name):
         return self.getfile(name)
@@ -203,11 +203,13 @@ class dir(queryableobj.queryableobj):
             yield newfile
         
     def addtodicts(self, file, replace=False):
+        '''Internal: Used to add a file or files to files and filenames dicts.'''
         if isinstance(file, basefile.basefile):
             self.addfiletodicts(file)
         else:
             self.addfilestodicts(file)
     def addfilestodicts(self, files, replace=False):
+        '''Internal: Used to add multiple files to files and filenames dicts at once.'''
         for file in files: self.addfiletodicts(file, replace)
     def addfiletodicts(self, file, replace=False):
         '''Internal: Used to add a file to files and filenames dictionaries.'''
@@ -227,6 +229,8 @@ class dir(queryableobj.queryableobj):
         self.filenames[file.name].append(file)
         
     def remove(self, file=None):
+        '''Remove a file from this dir.'''
+        
         if file is None: raise KeyError('Failed to remove file because no file was given.')
         if isinstance(file, basestring): file = self.getfile(file)
         
@@ -303,6 +307,11 @@ class dir(queryableobj.queryableobj):
                 if self.log: self.log.exception('Failed to write file %s to %s.' % (file, dest))
             
     def clean(self, dest=None):
+        '''
+            Cleans an output directory, typically before writing, so that files
+            that are present in the output directory but not in the dir object
+            won't stick around and interfere with things.
+        '''
         dest = self.getdestforfileop(dest)
         if self.log: self.log.debug('Cleaning files in %s.' % dest)
         for path in self.paths:
@@ -313,6 +322,7 @@ class dir(queryableobj.queryableobj):
                 shutil.rmtree(path)
                 
     def copy(self):
+        '''Create a copy of this dir.'''
         copy = dir()
         copy.root = self.root
         copy.dest = self.dest
@@ -324,6 +334,7 @@ class dir(queryableobj.queryableobj):
         return copy
             
     def clear(self):
+        '''Remove all files from this dir.'''
         for file in self.files.values(): self.remove(file)
         self.files = {}
         self.filenames = {}
@@ -337,7 +348,7 @@ class dir(queryableobj.queryableobj):
         self.read()
             
     def getdestforfileop(self, dest, exception=True):
-        '''Internal'''
+        '''Internal: Wonky method for determining a true destination path given one provided as an argument'''
         if dest is None:
             dest = self.dest if self.dest else self.root
             if exception and dest is None: raise ValueError(
@@ -345,11 +356,12 @@ class dir(queryableobj.queryableobj):
             )
         return dest
     
-    def tokens(self, *args, **kwargs):
+    def itokens(self, *args, **kwargs):
         '''Iterate through all tokens.'''
         for file in self.files.itervalues():
             if isinstance(file, queryable.queryable):
-                for token in file.tokens(*args, **kwargs): yield token
+                for token in file.tokens(*args, **kwargs):
+                    yield token
                 
     def getobjheaders(self, type=None):
         '''Gets OBJECT:X tokens where X is type. Is also prepared for special cases

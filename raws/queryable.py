@@ -9,67 +9,80 @@ import inspect
 class queryable(object):
     '''Classes which contain raws tokens should inherit from this in order to provide querying functionality.'''
     
-    query_tokeniter_docstring = '''
-        tokeniter: The query runs along this iterable until either a filter has hit
-            its limit or the tokens have run out.'''
-    
-    quick_query_args_docstring = '''
-        pretty: Convenience argument which acts as a substitute for directly
-            assigning a filter's exact_value and exact_args arguments. Some methods
-            also accept an until_pretty argument which acts as a substitute for
-            until_exact_value and until_exact_args.
-        %s
-        **kwargs: If no tokeniter is specified, then arguments which correspond to
-            named arguments of the object's tokens method will be passed to that
-            method. All other arguments will be passed to the appropriate filters,
-            and for accepted arguments you should take a look at the tokenfilter
-            constructor's docstring. Some quick query methods support arguments
-            prepended with 'until_' to distinguish tokens that should be matched
-            from tokens that should terminate the query. (These methods are getuntil,
-            getlastuntil, and alluntil. The arguments for the until method should be
-            named normally.)
-    ''' % query_tokeniter_docstring
-            
     def __iter__(self):
         return self.tokens()
     
     def __contains__(self, item):
         if isinstance(item, basestring):
-            return self.get(pretty=pretty) is not None
-        elif isinstance(item, queryable):
-            return item in self.tokens()
+            return self.get(pretty=item) is not None
+        elif isinstance(item, token.token):
+            return any(item is checktoken for checktoken in self.itokens())
+        else:
+            raise ValueError('Failed to check for containment of object because its type %s was unrecognized.' % type(item))
     
-    def __getitem__(self, item):
-        '''Overrides object[...] behavior. Accepts a number of different types for the item argument, each resulting in different behavior.
-        
-        object[...]
-            Returns object.list().
-        object[str]
-            Returns object.get(str).
-        object[int]
-            Returns object.index(int).
-        object[slice]
-            Returns object.slice(slice).
-        object[iterable]
-            Returns a flattened list containing object[member] in order for each member of iterable.
-        object[anything else]
-            Raises an exception.
+    def __getitem__(self, *args, **kwargs):
+        return self.getitem(*args, **kwargs)
+            
+    def getitem(self, item, singular=True, plural=True):
         '''
+            Overrides object[] behavior. Accepts a number of different types
+            for the item argument, each resulting in different behavior.
+            
+            An ellipsis returns self.list().
+            A string returns self.get(str).
+            A number returns self.index(number).
+            A token returns self.get(match_token=token).
+            A slice returns self.slice(slice).
+            A callable object will be treated as a filter and the result of a
+            query will be returned.
+            Any other iterable returns a flattened list containing self[item]
+            for each item in the iterable.
+            Anything else will cause an exception.
+        '''
+        
+        singularresult = None
+        pluralresult = None
+        
         if item is Ellipsis:
-            return self.list()
+            pluralresult = self.list()
+        elif item is None:
+            if plural:
+                pluralresult = tokenlist.tokenlist()
+            else:
+                singularresult = None
         elif isinstance(item, basestring):
-            return self.get(pretty=item)
+            singularresult = self.get(pretty=item)
+        elif isinstance(item, token.token):
+            singularresult = self.get(match_token=item)
         elif isinstance(item, numbers.Number):
-            return self.index(item)
+            singularresult = self.index(item)
         elif isinstance(item, slice):
-            return self.slice(item)
+            pluralresult = self.slice(item)
+        elif callable(item):
+            pluralresult = self.query(item)[0]
         elif hasattr(item, '__iter__') or hasattr(item, '__getitem__'):
-            return self.getitems(item)
+            pluralresult = self.getitems(item)
         else:
             raise TypeError('Failed to get item because the argument was of an unrecognized type %s.' % type(item))
             
-            
-            
+        if singularresult is not None:
+            if singular:
+                return singularresult
+            else:
+                tokens = tokenlist.tokenlist()
+                tokens.append(singularresult)
+                return tokens
+                
+        if pluralresult is not None:
+            if plural:
+                return pluralresult
+            elif len(pluralresult) == 0:
+                return None
+            elif len(pluralresult) == 1:
+                return pluralresult[0]
+            else:
+                raise ValueError('Failed to get item because a multiple items were found where a single return value was expected.')
+          
     builders = {
         'get': (
             # The method's docstring
@@ -205,7 +218,10 @@ class queryable(object):
         return querymethod
         
     def argstokens(self, tokens, kwargs):
-        '''Internal: Utility function for separating arguments to pass on to a tokens iterator from arguments to pass to filters.'''
+        '''
+            Internal: Utility function for separating arguments to pass on to a
+            tokens iterator from arguments to pass to filters.
+        '''
         
         conditionargs = kwargs
         untilargs = {}
@@ -229,23 +245,30 @@ class queryable(object):
         return tokens, conditionargs, untilargs
             
     def getitems(self, items):
-        result = []
+        '''
+            Internal: Used by getitem to flatten lists when an iterable, most
+            relevant being tuples, are recieved as an argument.
+        '''
+        result = tokenlist.tokenlist()
         for item in items:
-            ext = self.__getitem__(item)
-            (result.extend if isinstance(ext, list) else result.append)(ext)
+            result.append(self.getitem(item))
         return result
+    
+    def slice(self, slice, iter=False):
+        '''Get tokens from one to another inclusive.'''
+        return tokengenerator.tokengenerator(self.islice(slice)) if iter else self.lslice(slice)
         
-    def slice(self, slice):
-        return tokenlist.tokenlist(self.islice(slice))
+    def lslice(self, *args, **kwargs):
+        '''Internal: Get a slice as a tokenlist.'''
+        return tokenlist.tokenlist(self.islice(*args, **kwargs))
         
     def islice(self, slice):
-        root = self.index(slice.start)
-        tail = self.index(slice.stop)
+        '''Internal: Get a slice as a generator.'''
+        root = self.getitem(slice.start, plural=False)
+        tail = self.getitem(slice.stop, plural=False)
         if root is not None and tail is not None:
             for token in root.tokens(include_self=True, step=slice.step, until=tail, reverse=root.follows(tail)):
                 yield token
-        else:
-            return
 
     def query(self, filters, tokens=None, iter=False, **kwargs):
         '''
@@ -259,6 +282,8 @@ class queryable(object):
         return self.iquery(filters, tokens) if iter else self.lquery(filters, tokens)
      
     def lquery(self, filters, tokens):
+        '''Internal: Called by the query method when the iter argument is False.'''
+        
         if callable(filters): filters = (filters,)
         
         try:
@@ -282,6 +307,8 @@ class queryable(object):
         return results
         
     def iquery(self, filters, tokens):
+        '''Internal: Called by the query method when the iter argument is True.'''
+        
         if callable(filters): filters = (filters,)
             
         try:
@@ -307,34 +334,30 @@ class queryable(object):
             yield result
             if limit: break
             
+    def tokens(self, *args, **kwargs):
+        '''Get tokens as a tokengenerator.'''
+        return tokengenerator.tokengenerator(self.itokens, *args, **kwargs)
+            
     def list(self, *args, **kwargs):
-        '''Convenience method acts as a shortcut for raws.tokenlist.tokenlist(obj.tokens(*args, **kwargs)).
         '''
-        return tokenlist.tokenlist(self.tokens(*args, **kwargs))
+            Returns the same as the object's tokens method, but in the form of
+            a tokenlist instead of a generator.
+        '''
+        return tokenlist.tokenlist(self.itokens(*args, **kwargs))
             
     def removefirst(self, *args, **kwargs):
+        '''Remove the first token matching a filter.'''
         token = self.get(*args, **kwargs)
         if token is not None: token.remove()
         return token
     def removelast(self, *args, **kwargs):
+        '''Remove the last token matching a filter.'''
         token = self.last(*args, **kwargs)
         if token is not None: token.remove()
         return token
     def removeall(self, *args, **kwargs):
+        '''Remove all tokens matching some filter.'''
         tokens = self.all(*args, **kwargs)
-        for token in tokens: token.remove()
-        return tokens
-        
-    def removeprop(self, *args, **kwargs):
-        token = self.getprop(*args, **kwargs)
-        if token is not None: token.remove()
-        return token
-    def removelastprop(self, *args, **kwargs):
-        token = self.getlastprop(*args, **kwargs)
-        if token is not None: token.remove()
-        return token
-    def removeallprop(self, *args, **kwargs):
-        tokens = self.allprop(*args, **kwargs)
         for token in tokens: token.remove()
         return tokens
     
@@ -345,3 +368,5 @@ queryable.buildqueries()
 import objects
 import filters
 import tokenlist
+import tokengenerator
+import token

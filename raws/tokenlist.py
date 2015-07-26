@@ -2,37 +2,95 @@
 # coding: utf-8
 
 import textwrap
+import numbers
 
 import queryableadd
 
 
 
-class tokenlist(list, queryableadd.queryableadd):
-    '''Extends builtin list with token querying functionality.'''
+class tokenlist(queryableadd.queryableadd):
+    '''Wraps builtin list with token querying functionality.'''
     
-    def __init__(self, *args, **kwargs):
-        if args and args[0] and isinstance(args[0], basestring): args = (tokenparse.parseplural(args[0]),) + args[1:]
-        list.__init__(self, *args, **kwargs)
+    def __init__(self, content=None):
+        self.list = list()
+        if content is not None: self.append(content)
     
-    def tokens(self, range=None, reverse=False):
+    def __len__(self):
+        '''Return the number of items in the list.'''
+        return len(self.list)
+    
+    def __iter__(self):
+        '''Iterate through the tokens in the list.'''
+        return self.list.__iter__()
+    
+    def __add__(self, other):
+        '''Concatenate and return a tokenlist.'''
+        tokens = self.copy()
+        tokens.append(other)
+        return tokens
+        
+    def __radd__(self, other):
+        '''Concatenate and return a tokenlist.'''
+        tokens = tokenlist()
+        tokens.append(other)
+        tokens.append(self)
+        return tokens
+        
+    def __mul__(self, count):
+        '''Concatenate the list with itself some number of times.'''
+        result = tokenlist()
+        for i in xrange(0, count): result.add(self.copy())
+        return result
+        
+    def __iadd__(self, other):
+        '''Append an item to the list.'''
+        self.append(other)
+        
+    def __isub__(self, items):
+        '''Remove items from the end of the list.'''
+        self.sub(items)
+        return self
+        
+    def __setitem__(self, index, value):
+        '''Set the token at an index.'''
+        self.list[index] = value
+        
+    def __delitem__(self, item):
+        '''Remove an item or items from the list.'''
+        self.remove(item)
+        
+    def __str__(self, dedent=True):
+        '''Get a string representation.'''
+        return helpers.tokensstring(self)
+        
+    def __eq__(self, other):
+        '''Check equivalency with another iterable of tokens.'''
+        return self.equals(other)
+    
+    def itokens(self, range=None, reverse=False):
+        '''Iterate through the list's tokens.'''
+        count = 0
         for i in xrange(self.__len__()-1, -1, -1) if reverse else xrange(0, self.__len__()):
             if range is not None and range <= count: break
             yield self.__getitem__(i)
+            count += 1
             
     def append(self, item):
+        '''Add a new token to this list, or extend it with another iterable containing tokens.'''
         if isinstance(item, token.token):
-            list.append(self, item)
+            self.list.append(item)
         elif isinstance(item, queryable.queryable):
-            self.extend(item.tokens())
+            self.list.extend(item.tokens())
         elif isinstance(item, basestring):
-            self.append(tokenparse.parsevariable(item))
+            self.list.extend(tokenparse.parseplural(item, implicit=True))
         else:
             try:
-                self.extend(item)
+                self.list.extend(item)
             except:
                 raise TypeError('Failed to append item because it was of unrecognized type %s.' % type(item))
                 
     def add(self, *args, **kwargs):
+        '''Add token or tokens to the last token in this list, and also add those tokens to the list itself.'''
         if len(self):
             added = self[-1].add(*args, **kwargs)
             self.append(added)
@@ -40,73 +98,70 @@ class tokenlist(list, queryableadd.queryableadd):
         else:
             raise ValueError('Failed to add tokens to tokenlist because the list was already empty.')
     
+    def sub(self, items):
+        self.list[:] = self.list[:-items]
+    
     def each(self, func=None, filter=None, output=None):
         '''
-            Calls a function for each entry in the list with that entry as the argument, and
-            appends each result to a returned tokenlist.
+            Call a function for each entry in the list with that entry as the
+            argument and append each result to a returned tokenlist.
         '''
         if output is None: output = tokenlist
         return output(
             (func(token) if func is not None else token) for token in self if (filter is None or filter(token))
         )
         
+    def index(self, index):
+        '''Get the token at an index.'''
+        return self.list[index]
+        
+    def clear(self):
+        '''Remove all tokens from the list.'''
+        del self.list[:]
+        
+    def remove(self, item):
+        '''Remove an item or items from the list.'''
+        if item is Ellipsis:
+            self.clear()
+        elif item is None:
+            pass
+        elif isinstance(item, basestring):
+            filter = filters.tokenfilter(pretty=item)
+            self.list = [i for i in self.list if not filter.matches(i)]
+        elif isinstance(item, token.token):
+            self.list = [i for i in self.list if i is not item]
+        elif isinstance(item, numbers.Number):
+            del self.list[item]
+        elif isinstance(item, slice):
+            newlist = list()
+            for index, i in enumerate(self.list):
+                if not(
+                    (item.start is None or index >= item.start) and
+                    (item.stop is None or index <= item.stop) and
+                    (item.step is None or (index - item.start) % item.step == 0)
+                ):
+                    newlist.append(i)
+            self.list = newlist
+        elif callable(item):
+            self.list = [i[0] for i in self.iquery(filters=item) if i is not None]
+        elif hasattr(item, '__iter__') or hasattr(item, '__getitem__'):
+            for i in item: self.remove(i)
+        
     def copy(self, shallow=False):
+        '''Create a copy of the list.'''
         if shallow:
             return tokenlist(token for token in self)
         else:
             return helpers.lcopytokens(self)
             
-    def equals(self, other):
-        return list.__eq__(self, other)
-            
-    def remove(self, *args, **kwargs):
-        for token in self: token.remove(*args, **kwargs)
+    def equals(self, other, *args, **kwargs):
+        '''Check equivalency with another iterable of tokens.'''
+        return helpers.tokensequal(self, other, *args, **kwargs)
     
-    def __add__(self, other):
-        copy = self.copy()
-        copy.append(other)
-        return copy
-        
-    def __mul__(self, count):
-        result = tokenlist()
-        for i in xrange(0, count): result.add(self.copy())
-        return result
-        
-    def __iadd__(self, other):
-        self.add(other)
     
-    def __getitem__(self, *args, **kwargs):
-        result = list.__getitem__(self, *args, **kwargs)
-        if isinstance(result, list): result = tokenlist(result)
-        return result
-    
-    def __getslice__(self, *args, **kwargs):
-        return tokenlist(list.__getslice__(self, *args, **kwargs))
-    
-    def __str__(self, dedent=True):
-        if len(self) == 0:
-            return ''
-        elif len(self) == 1:
-            return str(self[0])
-        else:
-            parts = []
-            minindent = None
-            for token in self:
-                prefix = ''
-                text = str(token)
-                suffix = ''
-                if token is not self[0] and ((token.prefix and '\n' in token.prefix)): prefix += '\n'
-                if token.prefix: prefix += token.prefix.split('\n')[-1]
-                if token.suffix: suffix += token.suffix.split('\n')[0]
-                if token is not self[-1] and ((token.suffix and '\n' in token.suffix)): suffix += '\n'
-                parts.extend((prefix, text, suffix))
-            fulltext = ''.join(parts)
-            if dedent: fulltext = textwrap.dedent(fulltext)
-            return fulltext
-
-
 
 import queryable
 import tokenparse
 import token
 import helpers
+import filters

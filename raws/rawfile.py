@@ -131,7 +131,7 @@ class rawfile(contentfile.contentfile, queryableobj.queryableobj, queryableadd.q
         while self.tailtoken is not None and self.tailtoken.next is not None: self.tailtoken = self.tailtoken.next
         return self.tailtoken
         
-    def tokens(self, reverse=False, **kwargs):
+    def itokens(self, reverse=False, **kwargs):
         '''Iterate through all tokens.
         
         reverse: If False, starts from the first token and iterates forwards. If True,

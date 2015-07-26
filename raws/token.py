@@ -93,8 +93,7 @@ class token(queryableaddprop.queryableaddprop):
         return self is other or self.__gt__(other)
         
     def __add__(self, other):
-        '''Concatenates and returns a tokenlist object.
-        '''
+        '''Concatenate and return a tokenlist.'''
         if isinstance(other, rawstoken):
             tokens = tokenlist.tokenlist()
             tokens.append(self)
@@ -109,7 +108,7 @@ class token(queryableaddprop.queryableaddprop):
             raise TypeError('Failed to perform concatenation because the type %s of the other operand was unrecognized.' % type(other))
         
     def __radd__(self, other):
-        '''Internal: Same as __add__ except reversed.'''
+        '''Concatenate and return a tokenlist.'''
         if isinstance(other, rawstoken):
             tokens = tokenlist.tokenlist()
             tokens.append(other)
@@ -296,7 +295,7 @@ class token(queryableaddprop.queryableaddprop):
         '''Returns a copy of this token.'''
         return rawstoken(copy=self)
         
-    def tokens(self, range=None, include_self=False, reverse=False, until=None, step=None):
+    def itokens(self, range=None, include_self=False, reverse=False, until=None, step=None):
         '''Iterate through successive tokens starting with this one.'''
         count = 0
         itertoken = self if include_self else (self.prev if reverse else self.next)
@@ -428,3 +427,4 @@ import queryable
 import tokenlist
 import objects
 import tokenparse
+import helpers
