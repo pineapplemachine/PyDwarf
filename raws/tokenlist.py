@@ -5,10 +5,11 @@ import textwrap
 import numbers
 
 import queryableadd
+import tokencollection
 
 
 
-class tokenlist(queryableadd.queryableadd):
+class tokenlist(tokencollection.tokencollection, queryableadd.queryableadd):
     '''Wraps builtin list with token querying functionality.'''
     
     def __init__(self, content=None):
@@ -46,9 +47,9 @@ class tokenlist(queryableadd.queryableadd):
         '''Append an item to the list.'''
         self.append(other)
         
-    def __isub__(self, items):
-        '''Remove items from the end of the list.'''
-        self.sub(items)
+    def __isub__(self, count):
+        '''Remove some number of items from the end of the list.'''
+        self.sub(count)
         return self
         
     def __setitem__(self, index, value):
@@ -58,11 +59,7 @@ class tokenlist(queryableadd.queryableadd):
     def __delitem__(self, item):
         '''Remove an item or items from the list.'''
         self.remove(item)
-        
-    def __str__(self, dedent=True):
-        '''Get a string representation.'''
-        return helpers.tokensstring(self)
-        
+    
     def __eq__(self, other):
         '''Check equivalency with another iterable of tokens.'''
         return self.equals(other)
@@ -80,14 +77,19 @@ class tokenlist(queryableadd.queryableadd):
         if isinstance(item, token.token):
             self.list.append(item)
         elif isinstance(item, queryable.queryable):
-            self.list.extend(item.tokens())
+            self.extend(item.tokens())
         elif isinstance(item, basestring):
-            self.list.extend(tokenparse.parseplural(item, implicit=True))
+            self.extend(tokenparse.parseplural(item, implicit=True))
         else:
+            self.extend(item)
             try:
-                self.list.extend(item)
+                self.extend(item)
             except:
                 raise TypeError('Failed to append item because it was of unrecognized type %s.' % type(item))
+                
+    def extend(self, items):
+        '''Extend the list with another iterable containing tokens.'''
+        self.list.extend(items)
                 
     def add(self, *args, **kwargs):
         '''Add token or tokens to the last token in this list, and also add those tokens to the list itself.'''
@@ -98,19 +100,10 @@ class tokenlist(queryableadd.queryableadd):
         else:
             raise ValueError('Failed to add tokens to tokenlist because the list was already empty.')
     
-    def sub(self, items):
-        self.list[:] = self.list[:-items]
+    def sub(self, count):
+        '''Remove some number of items from the end of the list.'''
+        self.list[:] = self.list[:-count]
     
-    def each(self, func=None, filter=None, output=None):
-        '''
-            Call a function for each entry in the list with that entry as the
-            argument and append each result to a returned tokenlist.
-        '''
-        if output is None: output = tokenlist
-        return output(
-            (func(token) if func is not None else token) for token in self if (filter is None or filter(token))
-        )
-        
     def index(self, index):
         '''Get the token at an index.'''
         return self.list[index]
@@ -153,10 +146,6 @@ class tokenlist(queryableadd.queryableadd):
             return tokenlist(token for token in self)
         else:
             return helpers.lcopytokens(self)
-            
-    def equals(self, other, *args, **kwargs):
-        '''Check equivalency with another iterable of tokens.'''
-        return helpers.tokensequal(self, other, *args, **kwargs)
     
     
 

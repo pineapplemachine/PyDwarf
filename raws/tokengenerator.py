@@ -1,5 +1,7 @@
 import itertools
+
 import queryable
+import tokencollection
 
 
 
@@ -28,7 +30,7 @@ class regenerator(object):
         
     
     
-class tokengenerator(regenerator, queryable.queryable):
+class tokengenerator(regenerator, tokencollection.tokencollection, queryable.queryable):
     '''
         Wraps a generator containing token objects with helpful methods and the
         ability to iterate more than just once when desired.
@@ -39,10 +41,6 @@ class tokengenerator(regenerator, queryable.queryable):
         kwargs['iter'] = kwargs.get('iter', True)
         return helpers.copytokens(self, *args, **kwargs)
         
-    def equals(self, other):
-        '''Check for equivalency with another iterable containing tokens.'''
-        return helpers.tokensequal(self, other)
-
     def tokens(self, range=None):
         '''Iterate through the generator's tokens.'''
         count = 0
@@ -51,10 +49,6 @@ class tokengenerator(regenerator, queryable.queryable):
             yield item
             count += 1
             
-    def __str__(self):
-        '''Get a string representation.'''
-        return helpers.tokensstring(self)
-        
     def __eq__(self, other):
         '''Check for equivalency with another iterable containing tokens.'''
         return self.equals(other)
