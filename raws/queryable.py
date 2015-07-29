@@ -10,9 +10,11 @@ class queryable(object):
     '''Classes which contain raws tokens should inherit from this in order to provide querying functionality.'''
     
     def __iter__(self):
-        return self.tokens()
+        '''Iterate through the object's tokens.'''
+        return self.itokens()
     
     def __contains__(self, item):
+        '''Check if some matching token can be found.'''
         if isinstance(item, basestring):
             return self.get(pretty=item) is not None
         elif isinstance(item, token.token):
@@ -25,8 +27,8 @@ class queryable(object):
             
     def getitem(self, item, singular=True, plural=True):
         '''
-            Overrides object[] behavior. Accepts a number of different types
-            for the item argument, each resulting in different behavior.
+            Accepts a number of different types for the item argument, each
+            resulting in different behavior.
             
             An ellipsis returns self.list().
             A string returns self.get(str).
@@ -230,7 +232,7 @@ class queryable(object):
         if tokens is None:
             if hasattr(self, 'tokens') and callable(self.tokens):
                 conditionargs, tokensargs = {}, {}
-                possibletokensargs = inspect.getargspec(self.tokens)[0]
+                possibletokensargs = inspect.getargspec(self.itokens)[0]
                 for argname, argvalue in kwargs.iteritems():
                     if argname in possibletokensargs:
                         tokensargs[argname] = argvalue
