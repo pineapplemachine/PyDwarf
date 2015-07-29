@@ -28,7 +28,7 @@ from examples import examples
                     
 
     
-def verify(examples, **globs):
+def verify(examples, skipreset=False, **globs):
     docparser = doctest.DocTestParser()
     docrunner = doctest.DocTestRunner()
     results = []
@@ -38,31 +38,35 @@ def verify(examples, **globs):
     dfcopy = df.copy()
     
     for example in examples:
-        print 'Running example %s' % example['name']
-        testnum += 1
+        if skipreset and 'reset' in example['flags']:
+            print 'Skipping example %s' % example['name']
         
-        # Create the doctest object
-        test = docparser.get_doctest(
-            string = example['text'],
-            globs = globs,
-            name = example['name'],
-            filename = None,
-            lineno = None
-        )
-        
-        # Actually run the test
-        resultcount = len(results)
-        docrunner.run(
-            test = test,
-            out = lambda result: results.append(result),
-            clear_globs = False
-        )
-        
-        # Handle flags
-        if 'reset' in example['flags']:
-            print 'Resetting df raws.'
-            df = dfcopy
-            dfcopy = df.copy()
+        else:
+            print 'Running example %s' % example['name']
+            testnum += 1
+            
+            # Create the doctest object
+            test = docparser.get_doctest(
+                string = example['text'],
+                globs = globs,
+                name = example['name'],
+                filename = None,
+                lineno = None
+            )
+            
+            # Actually run the test
+            resultcount = len(results)
+            docrunner.run(
+                test = test,
+                out = lambda result: results.append(result),
+                clear_globs = False
+            )
+            
+            # Handle flags
+            if 'reset' in example['flags']:
+                print 'Resetting df raws.'
+                df = dfcopy
+                dfcopy = df.copy()
         
     return results
 
@@ -91,7 +95,8 @@ doctest_result_re = re.compile(doctest_pattern)
 if __name__ == '__main__':
     print 'Initializing session.'
     conf = pydwarf.config.load(root=pydwarf_root, args={
-        'log': ''
+        'log': '',
+        'verbose': False,
     })
     session = pydwarf.session(raws, conf)
     
