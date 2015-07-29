@@ -44,7 +44,7 @@ class token(queryableaddprop.queryableaddprop):
         if arg is not None:
             args = [arg]
         
-        if self.args is None or args is not None: self.setargs(args)
+        if self.args is None or args is not None: self.args = args
         if value is not None: self.setvalue(value)
         if prefix is not None: self.setprefix(prefix)
         if suffix is not None: self.setsuffix(suffix)
@@ -57,7 +57,7 @@ class token(queryableaddprop.queryableaddprop):
             Not that this class is immutable, just means you'll need to be
             careful about when you're using token hashes.
         '''
-        return hash('%s:%s' % (self.value, self.argsstr()) if self.nargs() else self.value)
+        return hash('%s:%s' % (self.value, self.args) if self.nargs() else self.value)
     
     def __str__(self):
         '''Get a concise string representation.'''
@@ -154,6 +154,14 @@ class token(queryableaddprop.queryableaddprop):
         '''Always returns True.'''
         return True
         
+    def __setattr__(self, name, value):
+        if name == 'args':
+            if 'args' not in self.__dict__ or self.args is None:
+                self.__dict__['args'] = tokenargs.tokenargs()
+            self.__dict__['args'].reset(value)
+        else:
+            super(token, self).__setattr__(name, value)
+        
     @staticmethod
     def autosingular(auto=None, token=None, **kwargs):
         '''Internal: Convenience function for handling method arguments when exactly one token is expected.'''
@@ -202,6 +210,7 @@ class token(queryableaddprop.queryableaddprop):
         return token, tokens
         
     def index(self, index):
+        '''Return the token at an integer offset relative to this one.'''
         itrtoken = self
         for i in xrange(0, abs(index)):
             itrtoken = itrtoken.next if index > 0 else itrtoken.prev
@@ -209,6 +218,10 @@ class token(queryableaddprop.queryableaddprop):
         return itrtoken
         
     def follows(self, other):
+        '''
+            Return True if a particular token is located after this one in some
+            file or list.
+        '''
         if other is not None:
             for token in other.tokens():
                 if token is self:
@@ -221,23 +234,19 @@ class token(queryableaddprop.queryableaddprop):
         
     def nargs(self, count=None):
         '''
-            When count is None, returns the number of arguments the token has. (Length of
-            arguments list.) Otherwise, returns True if the number of arguments is equal to the
+            When count is None, returns the number of arguments the token has.
+            Otherwise, returns True if the number of arguments is equal to the
             given count and False if not.
         '''
         return len(self.args) if (count is None) else (len(self.args) == count)
 
     def setargs(self, args=None):
-        if args is None:
-            if self.args is None:
-                self.args = tokenargs.tokenargs()
-            else:
-                self.args.clear()
-        else:
-            if self.args is None:
-                self.args = tokenargs.tokenargs(args)
-            else:
-                self.args.reset(args)
+        '''Set the token's arguments.'''
+        self.args = args
+        
+    def getargs(self):
+        '''Get the token's arguments.'''
+        return self.args
         
     def getvalue(self):
         '''Get the token's value.'''
@@ -309,42 +318,19 @@ class token(queryableaddprop.queryableaddprop):
             Adds a token or tokens nearby this one. If reverse is False the token 
             or tokens are added immediately after. If it's True, they are added before.
         '''
+        
         reverse = kwargs.get('reverse', False)
+        if 'reverse' in kwargs: del kwargs['reverse']
+        
         knit = kwargs.get('knit', False)
+        if 'knit' in kwargs: del kwargs['knit']
+        
         token, tokens = rawstoken.autovariable(*args, **kwargs)
+        
         if token is not None:
             return self.addone(token, reverse=reverse, knit=knit)
         elif tokens is not None:
             return self.addall(tokens, reverse=reverse, knit=knit)
-        
-    def propterminationfilter(self, naive=True):
-        if self.file is not None:
-            # Smartest: Base it off file header and objects knowledge if possible.
-            header = self.file.getobjheaders()[0]
-        
-        elif naive:
-            # Naive: If the information for smart isn't available, assume this token itself is the root object token.
-            header = objects.headerforobject(self)
-        
-        else:
-            raise ValueError('Failed to get termination filter for token because there wasn\'t enough information and because the naive filter was disallowed.')
-            
-        terminators = objects.objectsforheader(header)
-        return lambda token, count: (False, token.value in terminators and token.nargs(1))
-    
-    @staticmethod
-    def firstandlast(tokens, setfile=None):
-        '''Utility method for getting the first and last items of some iterable.'''
-        try:
-            if setfile is not None: raise ValueError
-            return tokens[0], tokens[-1]
-        except Exception as e:
-            first, last = None, None
-            for token in tokens:
-                if first is None: first = token
-                last = token
-                if setfile is not None: token.file = setfile
-            return first, last            
         
     def addone(self, token, reverse=False, knit=True):
         '''Internal: Utility method called by add when adding a single token.'''
@@ -391,6 +377,21 @@ class token(queryableaddprop.queryableaddprop):
             if self.next: self.next.prev = last
             self.next = first
         return tokens
+        
+    def propterminationfilter(self, naive=True):
+        if self.file is not None:
+            # Smartest: Base it off file header and objects knowledge if possible.
+            header = self.file.getobjheaders()[0]
+        
+        elif naive:
+            # Naive: If the information for smart isn't available, assume this token itself is the root object token.
+            header = objects.headerforobject(self)
+        
+        else:
+            raise ValueError('Failed to get termination filter for token because there wasn\'t enough information and because the naive filter was disallowed.')
+            
+        terminators = objects.objectsforheader(header)
+        return lambda token, count: (False, token.value in terminators and token.nargs(1))
     
     def remove(self, count=0, reverse=False):
         '''Removes this token and the next count tokens in the direction indicated by reverse.'''
