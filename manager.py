@@ -64,9 +64,9 @@ def __main__(args=None):
 def parseargs():
     parser = argparse.ArgumentParser()
     parser.add_argument('-ver', '--version', help='indicate Dwarf Fortress version', type=str)
-    parser.add_argument('-i', '--input', help='raws input directory', type=str)
-    parser.add_argument('-o', '--output', help='raws output directory', type=str)
-    parser.add_argument('-bak', '--backup', help='raws backup directory', type=str)
+    parser.add_argument('-i', '--input', help='dwarf fortress input directory', type=str)
+    parser.add_argument('-o', '--output', help='dwarf fortress output directory', type=str)
+    parser.add_argument('-bak', '--backup', help='dwarf fortress backup directory', type=str)
     parser.add_argument('-p', '--paths', help='which paths relative to input to store in memory and allow access to', nargs='+', type=str)
     parser.add_argument('-s', '--scripts', help='run scripts by name or namespace', nargs='+', type=str)
     parser.add_argument('-pk', '--packages', help='import packages containing PyDwarf scripts', nargs='+', type=str)
