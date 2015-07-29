@@ -1,5 +1,10 @@
 # Disclaimer: This is a shitty WIP
 
+'''
+    Automatically build html documentation using docstrings and code examples as
+    a basis.
+'''
+
 import sys
 import os
 
@@ -30,38 +35,7 @@ def methodclass(method):
 
 items = [
     raws,
-    pydwarf,
-    # raws.token,
-    
-    # raws.tokenlist,
-    # raws.tokenparse,
-    
-    # raws.filefactory,
-    # raws.basefile,
-    # raws.reffile,
-    # raws.binfile,
-    # raws.rawfile,
-    
-    # raws.dir,
-    
-    # raws.color,
-    
-    # raws.queryable,
-    # raws.queryableobj,
-    # raws.queryableadd,
-    # raws.queryableprop,
-    # raws.queryableaddprop,
-    
-    # raws.basefilter,
-    # raws.tokenfilter,
-    # raws.boolfilter,
-    
-    # pydwarf.session,
-    # pydwarf.urist,
-    # pydwarf.script,
-    # pydwarf.helpers,
-    # pydwarf.quick,
-    # pydwarf.registrar,
+    pydwarf
 ]
 
 
