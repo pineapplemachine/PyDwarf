@@ -334,6 +334,7 @@ css = '''
 html = '''
     <html>
         <head>
+            <link rel="shortcut icon" href="../images/favicon.png"/>
             <title>%(title)s</title>
             <style>%(style)s</style>
         </head>
