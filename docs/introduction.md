@@ -1,4 +1,4 @@
-# Configuring PyDwarf
+# Your First Time with PyDwarf
 
 The steps given here are specifically for Windows, but the procedure on other operating systems will be almost identical.
 

@@ -7,7 +7,7 @@
     This directory contains documentation and scripts for automatically building or otherwise fucking around with documentation.
     
     - **bin**  
-      Contains stuff like a shitty WIP script to make html documentation from PyDwarf's docstrings, a script to generate a markdown file containing descriptions of each script registered with PyDwarf, and a script which actually runs those examples in `docs/examples/` to make sure all of them work like they're supposed to.
+      Contains stuff like a script to make html documentation from PyDwarf's docstrings, a script to generate a markdown file containing descriptions of each script registered with PyDwarf, and a script which actually runs those examples in `docs/examples/` to make sure all of them work like they're supposed to.
       
     - **config**  
       Here you can find examples of PyDwarf configuration files in formats other than yaml.
