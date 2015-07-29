@@ -152,7 +152,8 @@ raws.dir.__getitem__
 >>> print food[0, 2:3, 'OBJECT', None]
 [OBJECT:ITEM]
 [NAME:biscuits]
-[LEVEL:2][OBJECT:ITEM]
+[LEVEL:2]
+[OBJECT:ITEM]
 
 ---
 
@@ -200,8 +201,8 @@ raws.queryable.itokens raws.queryable.tokens
 raws.dir.__getitem__
 
 >>> food = df['item_food']
->>> print food.itokens()
-<generator object itokens at 0x100526d20>
+>>> print type(food.itokens())
+<type 'generator'>
 >>> print food.tokens()
 [OBJECT:ITEM]
 [ITEM_FOOD:ITEM_FOOD_BISCUITS]

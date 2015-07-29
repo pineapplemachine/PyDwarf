@@ -62,3 +62,54 @@ pydwarf.registrar.__getattr__
 False
 >>> noexotic.within('pineapple')
 True
+
+---
+
+pydwarf.scripts.pineapple.adoptsowner
+pydwarf.registrar.__getattr__ raws.queryable.all raws.tokenlist.__len__
+reset
+>>> print len(df.all('ADOPTS_OWNER'))
+1
+>>> print pydwarf.scripts.pineapple.adoptsowner(df)
+SUCCESS: Added 0 ADOPTS_OWNER tokens and removed 1 from object type CREATURE.
+>>> print len(df.all('ADOPTS_OWNER'))
+0
+
+---
+
+pydwarf.scripts.pineapple.bauxitetoaluminum
+pydwarf.registrar.__getattr__ raws.queryable.get raws.queryableobj.getobj
+reset
+>>> print df.getobj('INORGANIC:ALUMINUM').get('MATERIAL_VALUE')
+[MATERIAL_VALUE:40]
+>>> print pydwarf.scripts.pineapple.bauxitetoaluminum(df)
+SUCCESS: Added object [REACTION:SMELT_BAUXITE_ALUMINUM_PINEAPPLE] to file raw/objects/reaction_smelter_bauxtoalum_pineapple.txt.
+>>> print df.getobj('INORGANIC:ALUMINUM').get('MATERIAL_VALUE')
+[MATERIAL_VALUE:30]
+>>> tokens = df['raw/objects/reaction_smelter_bauxtoalum_pineapple.txt'].tokens()
+>>> print ''.join(str(token) for token in tokens)
+[OBJECT:REACTION][REACTION:SMELT_BAUXITE_ALUMINUM_PINEAPPLE][NAME:smelt aluminum from bauxite][SMELTER][REAGENT:1:STONE:NO_SUBTYPE:STONE:BAUXITE][REAGENT:1:STONE:NO_SUBTYPE:STONE:CRYOLITE][PRODUCT:100:1:BAR:NO_SUBTYPE:METAL:ALUMINUM][FUEL]
+
+---
+
+pydwarf.scripts.pineapple.boneflux
+pydwarf.registrar.__getattr__ raws.rawfile.__len__
+reset
+>>> print pydwarf.scripts.pineapple.boneflux(df)
+SUCCESS: Added object [REACTION:BONE_TO_FLUX_PINEAPPLE] to file raw/objects/reaction_kiln_boneflux_pineapple.txt.
+>>> print len(df['raw/objects/reaction_kiln_boneflux_pineapple.txt'])
+10
+
+---
+
+pydwarf.scripts.pineapple.butcherinorganic
+pydwarf.registrar.__getattr__ raws.queryableobj.getobj raws.queryableprop.getprop
+reset
+>>> print pydwarf.scripts.pineapple.butcherinorganic(df)
+SUCCESS: Added BUTCHER_SPECIAL to 3 material templates.
+>>> print df.getobj('MATERIAL_TEMPLATE:WOOD_TEMPLATE').getprop('BUTCHER_SPECIAL')
+[BUTCHER_SPECIAL:WOOD:NONE]
+>>> print df.getobj('MATERIAL_TEMPLATE:METAL_TEMPLATE').getprop('BUTCHER_SPECIAL')
+[BUTCHER_SPECIAL:BARS:NONE]
+>>> print df.getobj('MATERIAL_TEMPLATE:STONE_TEMPLATE').getprop('BUTCHER_SPECIAL')
+[BUTCHER_SPECIAL:BOULDER:NONE]
