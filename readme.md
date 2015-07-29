@@ -6,9 +6,9 @@ PyDwarf is licensed via the exceptionally permissive [zlib/libpng license](https
 
 ## Configuring PyDwarf
 
-PyDwarf is easy to configure! Open `config.json` with your favorite plain text editor and tell it where to find your Dwarf Fortress raws, edit the list of scripts to reflect the mods you want to run and in what order you'd like them to run. Once the configuration is to your liking simply run `manager.py`, with Python 2.7 installed this can be done by opening a command line in the PyDwarf directory and running `python manager.py`.
+PyDwarf is easy to configure! Open `config.yaml` with your favorite plain text editor and tell it where to find your Dwarf Fortress raws, edit the list of scripts to reflect the mods you want to run and in what order you'd like them to run. Once the configuration is to your liking you can run `manager.py`: With Python 2.7 installed this can be done by opening a command line in the PyDwarf directory and running `python manager.py`.
 
-Here's a [step-by-step tutorial](docs/configuring.md) describing what this process might entail, and here's a full list of the scripts which [come bundled with PyDwarf](docs/scripts.md).
+Here's a [step-by-step tutorial](docs/introduction.md) describing what this process might entail your first time around, here's [detailed documentation](docs/config.md) on how to configure PyDwarf, and here's a full [list of scripts](docs/scripts.md) which come bundled with PyDwarf.
 
 ## Modding using PyDwarf
 
