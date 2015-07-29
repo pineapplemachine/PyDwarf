@@ -156,7 +156,7 @@ def cavegrass(df, grasses=default_grasses, add_file='plant_grasses_cavegrass_pin
         if 'add_tokens' in grassdict:
             grasstoken.add(grassdict['add_tokens'])
         if 'remove_tokens' in grassdict:
-            tokens = raws.token.parseplural(grassdict['remove_tokens'])
+            tokens = raws.tokenparse.parseplural(grassdict['remove_tokens'])
             for token in tokens:
                 removetoken = grasstoken.getprop(match_token=token)
                 if removetoken:

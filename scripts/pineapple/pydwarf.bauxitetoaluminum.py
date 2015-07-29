@@ -32,7 +32,7 @@ def bauxitetoaluminum(df, aluminum_value=0.75, entities=default_entities, add_to
         aluminum = df.getobj('INORGANIC:ALUMINUM')
         if aluminum is None: return pydwarf.failure('Couldn\'t find aluminum token to affect its value.')
         matvaluetoken = aluminum.getprop('MATERIAL_VALUE')
-        matvaluetoken.args[0] = str( float(matvaluetoken.args[0]) * aluminum_value )
+        matvaluetoken.args[0] = int( float(matvaluetoken.args[0]) * aluminum_value )
     except:
         pydwarf.log.exception('Failed to affect value of aluminum.')
         return pydwarf.failure()
