@@ -2,17 +2,22 @@
 *.pyc
 *.xcf
 *test.py
+.sublime-project
+
+# Don't worry about my personal config file
+config.py
 
 # Manager logs go here
 logs/*
 
 # Raws go here (for my personal testing and stuff anyway)
 df/*
-output/*
-backup/*
 
 # Older DF versions go here (for my help figuring version compatibility)
 refs/*
 
 # Stuff that's just not meant to be committed right now
 build/*
+
+# Used in a documentation example but don't include the actual file
+scripts/mynamespace/*
