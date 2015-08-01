@@ -292,13 +292,18 @@ class token(queryableaddprop.queryableaddprop):
         
     def equals(self, other):
         '''Returns True if two tokens have identical values and arguments, False otherwise.'''
-        return(
-            other is not None and
-            other is not rawstoken.nulltoken and
-            self is not rawstoken.nulltoken and
-            self.value == other.value and
-            self.args == other.args
-        )
+        if isinstance(other, rawstoken):
+            return(
+                other is not None and
+                other is not rawstoken.nulltoken and
+                self is not rawstoken.nulltoken and
+                self.value == other.value and
+                self.args == other.args
+            )
+        elif isinstance(other, basestring):
+            return self.equals(rawstoken(pretty=other))
+        else:
+            raise TypeError('Failed to check token equivalency against object of type %s.' % type(other))
     
     def copy(self):
         '''Returns a copy of this token.'''
