@@ -25,7 +25,11 @@ class tokenargs(object):
         
     def __getitem__(self, item):
         '''Get an item from the list.'''
-        return self.list[item]
+        result = self.list[item]
+        if isinstance(result, list):
+            return tokenargs(result)
+        else:
+            return result
         
     def __str__(self):
         '''Get a string representation.'''
