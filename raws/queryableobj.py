@@ -73,6 +73,22 @@ class queryableobj(queryable.queryable):
             if obj: return obj
         return None
         
+    def lastobj(self, pretty=None, type=None, exact_id=None, type_in=None, re_id=None, id_in=None): 
+        type, exact_id = queryableobj.objpretty(pretty, type, exact_id)
+        headers = self.headersfortype(type, type_in)
+        if type is None and type_in is None: type_in = objects.objects()
+        for objecttoken in headers:
+            obj = objecttoken.last(
+                exact_value = type,
+                value_in = type_in,
+                exact_args = (exact_id,) if exact_id else None,
+                re_args = (re_id,) if re_id else None,
+                arg_in = ((0, id_in),) if id_in else None,
+                args_count = 1
+            )
+            if obj: return obj
+        return None
+        
     def allobj(self, pretty=None, type=None, exact_id=None, type_in=None, re_id=None, id_in=None):
         '''Gets all objects matching a given type and optional id or id regex.
         
