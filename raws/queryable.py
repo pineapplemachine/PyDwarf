@@ -291,14 +291,23 @@ class queryable(object):
         try:
             results = {filterkey: tokenlist.tokenlist() for filterkey in filters.iterkeys()}
             filteriter = filters.items()
+            resultcontainer = queryresult.queryresult(self, results, results.items())
         except:
             results = [tokenlist.tokenlist() for i in filters]
             filteriter = tuple(enumerate(filters))
+            resultcontainer = queryresult.queryresult(self, results)
         
         limit = False    
         for token in tokens:
             for key, filter in filteriter:
-                matches, terminate = filter(token, len(results[key]))
+                try:
+                    returned = filter(token, len(results[key]))
+                except:
+                    returned = filter(token)
+                try:
+                    matches, terminate = returned
+                except:
+                    matches, terminate = returned, False
                 if matches:
                     results[key].append(token)
                 if terminate:
@@ -306,7 +315,7 @@ class queryable(object):
                     break
             if limit: break
             
-        return results
+        return resultcontainer
         
     def iquery(self, filters, tokens):
         '''Internal: Called by the query method when the iter argument is True.'''
@@ -326,7 +335,14 @@ class queryable(object):
         for token in tokens:
             result = newresult()
             for key, filter in filteriter:
-                matches, terminate = filter(token, count[key])
+                try:
+                    returned = filter(token, count[key])
+                except:
+                    returned = filter(token)
+                try:
+                    matches, terminate = returned
+                except:
+                    matches, terminate = returned, False
                 if matches:
                     result[key] = token
                     count[key] += 1
@@ -367,6 +383,7 @@ queryable.buildqueries()
 
 
 
+import queryresult
 import objects
 import filters
 import tokenlist
