@@ -41,7 +41,11 @@ class tokengenerator(regenerator, tokencollection.tokencollection, queryable.que
         kwargs['iter'] = kwargs.get('iter', True)
         return helpers.copytokens(self, *args, **kwargs)
         
-    def tokens(self, range=None):
+    def tokens(self, *args, **kwargs):
+        '''Iterate through the generator's tokens.'''
+        return self.itokens(*args, **kwargs)
+        
+    def itokens(self, range=None):
         '''Iterate through the generator's tokens.'''
         count = 0
         for item in self:
