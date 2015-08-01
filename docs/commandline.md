@@ -8,7 +8,7 @@ Running PyDwarf using settings in `config` files is straightforward: When `pytho
 
 ## Accepted arguments
 
-There is a 1:1 mapping of long argument names to the values in configuration files. For a more verbose explanation of the purpose each argument serves it would be best to look to [TODO](config.md).
+There is a 1:1 mapping of long argument names to the values in configuration files. For a more verbose explanation of the purpose each argument serves it would be best to look [here](config.md).
 
 * `-i` `--input`: DF input directory. Expects a directory path.
 * `-o` `--output`: DF output directory. Expects a directory path.

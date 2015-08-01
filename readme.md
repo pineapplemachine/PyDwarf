@@ -12,6 +12,6 @@ Here's a [step-by-step tutorial](docs/introduction.md) describing what this proc
 
 ## Modding using PyDwarf
 
-If you're interested in writing your own mods for PyDwarf or in understanding its more advanced features, take a look at [this tutorial](docs/tutorial.md), which goes into detail about how to use PyDwarf and how to write mods using it.
+If you're interested in writing your own mods for PyDwarf or in understanding its more advanced features, take a look at [this tutorial](docs/modding.md), which goes into detail about how write mods using PyDwarf.
 
 ![Image of a flying female bear](images/logo_transparent.png)
