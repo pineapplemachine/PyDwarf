@@ -99,7 +99,7 @@ class urist(object):
         if len(names):
             for name in names: urists += urist.getregistered(*urist.splitname(name))
         else:
-            urists = urist.allregistered()
+            urists = list(urist.registrar)
         items = sorted(ur.doc(format=format) for ur in urists)
         template = uristdoc.template.format.get(format if format else 'txt')
         if items and template:
@@ -184,5 +184,6 @@ class urist(object):
 
 
 import uristscript
+import uristdoc
 import version as versionutils
 from logger import log
