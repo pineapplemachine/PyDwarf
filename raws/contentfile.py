@@ -33,7 +33,7 @@ class contentfile(basefile.basefile):
     def write(self, file):
         '''Write the file contents to a path or file-like object.'''
         if file is None or isinstance(file, basestring):
-            dest = self.dest(path, makedir=True)
+            dest = self.dest(file, makedir=True)
             with open(dest, 'wb') as file:
                 file.write(self.getcontent())
         else:
