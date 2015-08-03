@@ -364,25 +364,9 @@ class dir(queryableobj.queryableobj):
                     yield token
                 
     def getobjheaders(self, type=None):
-        '''Gets OBJECT:X tokens where X is type. Is also prepared for special cases
-        like type=ITEM_PANTS matching OBJECT:ITEM.
-        
-        Example usage:
-            >>> objheaders = df.getobjheaders('INORGANIC')
-            >>> for token in objheaders: print token; print token.next
-            ...
-            [OBJECT:INORGANIC]
-            [INORGANIC:PLASTER]
-            [OBJECT:INORGANIC]
-            [INORGANIC:SANDSTONE]
-            [OBJECT:INORGANIC]
-            [INORGANIC:IRON]
-            [OBJECT:INORGANIC]
-            [INORGANIC:CLAY]
-            [OBJECT:INORGANIC]
-            [INORGANIC:ONYX]
-            [OBJECT:INORGANIC]
-            [INORGANIC:HEMATITE]
+        '''
+            Gets OBJECT:X tokens where X is type. Is also prepared for special
+            cases like type=ITEM_PANTS matching OBJECT:ITEM.
         '''
         
         match_types = self.getobjheadername(type)

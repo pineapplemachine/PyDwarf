@@ -81,3 +81,29 @@ hi! [THIS][IS][AN][EXAMPLE]
 [ITEM_FOOD:ITEM_FOOD_ROAST]
 [NAME:roast]
 [LEVEL:4]hi! [THIS][IS][AN][EXAMPLE]
+
+---
+
+raws.rawfile.length raws.rawfile.__len__
+raws.dir.__getitem__
+
+>>> print df['creature_standard'].length()
+5516
+>>> print len(df['creature_standard'])
+5516
+>>> print df['inorganic_metal'].length()
+1022
+>>> print df['item_pants'].length()
+109
+
+---
+
+raws.rawfile.clear
+raws.dir.__getitem__ raws.file.__len__
+reset
+>>> item_pants = df['item_pants']
+>>> print len(item_pants)
+109
+>>> item_pants.clear()
+>>> print len(item_pants)
+0

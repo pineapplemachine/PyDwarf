@@ -21,3 +21,23 @@ None
 >>> df.reset()
 >>> print df.getobj('CREATURE:DWARF')
 [CREATURE:DWARF]
+
+---
+
+raws.dir.getobjheaders
+raws.token.__add__ raws.tokenlist.__str__
+
+>>> objheaders = df.getobjheaders('INORGANIC')
+>>> print '\n'.join(sorted(str(token + token.next) for token in objheaders))
+[OBJECT:INORGANIC]
+[INORGANIC:CLAY]
+[OBJECT:INORGANIC]
+[INORGANIC:HEMATITE]
+[OBJECT:INORGANIC]
+[INORGANIC:IRON]
+[OBJECT:INORGANIC]
+[INORGANIC:ONYX]
+[OBJECT:INORGANIC]
+[INORGANIC:PLASTER]
+[OBJECT:INORGANIC]
+[INORGANIC:SANDSTONE]

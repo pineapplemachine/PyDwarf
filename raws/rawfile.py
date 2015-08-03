@@ -62,6 +62,7 @@ class rawfile(contentfile.contentfile, queryableobj.queryableobj, queryableadd.q
         return self.length()
         
     def __nonzero__(self):
+        '''Always returns True.'''
         return True
         
     def __repr__(self):
@@ -90,6 +91,7 @@ class rawfile(contentfile.contentfile, queryableobj.queryableobj, queryableadd.q
         return self
     
     def index(self, index):
+        '''Get the token at some integer index.'''
         itrtoken = self.root() if index >= 0 else self.tail()
         index += (index < 0)
         for i in xrange(0, abs(index)):
@@ -101,12 +103,11 @@ class rawfile(contentfile.contentfile, queryableobj.queryableobj, queryableadd.q
         return self.path
         
     def settokens(self, tokens, setfile=True):
-        '''Internal: Utility method for setting the root and tail tokens given an iterable.'''
+        '''Internal: Set the root and tail tokens given an iterable.'''
         self.roottoken, self.tailtoken = helpers.ends(tokens, self if setfile else None)
     
     def copy(self):
-        '''Makes a copy of a file and its contents.
-        '''
+        '''Make a copy of a file and its contents.'''
         copy = rawfile()
         copy.path = self.path
         copy.rootpath = self.rootpath
@@ -121,23 +122,16 @@ class rawfile(contentfile.contentfile, queryableobj.queryableobj, queryableadd.q
         return helpers.tokensequal(self.tokens(), other.tokens())
         
     def root(self):
-        '''Gets the first token in the file.
-        '''
+        '''Get the first token in the file.'''
         while self.roottoken is not None and self.roottoken.prev is not None: self.roottoken = self.roottoken.prev
         return self.roottoken
     def tail(self):
-        '''Gets the last token in the file.
-        '''
+        '''Get the last token in the file.'''
         while self.tailtoken is not None and self.tailtoken.next is not None: self.tailtoken = self.tailtoken.next
         return self.tailtoken
         
     def itokens(self, reverse=False, **kwargs):
-        '''Iterate through all tokens.
-        
-        reverse: If False, starts from the first token and iterates forwards. If True,
-            starts from the last token and iterates backwards. Defaults to False.
-        **kwargs: Other named arguments are passed on to the raws.token.tokens method.
-        '''
+        '''Iterate through the file's tokens.'''
         if reverse:
             tail = self.tail()
             if tail is None: return
@@ -150,7 +144,7 @@ class rawfile(contentfile.contentfile, queryableobj.queryableobj, queryableadd.q
             yield token
             
     def read(self, file=None, content=None, **kwargs):
-        '''Given a path or file-like object, reads name and data.'''
+        '''Given a path or file-like object, read name and data.'''
         self.roottoken = None
         self.tailtoken = None 
         
@@ -183,7 +177,10 @@ class rawfile(contentfile.contentfile, queryableobj.queryableobj, queryableadd.q
             self.data = None
             
     def write(self, file):
-        '''Given a path to a directory or a file-like object, writes the file's contents to that file.'''
+        '''
+            Given a path to a directory or a file-like object, write the file's
+            contents to that file.
+        '''
         if isinstance(file, basestring):
             with open(self.dest(file, makedir=True), 'wb') as dest:
                 dest.write(self.getcontent())
@@ -191,8 +188,7 @@ class rawfile(contentfile.contentfile, queryableobj.queryableobj, queryableadd.q
             file.write(self.getcontent())
     
     def add(self, *args, **kwargs):
-        '''Adds tokens to the end of a file.
-        '''
+        '''Add tokens to the end of a file.'''
         tail = self.tail()
         if tail:
             return tail.add(*args, **kwargs)
@@ -208,29 +204,11 @@ class rawfile(contentfile.contentfile, queryableobj.queryableobj, queryableadd.q
                 return tokens
         
     def length(self, *args, **kwargs):
-        '''Get the number of tokens in this file.
-        
-        Example usage:
-            >>> print df.getfile('creature_standard').length()
-            5516
-            >>> print df.getfile('inorganic_metal').length()
-            1022
-            >>> print df.getfile('item_pants').length()
-            109
-        '''
+        '''Get the number of tokens in the file.'''
         return sum(1 for token in self.tokens(*args, **kwargs))
         
     def clear(self):
-        '''Remove all tokens from this file.
-        
-        Example usage:
-            >>> item_pants = df.getfile('item_pants')
-            >>> print item_pants.length()
-            109
-            >>> item_pants.clear()
-            >>> print item_pants.length()
-            0
-        '''
+        '''Remove all tokens from this file.'''
         for token in self.tokens(): token.file = None
         self.roottoken = None
         self.tailtoken = None
