@@ -2,8 +2,8 @@ raws.helpers.ends
 raws.tokenparse.parse raws.tokenlist.add
 
 >>> tokens = raws.parse('[FIRST][SECOND][THIRD]')
->>> print raws.helpers.ends(tokens)
-([FIRST], [THIRD])
+>>> print [str(token) for token in raws.helpers.ends(tokens)]
+[[FIRST], [THIRD]]
 >>> tokens.add('FOURTH')
 [FOURTH]
 >>> tokensiter = (token for token in tokens)

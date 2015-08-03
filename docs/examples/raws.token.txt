@@ -98,12 +98,6 @@ This is a comment
 >>> token.setsuffix(' there')
 >>> print token.__str__(short=False)
 Hi [EXAMPLE] there
->>> token.setsuffix('bad string [ braces not allowed here')
-Traceback (most recent call last):
-  File "<stdin>", line 1, in <module>
-  File "raws/token.py", line 462, in setsuffix
-    return copiedtokens
-ValueError: Failed to set token suffix to "bad string [ braces not allowed here" because the string contains illegal characters.
 
 ---
 
