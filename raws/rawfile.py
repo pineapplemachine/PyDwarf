@@ -65,11 +65,8 @@ class rawfile(contentfile.contentfile, queryableobj.queryableobj, queryableadd.q
         '''Always returns True.'''
         return True
         
-    def __repr__(self):
-        return self.getcontent()
-        
-    def getcontent(self):
-        tokencontent = ''.join([repr(o) for o in self.tokens()])
+    def getcontent(self, short=False):
+        tokencontent = ''.join([o.__str__(short=short) for o in self.tokens()])
         if self.noheader:
             return tokencontent
         else:

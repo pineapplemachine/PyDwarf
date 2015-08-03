@@ -59,12 +59,13 @@ class token(queryableaddprop.queryableaddprop):
         '''
         return hash('%s:%s' % (self.value, self.args) if self.nargs() else self.value)
     
-    def __str__(self):
-        '''Get a concise string representation.'''
-        return '[%s%s]' %(self.value, (':%s' % self.args) if self.args else '')
-    def __repr__(self):
-        '''Get a full string representation.'''
-        return '%s%s%s' % (self.prefix if self.prefix else '', str(self), self.suffix if self.suffix else '')
+    def __str__(self, short=True):
+        '''Get a string representation.'''
+        internal = '[%s%s]' %(self.value, (':%s' % self.args) if self.args else '')
+        if short:
+            return internal
+        else:
+            return '%s%s%s' % (self.prefix if self.prefix else '', internal, self.suffix if self.suffix else '')
         
     def __eq__(self, other):
         '''Returns True if this and the other token have the same value and arguments.
