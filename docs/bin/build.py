@@ -34,36 +34,46 @@ def methodclass(method):
 
 
 class doc:
-    def document(self, internal=False):
+    defaultskips = ('Internal:', 'Deprecated:')
+    
+    def document(self, skips=defaultskips):
         if self.item:
             self.fullname = self.buildfullname(self.parents)
             print 'Documenting: %s' % self.fullname
             if inspect.isclass(self.item) or inspect.ismodule(self.item):
-                self.documentmembers(internal)
+                self.documentmembers(skips)
             
-    def documentmembers(self, internal=False):
+    def documentmembers(self, skips=defaultskips):
         if self.parents[-1].item is None:
             for member in self.item.__dict__.itervalues():
                 if (
                     (inspect.ismodule(member) and member.__name__ not in ('os', 'sys', 're')) or
                     inspect.isclass(member) or inspect.isfunction(member)
                 ):
-                    self.children.append(doc(member))
+                    if not doc.skip(member.__doc__, skips): self.children.append(doc(member))
+        
         else:
             memberpredicate = lambda member: (
                 (inspect.ismethod(member) and methodclass(member) is self.item) or inspect.isfunction(member)
             )
             for membername, member in inspect.getmembers(self.item, predicate=memberpredicate):
-                if (not internal) and member.__doc__ and member.__doc__.strip().startswith('Internal'): continue
-                self.children.append(doc(member))
-        self.documentchildren(internal)
+                if not doc.skip(member.__doc__, skips): self.children.append(doc(member))
+        
+        self.documentchildren(skips)
                 
-    def documentchildren(self, internal=False):
+    def documentchildren(self, skips=defaultskips):
         memberparents = self.parents + [self]
         for child in self.children:
             child.parents = memberparents
-            child.document(internal)
-
+            child.document(skips)
+    
+    @staticmethod
+    def skip(docstring, skips=defaultskips):
+        if docstring:
+            for skip in skips:
+                if docstring.strip().startswith(skip):
+                    return True
+    
     def __init__(self, item):
         self.item = item
         self.fullname = None
@@ -107,6 +117,7 @@ class doc:
         
     def findexamples(self, examples):
         self.examples = []
+        nameparts = self.fullname.split('.')
         for example in examples:
             for high in example['high']:
                 highparts = high.split('.')
@@ -116,8 +127,64 @@ class doc:
                 except:
                     pass
                     
+    def getfile(self):
+        path = os.path.abspath(inspect.getfile(self.item))
+        parts = path.replace('\\', '/').split('/')
+        for index, part in reversed(list(enumerate(parts))):
+            if part == 'pydwarf' or part == 'raws':
+                path = '/'.join(parts[index:])
+                if path.endswith('.pyc'): path = path[:-1]
+                return path
+        return None
+                    
+    def getsupers(self):
+        if inspect.isclass(self.item):
+            mro = inspect.getmro(self.item)
+            supers = []
+            for item in mro:
+                if item is not self.item:
+                    docitem = self.getroot().getforitem(item)
+                    if docitem: supers.append(docitem)
+            return supers
+        else:
+            return []
+    
+    def getroot(self):
+        return self.parents[0]
+        
+    def getforitem(self, item):
+        for child in self.iterall():
+            if child.item is item:
+                return child
+        return None
+                    
     def htmlbody(self, h=1):
-        header = '<h%d id="%s">%s</h%d>' % (h, self.fullname, self.fullname, h)
+        
+        srcpath = ''
+        if self.item is not None:
+            srcpath = self.getfile()
+            if srcpath: srcpath = '../%s' % srcpath
+            
+        inherits = ''
+        supers = sorted(self.getsupers(), key=lambda super: super.fullname)
+        if supers:
+            inherits = '<span class="inherits-from">inherits from</span>%s' % (
+                '<span class="superclass-delimeter">,</span>'.join(
+                    '<a class="superclass" href="#%s">%s</a>' % (
+                        item.fullname,
+                        item.fullname
+                    ) for item in supers
+                )
+            )
+                    
+            
+        header = '<h%(h)d class="item-title" id="%(id)s"><a href="%(srcpath)s">%(name)s</a></h%(h)d>%(supers)s' % {
+            'h': h,
+            'id': self.fullname,
+            'srcpath': srcpath,
+            'supers': inherits,
+            'name': self.fullname,
+        }
         
         docbody = ''
         argsbody = ''
@@ -182,7 +249,7 @@ class doc:
         
         if self.children:
             childrenbody = '<div class="subs">%s</div>' % ''.join(
-                child.htmlbody(h=h+(self.item is not None)) for child in self.children
+                child.htmlbody(h=h+(self.item is not None)) for child in sorted(self.children, key=lambda c: c.fullname)
             )
         
         if self.item is None:
@@ -229,6 +296,8 @@ root.children = [doc(item) for item in (raws, pydwarf)]
 root.documentchildren()
 root.markdupes()
 root.dedupe()
+for item in root.iterall():
+    item.findexamples(examples)
 
 
 
@@ -313,13 +382,14 @@ css = '''
         padding: 6px;
     }
     .item-body {
-        margin-left: 16px;
+        padding-left: 16px;
         border-top-style: solid;
         border-bottom-style: solid;
         border-width: 1px;
         border-color: #282828;
         padding-top: 6px;
         padding-bottom: 6px;
+        margin-bottom: 12px;
     }
     .level {
         margin-top: 16px;
@@ -328,6 +398,27 @@ css = '''
         border-color: #444;
         padding: 8px 0px;
         padding-left: 20px;
+    }
+    
+    .item-title {
+        display: inline;
+    }
+    .item-header {
+        padding-top: 12px;
+        padding-bottom: 8px;
+    }
+    .inherits-from, .superclass, .superclass-delimeter {
+        font-style: italic;
+        font-size: 10pt;
+    }
+    .inherits-from {
+        color: #bbb;
+        padding-left: 12px;
+        padding-right: 4px;
+    }
+    .superclass-delimeter {
+        color: #bbb;
+        padding-right: 3px;
     }
 '''
 
