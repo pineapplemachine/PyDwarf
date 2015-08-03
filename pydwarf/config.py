@@ -28,7 +28,7 @@ auto_paths = [
 
 
 
-class config:
+class config(object):
     def __init__(
         self,
         version=None, paths=None, hackversion=None, input=None, output=None, backup=None,

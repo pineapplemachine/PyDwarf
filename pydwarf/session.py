@@ -11,7 +11,7 @@ from config import config
 
 
 
-class session:
+class session(object):
     def __init__(self, raws=None, conf=None):
         self.df = None
         self.dfversion = None

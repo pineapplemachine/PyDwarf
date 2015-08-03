@@ -14,7 +14,7 @@ def __main__():
     
     
 
-class template:
+class template(object):
     '''Internal: Helpful class for handling different formats used by the urist.doc method.'''
     
     format = {}

@@ -6,7 +6,7 @@ import copy
 
 
 
-class basefilter:
+class basefilter(object):
     def __init__(self, invert=False, limit=None, limit_terminates=True):
         self.inv = invert
         self.limit = limit

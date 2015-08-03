@@ -6,7 +6,7 @@ import registrar
 
 
 # Functions in scripts must be decorated with this in order to be made available to PyDwarf
-class urist:
+class urist(object):
     '''
         Decorates a function as being an urist. Keyword arguments are treated as metadata.
         

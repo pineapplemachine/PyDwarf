@@ -2,7 +2,7 @@ import textwrap
 
 
 
-class uristscript:
+class uristscript(object):
     def __init__(self, func, **metadata):
         self.func = func
         self.metadata = metadata
