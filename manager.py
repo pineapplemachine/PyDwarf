@@ -9,13 +9,15 @@ __version__ = '1.1.0'
 
 
 import sys
+import os
+
+basedir = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(basedir)
+sys.path.append(os.path.join(basedir, 'lib'))
+
 import raws
 import pydwarf
 
-sys.path.append(pydwarf.rel(__file__))
-sys.path.append(pydwarf.rel(__file__, 'lib'))
-
-import os
 import re
 import shutil
 import importlib
