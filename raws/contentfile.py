@@ -28,7 +28,7 @@ class contentfile(basefile.basefile):
         else:
             self.setcontent(file.read())
         with open(path, 'rb') as contentfile:
-            self.setcontent(file.read())
+            self.setcontent(contentfile.read())
             
     def write(self, file):
         '''Write the file contents to a path or file-like object.'''
