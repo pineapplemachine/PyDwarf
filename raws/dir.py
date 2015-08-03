@@ -63,7 +63,7 @@ class dir(queryableobj.queryableobj):
         if isinstance(item, basefile.basefile):
             return item in self.files.itervalues()
         else:
-            return any(item is file for file in self.iterfiles())
+            return item in self.files or item in self.filenames
             
     def __len__(self):
         '''Get the number of file objects tracked by the dir.'''
