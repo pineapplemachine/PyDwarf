@@ -37,26 +37,7 @@ class queryableobj(queryable.queryable):
         return objects
         
     def getobj(self, pretty=None, type=None, exact_id=None, type_in=None, re_id=None, id_in=None):
-        '''Get the first object token matching a given type and id. (If there's more 
-            than one result for any given query then I'm afraid you've done something
-            silly with your raws.) This method should work properly with things like
-            CREATURE:X tokens showing up in entity_default. Should almost always be
-            faster than an equivalent call to get, also.
-        
-        Example usage:
-            >>> dwarf = df.getobj('CREATURE:DWARF')
-            >>> print dwarf.list(include_self=True, range=4)
-                [CREATURE:DWARF]
-                [DESCRIPTION:A short, sturdy creature fond of drink and industry.]
-                [NAME:dwarf:dwarves:dwarven]
-                [CASTE_NAME:dwarf:dwarves:dwarven]
-            >>> not_dwarf = df.getlast('CREATURE:DWARF') # gets the CREATURE:DWARF token underneath ENTITY:MOUNTAIN instead
-            >>> print not_dwarf.list(include_self=True, range=4)
-                [CREATURE:DWARF]
-                [TRANSLATION:DWARF]
-                [DIGGER:ITEM_WEAPON_PICK]
-                [WEAPON:ITEM_WEAPON_AXE_BATTLE]
-        '''
+        '''Get the first object token matching a given type and id.'''
             
         type, exact_id = queryableobj.objpretty(pretty, type, exact_id)
         headers = self.headersfortype(type, type_in)
@@ -74,6 +55,8 @@ class queryableobj(queryable.queryable):
         return None
         
     def lastobj(self, pretty=None, type=None, exact_id=None, type_in=None, re_id=None, id_in=None): 
+        '''Get the last object token matching a given type and id.'''
+        
         type, exact_id = queryableobj.objpretty(pretty, type, exact_id)
         headers = self.headersfortype(type, type_in)
         if type is None and type_in is None: type_in = objects.objects()
@@ -90,27 +73,7 @@ class queryableobj(queryable.queryable):
         return None
         
     def allobj(self, pretty=None, type=None, exact_id=None, type_in=None, re_id=None, id_in=None):
-        '''Gets all objects matching a given type and optional id or id regex.
-        
-        Example usage:
-            >>> pants = df.allobj('ITEM_PANTS')
-            >>> print pants
-            [ITEM_PANTS:ITEM_PANTS_PANTS]
-            [ITEM_PANTS:ITEM_PANTS_GREAVES]
-            [ITEM_PANTS:ITEM_PANTS_LEGGINGS]
-            [ITEM_PANTS:ITEM_PANTS_LOINCLOTH]
-            [ITEM_PANTS:ITEM_PANTS_THONG]
-            [ITEM_PANTS:ITEM_PANTS_SKIRT]
-            [ITEM_PANTS:ITEM_PANTS_SKIRT_SHORT]
-            [ITEM_PANTS:ITEM_PANTS_SKIRT_LONG]
-            [ITEM_PANTS:ITEM_PANTS_BRAIES]
-            >>> bears = df.allobj(type='CREATURE', re_id='BEAR_.+')
-            >>> print bears
-            [CREATURE:BEAR_GRIZZLY]
-            [CREATURE:BEAR_BLACK]
-            [CREATURE:BEAR_POLAR]
-            [CREATURE:BEAR_SLOTH]
-        '''
+        '''Get all object tokens matching a given type and id.'''
         
         type, exact_id = queryableobj.objpretty(pretty, type, exact_id)
         results = tokenlist.tokenlist()
@@ -129,23 +92,10 @@ class queryableobj(queryable.queryable):
         return results
         
     def objdict(self, *args, **kwargs):
-        '''Calls allobj with the same arguments then adds each result to a dictionary
-        associating object IDs with the tokens where they're declared.
-        
-        Example usage:
-            >>> inorganics = df.objdict('INORGANIC')
-            >>> print len(inorganics)
-            263
-            >>> print 'NOT_A_ROCK' in inorganics
-            False
-            >>> obsidian = inorganics.get('OBSIDIAN')
-            >>> print obsidian.list(range=6, include_self=True)
-            [INORGANIC:OBSIDIAN]
-            [USE_MATERIAL_TEMPLATE:STONE_TEMPLATE]
-                [MELTING_POINT:13600]
-                [BOILING_POINT:16000]
-                [IMPACT_YIELD:1000000]
-                [IMPACT_FRACTURE:1000000]
+        '''
+            Calls allobj with the same arguments then adds each result to a
+            dictionary associating object IDs with the tokens where they're
+            declared.
         '''
         return {token.args[0]: token for token in self.allobj(*args, **kwargs)}
         
