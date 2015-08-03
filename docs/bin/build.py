@@ -9,6 +9,7 @@ import sys
 import os
 
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), '../..'))
+sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../lib'))
 
 import inspect
 import itertools
@@ -32,124 +33,105 @@ def methodclass(method):
     
 
 
-
-items = [
-    raws,
-    pydwarf
-]
-
-
-
-def document(item, parents=None, skipinternal=True):
-    nameparts = [item.__name__]
-    itemexamples = None
-    subs = None
-    
-    if parents:
-        for parent in reversed(parents):
-            nameparts.append(parent.__name__)
+class doc:
+    def document(self, internal=False):
+        if self.item:
+            self.fullname = self.buildfullname(self.parents)
+            print 'Documenting: %s' % self.fullname
+            if inspect.isclass(self.item) or inspect.ismodule(self.item):
+                self.documentmembers(internal)
             
-    nameparts.reverse()
-    name = '.'.join(nameparts)
-    
-    print 'Documenting item: %s' % name
-    
-    if inspect.isclass(item) or inspect.ismodule(item):
-        if parents:
-            memberparents = parents + [item]
-        else:
-            memberparents = [item]
-        
-        subs = []
-        
-        if parents is None:
-            for member in item.__dict__.itervalues():
+    def documentmembers(self, internal=False):
+        if self.parents[-1].item is None:
+            for member in self.item.__dict__.itervalues():
                 if (
                     (inspect.ismodule(member) and member.__name__ not in ('os', 'sys', 're')) or
                     inspect.isclass(member) or inspect.isfunction(member)
                 ):
-                    subs.append(document(member, memberparents[1:]))
+                    self.children.append(doc(member))
         else:
             memberpredicate = lambda member: (
-                (inspect.ismethod(member) and methodclass(member) is item) or inspect.isfunction(member)
+                (inspect.ismethod(member) and methodclass(member) is self.item) or inspect.isfunction(member)
             )
-            for membername, member in inspect.getmembers(item, predicate=memberpredicate):
-                if skipinternal and member.__doc__ and member.__doc__.startswith('Internal'): continue
-                subs.append(document(member, memberparents))
+            for membername, member in inspect.getmembers(self.item, predicate=memberpredicate):
+                if (not internal) and member.__doc__ and member.__doc__.strip().startswith('Internal'): continue
+                self.children.append(doc(member))
+        self.documentchildren(internal)
+                
+    def documentchildren(self, internal=False):
+        memberparents = self.parents + [self]
+        for child in self.children:
+            child.parents = memberparents
+            child.document(internal)
+
+    def __init__(self, item):
+        self.item = item
+        self.fullname = None
+        self.examples = []
+        self.children = []
+        self.parents = []
+        self.documented = False
+        self.duplicate = False
         
-    itemexamples = []
-    for example in examples:
-        for high in example['high']:
-            highparts = high.split('.')
-            try:
-                if highparts[-1] == nameparts[-1] and highparts[-2] == nameparts[-2]:
-                    itemexamples.append(example)
-            except:
-                pass
+    def __iter__(self):
+        if self.children:
+            for child in self.children:
+                yield child
         
-    return (name, item, itemexamples, subs)
+    def __str__(self):
+        return self.fullname
+        
+    def iterall(self):
+        if self.children:
+            for child in self.children:
+                yield child
+                for item in child.iterall():
+                    yield item
     
-def dedupedocs(docs, alldocs=None, conflicts=None, root=True):
-    if root:
-        alldocs = docs
-        conflicts = {}
-    
-    for name, item, itemexamples, subs in docs:
-        for subname in docdupes(name, item, alldocs):
-            if name not in conflicts: conflicts[name] = []
-            conflicts[name].append(subname)
-        if subs:
-            dedupedocs(subs, alldocs, conflicts, False)
-            
-    if root:
-        return dedupeconflicts(alldocs, conflicts)
-        
-def dedupeconflicts(docs, conflicts):
-    newdocs = []
-    for name, item, itemexamples, subs in docs:
-        ignore = False
-        if name in conflicts:
-            for conflictname in conflicts[name]:
-                if len(name) < len(conflictname):
-                    ignore = True
-                    break
-        if not ignore:
-            if subs:
-                subs = dedupeconflicts(subs, conflicts)
-            newdocs.append((name, item, itemexamples, subs))
+    def itemname(self):
+        if self.item is None:
+            return ''
+        elif inspect.ismodule(self.item):
+            return self.item.__name__.split('.')[-1]
         else:
-            print 'Ignoring item: %s' % name
-    return newdocs
-
-def docdupes(name, item, docs):
-    for subname, subitem, subexamples, subsubs in docs:
-        if item is subitem and name != subname:
-            yield subname
-        if subsubs:
-            for dupe in docdupes(name, item, subsubs):
-                yield dupe
+            return self.item.__name__
             
-
-
-
-documented = {}
-
-def htmldoc(docs, h=1):
-    bodies = []
-    for name, item, itemexamples, subs in docs:
-        header = '<h%d id="%s">%s</h%d>' % (h, name, name, h)
+    def buildfullname(self, parents):
+        parts = [self.itemname()]
+        if parents:
+            for parent in reversed(parents):
+                if parent.item:
+                    parts.append(parent.itemname())
+        parts.reverse()
+        return '.'.join(parts)
+        
+    def findexamples(self, examples):
+        self.examples = []
+        for example in examples:
+            for high in example['high']:
+                highparts = high.split('.')
+                try:
+                    if highparts[-1] == nameparts[-1] and highparts[-2] == nameparts[-2]:
+                        self.examples.append(example)
+                except:
+                    pass
+                    
+    def htmlbody(self, h=1):
+        header = '<h%d id="%s">%s</h%d>' % (h, self.fullname, self.fullname, h)
         
         docbody = ''
         argsbody = ''
         examplesbody = ''
-        subsbody = ''
+        childrenbody = ''
+        
+        if self.item.__doc__:
+            docbody = '<div class="docstring documented">%s</div>' % self.item.__doc__
         
         try:
-            args = inspect.getargspec(item)
+            args = inspect.getargspec(self.item)
         except:
             args = None
-        if item.__doc__:
-            docbody = '<div class="docstring documented">%s</div>' % item.__doc__
+        
         if args:
             outer = '<div class="arguments">Arguments: %s</div>'
             delim = '<span class="argument-separator">,</span>'
@@ -166,11 +148,7 @@ def htmldoc(docs, h=1):
                     itemtext = item % (
                         'argument has-default',
                         '<span class="argument-name %s">%s</span><span class="argument-equals">=</span><span class="argument-default %s %s">%s</span>' % (
-                            arg,
-                            arg,
-                            type(default).__name__,
-                            default,
-                            defaultfmt
+                            arg, arg, type(default).__name__, default, defaultfmt
                         )
                     )
                 else:
@@ -179,6 +157,7 @@ def htmldoc(docs, h=1):
                         '<span class="argument-name %s">%s</span>' % (arg, arg)
                     )
                 inner.append(itemtext)
+                
             if args.varargs:
                 itemtext = item % ('argument varargs', '*args')
                 inner.append(itemtext)
@@ -188,49 +167,70 @@ def htmldoc(docs, h=1):
             
             argsbody = outer % delim.join(inner)
             
-        if itemexamples:
+        if self.examples:
             examplesbody = (
                 '<div class="examples">%s</div>' %
                 '<div class="example-separator"></div>'.join(
-                    (
-                        '<pre class="example">%s</pre>' % example['text']
-                    ) for example in itemexamples
+                    ('<pre class="example">%s</pre>' % example['text']) for example in self.examples
                 )
             )
             
         if not(examplesbody or docbody):
             docbody = '<div class="docstring undocumented">Undocumented</div>'
-            documented[name] = False
         else:
-            documented[name] = True
+            self.documented = True
         
-        if subs:
-            subsbody = '<div class="subs">%s</div>' % htmldoc(subs, h+1)
+        if self.children:
+            childrenbody = '<div class="subs">%s</div>' % ''.join(
+                child.htmlbody(h=h+(self.item is not None)) for child in self.children
+            )
         
-        body = '<div class="item-header">%s</div><div class="item-body">%s</div>' % (header, docbody + argsbody + examplesbody + subsbody)
-        bodies.append('<div class="item">%s</div>' % body)
-    bodiestext = '<div class="level level-%d">%s</div>' % (h, '\n'.join(sorted(bodies)))
-    return bodiestext
-    
-def htmlcontents(docs):
-    contents = []
-    for name, item, itemexamples, subs in docs:
+        if self.item is None:
+            return childrenbody
+        else:
+            return '<div class="item-header">%s</div><div class="item-body">%s</div>' % (
+                header, docbody + argsbody + examplesbody + childrenbody
+            )
+        
+    def htmlcontents(self):
         content = '<a class="%s" href="#%s">%s</a>' % (
-            ('contents-undocumented', 'contents-documented')[documented.get(name, 0)],
-            name, item.__name__
+            ('contents-undocumented', 'contents-documented')[self.documented],
+            self.fullname, self.itemname()
         )
-        if subs:
-            content += htmlcontents(subs)
-        contents.append(content)
-    contentstext = '<ul>%s</ul>' % '\n'.join(('<li>%s</li>' % item) for item in sorted(contents))
-    return contentstext
         
+        contents = (child.htmlcontents() for child in sorted(self.children, key=lambda c: c.fullname))
+            
+        contentstext = '<ul>%s</ul>' % '\n'.join(('<li>%s</li>' % item) for item in contents)
+        return content + repr(self.item) + contentstext
+        
+    def dedupe(self):
+        newchildren = []
+        for child in self.children:
+            if not child.duplicate:
+                child.dedupe()
+                newchildren.append(child)
+        self.children = newchildren
+    
+    def markdupes(self):
+        reprs = {}
+        for child in self.iterall():
+            key = repr(child.item)
+            if key not in reprs: reprs[key] = []
+            reprs[key].append(child)
+        for childlist in reprs.itervalues():
+            if len(childlist) > 1:
+                childlist.sort(key=lambda child: -len(child.fullname))
+                for i in xrange(1, len(childlist)): childlist[i].duplicate = True
+                
+    
+    
+root = doc(None)
+root.children = [doc(item) for item in (raws, pydwarf)]
+root.documentchildren()
+root.markdupes()
+root.dedupe()
 
 
-
-docs = []
-for item in items: docs.append(document(item))
-docs = dedupedocs(docs)
 
 css = '''
     body {
@@ -348,8 +348,8 @@ html = '''
 ''' % {
     'title': 'PyDwarf docs',
     'style': css,
-    'body': htmldoc(docs, h=2),
-    'contents': htmlcontents(docs),
+    'body': root.htmlbody(h=2),
+    'contents': root.htmlcontents(),
 }
 
 
