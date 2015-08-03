@@ -1,4 +1,5 @@
 def quick(raws, root=None, **kwargs):
+    '''Quickly load a session object. Useful for testing.'''
     se = session.session()
     if root is not None: kwargs['root'] = root
     args = {
@@ -17,6 +18,7 @@ def quick(raws, root=None, **kwargs):
     return se
 
 def df(*args, **kwargs):
+    '''Quickly load a Dwarf Fortress directory. Useful for testing.'''
     se = quick(*args, **kwargs)
     return se.df
 

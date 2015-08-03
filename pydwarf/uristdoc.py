@@ -1,6 +1,12 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+
+
+'''Generate formatted documentation for registered scripts based on their metadata.'''
+
+
+
 import os
 import textwrap
 

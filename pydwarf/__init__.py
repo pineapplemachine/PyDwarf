@@ -43,8 +43,8 @@ stdouthandler = logger.stdouthandler
 logfilehandler = logger.logfilehandler
 log = logger.log
 
-success = response.success
-failure = response.failure
+success = response.response.success
+failure = response.response.failure
 response = response.response
 
 df = quick.df

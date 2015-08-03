@@ -17,10 +17,10 @@ import filefactory
 
 
 class dir(queryableobj.queryableobj):
-    '''Represents as a whole all the raws contained within a directory.'''
+    '''Represents files contained within a Dwarf Fortress directory.'''
     
     def __init__(self, root=None, dest=None, paths=None, version=None, log=None, **kwargs):
-        '''Constructor for dir object.'''
+        '''Initialize a dir object.'''
         self.files = {}
         self.filenames = {}
         self.root = root    # Root input directory
@@ -31,17 +31,22 @@ class dir(queryableobj.queryableobj):
         if root: self.read(**kwargs)
         
     def __str__(self):
+        '''Get a string representation.'''
         return '\n'.join(['%s %s' % (file.kind, str(file)) for file in self.files.itervalues()])
         
     def __enter__(self):
+        '''Support for with/as syntax.'''
         return self
     def __exit__(self, type, value, traceback):
+        '''Support for with/as syntax.'''
         if traceback is None and self.root is not None: self.write(self.root)
         
     def __getitem__(self, name):
+        '''Get member file by name or full relative path.'''
         return self.getfile(name)
     
     def __setitem__(self, name, content):
+        '''Set file given a name.'''
         if isinstance(content, basefile.basefile):
             if content.dir: content = content.copy()
             content.setpath(name)
@@ -54,26 +59,33 @@ class dir(queryableobj.queryableobj):
             self.add(file=name, tokens=content)
     
     def __contains__(self, item):
+        '''Check if the dir contains a file name or object.'''
         if isinstance(item, basefile.basefile):
             return item in self.files.itervalues()
         else:
-            return str(item) in self.files or str(item) in self.filenames
+            return any(item is file for file in self.iterfiles())
             
     def __len__(self):
+        '''Get the number of file objects tracked by the dir.'''
         return len(self.files)
         
     def __nonzero__(self):
+        '''Always returns True.'''
         return True
             
     def __eq__(self, other):
+        '''Check equivalency with another dir object.'''
         return self.equals(other)
     def __ne__(self, other):
+        '''Check inequivalency with another dir object.'''
         return not self.equals(other)
         
     def __iadd__(self, file):
+        '''Add a file to the dir.'''
         self.add(file=file)
         
     def equals(self, other):
+        '''Check equivalency with another dir object.'''
         if len(self.files) == len(other.files):
             for file in self.iterfiles():
                 matchingfile = other.getfile(str(file))
@@ -108,9 +120,11 @@ class dir(queryableobj.queryableobj):
         return file
         
     def iterfiles(self, *args, **kwargs):
+        '''Iterate through the dir's file objects.'''
         return self.files.itervalues(*args, **kwargs)
         
     def add(self, auto=None, **kwargs):
+        '''Add a file to the dir.'''
         if auto is not None:
             return self.addbyauto(auto, **kwargs)
         elif 'file' in kwargs:
@@ -143,6 +157,7 @@ class dir(queryableobj.queryableobj):
             raise ValueError('Failed to add file because no recognized arguments were specificed.')
         
     def addbyauto(self, auto, **kwargs):
+        '''Internal: Add a file when given an 'auto' argument.'''
         if isinstance(auto, basefile.basefile):
             return self.addbyfile(auto, **kwargs)
         elif isinstance(auto, basestring):
@@ -154,48 +169,68 @@ class dir(queryableobj.queryableobj):
                 return self.addbyname(auto, **kwargs)
         elif isinstance(auto, dir):
             return self.addbydir(auto, **kwargs)
+        else:
+            try:
+                self.addbytokens(auto, **kwargs)
+            except:
+                return ValueError('Failed to add file because the argument type %s was unrecognized.' % type(auto))
             
     def addbyfile(self, file, **kwargs):
+        '''Internal: Add a file when given a 'file' argument.'''
         self.addfiletodicts(file, **kwargs)
         return file
     def addbyname(self, name, ext=None, loc=None, kind=None, **kwargs):
+        '''Internal: Add a file when given a 'name' argument.'''
         file = self.filebyname(name=name, ext=ext, loc=loc, kind=kind)
         self.addfiletodicts(file, **kwargs)
         return file
     def addbyfilepath(self, path, root=None, loc=None, kind=None, **kwargs):
+        '''Internal: Add a file when given a 'filepath' argument.'''
         file = self.filebyfilepath(path=path, root=root, loc=loc, kind=kind)
         self.addfiletodicts(file, **kwargs)
         return file
     def addbydirpath(self, path, root=None, loc=None, kind=None, **kwargs):
+        '''Internal: Add a file when given a 'dirpath' argument.'''
         files = self.filesbydirpath(path=path, root=root, loc=loc, kind=kind)
         self.addfilestodicts(files, **kwargs)
         return files
     def addbydir(self, dir, loc=None, **kwargs):
+        '''Internal: Add a file when given a 'dir' argument.'''
         files = self.filesbydir(dir=dir, loc=loc)
         self.addfilestodicts(files, **kwargs)
         return files
     def addbytokens(self, name, tokens, **kwargs):
+        '''Internal: Add a file when given a 'tokens' argument.'''
         file = self.addbyname(name, **kwargs)
         file.add(tokens)
         return file
     def addbybincontent(self, name, content, **kwargs):
+        '''Internal: Add a file when given a 'content' argument.'''
         file = self.addbyname(name, kind=binfile.binfile, **kwargs)
         file.content = content
         return file
         
     def filebyname(self, name, ext=None, loc=None, kind=None):
+        '''Internal: Create a file object to be added to the dir.'''
         if kind is None: kind = rawfile.rawfile
         splitloc, name = os.path.split(name)
         if not ext: name, ext = os.path.splitext(name)
         loc = os.path.join(loc, splitloc) if loc else splitloc
         return kind(name=name, ext=ext, loc=loc, dir=self)
     def filebyfilepath(self, path, root=None, loc=None, kind=None):
+        '''Internal: Create a file object to be added to the dir.'''
         if kind is None: kind = rawfile.rawfile
         return kind(path=path, loc=loc, dir=self) 
     def filesbydirpath(self, path, root=None, loc=None, kind=None):
+        '''Internal: Create a file object to be added to the dir.'''
         for walkroot, walkdirs, walkfiles in os.walk(path):
-            return ((kind if kind else filefactory.filefactory)(path=os.path.join(walkroot, walkfile), root=root, loc=loc, dir=self) for walkfile in walkfiles)
+            for walkfile in walkfiles:
+                if kind:
+                    return kind(path=os.path.join(walkroot, walkfile), root=root, loc=loc, dir=self)
+                else:
+                    return filefactory.filefactory(path=os.path.join(walkroot, walkfile), root=root, loc=loc, dir=self)
     def filesbydir(self, dir, loc=None):
+        '''Internal: Create multiple file objects to be added to the dir.'''
         for dirfile in dir.files.iteritems():
             newfile = dirfile.copy()
             newfile.dir = self

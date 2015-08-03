@@ -15,21 +15,22 @@ class binfile(contentfile.contentfile):
     '''
     
     def __init__(self, content=None, path=None, dir=None, **kwargs):
+        '''Initialize a binfile object.'''
         self.dir = None
         self.setpath(path, **kwargs)
         self.dir = dir
         self.content = content
         if self.content is None and self.path is not None and os.path.isfile(self.path): self.read(self.path)
         self.kind = 'bin'
-        
-    def __repr__(self):
-        return str(self.content)
-        
+          
     def __len__(self):
+        '''Get the length in bytes of the file's binary data string.'''
         return len(self.content)
-        
-    def read(self, path=None):
-        with open(path if path else self.path, 'rb') as binfile: self.content = binfile.read()
+    
+    def __iadd__(self, content):
+        '''Add to the end of the file's content string.'''
+        self.add(content)
+        return self
         
     def ref(self, **kwargs):
         raise ValueError('Failed to cast binfile %s to a reffile because it is an invalid conversion.' % self)
@@ -44,6 +45,7 @@ class binfile(contentfile.contentfile):
         return self
         
     def copy(self):
+        '''Create a copy of the file.'''
         copy = binfile()
         copy.path = self.path
         copy.rootpath = self.rootpath
@@ -53,12 +55,8 @@ class binfile(contentfile.contentfile):
         copy.content = self.content
         return copy
     
-    def write(self, path):
-        dest = self.dest(path, makedir=True)
-        with open(dest, 'wb') as file:
-            file.write(self.content)
-            
     def add(self, content):
+        '''Add to the end of the file's content string.'''
         if self.content is None:
             self.content = str(content)
         else:

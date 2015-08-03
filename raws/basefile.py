@@ -13,6 +13,7 @@ class basefile(object):
     '''
     
     def __init__(self):
+        '''Initialize a basefile object.'''
         self.dir = None
         self.path = None
         self.rootpath = None
@@ -22,16 +23,16 @@ class basefile(object):
         self.kind = None
     
     def __str__(self):
+        '''Get a string representation.'''
         if self.name and self.ext:
             name = ''.join((self.name, self.ext))
         else:
             name = self.name
         path = os.path.join(self.loc, name) if self.loc and name else name
         return path.replace('\\', '/') if path else ''
-    def __repr__(self):
-        return str(self)
         
     def __hash__(self):
+        '''Get a hash based on the file's name. Be careful using this hash since file objects are not inherently immutable.'''
         return hash(str(self))
         
     def __eq__(self, other):

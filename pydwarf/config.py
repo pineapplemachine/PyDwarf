@@ -29,11 +29,17 @@ auto_paths = [
 
 
 class config(object):
+    '''
+        Objects store settings used by session objects to determine
+        customizeable behavior.
+    '''
+    
     def __init__(
         self,
         version=None, paths=None, hackversion=None, input=None, output=None, backup=None,
         scripts=[], packages=[], verbose=False, log='logs/%s.txt' % timestamp,
     ):
+        '''Initialize a config object.'''
         self.version = version          # Dwarf Fortress version, for handling script compatibility metadata
         self.hackversion = hackversion  # DFHack version
         self.input = input              # Raws are loaded from this input directory
@@ -47,6 +53,11 @@ class config(object):
         
     @staticmethod
     def load(root=None, json='config.json', yaml='config.yaml', override='config.py', logoverridefailure=False, args=None):
+        '''
+            Load a config object given default configuration file paths and
+            command line arguments.
+        '''
+        
         conf = config()
         
         # Load default config files with the precedence: python override > json > yaml
@@ -90,32 +101,40 @@ class config(object):
         return conf
         
     def __str__(self):
+        '''Get a string representation.'''
         return str(self.__dict__)
-    def __repr__(self):
-        return self.__str__()
         
     def __getitem__(self, attr):
+        '''Get configuration argument.'''
         return self.__dict__[attr]
     def __setitem__(self, attr, value):
+        '''Set configuration argument.'''
         self.__dict__[attr] = value
         
     def __iter__(self):
+        '''Iterate through configuration dict.'''
         return iter(self.__dict__)
     def iteritems(self):
+        '''Iterate through configuration dict items.'''
         return self.__dict__.iteritems()
         
     def __add__(self, other):
+        '''Merge two configuration objects.'''
         return config.concat(self, other)
     def __radd__(self, other):
+        '''Merge two configuration objects.'''
         return config.concat(other, self)
     def __iadd__(self, item):
+        '''Merge another configuration object into this one.'''
         self.apply(item)
         return self
     
     def __and__(self, other):
+        '''Get the intersection of two configuration objects.'''
         return config.intersect(self, other)
         
     def json(self, path, *args, **kwargs):
+        '''Load json configuration from a file.'''
         log.info('Applying json configuration from %s.' % path)
         try:
             with open(path, 'rb') as jsonfile:
@@ -129,12 +148,14 @@ class config(object):
                 raise error
                 
     def yaml(self, path, *args, **kwargs):
+        '''Load yaml configuration from a file.'''
         log.info('Applying yaml configuration from %s.' % path)
         with open(path, 'rb') as yamlfile:
             yamldata = yaml.load(yamlfile)
             return self.apply(yamldata, *args, **kwargs)
             
     def override(self, module, *args, **kwargs):
+        '''Load python configuration from a file.'''
         log.info('Applying python configuration from %s.' % module)
         if module.endswith('.py'):
             modulename = os.path.splitext(os.path.basename(module))[0]
@@ -149,24 +170,28 @@ class config(object):
         self.apply(export)
     
     def apply(self, data, applynone=False):
+        '''Apply another dict or config object's settings to this one.'''
         if data:
             for key, value in data.iteritems(): 
                 if applynone or value is not None: self.__dict__[key] = value
         return self
         
     def copy(self):
+        '''Copy the config object.'''
         copy = config()
         for key, value in self: copy[key] = value
         return copy
         
     @staticmethod
     def concat(*configs):
+        '''Merge two config objects.'''
         result = config()
         for conf in configs: result.apply(conf)
         return result
         
     @staticmethod
     def intersect(*configs):
+        '''Get the intersection of two configuration objects.'''
         result = config()
         first = configs[0]
         for attr, value in first.iteritems():
@@ -177,6 +202,10 @@ class config(object):
         return result
         
     def setup(self, logger=True):
+        '''
+            Setup logger and handle 'auto' arguments after a configuration
+            object has been fully loaded.
+        '''
         # Set up the pydwarf logger
         if logger: self.setuplogger()
         # Handle paths == 'auto' or ['auto']
@@ -189,6 +218,7 @@ class config(object):
         self.setuppackages()
         
     def setuplogger(self):
+        '''Internal: Setup the logger object.'''
         # Handler for console output
         stdouthandler.setLevel(logging.DEBUG if self.verbose else logging.INFO)
         # Handler for log file output
@@ -199,6 +229,7 @@ class config(object):
             log.addHandler(logfilehandler)
         
     def setuppackages(self):
+        '''Internal: Import packages.'''
         self.importedpackages = []
         if isinstance(self.packages, basestring): self.packages = (self.packages,)
         for package in self.packages:
@@ -208,10 +239,12 @@ class config(object):
                 log.exception('Failed to import package %s.' % package)
         
     def setuppaths(self):
+        '''Internal: Handle 'auto' for --paths.'''
         if self.paths == 'auto' or self.paths == ['auto'] or self.paths == ('auto',):
             self.paths = auto_paths
         
     def setupversion(self):
+        '''Internal: Handle 'auto' for --version.'''
         # Handle automatic version detection
         if self.version == 'auto':
             log.debug('Attempting to automatically detect Dwarf Fortress version.')
@@ -226,6 +259,7 @@ class config(object):
             log.info('Managing Dwarf Fortress version %s.' % self.version)
         
     def setuphackversion(self):
+        '''Internal: Handle 'auto' for --hackversion.''' # TODO: Probably doesn't work for all releases
         if self.hackversion == 'auto':
             log.debug('Attempting to automatically detect DFHack version.')
             

@@ -2,7 +2,7 @@
 # coding: utf-8
 
 '''
-    This module is super simple: just make a default, shared logger object.
+    Initialize a shared logger object.
 '''
 
 import sys

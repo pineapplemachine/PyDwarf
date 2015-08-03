@@ -10,7 +10,7 @@ import queryableadd
 
 
 class rawfile(contentfile.contentfile, queryableobj.queryableobj, queryableadd.queryableadd):
-    '''Represents a single file within a raws directory.'''
+    '''Represents a single raws file within a dir object.'''
     
     def __init__(self, name=None, file=None, path=None, root=None, content=None, tokens=None, dir=None, readpath=True, noheader=False, **kwargs):
         '''Constructs a new raws file object.
@@ -172,17 +172,6 @@ class rawfile(contentfile.contentfile, queryableobj.queryableobj, queryableadd.q
         else:
             self.noheader = True
             self.data = None
-            
-    def write(self, file):
-        '''
-            Given a path to a directory or a file-like object, write the file's
-            contents to that file.
-        '''
-        if isinstance(file, basestring):
-            with open(self.dest(file, makedir=True), 'wb') as dest:
-                dest.write(self.getcontent())
-        else:
-            file.write(self.getcontent())
     
     def add(self, *args, **kwargs):
         '''Add tokens to the end of a file.'''

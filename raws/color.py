@@ -2,7 +2,12 @@
 # coding: utf-8
 
 '''
-    A bit of clever hackishness to make it possible to do things like:
+    A bit of clever hackishness to provide a convenient syntax for working with
+    color definitions in raws files.
+'''
+
+'''
+    Examples of what becomes possible:
     
     raws.color.blue == 1
     raws.color.lred == 12

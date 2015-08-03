@@ -8,32 +8,8 @@ import registrar
 # Functions in scripts must be decorated with this in order to be made available to PyDwarf
 class urist(object):
     '''
-        Decorates a function as being an urist. Keyword arguments are treated as metadata.
-        
-        Special metadata - these are given special handling:
-            name: If name is not specified, then the function name is used to refer to the script.
-                If specified, this is used instead.
-            compatibility: Informs PyDwarf, using a regular expression, which Dwarf Fortress
-                versions a script is compatible with. If this is an iterable, later patterns
-                should describe versions that the plugin is partially compatible with, or that
-                it ought to be compatible with but that hasn't been tested. This way, a version
-                with a more confident compatibility indicator can be chosen over one with a less
-                confident indicator.
-            namespace: Should correspond to an author or authors, groups of mods, or anything
-                really. When specified, it becomes possible for a user to conveniently reference
-                a particular one of multiple identically-named mods by a namespace. If there is
-                a period in a script name, the text preceding the last period is assumed to be
-                namespace and the text after the name.
-            dependency: Will cause an error to be logged when running a script without having
-                run all of its dependencies first.
-                
-        Standard metadata - PyDwarf does nothing special with these, but for the sake of standardization they ought to be included:
-            author: Indicates who created the script. In the case of multiple authors, an
-                iterable such as a tuple or list should be used to enumerate them.
-            version: Indicates the script version.
-            description: Describes the script's purpose and functioning.
-            arguments: Should be a dict with argument names as keys corresponding to strings which
-                explain their purpose.
+        Decorates a function as being an urist. Keyword arguments are treated as
+        metadata.
     '''
     
     # Track registered functions
@@ -41,14 +17,17 @@ class urist(object):
     
     # Decorator handling
     def __init__(self, **kwargs):
+        '''Initialize an urist object.'''
         self.metadata = kwargs
     def __call__(self, func):
+        '''Register a function when used as a decorator.'''
         script = uristscript.uristscript(func, **self.metadata)
         urist.register(script)
         return script
         
     @staticmethod
     def register(script):
+        '''Register an uristscript object.'''
         urist.registrar.__register__(script)
         log.debug('Registered script %s.' % script.getname())
     
@@ -101,7 +80,7 @@ class urist(object):
         
     @staticmethod
     def getfn(name, **kwargs):
-        # TODO: deprecate
+        '''Deprecated: As of v1.1.0. Use pydwarf.registrar instead.'''
         candidates, original, culled = urist.get(name, **kwargs)
         if len(candidates):
             return candidates[0]
@@ -110,10 +89,12 @@ class urist(object):
             
     @staticmethod
     def list():
+        '''Get a list of all registered scripts sorted by name.'''
         return sorted((script for script in urist.registrar), key=lambda script: str(script))
             
     @staticmethod
     def doclist(names=[], delimiter='\n\n', format=None):
+        '''Get metadata documentation for all script names in a list.'''
         urists = []
         if len(names):
             for name in names: urists += urist.getregistered(*urist.splitname(name))
@@ -129,6 +110,7 @@ class urist(object):
     
     @staticmethod
     def cullcandidates(version, match, session, candidates):
+        '''Internal: Cull candidates retrieved for some script info.'''
         if candidates and len(candidates):
             original_candidates = list(candidates)
             culled_match = 0
@@ -151,12 +133,14 @@ class urist(object):
     
     @staticmethod
     def cullcandidates_match(match, candidates):
+        '''Internal: Cull candidates retrieved for some script info based on match data.'''
         newcand, culled = [], []
         for cand in candidates: (newcand if cand.matches(match) else culled).append(cand)
         return newcand, culled
     
     @staticmethod
     def cullcandidates_compatibility(version, candidates):
+        '''Internal: Cull candidates retrieved for some script info based on Dwarf Fortress version compatibility.'''
         if version:
             culled = []
             comp = []
@@ -170,6 +154,7 @@ class urist(object):
     
     @staticmethod
     def cullcandidates_dependency(session, candidates):
+        '''Internal: Cull candidates retrieved for some script info based on unfulfilled dependencies.'''
         if session:
             newcand, culled = [], []
             for cand in candidates: (newcand if cand.depsatisfied(session) else culled).append(cand)
@@ -179,6 +164,10 @@ class urist(object):
     
     @staticmethod
     def cullcandidates_duplicates(candidates):
+        '''Internal: Cull candidates retrieved for some script info based on duplicate entries.'''
+        
+        # TODO: rewrite this, it sucks right now
+        
         names = {}
         for candidate in candidates:
             candname = candidate.name
