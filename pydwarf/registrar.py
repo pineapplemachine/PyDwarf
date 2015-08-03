@@ -45,13 +45,16 @@ class registrar(object):
             
     def __getitem__(self, name):
         parts = name.split('.') if isinstance(name, basestring) else name
-        if len(parts) == 1:
-            if parts[0] == '*':
-                return self
+        try:
+            if len(parts) == 1:
+                if parts[0] == '*':
+                    return self
+                else:
+                    return self.__dict__[parts[0]]
             else:
-                return self.__dict__[parts[0]]
-        else:
-            return self.__dict__[parts[0]][parts[1:]]
+                return self.__dict__[parts[0]][parts[1:]]
+        except KeyError:
+            raise KeyError('Failed to find "%s" in namespace %s.' % (name, str(self)))
             
     def __getattr__(self, attr):
         return self.__getitem__(attr)
