@@ -161,6 +161,10 @@ class token(queryableaddprop.queryableaddprop):
                 self.__dict__['args'] = tokenargs.tokenargs()
             self.__dict__['args'].reset(value)
         else:
+            if name == 'value':
+                self.verifyinternal(value)
+            elif name == 'prefix' or name == 'suffix':
+                self.verifyexternal(value)
             super(token, self).__setattr__(name, value)
         
     @staticmethod
@@ -210,6 +214,19 @@ class token(queryableaddprop.queryableaddprop):
             raise ValueError('Received no recognized arguments.')
         return token, tokens
         
+    def verifytext(self, value, illegal):
+        '''Internal: Guard against setting token attributes to illegal strings.'''
+        value = str(value)
+        if any([char in value for char in illegal]):
+            raise ValueError('Failed to set token attribute to "%s" because the string contains illegal characters.' % value)
+        return value
+    def verifyinternal(self, value):
+        '''Internal: Guard against setting token value to an illegal string.'''
+        return self.verifytext(value, token.illegal_internal_chars)
+    def verifyexternal(self, value):
+        '''Internal: Guard against setting token prefix or suffix to an illegal string.'''
+        return self.verifytext(value, token.illegal_external_chars)
+        
     def index(self, index):
         '''Return the token at an integer offset relative to this one.'''
         itrtoken = self
@@ -255,8 +272,6 @@ class token(queryableaddprop.queryableaddprop):
         
     def setvalue(self, value):
         '''Set the token's value.'''
-        valuestr = str(value)
-        if any([char in valuestr for char in rawstoken.illegal_internal_chars]): raise ValueError('Failed to set token value to "%s" because the string contains illegal characters.' % valuestr)
         self.value = value
         
     def getprefix(self):
@@ -265,8 +280,6 @@ class token(queryableaddprop.queryableaddprop):
     
     def setprefix(self, value):
         '''Set the comment text preceding a token.'''
-        valuestr = str(value)
-        if any([char in valuestr for char in rawstoken.illegal_external_chars]): raise ValueError('Failed to set token prefix to "%s" because the string contains illegal characters.' % valuestr)
         self.prefix = value
         
     def getsuffix(self):
@@ -275,8 +288,6 @@ class token(queryableaddprop.queryableaddprop):
     
     def setsuffix(self, value):
         '''Set the comment text following a token.'''
-        valuestr = str(value)
-        if any([char in valuestr for char in rawstoken.illegal_external_chars]): raise ValueError('Failed to set token suffix to "%s" because the string contains illegal characters.' % valuestr)
         self.suffix = value
         
     def arg(self, index=None):
