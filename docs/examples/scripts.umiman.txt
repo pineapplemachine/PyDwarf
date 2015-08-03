@@ -2,11 +2,11 @@ pydwarf.registrar.__iter__ pydwarf.registrar.__getattr__
 pydwarf.scripts.umiman.smallthings pydwarf.uristscript.__str__
 
 >>> smallthings = pydwarf.scripts.umiman.smallthings
->>> print '\n'.join(str(script) for script in smallthings)
+>>> print '\n'.join(sorted(str(script) for script in smallthings))
 umiman.smallthings.engraving
 umiman.smallthings.prefstring
-umiman.smallthings.speech.threats
 umiman.smallthings.speech.nofamily
+umiman.smallthings.speech.threats
 
 ---
 
@@ -32,11 +32,11 @@ pydwarf.urist.list pydwarf.uristscript.within
 pydwarf.uristscript.__str__
 
 >>> scripts = pydwarf.urist.list()
->>> print '\n'.join(str(script) for script in scripts if script.within('umiman'))
+>>> print '\n'.join(sorted(str(script) for script in scripts if script.within('umiman')))
 umiman.smallthings.engraving
 umiman.smallthings.prefstring
-umiman.smallthings.speech.threats
 umiman.smallthings.speech.nofamily
+umiman.smallthings.speech.threats
 
 ---
 
