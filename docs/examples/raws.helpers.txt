@@ -7,8 +7,8 @@ raws.tokenparse.parse raws.tokenlist.add
 >>> tokens.add('FOURTH')
 [FOURTH]
 >>> tokensiter = (token for token in tokens)
->>> print raws.helpers.ends(tokensiter)
-([FIRST], [FOURTH])
+>>> print [str(token) for token in raws.helpers.ends(tokensiter)]
+[[FIRST], [FOURTH]]
 
 ---
 

@@ -23,7 +23,8 @@ raws.dir.__getitem__ raws.queryable.list
 False
 >>> print item_food == food_copy
 True
->>> food_copy.add('EXAMPLE:TOKEN')
+>>> exampletoken = food_copy.add('EXAMPLE:TOKEN')
+>>> print exampletoken
 [EXAMPLE:TOKEN]
 >>> print food_copy.list()
 [OBJECT:ITEM]
