@@ -5,7 +5,7 @@ import raws
 
 @pydwarf.urist(
     name = 'pineapple.utils.addtoentity',
-    version = '1.0.1',
+    version = '1.0.2',
     author = 'Sophie Kirschner',
     description = '''A simple utility script which adds tokens to entities.''',
     arguments = {
@@ -77,7 +77,7 @@ def objecttokens(df, object_type, token, add_to=None, remove_from=None):
 
 @pydwarf.urist(
     name = 'pineapple.utils.addhack',
-    version = '1.0.0',
+    version = '1.0.1',
     author = 'Sophie Kirschner',
     description = '''Utility script for adding a new DFHack script.''',
     arguments = {
@@ -155,7 +155,7 @@ def addhack(df, auto_run, onload=True, startup=False, **kwargs):
 
 @pydwarf.urist(
     name = 'pineapple.utils.addobject',
-    version = '1.0.0',
+    version = '1.0.1',
     author = 'Sophie Kirschner',
     description = '''Utility script for adding a new object to the raws.''',
     arguments = {

@@ -63,7 +63,7 @@ with open(entities_json, 'rb') as efile: armoury_entities = json.load(efile)
 
 @pydwarf.urist(
     name = 'stal.armoury.items',
-    version = '1.0.0',
+    version = '1.0.1',
     author = ('Stalhansch', 'Sophie Kirschner'),
     description = 'Attempts to improve the balance and realism of combat.',
     arguments = {

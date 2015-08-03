@@ -5,7 +5,7 @@ def addwm(token, pretty): token.add('\n\t[%s] - WM ' % pretty)
 
 @pydwarf.urist(
     name = 'witty.restrictednobles.standard',
-    version = '1.0.0',
+    version = '1.0.1',
     author = ('Witty', 'Sophie Kirschner'),
     description = '''Witty: This is a pretty simple mod I've been meaning to make for a
     while. This should restrict all nobles of a given dwarven civ to dwarves and only

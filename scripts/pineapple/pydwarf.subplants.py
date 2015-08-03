@@ -5,7 +5,7 @@ seasons = ('SPRING', 'SUMMER', 'AUTUMN', 'WINTER')
 
 @pydwarf.urist(
     name = 'pineapple.subplants',
-    version = '1.0.0',
+    version = '1.0.1',
     author = 'Sophie Kirschner',
     description = 'Makes all subterranean plants grow year-round.',
     compatibility = (pydwarf.df_0_34, pydwarf.df_0_40)
