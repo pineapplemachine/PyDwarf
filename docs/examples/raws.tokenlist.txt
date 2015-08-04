@@ -17,7 +17,7 @@ raws.tokenlist.__init__ raws.queryable.all raws.queryable.get raws.queryable.las
 
 ---
 
-raws.tokenlist.each
+raws.queryable.each
 raws.tokenlist.__init__ raws.token.__init__ raws.token.arg
 
 >>> tokens = raws.tokenlist('[A:1][B:2][C:1][D:2]')
@@ -46,3 +46,18 @@ raws.tokenlist.__init__ raws.token.__init__
 >>> tokens.append(tokens)
 >>> print tokens
 [ONE][TWO][THREE][FOUR][FIVE][SIX][SEVEN][EIGHT][ONE][TWO][THREE][FOUR][FIVE][SIX][SEVEN][EIGHT]
+
+---
+
+raws.tokenlist.__iter__
+raws.tokenlist.__init__
+
+>>> tokens = raws.tokenlist('[A][B][C][D][E][F]')
+>>> for token in tokens: print token
+...
+[A]
+[B]
+[C]
+[D]
+[E]
+[F]

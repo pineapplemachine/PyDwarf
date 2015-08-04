@@ -1,24 +1,24 @@
-raws.token.__init__ raws.token.__str__
-
+raws.token.__init__
+raws.token.fullstr
 
 >>> print raws.token('DISPLAY_COLOR:6:0:1')
 [DISPLAY_COLOR:6:0:1]
 >>> print raws.token(value='DISPLAY_COLOR', args=['6', '0', '1'])
 [DISPLAY_COLOR:6:0:1]
->>> print raws.token(value='EXAMPLE', arg='TOKEN', suffix=' hiya').__str__(short=False)
+>>> print raws.token(value='EXAMPLE', arg='TOKEN', suffix=' hiya').fullstr()
 [EXAMPLE:TOKEN] hiya
 
 ---
 
-raws.token.__str__ raws.token.__repr__
+raws.token.__str__ raws.token.shortstr raws.token.fullstr
 raws.token.__init__
 
 >>> token = raws.token('prefix [HI] suffix')
 >>> print str(token)
 [HI]
->>> print token.__str__(short=True)
+>>> print token.shortstr()
 [HI]
->>> print token.__str__(short=False)
+>>> print token.fullstr()
 prefix [HI] suffix
 
 ---
@@ -85,7 +85,7 @@ raws.token.__init__
 ---
 
 raws.token.getprefix raws.token.getsuffix raws.token.setprefix raws.token.setsuffic
-raws.token.__init__ raws.token.__str__
+raws.token.__init__ raws.token.fullstr
 
 >>> token = raws.token('This is a comment [EXAMPLE] so is this')
 >>> print token
@@ -96,7 +96,7 @@ This is a comment
  so is this
 >>> token.setprefix('Hi ')
 >>> token.setsuffix(' there')
->>> print token.__str__(short=False)
+>>> print token.fullstr()
 Hi [EXAMPLE] there
 
 ---
@@ -128,10 +128,10 @@ raws.token.__init__
 
 >>> token = raws.token('ZERO')
 >>> one = token.add('ONE')
->>> print token.list(include_self=True)
+>>> print token.list(skip=False)
 [ZERO][ONE]
 >>> half = token.add('HALF')
->>> print token.list(include_self=True)
+>>> print token.list(skip=False)
 [ZERO][HALF][ONE]
 
 ---
@@ -177,7 +177,7 @@ raws.tokenlist.__init__ raws.tokenparse.parsevariable
 [?]
 >>> print raws.tokenlist(first.tokens()) # Construct a raws.tokenlist object using the generator returned by the tokens method
 [HOW][ARE][YOU][?]
->>> print raws.tokenlist(first.tokens(include_self=True))
+>>> print raws.tokenlist(first.tokens(skip=False))
 [HI][HOW][ARE][YOU][?]
 >>> print raws.tokenlist(first.tokens(range=1))
 [HOW]

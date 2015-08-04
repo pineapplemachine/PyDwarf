@@ -55,7 +55,7 @@ raws.queryableobj.getobj
 ---
 
 raws.queryable.all
-raws.queryableobj.getobj raws.tokenlist.each
+raws.queryableobj.getobj raws.queryable.each
 
 >>> dwarven = df.getobj('TRANSLATION:DWARF')
 >>> print dwarven.all(exact_value='T_WORD', re_arg=(0, 'AL.*'))
@@ -96,7 +96,7 @@ raws.queryable.list
 raws.queryableobj.getobj raws.queryable.get
 reset
 >>> forest = df.getobj('ENTITY:FOREST')
->>> print forest.list(range=5, include_self=True)
+>>> print forest.list(range=5, skip=False)
 [ENTITY:FOREST]
     [CREATURE:ELF]
     [TRANSLATION:ELF]
@@ -104,7 +104,7 @@ reset
     [WEAPON:ITEM_WEAPON_SPEAR]
 >>> sword = forest.get('WEAPON:ITEM_WEAPON_SWORD_SHORT')
 >>> sword.remove()
->>> print forest.list(range=5, include_self=True)
+>>> print forest.list(range=5, skip=False)
 [ENTITY:FOREST]
     [CREATURE:ELF]
     [TRANSLATION:ELF]
@@ -215,3 +215,92 @@ raws.dir.__getitem__
 [NAME:roast]
 [LEVEL:4]
 
+---
+
+raws.queryable.__contains__
+raws.tokenlist.__init__
+
+>>> tokens = raws.tokenlist('[A][B][C][D][E][F]')
+>>> print 'B' in tokens
+True
+>>> print 'G' in tokens
+False
+>>> print tokens[0] in tokens
+True
+>>> print raws.token('[A]') in tokens
+False
+>>> (lambda token: token.value == 'C') in tokens
+True
+>>> (lambda token: token.value == 'G') in tokens
+False
+>>> print ('A', 'B') in tokens
+True
+>>> print ('A', 'G') in tokens
+False
+
+---
+
+raws.queryable.__iter__ raws.queryableobj.allobj
+raws.tokenlist.__init__ raws.token.__str__
+
+>>> pants = sorted(df.allobj('ITEM_PANTS', iter=True), key=lambda token: str(token))
+>>> for token in pants: print token
+...
+[ITEM_PANTS:ITEM_PANTS_BRAIES]
+[ITEM_PANTS:ITEM_PANTS_GREAVES]
+[ITEM_PANTS:ITEM_PANTS_LEGGINGS]
+[ITEM_PANTS:ITEM_PANTS_LOINCLOTH]
+[ITEM_PANTS:ITEM_PANTS_PANTS]
+[ITEM_PANTS:ITEM_PANTS_SKIRT]
+[ITEM_PANTS:ITEM_PANTS_SKIRT_LONG]
+[ITEM_PANTS:ITEM_PANTS_SKIRT_SHORT]
+[ITEM_PANTS:ITEM_PANTS_THONG]
+
+---
+
+raws.queryable.all raws.queryable.list
+raws.dir.__getitem__
+
+>>> creature_standard = df['raw/objects/creature_standard.txt']
+>>> descriptions = creature_standard.all('DESCRIPTION')
+>>> print len(descriptions)
+33
+>>> print descriptions.list(range=5)
+[DESCRIPTION:A short, sturdy creature fond of drink and industry.]
+[DESCRIPTION:A medium-sized creature prone to great ambition.]
+[DESCRIPTION:A medium-sized creature dedicated to the ruthless protection of nature.]
+[DESCRIPTION:A medium-sized humanoid driven to cruelty by its evil nature.]
+[DESCRIPTION:A small, squat humanoid with large pointy ears and yellow glowing eyes.]
+>>> print descriptions.list(reverse=True, range=5)
+[DESCRIPTION:A bird of prey so large and ferocious it dwarfs many dragons.  All beneath its mighty wings should fear the sky.]
+[DESCRIPTION:A giant creature with many eyes and arms to terrify the sea.]
+[DESCRIPTION:A giant limbless dragon that lives in the sea.]
+[DESCRIPTION:A man-like creature with the tail of a fish instead of legs.]
+[DESCRIPTION:A giant dragon-like monster with seven biting heads.]
+
+---
+
+raws.queryable.__reversed__
+raws.dir.__getitem__ raws.queryable.list
+
+>>> food = df['item_food']
+>>> print food.list()
+[ITEM_FOOD:ITEM_FOOD_BISCUITS]
+[NAME:biscuits]
+[LEVEL:2]
+[ITEM_FOOD:ITEM_FOOD_STEW]
+[NAME:stew]
+[LEVEL:3]
+[ITEM_FOOD:ITEM_FOOD_ROAST]
+[NAME:roast]
+[LEVEL:4]
+>>> print reversed(food.list())
+[LEVEL:4]
+[NAME:roast]
+[ITEM_FOOD:ITEM_FOOD_ROAST]
+[LEVEL:3]
+[NAME:stew]
+[ITEM_FOOD:ITEM_FOOD_STEW]
+[LEVEL:2]
+[NAME:biscuits]
+[ITEM_FOOD:ITEM_FOOD_BISCUITS]
