@@ -19,8 +19,30 @@ class queryable(object):
             return self.get(pretty=item) is not None
         elif isinstance(item, token.token):
             return any(item is checktoken for checktoken in self.itokens())
+        elif callable(item):
+            for result in self.query(filters=item, iter=True):
+                if any(item is not None for item in result):
+                    return True
+            return False
         else:
-            raise ValueError('Failed to check for containment of object because its type %s was unrecognized.' % type(item))
+            try:
+                return all(self.__contains__(i) for i in item)
+            except:
+                raise ValueError('Failed to check for containment of object because its type %s was unrecognized.' % type(item))
+    
+    def __eq__(self, other):
+        '''Check for equivalency.'''
+        return self.equals(other)
+    def __ne__(self, other):
+        '''Check for inequivalency.'''
+        return not self.equals(other)
+    
+    def __str__(self):
+        '''Get a string representation.'''
+        return helpers.tokensstring(self)
+    
+    def __reversed__(self):
+        return self.tokens(reverse=True)
     
     def __getitem__(self, *args, **kwargs):
         return self.getitem(*args, **kwargs)
@@ -230,9 +252,9 @@ class queryable(object):
         tokens = tokens
         
         if tokens is None:
-            if hasattr(self, 'tokens') and callable(self.tokens):
+            if hasattr(self, 'tokens') and callable(self.itokens):
                 conditionargs, tokensargs = {}, {}
-                possibletokensargs = inspect.getargspec(self.itokens)[0]
+                possibletokensargs = ('range', 'reverse', 'until', 'step', 'skip') # inspect.getargspec(self.itokens)[0]
                 for argname, argvalue in kwargs.iteritems():
                     if argname in possibletokensargs:
                         tokensargs[argname] = argvalue
@@ -269,7 +291,7 @@ class queryable(object):
         root = self.getitem(slice.start, plural=False)
         tail = self.getitem(slice.stop, plural=False)
         if root is not None and tail is not None:
-            for token in root.tokens(include_self=True, step=slice.step, until=tail, reverse=root.follows(tail)):
+            for token in root.tokens(skip=False, step=slice.step, until=tail, reverse=root.follows(tail)):
                 yield token
 
     def query(self, filters, tokens=None, iter=False, **kwargs):
@@ -362,6 +384,32 @@ class queryable(object):
             a tokenlist instead of a generator.
         '''
         return tokenlist.tokenlist(self.itokens(*args, **kwargs))
+        
+    def each(self, func=None, filter=None, iter=None, output=None, none=False):
+        '''
+            Call a function for each entry in the list with that entry as the
+            argument and return the results as the given output type or, if no
+            such class is provided, as the same class as this object.
+        '''
+        
+        if iter is None: iter = self.itokens()
+        
+        def gen():
+            for token in iter:
+                if filter is None or filter(token):
+                    if func:
+                        result = func(token)
+                    else:
+                        result = token
+                    if none or result is not None:
+                        yield result
+        
+        if output is None: output = type(self)
+        return output(gen())
+        
+    def equals(self, other):
+        '''Check for equivalency with another iterable of tokens.'''
+        return helpers.tokensequal(self.itokens(), other)
             
     def removefirst(self, *args, **kwargs):
         '''Remove the first token matching a filter.'''
@@ -389,3 +437,4 @@ import filters
 import tokenlist
 import tokengenerator
 import token
+import helpers

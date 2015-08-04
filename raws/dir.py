@@ -4,19 +4,12 @@
 import os
 import shutil
 
-import copytree
-import queryable
-import tokenlist
 import queryableobj
-import basefile
-import reffile
-import binfile
-import rawfile
-import filefactory
+import tokencollection
 
 
 
-class dir(queryableobj.queryableobj):
+class dir(queryableobj.queryableobj, tokencollection.tokencollection):
     '''Represents files contained within a Dwarf Fortress directory.'''
     
     def __init__(self, root=None, dest=None, paths=None, version=None, log=None, **kwargs):
@@ -223,12 +216,14 @@ class dir(queryableobj.queryableobj):
         return kind(path=path, loc=loc, dir=self) 
     def filesbydirpath(self, path, root=None, loc=None, kind=None):
         '''Internal: Create a file object to be added to the dir.'''
+        files = []
         for walkroot, walkdirs, walkfiles in os.walk(path):
             for walkfile in walkfiles:
                 if kind:
-                    return kind(path=os.path.join(walkroot, walkfile), root=root, loc=loc, dir=self)
+                    files.append(kind(path=os.path.join(walkroot, walkfile), root=root, loc=loc, dir=self))
                 else:
-                    return filefactory.filefactory(path=os.path.join(walkroot, walkfile), root=root, loc=loc, dir=self)
+                    files.append(filefactory.filefactory(path=os.path.join(walkroot, walkfile), root=root, loc=loc, dir=self))
+        return files
     def filesbydir(self, dir, loc=None):
         '''Internal: Create multiple file objects to be added to the dir.'''
         for dirfile in dir.files.iteritems():
@@ -412,3 +407,14 @@ class dir(queryableobj.queryableobj):
                 if root is not None and root.value == 'OBJECT' and root.nargs() == 1 and root.args[0] in match_types:
                     results.append(root)
         return results
+
+
+
+import copytree
+import queryable
+import tokenlist
+import basefile
+import reffile
+import binfile
+import rawfile
+import filefactory

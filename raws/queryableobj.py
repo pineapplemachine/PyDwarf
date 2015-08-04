@@ -36,7 +36,7 @@ class queryableobj(queryable.queryable):
         for obj in objects: obj.removeselfandprops()
         return objects
         
-    def getobj(self, pretty=None, type=None, exact_id=None, type_in=None, re_id=None, id_in=None):
+    def getobj(self, pretty=None, type=None, exact_id=None, type_in=None, re_id=None, id_in=None, **kwargs):
         '''Get the first object token matching a given type and id.'''
             
         type, exact_id = queryableobj.objpretty(pretty, type, exact_id)
@@ -49,12 +49,13 @@ class queryableobj(queryable.queryable):
                 exact_args = (exact_id,) if exact_id else None,
                 re_args = (re_id,) if re_id else None,
                 arg_in = ((0, id_in),) if id_in else None,
-                args_count = 1
+                args_count = 1,
+                **kwargs
             )
             if obj: return obj
         return None
         
-    def lastobj(self, pretty=None, type=None, exact_id=None, type_in=None, re_id=None, id_in=None): 
+    def lastobj(self, pretty=None, type=None, exact_id=None, type_in=None, re_id=None, id_in=None, **kwargs): 
         '''Get the last object token matching a given type and id.'''
         
         type, exact_id = queryableobj.objpretty(pretty, type, exact_id)
@@ -67,12 +68,13 @@ class queryableobj(queryable.queryable):
                 exact_args = (exact_id,) if exact_id else None,
                 re_args = (re_id,) if re_id else None,
                 arg_in = ((0, id_in),) if id_in else None,
-                args_count = 1
+                args_count = 1,
+                **kwargs
             )
             if obj: return obj
         return None
         
-    def allobj(self, pretty=None, type=None, exact_id=None, type_in=None, re_id=None, id_in=None):
+    def allobj(self, pretty=None, type=None, exact_id=None, type_in=None, re_id=None, id_in=None, **kwargs):
         '''Get all object tokens matching a given type and id.'''
         
         type, exact_id = queryableobj.objpretty(pretty, type, exact_id)
@@ -86,7 +88,8 @@ class queryableobj(queryable.queryable):
                 exact_args = (exact_id,) if exact_id else None,
                 re_args = (re_id,) if re_id else None,
                 arg_in = ((0, id_in),) if id_in else None,
-                args_count = 1
+                args_count = 1,
+                **kwargs
             ):
                 results.append(result)
         return results

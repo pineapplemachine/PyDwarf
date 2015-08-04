@@ -40,6 +40,7 @@ import token
 import basefile, contentfile, reffile, binfile, rawfile
 import filefactory
 import tokenlist
+import tokengenerator
 import tokenparse
 import dir
 import filters
@@ -62,6 +63,7 @@ queryableprop = queryableprop.queryableprop
 queryableaddprop = queryableaddprop.queryableaddprop
 
 tokenlist = tokenlist.tokenlist
+tokengenerator = tokengenerator.tokengenerator
 
 token = token.token
 

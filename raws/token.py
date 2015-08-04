@@ -2,11 +2,12 @@
 # coding: utf-8
 
 import queryableaddprop
+import tokencollection
 import tokenargs
 
 
 
-class token(queryableaddprop.queryableaddprop):
+class token(queryableaddprop.queryableaddprop, tokencollection.tokencollection):
     
     illegal_internal_chars = tokenargs.tokenargs.illegal # TODO: make this better
     
@@ -59,14 +60,10 @@ class token(queryableaddprop.queryableaddprop):
         '''
         return hash('%s:%s' % (self.value, self.args) if self.nargs() else self.value)
     
-    def __str__(self, short=True):
+    def __str__(self):
         '''Get a string representation.'''
-        internal = '[%s%s]' %(self.value, (':%s' % self.args) if self.args else '')
-        if short:
-            return internal
-        else:
-            return '%s%s%s' % (self.prefix if self.prefix else '', internal, self.suffix if self.suffix else '')
-        
+        return self.shortstr()
+            
     def __eq__(self, other):
         '''Returns True if this and the other token have the same value and arguments.
         '''
@@ -227,6 +224,13 @@ class token(queryableaddprop.queryableaddprop):
         '''Internal: Guard against setting token prefix or suffix to an illegal string.'''
         return self.verifytext(value, token.illegal_external_chars)
         
+    def shortstr(self):
+        '''Get a shortened string representation with only value and arguments.'''
+        return '[%s%s]' %(self.value, (':%s' % self.args) if self.args else '')
+    def fullstr(self):
+        '''Get a full string representation.'''
+        return '%s%s%s' % (self.prefix if self.prefix else '', self.shortstr(), self.suffix if self.suffix else '')
+        
     def index(self, index):
         '''Return the token at an integer offset relative to this one.'''
         itrtoken = self
@@ -321,14 +325,21 @@ class token(queryableaddprop.queryableaddprop):
         '''Returns a copy of this token.'''
         return rawstoken(copy=self)
         
-    def itokens(self, range=None, include_self=False, reverse=False, until=None, step=None):
+    def itokens(self, range=None, reverse=False, until=None, step=None, skip=True):
         '''Iterate through successive tokens starting with this one.'''
-        count = 0
-        itertoken = self if include_self else (self.prev if reverse else self.next)
-        while itertoken is not None and (range is None or range > count) and (until is None or itertoken is not until.next):
-            if (step is None) or (count % step == 0): yield itertoken
-            itertoken = itertoken.prev if reverse else itertoken.next
-            count += 1
+        
+        token = self
+        if not skip:
+            token = token.prev if reverse else token.next
+        
+        index = 0
+        while token is not None:
+            if (range is not None and index >= range) or (until is not None and token is not until):
+                break
+            elif step is None or index % step == 0:
+                yield token
+                index += 1
+                token = token.prev if reverse else token.next
     
     def add(self, *args, **kwargs):
         '''
@@ -408,7 +419,7 @@ class token(queryableaddprop.queryableaddprop):
             raise ValueError('Failed to get termination filter for token because there wasn\'t enough information and because the naive filter was disallowed.')
             
         terminators = objects.objectsforheader(header)
-        return lambda token, count: (False, token.value in terminators and token.nargs(1))
+        return lambda token, count: (False, token.next and token.next.nargs(1) and token.next.value in terminators)
     
     def remove(self, count=0, reverse=False):
         '''Removes this token and the next count tokens in the direction indicated by reverse.'''

@@ -66,7 +66,7 @@ class rawfile(contentfile.contentfile, queryableobj.queryableobj, queryableadd.q
         return True
         
     def getcontent(self, short=False):
-        tokencontent = ''.join([o.__str__(short=short) for o in self.tokens()])
+        tokencontent = ''.join([o.shortstr() if short else o.fullstr() for o in self.tokens()])
         if self.noheader:
             return tokencontent
         else:
@@ -132,11 +132,11 @@ class rawfile(contentfile.contentfile, queryableobj.queryableobj, queryableadd.q
         if reverse:
             tail = self.tail()
             if tail is None: return
-            generator = tail.tokens(include_self=True, reverse=True, **kwargs)
+            generator = tail.tokens(skip=False, reverse=True, **kwargs)
         else:
             root = self.root()
             if root is None: return
-            generator = root.tokens(include_self=True, **kwargs)
+            generator = root.tokens(skip=False, reverse=False, **kwargs)
         for token in generator:
             yield token
             

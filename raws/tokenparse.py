@@ -52,11 +52,11 @@ def parseplural(data, implicit=False, **kwargs):
         
         
         
-def parsesingular(data, implicit=True, fail_on_multiple=True, apply=None, **kwargs):
+def parsesingular(data, implicit=True, failmulti=True, apply=None, **kwargs):
     '''Parses a string containing exactly one token. **kwargs are passed on to the parse static method.
     '''
     if data.count('[') > 1:
-        if fail_on_multiple:
+        if failmulti:
             raise ValueError('Failed to parse token because there was more than one open bracket in the data string.')
         else:
             data = data[:data.find('[', data.find('[')+1)]
