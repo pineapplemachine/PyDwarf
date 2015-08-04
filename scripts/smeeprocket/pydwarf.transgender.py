@@ -111,5 +111,7 @@ def trans(dfraws, species=default_species, beards=True, frequency=500):
     if len(castefailures) == 0:
         return pydwarf.success('Added new castes to %d creatures.' % len(species))
     else:
-        return pydwarf.failure('Added new castes to %d creatures, but failed to add castes to %s.' % (len(species) - len(castefailures), castefailures))
+        return pydwarf.failure('Added new castes to %d creatures, but failed to add castes to %s.' % (
+            len(species) - len(castefailures), ', '.join(str(token) for token in castefailures)
+        ))
     
