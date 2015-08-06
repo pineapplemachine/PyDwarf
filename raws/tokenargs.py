@@ -48,9 +48,9 @@ class tokenargs(object):
         self.add(item)
         return self
         
-    def __isub__(self, count):
+    def __isub__(self, item):
         '''Remove some number of items from the end of the list.'''
-        self.sub(count)
+        self.sub(item)
         return self
         
     def __contains__(self, item):
@@ -149,6 +149,12 @@ class tokenargs(object):
         if args:
             self.add(args)
             
-    def sub(self, count):
+    def remove(self, item):
+        self.list.remove(item)
+            
+    def sub(self, item):
         '''Remove some number of items from the end of the list.'''
-        self[:] = self[:-count]
+        try:
+            self.list[:] = self.list[:-item]
+        except:
+            self.remove(item)
