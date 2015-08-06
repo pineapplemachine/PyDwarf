@@ -187,7 +187,7 @@ def addobject(df, add_to_file, tokens, type=None, id=None, permit_entities=None,
     header_in_tokens = type is None and id is None
     header = None
     if header_in_tokens:
-        if isinstance(tokens, basestring): tokens = raws.token.parseplural(tokens)
+        if isinstance(tokens, basestring): tokens = raws.parseplural(tokens)
         header = tokens[0]
         type = header.value
         id = header.arg()
