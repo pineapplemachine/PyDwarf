@@ -137,15 +137,15 @@ class token(queryableaddprop.queryableaddprop, tokencollection.tokencollection):
         return self.nargs()
     def __contains__(self, value):
         '''Determine whether an argument is present within the token's argument list.'''
-        return self.containsarg(value)
+        return value in self.args
         
     def __iadd__(self, value):
         '''Append to the token's argument list.'''
         self.args.add(value)
         return self
-    def __isub__(self, value):
-        '''Remove the last value from the token's argument list.'''
-        self.args.sub(value)
+    def __isub__(self, item):
+        '''Remove the last count items from the token's argument list.'''
+        self.args.sub(item)
         return self
             
     def __nonzero__(self):
@@ -153,6 +153,7 @@ class token(queryableaddprop.queryableaddprop, tokencollection.tokencollection):
         return True
         
     def __setattr__(self, name, value):
+        '''Internal: Handles input sanitization for certain attributes.'''
         if name == 'args':
             if 'args' not in self.__dict__ or self.args is None:
                 self.__dict__['args'] = tokenargs.tokenargs()
@@ -406,6 +407,7 @@ class token(queryableaddprop.queryableaddprop, tokencollection.tokencollection):
         return tokens
         
     def propterminationfilter(self, naive=True):
+        '''Internal: Supports getprop, lastprop, addprop queries.'''
         if self.file is not None:
             # Smartest: Base it off file header and objects knowledge if possible.
             header = self.file.getobjheaders()[0]
@@ -418,7 +420,7 @@ class token(queryableaddprop.queryableaddprop, tokencollection.tokencollection):
             raise ValueError('Failed to get termination filter for token because there wasn\'t enough information and because the naive filter was disallowed.')
             
         terminators = objects.objectsforheader(header)
-        return lambda token, count: (False, token.next and token.next.nargs(1) and token.next.value in terminators)
+        return lambda token, count: (False, token and token.nargs(1) and token.value in terminators)
     
     def remove(self, count=0, reverse=False):
         '''Removes this token and the next count tokens in the direction indicated by reverse.'''
@@ -441,7 +443,7 @@ class token(queryableaddprop.queryableaddprop, tokencollection.tokencollection):
         self.next = None
         
     def removeselfandprops(self, *args, **kwargs):
-        tokens = [self] + self.removeallprop(*args, **kwargs)
+        tokens = self + self.removeallprop(*args, **kwargs)
         self.remove()
         return tokens
 
