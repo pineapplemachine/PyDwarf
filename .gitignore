@@ -3,6 +3,8 @@
 *.xcf
 *test.py
 .sublime-project
+.coverage
+htmlcov/*
 
 # Don't worry about my personal config file
 config.py
