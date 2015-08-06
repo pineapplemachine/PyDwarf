@@ -8,8 +8,6 @@
 
 # import raws, pydwarf; df = pydwarf.df(raws)
 
-
-
 import sys
 import os
 
@@ -35,14 +33,13 @@ def verify(examples, skipreset=False, **globs):
     testnum = 0
     
     df = globs['df']
-    dfcopy = df.copy()
     
     for example in examples:
         if skipreset and 'reset' in example['flags']:
-            print 'Skipping example %s' % example['name']
+            print('Skipping example %s' % example['name'])
         
         else:
-            print 'Running example %s' % example['name']
+            print('Running example %s' % example['name'])
             testnum += 1
             
             # Create the doctest object
@@ -64,9 +61,8 @@ def verify(examples, skipreset=False, **globs):
             
             # Handle flags
             if 'reset' in example['flags']:
-                print 'Resetting df raws.'
-                df = dfcopy
-                dfcopy = df.copy()
+                print('Resetting df raws.')
+                df.reset()
         
     return results
 
@@ -93,14 +89,14 @@ doctest_result_re = re.compile(doctest_pattern)
 
 
 if __name__ == '__main__':
-    print 'Initializing session.'
+    print('Initializing session.')
     conf = pydwarf.config.load(root=pydwarf_root, args={
         'log': '',
         'verbose': False,
     })
     session = pydwarf.session(raws, conf)
     
-    print 'Running examples.'
+    print('Running examples.')
     results = verify(
         examples,
         df = session.df,
@@ -128,6 +124,6 @@ if __name__ == '__main__':
     
     if realresults:
         resultstext = '\n\n'.join(reversed(realresults))
-        print resultstext
+        print(resultstext)
     else:
-        print 'All examples ran successfully.'
+        print('All examples ran successfully.')
