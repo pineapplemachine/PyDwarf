@@ -26,7 +26,7 @@ raws.tokenparse.parsevariable
 
 ---
 
-raws.tokenparse.parseplural parsesingular
+raws.tokenparse.parseplural raws.tokenparse.parsesingular
 
 
 >>> braces = '[EXAMPLE:TOKEN]'

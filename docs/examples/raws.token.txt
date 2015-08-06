@@ -182,7 +182,7 @@ raws.tokenlist.__init__ raws.tokenparse.parsevariable
 >>> print raws.tokenlist(first.tokens(range=1))
 [HOW]
 >>> print raws.tokenlist(first.tokens(until=tokens[3]))
-[HOW][ARE][YOU]
+[HOW][ARE]
 >>> print raws.tokenlist(last.tokens(reverse=True))
 [YOU][ARE][HOW][HI]
 
@@ -237,3 +237,156 @@ raws.token.__init__
 >>> behold = raws.token('BEHOLD:IT:IS:YET:ANOTHER:EXAMPLE')
 >>> print len(behold)
 5
+
+---
+
+raws.token.follows raws.token.__gt__ raws.token.__lt__
+raws.tokenlist.__init__
+
+>>> tokens = raws.tokenlist('[x][y][z]')
+>>> print tokens[0].follows(tokens[2])
+False
+>>> print tokens[2].follows(tokens[0])
+True
+>>> print tokens[0] > tokens[2]
+False
+>>> print tokens[0] < tokens[2]
+True
+
+---
+
+raws.token.nargs
+raws.token.__init__
+
+>>> token = raws.token('example:1:2:3')
+>>> print token.nargs()
+3
+>>> print token.nargs(3)
+True
+>>> print token.nargs(5)
+False
+
+---
+
+raws.token.arg
+raws.token.__init__ raws.tokenlist.append
+
+>>> token = raws.token('example:token')
+>>> print token.arg()
+token
+>>> token.args.append('hello')
+>>> print token
+[example:token:hello]
+>>> print token.arg(0)
+token
+>>> print token.arg(1)
+hello
+>>> print token.arg()
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "raws/token.py", line 304, in arg
+    if len(self.args) != 1: raise ValueError('Failed to retrieve token argument because it doesn\'t have exactly one.')
+ValueError: Failed to retrieve token argument because it doesn't have exactly one.
+
+---
+
+raws.token.__contains__
+raws.token.__init__
+
+>>> token = raws.token('example:a:b:c')
+>>> print 'a' in token
+True
+>>> print 'x' in token
+False
+
+---
+
+raws.token.__iadd__ raws.token.__isub__
+raws.token.__init__
+
+>>> token = raws.token('example:a:b:c')
+>>> print token
+[example:a:b:c]
+>>> token += 'd'
+>>> print token
+[example:a:b:c:d]
+>>> token -= 2
+>>> print token
+[example:a:b]
+>>> token -= 'a'
+[example:b]
+
+---
+
+raws.token.index raws.queryable.__getitem__
+raws.queryableobj.getobj
+
+>>> dwarf = df.getobj('CREATURE:DWARF')
+>>> print dwarf.index(0)
+[CREATURE:DWARF]
+>>> print dwarf.index(3)
+[CASTE_NAME:dwarf:dwarves:dwarven]
+>>> print dwarf.index(-1)
+[OBJECT:CREATURE]
+>>> print dwarf[0, -1, 3]
+[CREATURE:DWARF]
+[OBJECT:CREATURE]
+    [CASTE_NAME:dwarf:dwarves:dwarven]
+
+---
+
+raws.token.remove
+raws.queryableobj.getobj raws.queryable.get raws.queryable.list
+reset
+>>> dwarf = df.getobj('CREATURE:DWARF')
+>>> print dwarf.list(range=4)
+[DESCRIPTION:A short, sturdy creature fond of drink and industry.]
+[NAME:dwarf:dwarves:dwarven]
+[CASTE_NAME:dwarf:dwarves:dwarven]
+[CREATURE_TILE:1]
+>>> dwarf.get('NAME').remove()
+>>> print dwarf.list(range=4)
+[DESCRIPTION:A short, sturdy creature fond of drink and industry.]
+[CASTE_NAME:dwarf:dwarves:dwarven]
+[CREATURE_TILE:1][COLOR:3:0:0]
+
+---
+
+raws.token.remove
+raws.queryableobj.getobj raws.queryable.list
+reset
+>>> elf = df.getobj('CREATURE:ELF')
+>>> print elf.list(range=6)
+[DESCRIPTION:A medium-sized creature dedicated to the ruthless protection of nature.]
+[NAME:elf:elves:elven]
+[CASTE_NAME:elf:elves:elven]
+[CREATURE_TILE:'e'][COLOR:3:0:0]
+[CREATURE_SOLDIER_TILE:137]
+>>> elf.next.remove(count=4)
+>>> print elf.list(range=6)
+[CREATURE_SOLDIER_TILE:137]
+[INTELLIGENT]
+[CANOPENDOORS]
+[BENIGN]
+[PREFSTRING:grace]
+[SPEECH:elf.txt]
+
+---
+
+raws.token.removeselfandprops
+raws.dir.__getitem__ raws.queryableobj.getobj
+
+>>> food = df['item_food']
+>>> removed = food.getobj('ITEM_FOOD:ITEM_FOOD_BISCUITS').removeselfandprops()
+>>> print removed
+[ITEM_FOOD:ITEM_FOOD_BISCUITS]
+[NAME:biscuits]
+[LEVEL:2]
+>>> print food.list()
+[OBJECT:ITEM]
+[ITEM_FOOD:ITEM_FOOD_STEW]
+[NAME:stew]
+[LEVEL:3]
+[ITEM_FOOD:ITEM_FOOD_ROAST]
+[NAME:roast]
+[LEVEL:4]

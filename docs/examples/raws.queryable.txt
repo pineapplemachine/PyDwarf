@@ -145,11 +145,10 @@ raws.dir.__getitem__
 [ITEM_FOOD:ITEM_FOOD_BISCUITS]
 [NAME:biscuits]
 [LEVEL:2]
-[ITEM_FOOD:ITEM_FOOD_STEW]
 >>> print food[0, 'NAME']
 [OBJECT:ITEM]
 [NAME:biscuits]
->>> print food[0, 2:3, 'OBJECT', None]
+>>> print food[0, 2:4, 'OBJECT', None]
 [OBJECT:ITEM]
 [NAME:biscuits]
 [LEVEL:2]
@@ -163,11 +162,11 @@ raws.dir.__getitem__
 >>> food = df['item_food']
 >>> print food[raws]
 Traceback (most recent call last):
-  File "<stdin>", line 1, in <module>
-  File "raws/queryable.py", line 43, in __getitem__
-    return self.getitem(*args, **kwargs)
-  File "raws/queryable.py", line 85, in getitem
-    raise TypeError('Failed to get item because the argument was of an unrecognized type %s.' % type(item))
+    File "<stdin>", line 1, in <module>
+    File "raws/queryable.py", line 43, in __getitem__
+        return self.getitem(*args, **kwargs)
+    File "raws/queryable.py", line 85, in getitem
+        raise TypeError('Failed to get item because the argument was of an unrecognized type %s.' % type(item))
 TypeError: Failed to get item because the argument was of an unrecognized type <type 'module'>.
 
 ---
@@ -285,6 +284,7 @@ raws.dir.__getitem__ raws.queryable.list
 
 >>> food = df['item_food']
 >>> print food.list()
+[OBJECT:ITEM]
 [ITEM_FOOD:ITEM_FOOD_BISCUITS]
 [NAME:biscuits]
 [LEVEL:2]
@@ -304,3 +304,32 @@ raws.dir.__getitem__ raws.queryable.list
 [LEVEL:2]
 [NAME:biscuits]
 [ITEM_FOOD:ITEM_FOOD_BISCUITS]
+[OBJECT:ITEM]
+
+---
+
+raws.queryable.each raws.tokenargs.append
+raws.queryable.list
+reset
+>>> tokens = df.each(lambda token: token.args.append('lol'))
+>>> print df['creature_standard'].list(range=8)
+[OBJECT:CREATURE:lol]
+[CREATURE:DWARF:lol]
+    [DESCRIPTION:A short, sturdy creature fond of drink and industry.:lol]
+    [NAME:dwarf:dwarves:dwarven:lol]
+    [CASTE_NAME:dwarf:dwarves:dwarven:lol]
+    [CREATURE_TILE:1:lol][COLOR:3:0:0:lol]
+    [CREATURE_SOLDIER_TILE:2:lol]
+    
+---
+
+raws.queryable.__eq__
+raws.tokenlist.__init__
+
+>>> tokens = raws.tokenlist('[a][b][c]')
+>>> print tokens == (token for token in tokens)
+True
+>>> print tokens == '[a][b][c]'
+True
+>>> print tokens == '[x][y][z]'
+False

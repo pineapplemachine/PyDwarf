@@ -31,3 +31,24 @@ raws.queryableobj.getobj raws.tokenlist.__len__
 >>> print hematite.allprop('ENVIRONMENT') # Gets only the ENVIRONMENT tokens belonging to hematite
 [ENVIRONMENT:SEDIMENTARY:VEIN:100]
 [ENVIRONMENT:IGNEOUS_EXTRUSIVE:VEIN:100]
+
+---
+
+raws.queryable.allprop
+raws.queryableobj.getobj raws.queryable.list
+
+>>> biscuits = df.getobj('ITEM_FOOD:ITEM_FOOD_BISCUITS')
+>>> print biscuits.file.list()
+[OBJECT:ITEM]
+[ITEM_FOOD:ITEM_FOOD_BISCUITS]
+[NAME:biscuits]
+[LEVEL:2]
+[ITEM_FOOD:ITEM_FOOD_STEW]
+[NAME:stew]
+[LEVEL:3]
+[ITEM_FOOD:ITEM_FOOD_ROAST]
+[NAME:roast]
+[LEVEL:4]
+>>> print biscuits.allprop()
+[NAME:biscuits]
+[LEVEL:2]

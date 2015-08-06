@@ -43,9 +43,6 @@ raws.tokenlist.__init__ raws.token.__init__
 >>> tokens.append(raws.token('EIGHT'))
 >>> print tokens
 [ONE][TWO][THREE][FOUR][FIVE][SIX][SEVEN][EIGHT]
->>> tokens.append(tokens)
->>> print tokens
-[ONE][TWO][THREE][FOUR][FIVE][SIX][SEVEN][EIGHT][ONE][TWO][THREE][FOUR][FIVE][SIX][SEVEN][EIGHT]
 
 ---
 
