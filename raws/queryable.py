@@ -39,7 +39,7 @@ class queryable(object):
     
     def __str__(self):
         '''Get a string representation.'''
-        return helpers.tokensstring(self)
+        return helpers.tokensstring(self.itokens())
     
     def __reversed__(self):
         return self.tokens(reverse=True)
