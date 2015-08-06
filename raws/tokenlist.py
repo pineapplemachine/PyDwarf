@@ -81,7 +81,6 @@ class tokenlist(queryableadd.queryableadd):
         elif isinstance(item, basestring):
             self.extend(tokenparse.parseplural(item, implicit=True))
         else:
-            self.extend(item)
             try:
                 self.extend(item)
             except:
@@ -89,7 +88,8 @@ class tokenlist(queryableadd.queryableadd):
                 
     def extend(self, items):
         '''Extend the list with another iterable containing tokens.'''
-        self.content.extend(items)
+        for item in items:
+            self.append(item)
                 
     def add(self, *args, **kwargs):
         '''Add token or tokens to the last token in this list, and also add those tokens to the list itself.'''
