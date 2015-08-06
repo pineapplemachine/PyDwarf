@@ -22,7 +22,8 @@ class queryableprop(queryable.queryable):
         return self.propquery(self.all, *args, **kwargs)
         
     def propquery(self, method, *args, **kwargs):
-        return method(*args, filters=self.propterminationfilter(), **kwargs)
+        '''Internal: Generalized prop query.'''
+        return method(*args, prefilters=self.propterminationfilter(), **kwargs)
         
     def removeprop(self, *args, **kwargs):
         '''Remove the first property matching some filter.'''

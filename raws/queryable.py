@@ -185,7 +185,7 @@ class queryable(object):
     def buildquerymethod(queryname, docstring, defaultiter, normalfilters, untilfilters):
         '''Internal: Dynamically builds convenience query methods.'''
         
-        def querymethod(self, pretty=None, until=None, tokens=None, iter=None, filters=None, **kwargs):
+        def querymethod(self, pretty=None, until=None, tokens=None, iter=None, filters=None, prefilters=None, postfilters=None, **kwargs):
             '''%s''' % docstring
             
             tokens, conditionargs, untilargs = self.argstokens(tokens, kwargs)
@@ -201,8 +201,14 @@ class queryable(object):
                 queryfilters = filterfunc(pretty, conditionargs)
             
             if filters is not None:
-                if callable(filters): filters = (filters,)
-                queryfilters = queryfilters + filters
+                postfilters = filters
+            if prefilters is not None:
+                if callable(prefilters): prefilters = (prefilters,)
+                queryfilters = prefilters + queryfilters
+                filterindex += len(prefilters)
+            if postfilters is not None:
+                if callable(postfilters): postfilters = (postfilters,)
+                queryfilters = queryfilters + postfilters
                 
             result = self.query(
                 filters = queryfilters,
@@ -385,17 +391,17 @@ class queryable(object):
         '''
         return tokenlist.tokenlist(self.itokens(*args, **kwargs))
         
-    def each(self, func=None, filter=None, iter=None, output=None, none=False):
+    def each(self, func=None, filter=None, tokens=None, iter=False, none=False, output=None):
         '''
             Call a function for each entry in the list with that entry as the
             argument and return the results as the given output type or, if no
             such class is provided, as the same class as this object.
         '''
         
-        if iter is None: iter = self.itokens()
+        if tokens is None: tokens = self.itokens()
         
         def gen():
-            for token in iter:
+            for token in tokens:
                 if filter is None or filter(token):
                     if func:
                         result = func(token)
@@ -404,8 +410,12 @@ class queryable(object):
                     if none or result is not None:
                         yield result
         
-        if output is None: output = type(self)
-        return output(gen())
+        if output is not None:
+            return output(gen())
+        elif iter:
+            return tokengenerator.tokengenerator(gen())
+        else:
+            return tokenlist.tokenlist(gen())
         
     def equals(self, other):
         '''Check for equivalency with another iterable of tokens.'''
