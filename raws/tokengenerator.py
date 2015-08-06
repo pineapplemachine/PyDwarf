@@ -21,7 +21,8 @@ class regenerator(object):
         
     def __iter__(self):
         '''Create and return a new generator.'''
-        return self.func(*self.args, **self.kwargs)
+        for token in self.func(*self.args, **self.kwargs):
+            yield token
         
     def __len__(self):
         '''Get the number of elements in the generator.'''
@@ -50,7 +51,7 @@ class tokengenerator(regenerator, queryable.queryable):
     def itokens(self, range=None, until=None, step=None):
         '''Iterate through the generator's tokens.'''
         for index, token in enumerate(self):
-            if (range is not None and index >= range) or (until is not None and token is not until):
+            if (range is not None and index >= range) or (until is not None and token is until):
                 break
             elif step is None or index % step == 0:
                 yield token

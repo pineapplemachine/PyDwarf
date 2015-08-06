@@ -329,12 +329,11 @@ class token(queryableaddprop.queryableaddprop, tokencollection.tokencollection):
         '''Iterate through successive tokens starting with this one.'''
         
         token = self
-        if not skip:
-            token = token.prev if reverse else token.next
+        if skip: token = token.prev if reverse else token.next
         
         index = 0
         while token is not None:
-            if (range is not None and index >= range) or (until is not None and token is not until):
+            if (range is not None and index >= range) or (until is not None and token is until):
                 break
             elif step is None or index % step == 0:
                 yield token

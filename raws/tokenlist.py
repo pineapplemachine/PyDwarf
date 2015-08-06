@@ -67,7 +67,7 @@ class tokenlist(queryableadd.queryableadd):
         '''Iterate through the list's tokens.'''
         iter = reversed(self.content) if reverse else self.content
         for index, token in enumerate(iter):
-            if (range is not None and index >= range) or (until is not None and token is not until):
+            if (range is not None and index >= range) or (until is not None and token is until):
                 break
             elif step is None or index % step == 0:
                 yield token
