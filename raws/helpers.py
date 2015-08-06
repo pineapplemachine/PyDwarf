@@ -39,25 +39,28 @@ def ends(tokens, setfile=None):
         
 def tokensstring(tokens, dedent=True):
     '''Get a fancy string representation of some collection of tokens.'''
-    if len(tokens) == 0:
-        return ''
-    elif len(tokens) == 1:
-        return str(tokens[0])
-    else:
-        parts = []
-        minindent = None
-        for token in tokens:
-            prefix = ''
-            text = str(token)
-            suffix = ''
-            if ((token.prefix and '\n' in token.prefix)): prefix += '\n'
-            if token.prefix: prefix += token.prefix.split('\n')[-1]
-            if token.suffix: suffix += token.suffix.split('\n')[0]
-            if ((token.suffix and '\n' in token.suffix)): suffix += '\n'
-            parts.extend((prefix, text, suffix))
-        fulltext = ''.join(parts).strip('\n')
-        if dedent: fulltext = textwrap.dedent(fulltext)
-        return fulltext
+    try:
+        if len(tokens) == 0:
+            return ''
+        elif len(tokens) == 1:
+            return str(tokens[0])
+    except:
+        pass
+    
+    parts = []
+    minindent = None
+    for token in tokens:
+        prefix = ''
+        text = str(token)
+        suffix = ''
+        if ((token.prefix and '\n' in token.prefix)): prefix += '\n'
+        if token.prefix: prefix += token.prefix.split('\n')[-1]
+        if token.suffix: suffix += token.suffix.split('\n')[0]
+        if ((token.suffix and '\n' in token.suffix)): suffix += '\n'
+        parts.extend((prefix, text, suffix))
+    fulltext = ''.join(parts).strip('\n')
+    if dedent: fulltext = textwrap.dedent(fulltext)
+    return fulltext
         
 
 
@@ -91,6 +94,10 @@ def icopytokens(tokens):
 
 def tokensequal(atokens, btokens):
     '''Check equivalency between two iterables containing tokens.'''
+    if isinstance(atokens, basestring):
+        atokens = tokenparse.parseplural(atokens, implicit=True)
+    if isinstance(btokens, basestring):
+        btokens = tokenparse.parseplural(btokens, implicit=True)
     return all(
         atoken.equals(btoken) for atoken, btoken in itertools.izip_longest(
             atokens, btokens, fillvalue=token.token.nulltoken
@@ -102,3 +109,4 @@ def tokensequal(atokens, btokens):
 import token
 import tokenlist
 import tokengenerator
+import tokenparse
