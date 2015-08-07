@@ -14,6 +14,15 @@ sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../
 import inspect
 import itertools
 
+try:
+    raise ValueError # TODO: make this highlighting suck less maybe
+    import pygments
+    import pygments.lexers
+    import pygments.formatters
+except:
+    print('Failed to load dependency pygments. In its absence code examples will lack syntax highlighting.')
+    pygments = None
+
 import raws
 import pydwarf
 
@@ -159,7 +168,16 @@ class doc:
         return None
                     
     def htmlbody(self, h=1):
+        self.documented = bool(self.item.__doc__ or self.examples)
         
+        if self.item is None:
+            return self.htmlchildren(h)
+        else:
+            return '<div class="item-header">%s</div><div class="item-body">%s</div>' % (
+                self.htmlheader(h), self.htmldocbase() + self.htmlarguments() + self.htmlexamples() + self.htmlchildren(h)
+            )
+    
+    def htmlheader(self, h=1):
         srcpath = ''
         if self.item is not None:
             srcpath = self.getfile()
@@ -176,30 +194,35 @@ class doc:
                     ) for item in supers
                 )
             )
-                    
             
-        header = '<h%(h)d class="item-title" id="%(id)s"><a href="%(srcpath)s">%(name)s</a></h%(h)d>%(supers)s' % {
+        return '<h%(h)d class="item-title" id="%(id)s"><a href="%(srcpath)s">%(name)s</a></h%(h)d>%(supers)s' % {
             'h': h,
             'id': self.fullname,
             'srcpath': srcpath,
             'supers': inherits,
             'name': self.fullname,
         }
+    
+    def htmldocbase(self):
+        if not(self.item.__doc__) and not(self.examples):
+            return '<div class="docstring undocumented">Undocumented</div>'
+        else:
+            return '<div class="docstring documented">%s</div>' % self.item.__doc__
+    
+    def htmlchildren(self, h=1):
+        if self.children:
+            return '<div class="subs">%s</div>' % ''.join(
+                child.htmlbody(h=h+(self.item is not None)) for child in sorted(self.children, key=lambda c: c.fullname)
+            )
+        else:
+            return ''
         
-        docbody = ''
-        argsbody = ''
-        examplesbody = ''
-        childrenbody = ''
-        
-        if self.item.__doc__:
-            docbody = '<div class="docstring documented">%s</div>' % self.item.__doc__
-        
+    def htmlarguments(self):
         try:
             args = inspect.getargspec(self.item)
         except:
-            args = None
-        
-        if args:
+            return ''
+        else:
             outer = '<div class="arguments">Arguments: %s</div>'
             delim = '<span class="argument-separator">,</span>'
             item = '<span class="%s">%s</span>'
@@ -232,32 +255,26 @@ class doc:
                 itemtext = item % ('argument keywords', '**kwargs')
                 inner.append(itemtext)
             
-            argsbody = outer % delim.join(inner)
-            
+            return outer % delim.join(inner)
+        
+    def htmlexamples(self):
         if self.examples:
-            examplesbody = (
+            examples = (self.formathtmlexample(example['text']) for example in self.examples)
+            element = 'pre' if pygments is None else 'div'
+            return (
                 '<div class="examples">%s</div>' %
                 '<div class="example-separator"></div>'.join(
-                    ('<pre class="example">%s</pre>' % example['text']) for example in self.examples
+                    ('<%s class="highlight-example">%s</%s>' % (element, example, element)) for example in examples
                 )
             )
+        else:
+            return ''
             
-        if not(examplesbody or docbody):
-            docbody = '<div class="docstring undocumented">Undocumented</div>'
+    def formathtmlexample(self, example):
+        if pygments is not None:
+            return pygments.highlight(example, pygments.lexers.PythonLexer(), pygments.formatters.HtmlFormatter())
         else:
-            self.documented = True
-        
-        if self.children:
-            childrenbody = '<div class="subs">%s</div>' % ''.join(
-                child.htmlbody(h=h+(self.item is not None)) for child in sorted(self.children, key=lambda c: c.fullname)
-            )
-        
-        if self.item is None:
-            return childrenbody
-        else:
-            return '<div class="item-header">%s</div><div class="item-body">%s</div>' % (
-                header, docbody + argsbody + examplesbody + childrenbody
-            )
+            return example.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
         
     def htmlcontents(self):
         content = '<a class="%s" href="#%s">%s</a>' % (
@@ -309,7 +326,7 @@ css = '''
         padding: 2%;
     }
     
-    .example {
+    .highlight-example {
         background-color: #060606;
         color: #3c1;
         padding: 8px;
@@ -421,6 +438,9 @@ css = '''
         padding-right: 3px;
     }
 '''
+
+if pygments is not None:
+    css += pygments.formatters.HtmlFormatter().get_style_defs('.highlight-example')
 
 html = '''
     <html>
