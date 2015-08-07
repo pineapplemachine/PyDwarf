@@ -1,0 +1,57 @@
+raws.tokenfilter.__init__ raws.basefilter.match
+raws.token.__init__
+
+>>> filter = raws.filter('EXAMPLE:TOKEN')
+>>> print filter.match(raws.token('EXAMPLE:TOKEN'))
+True
+>>> print filter.match(raws.token('EXAMPLE:TOKEN:NO:MATCH'))
+False
+
+---
+
+raws.tokenfilter.__init__
+raws.token.__init__ raws.basefilter.match
+
+>>> tokena = raws.token('EXAMPLE')
+>>> tokenb = raws.token('ANOTHER_EXAMPLE')
+>>> tokenc = raws.token('EXAMPLE')
+>>> filter = raws.filter(match_token=tokena)
+>>> print filter.match(tokena)
+True
+>>> print filter.match(tokenb)
+False
+>>> print filter.match(tokenc)
+True
+>>> filter = raws.filter(exact_token=tokena)
+>>> print filter.match(tokena)
+True
+>>> print filter.match(tokenb)
+False
+>>> print filter.match(tokenc)
+False
+
+---
+
+raws.tokenfilter.__init__
+raws.token.__init__ raws.basefilter.match
+
+>>> filter = raws.filter(exact_value='HELLO')
+>>> print filter.match(raws.token('HELLO:WORLD'))
+True
+>>> print filter.match(raws.token('HELLO:THERE'))
+True
+>>> print filter.match(raws.token('GREETINGS:WORLD'))
+False
+
+---
+
+raws.tokenfilter.__init__
+raws.token.__init__ raws.basefilter.match
+
+>>> filter = raws.filter(exact_args=['x', 'y'])
+>>> print filter.match(raws.token('example:x:y'))
+True
+>>> print filter.match(raws.token('example:a:b'))
+False
+>>> print filter.match(raws.token('example:x:y:z'))
+False

@@ -375,7 +375,7 @@ reset
 
 raws.token.removeselfandprops
 raws.dir.__getitem__ raws.queryableobj.getobj
-
+reset
 >>> food = df['item_food']
 >>> removed = food.getobj('ITEM_FOOD:ITEM_FOOD_BISCUITS').removeselfandprops()
 >>> print removed
@@ -390,3 +390,15 @@ raws.dir.__getitem__ raws.queryableobj.getobj
 [ITEM_FOOD:ITEM_FOOD_ROAST]
 [NAME:roast]
 [LEVEL:4]
+
+---
+
+raws.token.strip raws.token.fullstr
+raws.token.__init__
+
+>>> token = raws.token('prefix [EXAMPLE] suffix')
+>>> print token.fullstr()
+prefix [EXAMPLE] suffix
+>>> token.strip()
+>>> print token.fullstr()
+[EXAMPLE]

@@ -1,4 +1,4 @@
-raws.queryable.get raws.queryable.getprop
+raws.queryable.get raws.queryableprop.getprop
 raws.queryableobj.getobj
 
 >>> iron = df.getobj('INORGANIC:IRON')
@@ -11,7 +11,7 @@ None
 
 ---
 
-raws.queryable.last raws.queryable.lastprop
+raws.queryable.last raws.queryableprop.lastprop
 raws.queryableobj.getobj
 
 >>> iron = df.getobj('INORGANIC:IRON')
@@ -22,7 +22,7 @@ raws.queryableobj.getobj
 
 ---
 
-raws.queryable.all raws.queryable.allprop
+raws.queryable.all raws.queryableprop.allprop
 raws.queryableobj.getobj raws.tokenlist.__len__
 
 >>> hematite = df.getobj('INORGANIC:HEMATITE')
@@ -34,7 +34,7 @@ raws.queryableobj.getobj raws.tokenlist.__len__
 
 ---
 
-raws.queryable.allprop
+raws.queryableprop.allprop
 raws.queryableobj.getobj raws.queryable.list
 
 >>> biscuits = df.getobj('ITEM_FOOD:ITEM_FOOD_BISCUITS')
@@ -52,3 +52,23 @@ raws.queryableobj.getobj raws.queryable.list
 >>> print biscuits.allprop()
 [NAME:biscuits]
 [LEVEL:2]
+
+---
+
+raws.queryableprop.removeprop
+raws.queryableobj.getobj raws.queryable.list
+reset
+>>> stew = df.getobj('ITEM_FOOD:ITEM_FOOD_STEW')
+>>> removed = stew.removeallprop()
+>>> print removed
+[NAME:stew]
+[LEVEL:3]
+>>> print stew.file.list()
+[OBJECT:ITEM]
+[ITEM_FOOD:ITEM_FOOD_BISCUITS]
+[NAME:biscuits]
+[LEVEL:2]
+[ITEM_FOOD:ITEM_FOOD_STEW]
+[ITEM_FOOD:ITEM_FOOD_ROAST]
+[NAME:roast]
+[LEVEL:4]
