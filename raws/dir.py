@@ -24,7 +24,7 @@ class dir(queryableobj.queryableobj):
         
     def __str__(self):
         '''Get a string representation.'''
-        return '\n'.join(['%s %s' % (file.kind, str(file)) for file in self.files.itervalues()])
+        return '\n'.join(['%s %s' % (file.kind, str(file)) for file in sorted(self.files.itervalues(), key=lambda f: str(f))])
         
     def __enter__(self):
         '''Support for with/as syntax.'''
@@ -53,9 +53,9 @@ class dir(queryableobj.queryableobj):
     def __contains__(self, item):
         '''Check if the dir contains a file name or object.'''
         if isinstance(item, basefile.basefile):
-            return item in self.files.itervalues()
+            return any(item is file for file in self.iterfiles())
         else:
-            return item in self.files or item in self.filenames
+            return item in self.files.iterkeys() or item in self.filenames.iterkeys()
             
     def __len__(self):
         '''Get the number of file objects tracked by the dir.'''
@@ -108,7 +108,7 @@ class dir(queryableobj.queryableobj):
         method is called using the value for create as its argument.'''
         
         if isinstance(name, basefile.basefile):
-            return name if name in self.files.itervalues() else None
+            return name if name in self else None
         
         file = self.files.get(name)
         if file is None:
@@ -120,9 +120,14 @@ class dir(queryableobj.queryableobj):
                     if not conflicts: raise ValueError('Failed to retrieve file from dir because the name found no exact matches, and because multiple files were found with that name.')
                     return file
                     
-        if create is not None and file is None:
-            file = self.add(name, **kwargs)
-            file.add(create)
+        if file is None:
+            if create is not None:
+                file = self.add(name, **kwargs)
+                if create is not False:
+                    file.add(create)
+            else:
+                raise KeyError('Failed to find file name "%s" in dir.' % name)
+        
         return file
         
     def iterfiles(self, *args, **kwargs):
@@ -274,11 +279,12 @@ class dir(queryableobj.queryableobj):
     def remove(self, file=None):
         '''Remove a file from this dir.'''
         
-        if file is None: raise KeyError('Failed to remove file because no file was given.')
-        if isinstance(file, basestring): file = self.getfile(file)
-        
-        if file.dir is not self: raise KeyError('Failed to remove file because it belongs to a different dir.')
-        if not any(file is f for f in self.iterfiles()): raise KeyError('Failed to remove file because it doesn\'t belong to this dir.')
+        if file is None:
+            raise KeyError('Failed to remove file because no file was given.')
+        elif isinstance(file, basestring):
+            file = self.getfile(file)
+        elif (file.dir is not self) or (file not in self):
+            raise KeyError('Failed to remove file because it doesn\'t belong to this dir.')
         
         filenamelist = self.filenames[file.name]
         for index, filenameentry in enumerate(filenamelist):
