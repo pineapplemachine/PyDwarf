@@ -5,11 +5,10 @@ import os
 import shutil
 
 import queryableobj
-import tokencollection
 
 
 
-class dir(queryableobj.queryableobj, tokencollection.tokencollection):
+class dir(queryableobj.queryableobj):
     '''Represents files contained within a Dwarf Fortress directory.'''
     
     def __init__(self, root=None, dest=None, paths=None, version=None, log=None, **kwargs):

@@ -36,7 +36,9 @@ raws.parse: A convenience alias for raws.token.parse, which accepts an input str
 
 
 import queryable, queryableobj, queryableadd, queryableprop, queryableaddprop
+import queryresult
 import token
+import tokenargs
 import basefile, contentfile, reffile, binfile, rawfile
 import filefactory
 import tokenlist
@@ -62,10 +64,13 @@ queryableadd = queryableadd.queryableadd
 queryableprop = queryableprop.queryableprop
 queryableaddprop = queryableaddprop.queryableaddprop
 
+queryresult = queryresult.queryresult
+
 tokenlist = tokenlist.tokenlist
 tokengenerator = tokengenerator.tokengenerator
 
 token = token.token
+tokenargs = tokenargs.tokenargs
 
 basefile = basefile.basefile
 contentfile = contentfile.contentfile

@@ -1,9 +1,8 @@
 import queryable
-import tokencollection
 
 
 
-class queryresult(queryable.queryable, tokencollection.tokencollection):
+class queryresult(queryable.queryable):
     def __init__(self, source, results, resultiter=None):
         self.source = source
         self.results = results
@@ -29,7 +28,7 @@ class queryresult(queryable.queryable, tokencollection.tokencollection):
                 
     def each(self, *args, **kwargs):
         kwargs['output'] = kwargs.get('output', tokenlist.tokenlist)
-        return tokencollection.tokencollection.each(self, *args, **kwargs)
+        return queryable.queryable.each(self, *args, **kwargs)
         
 
 
