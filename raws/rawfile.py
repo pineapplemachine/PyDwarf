@@ -13,15 +13,7 @@ class rawfile(contentfile.contentfile, queryableobj.queryableobj, queryableadd.q
     '''Represents a single raws file within a dir object.'''
     
     def __init__(self, name=None, file=None, path=None, root=None, content=None, tokens=None, dir=None, readpath=True, noheader=False, **kwargs):
-        '''Constructs a new raws file object.
-        
-        name: The name string to appear at the top of the file. Also used to determine filename.
-        data: A string to be parsed into token data.
-        path: A path to the file from which this object is being parsed, if any exists.
-        tokens: An iterable of tokens from which to construct the object; these tokens will be its initial contents.
-        file: A file-like object from which to automatically read the name and data attributes.
-        dir: Which raws.dir object this file belongs to.
-        '''
+        '''Constructs a new raws file object.'''
         
         self.dir = dir
         self.data = None
@@ -49,16 +41,14 @@ class rawfile(contentfile.contentfile, queryableobj.queryableobj, queryableadd.q
         self.kind = 'raw'
             
     def __enter__(self):
+        '''Support for with/as syntax.'''
         return self
     def __exit__(self):
+        '''Support for with/as syntax.'''
         if self.path: self.write(self.path)
-            
-    def __eq__(self, other):
-        return self.equals(other)
-    def __ne__(self, other):
-        return not self.equals(other)
-        
+    
     def __len__(self):
+        '''Get the number of tokens in the file.'''
         return self.length()
         
     def __nonzero__(self):
@@ -66,6 +56,7 @@ class rawfile(contentfile.contentfile, queryableobj.queryableobj, queryableadd.q
         return True
         
     def getcontent(self, short=False):
+        '''Get the textual content of the file.'''
         tokencontent = ''.join([o.shortstr() if short else o.fullstr() for o in self.tokens()])
         if self.noheader:
             return tokencontent
@@ -73,6 +64,7 @@ class rawfile(contentfile.contentfile, queryableobj.queryableobj, queryableadd.q
             return '%s\n%s' %(self.name, tokencontent)
             
     def setcontent(self, content):
+        '''Set the file content via a string.'''
         self.read(content=content)
         
     def ref(self, **kwargs):
@@ -88,16 +80,13 @@ class rawfile(contentfile.contentfile, queryableobj.queryableobj, queryableadd.q
         return self
     
     def index(self, index):
-        '''Get the token at some integer index.'''
+        '''Get the token at an integer index.'''
         itrtoken = self.root() if index >= 0 else self.tail()
         index += (index < 0)
         for i in xrange(0, abs(index)):
             itrtoken = itrtoken.next if index > 0 else itrtoken.prev
             if itrtoken is None: return None
         return itrtoken
-        
-    def getpath(self):
-        return self.path
         
     def settokens(self, tokens, setfile=True):
         '''Internal: Set the root and tail tokens given an iterable.'''
@@ -114,9 +103,6 @@ class rawfile(contentfile.contentfile, queryableobj.queryableobj, queryableadd.q
         copy.noheader = self.noheader
         copy.settokens(helpers.icopytokens(self.tokens()))
         return copy
-        
-    def equals(self, other):
-        return helpers.tokensequal(self.tokens(), other.tokens())
         
     def root(self):
         '''Get the first token in the file.'''
