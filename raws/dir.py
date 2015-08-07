@@ -75,6 +75,20 @@ class dir(queryableobj.queryableobj):
     def __iadd__(self, file):
         '''Add a file to the dir.'''
         self.add(file=file)
+        return self
+        
+    def __isub__(self, file):
+        '''Remove a file from this dir.'''
+        self.remove(file)
+        
+    def __delitem__(self, file):
+        '''Remove a file from this dir.'''
+        self.remove(file)
+        
+    def __iter__(self):
+        '''Iterate through the dir's file objects.'''
+        for file in self.iterfiles():
+            yield file
         
     def equals(self, other):
         '''Check equivalency with another dir object.'''
