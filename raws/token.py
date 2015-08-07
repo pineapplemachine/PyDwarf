@@ -2,12 +2,11 @@
 # coding: utf-8
 
 import queryableaddprop
-import tokencollection
 import tokenargs
 
 
 
-class token(queryableaddprop.queryableaddprop, tokencollection.tokencollection):
+class token(queryableaddprop.queryableaddprop):
     
     illegal_internal_chars = tokenargs.tokenargs.illegal # TODO: make this better
     
