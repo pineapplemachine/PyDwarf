@@ -14,7 +14,7 @@ class binfile(contentfile.contentfile):
         manipulated but don't have their own specialized class.
     '''
     
-    def __init__(self, content=None, path=None, dir=None, **kwargs):
+    def __init__(self, path=None, content=None, dir=None, **kwargs):
         '''Initialize a binfile object.'''
         self.dir = None
         self.setpath(path, **kwargs)
