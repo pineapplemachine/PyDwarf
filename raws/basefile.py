@@ -59,18 +59,22 @@ class basefile(object):
             extension, location while we're at it.
         '''
         if self.dir and self.dir.root and (not root): root = self.dir.root
-        path = os.path.abspath(path) if path else None
-        root = os.path.abspath(root) if root else None
-        self.path = path
-        self.rootpath = root
+        abspath = os.path.abspath(path) if path else None
+        absroot = os.path.abspath(root) if root else None
+        self.path = abspath
+        self.rootpath = absroot
         if not path:
             self.name, self.ext = None, None
-        elif os.path.isfile(path):
-            self.name, self.ext = os.path.splitext(os.path.basename(path))
+        elif root and os.path.isfile(abspath):
+            self.name, self.ext = os.path.splitext(os.path.basename(abspath))
+        elif root:
+            self.name, self.ext = os.path.basename(abspath), None
         else:
-            self.name, self.ext = os.path.basename(path), None
-        if root and path and root != path and path.startswith(root):
-            self.loc = os.path.dirname(os.path.relpath(path, root))
+            self.name, self.ext = os.path.splitext(os.path.basename(path))
+        if absroot and abspath and absroot != abspath and abspath.startswith(absroot):
+            self.loc = os.path.dirname(os.path.relpath(abspath, absroot))
+        elif path:
+            self.loc = os.path.dirname(path)
         else:
             self.loc = None
         if loc: self.loc = loc
