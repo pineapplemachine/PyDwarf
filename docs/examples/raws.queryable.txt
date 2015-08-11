@@ -333,3 +333,34 @@ True
 True
 >>> print tokens == '[x][y][z]'
 False
+
+---
+
+raws.queryable.get raws.queryable.last raws.queryable.all
+raws.tokenargs.__getitem__ raws.tokenlist.__len__
+
+>>> print df.get(lambda token: token.value == 'CREATURE' and token.args[0] == 'DWARF')
+[CREATURE:DWARF]
+>>> print df.get(lambda token: token.value == 'CREATURE')
+[CREATURE:MONGOOSE]
+>>> print df.last(lambda token: token.value == 'CREATURE')
+[CREATURE:GIANT_OPOSSUM]
+>>> print len(df.all(lambda token: token.value == 'CREATURE'))
+674
+
+---
+
+raws.dir.__getitem__ raws.queryable.all
+
+
+>>> print df['item_food'].all()
+[OBJECT:ITEM]
+[ITEM_FOOD:ITEM_FOOD_BISCUITS]
+[NAME:biscuits]
+[LEVEL:2]
+[ITEM_FOOD:ITEM_FOOD_STEW]
+[NAME:stew]
+[LEVEL:3]
+[ITEM_FOOD:ITEM_FOOD_ROAST]
+[NAME:roast]
+[LEVEL:4]

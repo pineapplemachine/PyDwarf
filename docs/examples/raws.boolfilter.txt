@@ -1,0 +1,12 @@
+raws.basefilter.__or__
+raws.tokenfilter.__init__
+
+>>> filter = raws.filter(exact_value='example') | raws.filter(exact_arg='token')
+>>> print filter.match(raws.token('example:token'))
+True
+>>> print filter.match(raws.token('example:hello'))
+True
+>>> print filter.match(raws.token('hello:token'))
+True
+>>> print filter.match(raws.token('hello:world'))
+None
