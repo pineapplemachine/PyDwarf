@@ -185,8 +185,14 @@ class queryable(object):
     def buildquerymethod(queryname, docstring, defaultiter, normalfilters, untilfilters):
         '''Internal: Dynamically builds convenience query methods.'''
         
-        def querymethod(self, pretty=None, until=None, tokens=None, iter=None, filters=None, prefilters=None, postfilters=None, **kwargs):
+        def querymethod(self, auto=None, pretty=None, until=None, tokens=None, iter=None, filters=None, prefilters=None, postfilters=None, **kwargs):
             '''%s''' % docstring
+            
+            if auto is not None:
+                if callable(auto):
+                    filters = auto
+                else:
+                    pretty = auto
             
             tokens, conditionargs, untilargs = self.argstokens(tokens, kwargs)
             
@@ -198,7 +204,10 @@ class queryable(object):
                 queryfilters = filterfunc(pretty, until, conditionargs, untilargs)
             else:
                 filterindex, resultindex, filterfunc = normalfilters
-                queryfilters = filterfunc(pretty, conditionargs)
+                if pretty:
+                    queryfilters = filterfunc(pretty, conditionargs)
+                else:
+                    queryfilters = tuple()
             
             if filters is not None:
                 postfilters = filters
@@ -209,6 +218,9 @@ class queryable(object):
             if postfilters is not None:
                 if callable(postfilters): postfilters = (postfilters,)
                 queryfilters = queryfilters + postfilters
+                
+            if not queryfilters:
+                queryfilters = (lambda token, count: (True, False))
                 
             result = self.query(
                 filters = queryfilters,
