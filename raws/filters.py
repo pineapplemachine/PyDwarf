@@ -7,41 +7,40 @@ import copy
 
 
 class basefilter(object):
+    '''Base class for filter objects.'''
+    
     def __init__(self, invert=False, limit=None, limit_terminates=True):
+        '''Initialize a filter object.'''
         self.inv = invert
         self.limit = limit
         self.limit_terminates = limit_terminates
         
     def invert(self):
+        '''Cause the filter to return the inverse of what it otherwise would.'''
         self.inv = not self.inv
     def match(self, token):
+        '''Check if the filter matches a token.'''
         result = self.basematch(token)
         return not result if self.inv else result
     def basematch(self, token):
+        '''Internal: Should be overridden by inheriting classes.'''
         return False
         
     def copy(self):
+        '''Make a copy of the filter.'''
         return copy.deepcopy(self)
         
     def inverted(self):
+        '''Return an inverted copy of the filter.'''
         inv = self.copy()
         inv.invert()
         return inv
         
-    def __and__(self, other):
-        return boolfilter.all(self, other)
-    def __or__(self, other):
-        return boolfilter.any(self, other)
-    def __xor__(self, other):
-        return boolfilter.one(self, other)
-    
-    def __invert__(self):
-        return self.inverted()
-    
-    def __contains__(self, token):
-        return self.match(token)
-        
-    def __call__(self, token, count):
+    def eval(self, token, count):
+        '''
+            Check if the filter matches a token and whether a performing query
+            should be terminated.
+        '''
         matches = False
         terminate = False
         if self.limit is None:
@@ -53,11 +52,39 @@ class basefilter(object):
             if self.limit_terminates and count >= self.limit:
                 terminate = True
         return matches, terminate
+        
+    def __and__(self, other):
+        '''Return a filter representing A AND B.'''
+        return boolfilter.all(self, other)
+    def __or__(self, other):
+        '''Return a filter representing A OR B.'''
+        return boolfilter.any(self, other)
+    def __xor__(self, other):
+        '''Return a filter representing A XOR B.'''
+        return boolfilter.one(self, other)
+    
+    def __invert__(self):
+        '''Cause the filter to return the inverse of what it otherwise would.'''
+        return self.inverted()
+    
+    def __contains__(self, token):
+        '''Check if the filter matches a token.'''
+        return self.match(token)
+        
+    def __call__(self, token, count):
+        '''
+            Check if the filter matches a token and whether a performing query
+            should be terminated.
+        '''
+        return self.eval(token, count)
             
 
 
 class tokenfilter(basefilter):
-    '''Basic filter class for applying to rawstoken objects.'''
+    '''
+        Basic filter class providing a number of convenient attributes to
+        simplify query filtering.
+    '''
     
     def __init__(self,
         pretty=None,
@@ -67,9 +94,8 @@ class tokenfilter(basefilter):
         re_value=None, re_args=None, re_arg=None, 
         re_prefix=None, re_suffix=None,
         except_value=None,
-        value_in=None, value_not_in=None, arg_in=None,
+        value_in=None, value_not_in=None, arg_in=None, arg_not_in=None,
         args_contains=None, args_count=None,
-        args_count_at_least=None, args_count_no_more=None,
         invert=None,
         limit=None, limit_terminates=True
     ):
@@ -117,10 +143,6 @@ class tokenfilter(basefilter):
             args_contains: If at least one of a token's arguments is not exactly this string, then it
                 doesn't match.
             args_count: If a token's number of arguments is not exactly this, then it doesn't match.
-            args_count_at_least: If a token's number of arguments is not at least this many then it
-                doesn't match.
-            args_count_no_more: If a token's number of arguments exceeds this many then it doesn't
-                match.
             
             These arguments regard how the filter is treated in queries.
             
@@ -150,7 +172,7 @@ class tokenfilter(basefilter):
         self.exact_value = exact_value
         self.except_value = except_value
         self.exact_args = exact_args
-        self.exact_arg = tokenargs.tokenargsexact_arg
+        self.exact_arg = exact_arg
         self.exact_prefix = exact_prefix
         self.exact_suffix = exact_suffix
         self.re_value = re_value
@@ -161,32 +183,40 @@ class tokenfilter(basefilter):
         self.value_in = value_in
         self.value_not_in = value_not_in
         self.arg_in = arg_in
+        self.arg_not_in = arg_not_in
         self.args_contains = args_contains
         self.args_count = args_count
-        self.args_count_at_least = args_count_at_least
-        self.args_count_no_more = args_count_no_more
         
-        # Smart handling of different types of input for exact_arg, re_arg, re_in
+        self.prepare()
         
-        if isinstance(self.exact_arg, basestring):
-            self.exact_arg = (0, self.exact_arg)
-            self.args_count = 1
-        elif self.exact_arg and isinstance(self.exact_arg[0], int):
-            self.exact_arg = (self.exact_arg,)
-            
-        if isinstance(self.re_arg, basestring):
-            self.re_arg = (0, self.re_arg)
-            self.args_count = 1
-        elif self.re_arg and isinstance(self.re_arg[0], int):
-            self.re_arg = (self.re_arg,)
-            
-        if isinstance(self.arg_in, basestring):
-            self.arg_in = (0, self.arg_in)
-            self.args_count = 1
-        elif self.arg_in and isinstance(self.arg_in[0], int):
-            self.arg_in = (self.arg_in,)
-        
+    def prepare(self):
+        '''Internal: Extra handling for some attributes.'''
+        self.autodepths()
         self.anchor()
+        
+    def autodepths(self):
+        '''Internal: Handle various input types for exact_arg, re_arg, arg_in, arg_not_in.''' 
+        for attr, mindepth in (
+            ('exact_arg', 0),
+            ('re_arg', 0),
+            ('arg_in', 1),
+            ('arg_not_in', 1),
+        ):
+            if self.__dict__[attr] is not None:
+                depth = -mindepth
+                arg = self.__dict__[attr]
+                while not isinstance(arg, basestring):
+                    try:
+                        arg = arg[0]
+                    except:
+                        break
+                    else:
+                        depth += 1
+                if depth == 0:
+                    self.__dict__[attr] = ((0, self.__dict__[attr]),)
+                    self.args_count = 1
+                elif depth == 1:
+                    self.__dict__[attr] = (self.__dict__[attr],)
         
     def anchor(self):
         '''Internal: Anchor regular expressions.'''
@@ -197,14 +227,12 @@ class tokenfilter(basefilter):
         if self.re_arg: self.re_arg = [(None if a is None else (a[0], a[1]+'$')) for a in self.re_arg]
         
     def basematch(self, token):
-        '''Internal: See if things match regardless of inversion.'''
+        '''Internal: Check for a matching token.'''
         if (
             (self.exact_token is not None and self.exact_token is not token) or
             (self.except_value is not None and self.except_value == token.value) or
             (self.exact_value is not None and self.exact_value != token.value) or
             (self.args_count is not None and self.args_count != token.nargs()) or
-            (self.args_count_at_least is not None and token.nargs() < self.args_count_at_least) or
-            (self.args_count_no_more is not None and token.nargs() > self.args_count_no_more) or
             (self.value_in is not None and token.value not in self.value_in) or
             (self.value_not_in is not None and token.value in self.value_not_in) or
             (self.re_value is not None and re.match(self.re_value, token.value) == None) or
@@ -220,6 +248,9 @@ class tokenfilter(basefilter):
         if self.arg_in is not None:
             if not all([token.args[a[0]] in a[1] for a in self.arg_in]):
                 return False
+        if self.arg_not_in is not None:
+            if any([token.args[a[0]] in a[1] for a in self.arg_not_in]):
+                return False
         if self.re_args is not None:
             if not (len(self.re_args) == token.nargs() and all([self.re_args[i] == None or re.match(self.re_args[i], token.args[i]) for i in xrange(0, token.nargs())])):
                 return False
@@ -227,12 +258,14 @@ class tokenfilter(basefilter):
             if not all([re.match(a[1], token.args[a[0]]) for a in self.re_arg]):
                 return False
         if self.exact_prefix is not None or self.re_prefix is not None:
-            match_prefix = (self.prev.suffix + self.prefix) if self.prev else self.prefix
-            if (self.exact_prefix is not None and match_prefix != self.exact_prefix) or (self.re_prefix is not None and re.match(self.re_prefix, match_prefix)):
+            match_prefix = '' if token.prefix is None else str(token.prefix)
+            if token.prev is not None and token.prev.suffix is not None: match_prefix = token.prev.suffix + match_prefix
+            if (self.exact_prefix is not None and match_prefix != self.exact_prefix) or (self.re_prefix is not None and re.match(self.re_prefix, match_prefix) is None):
                 return False
         if self.exact_suffix is not None or self.re_suffix is not None:
-            match_suffix = (self.suffix + self.next.prefix) if self.next else self.suffix
-            if (self.exact_suffix is not None and match_suffix != self.exact_suffix) or (self.re_suffix is not None and re.match(self.re_suffix, match_suffix)):
+            match_suffix = '' if token.suffix is None else str(token.suffix)
+            if token.next is not None and token.next.prefix is not None: match_suffix = match_suffix + token.next.prefix
+            if (self.exact_suffix is not None and match_suffix != self.exact_suffix) or (self.re_suffix is not None and re.match(self.re_suffix, match_suffix) is None):
                 return False
         return True
         
@@ -248,31 +281,33 @@ class tokenfilter(basefilter):
 
 
 class boolfilter(basefilter):
-    '''Logical filter class for combining other filters.'''
+    '''Logical filter for combining other filters.'''
     
     def __init__(self, 
         subs, operand=None, invert=None,
         limit=None, limit_terminates=True
     ):
+        '''Initialize a filter object.'''
         basefilter.__init__(self, invert, limit, limit_terminates)
         self.subs = subs
         self.operand = operand
         
     def basematch(self, token):
-        '''Internal: See if things match regardless of inversion.'''
+        '''Internal: Check for a matching token.'''
         if self.operand == 'one':
             count = 0
-            for sub in subs:
+            for sub in self.subs:
                 count += sub.match(token)
                 if count > 1: return False
             return count == 1
         elif self.operand == 'any':
-            for sub in subs:
+            for sub in self.subs:
                 if sub.match(token): return True
         elif self.operand == 'all':
-            for sub in subs:
+            for sub in self.subs:
                 if not sub.match(token): return False
             return True
+        return False
             
     @staticmethod
     def one(*subs):
