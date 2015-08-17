@@ -39,20 +39,32 @@ class tokenlist(queryableadd.queryableadd):
     def __mul__(self, count):
         '''Concatenate the list with itself some number of times.'''
         result = tokenlist()
-        for i in xrange(0, count): result.add(self.copy())
+        for i in xrange(0, count): result.append(self.copy())
         return result
+        
+    def __imul__(self, count):
+        length = len(self)
+        for i in xrange(1, count):
+            for j in xrange(0, length):
+                self.append(self[j])
+        return self
         
     def __iadd__(self, other):
         '''Append an item to the list.'''
         self.append(other)
+        return self
         
-    def __isub__(self, count):
+    def __isub__(self, item):
         '''Remove some number of items from the end of the list.'''
-        self.sub(count)
+        self.sub(item)
         return self
         
     def __setitem__(self, index, value):
         '''Set the token at an index.'''
+        
+        # TODO: Support slices?
+        if isinstance(value, basestring):
+            value = token.token(value)
         self.content[index] = value
         
     def __delitem__(self, item):
@@ -100,9 +112,12 @@ class tokenlist(queryableadd.queryableadd):
         else:
             raise ValueError('Failed to add tokens to tokenlist because the list was already empty.')
     
-    def sub(self, count):
+    def sub(self, item):
         '''Remove some number of items from the end of the list.'''
-        self.content[:] = self.content[:-count]
+        try:
+            self.content[:] = self.content[:-item]
+        except:
+            self.remove(item)
     
     def index(self, index):
         '''Get the token at an index.'''
@@ -120,7 +135,7 @@ class tokenlist(queryableadd.queryableadd):
             pass
         elif isinstance(item, basestring):
             filter = filters.tokenfilter(pretty=item)
-            self.content = [i for i in self.content if not filter.matches(i)]
+            self.content = [i for i in self.content if not filter.match(i)]
         elif isinstance(item, token.token):
             self.content = [i for i in self.content if i is not item]
         elif isinstance(item, numbers.Number):
@@ -136,7 +151,7 @@ class tokenlist(queryableadd.queryableadd):
                     newlist.append(i)
             self.content = newlist
         elif callable(item):
-            self.content = [i[0] for i in self.iquery(filters=item) if i is not None]
+            self.content = [i for i in self.content if not item(i)]
         elif hasattr(item, '__iter__') or hasattr(item, '__getitem__'):
             for i in item: self.remove(i)
         
