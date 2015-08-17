@@ -45,44 +45,47 @@ def methodclass(method):
 class doc:
     defaultskips = ('Internal:', 'Deprecated:')
     
-    def document(self, skips=defaultskips):
+    def document(self, passes={}, skips=defaultskips):
         if self.item:
             self.fullname = self.buildfullname(self.parents)
             print 'Documenting: %s' % self.fullname
             if inspect.isclass(self.item) or inspect.ismodule(self.item):
-                self.documentmembers(skips)
+                self.documentmembers(passes, skips)
             
-    def documentmembers(self, skips=defaultskips):
-        if self.parents[-1].item is None:
-            for member in self.item.__dict__.itervalues():
-                if (
-                    (inspect.ismodule(member) and member.__name__ not in ('os', 'sys', 're')) or
-                    inspect.isclass(member) or inspect.isfunction(member)
-                ):
-                    if not doc.skip(member.__doc__, skips): self.children.append(doc(member))
-        
-        else:
-            memberpredicate = lambda member: (
-                (inspect.ismethod(member) and methodclass(member) is self.item) or inspect.isfunction(member)
-            )
-            for membername, member in inspect.getmembers(self.item, predicate=memberpredicate):
-                if not doc.skip(member.__doc__, skips): self.children.append(doc(member))
-        
-        self.documentchildren(skips)
+    def documentmembers(self, passes={}, skips=defaultskips):
+        for member in self.item.__dict__.itervalues():
+            if (
+                (
+                    inspect.isclass(member) or
+                    inspect.isfunction(member) or
+                    (inspect.ismodule(member) and self.legalmodule(member)) or
+                    (inspect.ismethod(member) and methodclass(member) is self.item)
+                ) and (
+                    (not inspect.isbuiltin(member)) and
+                    (not doc.skip(member.__doc__)) and
+                    repr(member) not in passes
+                )
+            ):
+                passes[repr(member)] = True
+                self.children.append(doc(member))
+        self.documentchildren(passes, skips)
                 
-    def documentchildren(self, skips=defaultskips):
+    def documentchildren(self, passes={}, skips=defaultskips):
         memberparents = self.parents + [self]
         for child in self.children:
             child.parents = memberparents
-            child.document(skips)
+            child.document(passes, skips)
     
     @staticmethod
     def skip(docstring, skips=defaultskips):
-        if docstring:
-            for skip in skips:
-                if docstring.strip().startswith(skip):
-                    return True
-    
+        try:
+            if docstring:
+                for skip in skips:
+                    if docstring.strip().startswith(skip):
+                        return True
+        except:
+            return True
+        
     def __init__(self, item):
         self.item = item
         self.fullname = None
@@ -145,6 +148,18 @@ class doc:
                 if path.endswith('.pyc'): path = path[:-1]
                 return path
         return None
+        
+    def legalmodule(self, module):
+        if self.item is None or self.parents[-1].item is None:
+            try:
+                file = module.__file__
+            except:
+                return False
+            else:
+                return file.startswith('/Users/') # TODO: work on more than just OSX
+        else:
+            return False
+                
                     
     def getsupers(self):
         if inspect.isclass(self.item):
@@ -206,8 +221,10 @@ class doc:
     def htmldocbase(self):
         if not(self.item.__doc__) and not(self.examples):
             return '<div class="docstring undocumented">Undocumented</div>'
-        else:
+        elif self.item.__doc__:
             return '<div class="docstring documented">%s</div>' % self.item.__doc__
+        else:
+            return ''
     
     def htmlchildren(self, h=1):
         if self.children:
