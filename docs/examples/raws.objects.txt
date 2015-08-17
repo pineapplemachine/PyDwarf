@@ -1,0 +1,58 @@
+raws.objects.headers
+
+
+>>> print raws.objects.headers()
+['BODY', 'INTERACTION', 'MATERIAL_TEMPLATE', 'DESCRIPTOR_SHAPE', 'TISSUE_TEMPLATE', 'BODY_DETAIL_PLAN', 'GRAPHICS', 'ENTITY', 'DESCRIPTOR_COLOR', 'BUILDING', 'REACTION', 'PLANT', 'LANGUAGE', 'ITEM', 'DESCRIPTOR_PATTERN', 'INORGANIC', 'CREATURE', 'CREATURE_VARIATION']
+
+---
+
+raws.objects.objects
+
+
+>>> print raws.objects.objects()
+['ITEM_FOOD', 'ITEM_SHIELD', 'SYMBOL', 'ITEM_TRAPCOMP', 'ENTITY', 'ITEM_PANTS', 'TISSUE_TEMPLATE', 'CREATURE_GRAPHICS', 'REACTION', 'WORD', 'BUILDING_WORKSHOP', 'COLOR', 'ITEM_SHOES', 'ITEM_ARMOR', 'BUILDING_FURNACE', 'SHAPE', 'ITEM_AMMO', 'ITEM_INSTRUMENT', 'ITEM_GLOVES', 'TRANSLATION', 'TILE_PAGE', 'BODY', 'INTERACTION', 'ITEM_TOOL', 'ITEM_TOY', 'COLOR_PATTERN', 'MATERIAL_TEMPLATE', 'ITEM_HELM', 'BODY_DETAIL_PLAN', 'PLANT', 'ITEM_WEAPON', 'ITEM_SIEGEAMMO', 'INORGANIC', 'CREATURE_VARIATION', 'CREATURE']
+
+---
+
+raws.objects.objects
+
+
+>>> print '\n'.join(object for object in raws.objects.objects() if object.startswith('ITEM_'))
+ITEM_FOOD
+ITEM_SHIELD
+ITEM_TRAPCOMP
+ITEM_PANTS
+ITEM_SHOES
+ITEM_ARMOR
+ITEM_AMMO
+ITEM_INSTRUMENT
+ITEM_GLOVES
+ITEM_TOOL
+ITEM_TOY
+ITEM_HELM
+ITEM_WEAPON
+ITEM_SIEGEAMMO
+
+---
+
+raws.objects.headerforobject
+
+
+>>> print raws.objects.headerforobject('ENTITY')
+ENTITY
+>>> print raws.objects.headerforobject('ITEM_ARMOR')
+ITEM
+>>> print raws.objects.headerforobject('TILE_PAGE')
+GRAPHICS
+
+---
+
+raws.objects.objectsforheader
+
+
+>>> print raws.objects.objectsforheader('INORGANIC')
+['INORGANIC']
+>>> print raws.objects.objectsforheader('ITEM')
+['ITEM_WEAPON', 'ITEM_TOY', 'ITEM_TOOL', 'ITEM_INSTRUMENT', 'ITEM_TRAPCOMP', 'ITEM_ARMOR', 'ITEM_AMMO', 'ITEM_SIEGEAMMO', 'ITEM_GLOVES', 'ITEM_SHOES', 'ITEM_SHIELD', 'ITEM_HELM', 'ITEM_PANTS', 'ITEM_FOOD']
+>>> print raws.objects.objectsforheader('GRAPHICS')
+['TILE_PAGE', 'CREATURE_GRAPHICS']

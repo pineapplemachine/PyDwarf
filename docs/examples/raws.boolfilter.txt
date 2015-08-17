@@ -1,5 +1,5 @@
 raws.basefilter.__or__
-raws.tokenfilter.__init__
+raws.tokenfilter.__init__ raws.basefilter.match
 
 >>> filter = raws.filter(exact_value='example') | raws.filter(exact_arg='token')
 >>> print filter.match(raws.token('example:token'))

@@ -39,3 +39,167 @@ raws.token.__init__
 >>> token = raws.token('EXAMPLE:a:b:c')
 >>> print str(token.args)
 a:b:c
+
+---
+
+raws.tokenargs.__init__ raws.tokenargs.__setitem__
+raws.tokenargs.__str__
+
+>>> args = raws.tokenargs(('a', 'b', 'c'))
+>>> print args
+a:b:c
+>>> args[0] = 'APPLE'
+>>> args[-1] = 'CITRUS'
+>>> print args
+APPLE:b:CITRUS
+
+---
+
+raws.tokenargs.__init__ raws.tokenargs.__getitem__
+raws.tokenargs.__str__
+
+>>> args = raws.tokenargs('x:y:z')
+>>> print args
+x:y:z
+>>> print args[0]
+x
+>>> print args[-2]
+y
+
+---
+
+raws.tokenargs.__add__
+raws.tokenargs.__str__ raws.tokenargs.__init__
+
+>>> letters = raws.tokenargs('a:b:c')
+>>> numbers = raws.tokenargs('1:2:3')
+>>> print letters + numbers
+a:b:c:1:2:3
+
+---
+
+raws.tokenargs.__iadd__ raws.tokenargs.__len__
+raws.tokenargs.__str__ raws.tokenargs.__init__
+
+
+>>> args = raws.tokenargs('x:y')
+>>> args += 'z'
+>>> print args
+x:y:z
+>>> print len(args)
+3
+>>> args += 'a:b:c'
+>>> print args
+x:y:z:a:b:c
+>>> print len(args)
+6
+
+---
+
+raws.tokenargs.__eq__ raws.tokenargs.__iadd__
+raws.tokenargs.__init__
+
+>>> args1 = raws.tokenargs('a:b')
+>>> args2 = raws.tokenargs('a:b:c')
+>>> print args1 == args2
+False
+>>> args1 += 'c'
+>>> print args1 == args2
+True
+
+---
+
+raws.tokenargs.clear
+raws.tokenargs.__init__ raws.tokenargs.__len__
+
+>>> args = raws.tokenargs('x:y:z')
+>>> print len(args)
+3
+>>> args.clear()
+>>> print len(args)
+0
+
+---
+
+raws.tokenargs.__isub__
+raws.tokenargs.__init__ raws.tokenargs.__str__
+
+>>> args = raws.tokenargs('a:b:c:d:e:f')
+>>> args -= 2
+>>> print args
+a:b:c:d
+>>> args -= 'b'
+>>> print args
+a:c:d
+
+---
+
+raws.tokenargs.__init__ raws.tokenargs.__iter__
+
+
+>>> args = raws.tokenargs('a:b:c:d:e:f')
+>>> print '\n'.join(args)
+a
+b
+c
+d
+e
+f
+
+---
+
+raws.tokenargs.__mul__ raws.tokenargs.__imul__
+raws.tokenargs.__init__
+
+>>> args = raws.tokenargs('x:y')
+>>> print args * 3
+x:y:x:y:x:y
+>>> args *= 2
+>>> print args
+x:y:x:y
+
+---
+
+raws.tokenargs.__contains__
+raws.tokenargs.__init__
+
+>>> args = raws.tokenargs('x:y:z')
+>>> print 'x' in args
+True
+>>> print 'y' in args
+True
+>>> print 'a' in args
+False
+
+---
+
+raws.tokenargs.insert
+raws.tokenargs.__init__ raws.tokenargs.__str__
+
+>>> args = raws.tokenargs('a:c:d')
+>>> args.insert(1, 'b')
+>>> print args
+a:b:c:d
+
+---
+
+raws.tokenargs.remove
+raws.tokenargs.__init__ raws.tokenargs.__str__
+
+>>> args = raws.tokenargs('0:1:2:3:4:5:6:7')
+>>> args.remove('1')
+>>> print args
+0:2:3:4:5:6:7
+>>> args.remove('6')
+>>> print args
+0:2:3:4:5:7
+
+---
+
+raws.tokenargs.__delitem__
+raws.tokenargs.__init__ raws.tokenargs.__str__
+
+>>> args = raws.tokenargs('x:y:z')
+>>> del args[1]
+>>> print args
+x:z

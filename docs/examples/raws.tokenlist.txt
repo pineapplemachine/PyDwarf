@@ -58,3 +58,154 @@ raws.tokenlist.__init__
 [D]
 [E]
 [F]
+
+---
+
+raws.tokenlist.__add__ raws.tokenlist.__len__
+raws.tokenlist.__init__
+
+>>> letters = raws.tokenlist('[a][b][c]')
+>>> numbers = raws.tokenlist('[1][2][3]')
+>>> print len(letters)
+3
+>>> tokens = letters + numbers
+>>> print tokens
+[a][b][c][1][2][3]
+>>> print len(tokens)
+6
+
+---
+
+raws.tokenlist.__iadd__
+raws.tokenlist.__init__
+
+>>> tokens = raws.tokenlist('[a][b][c]')
+>>> tokens += 'd'
+>>> print tokens
+[a][b][c][d]
+SyntaxError: invalid syntax
+>>> tokens += '[e][f]'
+>>> print tokens
+[a][b][c][d][e][f]
+
+---
+
+raws.tokenlist.__init__ raws.tokenlist.__getitem__
+
+
+>>> tokens = raws.tokenlist('[a][b][c][d]')
+>>> print tokens[0]
+[a]
+>>> print tokens[-1]
+[d]
+
+---
+
+raws.tokenlist.__setitem__
+raws.tokenlist.__init__ raws.token.__init__ raws.tokenlist.__str__
+
+>>> tokens = raws.tokenlist('[a][b][c][d]')
+>>> tokens[0] = raws.token('APPLE')
+>>> tokens[3] = raws.token('DIMPLE_CUP')
+>>> print tokens
+[APPLE][b][c][DIMPLE_CUP]
+
+---
+
+raws.tokenlist.__setitem__ raws.tokenlist.__str__
+raws.tokenlist.__init__
+
+>>> tokens = raws.tokenlist('[x][y]')
+>>> print tokens
+[x][y]
+>>> tokens[0] = 'x:hello:world'
+>>> print tokens
+[x:hello:world][y]
+
+---
+
+raws.tokenlist.__delitem__
+raws.tokenlist.__str__ raws.tokenlist.__init__
+
+>>> tokens = raws.tokenlist('[x][y][z]')
+>>> del tokens[0]
+>>> print tokens
+[y][z]
+>>> del tokens['z']
+>>> print tokens
+[y]
+
+---
+
+raws.tokenlist.copy
+raws.tokenlist.__init__ raws.tokenlist.__getitem__ raws.token.__eq__
+
+>>> tokens = raws.tokenlist('[a][b][c]')
+>>> shallowcopy = tokens.copy(shallow=True)
+>>> print tokens[0] == shallowcopy[0]
+True
+>>> print tokens[0] is shallowcopy[0]
+True
+>>> deepcopy = tokens.copy(shallow=False)
+>>> print tokens[0] == deepcopy[0]
+True
+>>> print tokens[0] is deepcopy[0]
+False
+
+---
+
+raws.tokenlist.remove
+raws.tokenlist.__init__ raws.tokenlist.__str__
+
+>>> tokens = raws.tokenlist('[a][b][c][d][e][f]')
+>>> tokens.remove(0)
+>>> print tokens
+[b][c][d][e][f]
+>>> tokens.remove('b')
+>>> print tokens
+[c][d][e][f]
+>>> tokens.remove(lambda token: token.value in ('c', 'd'))
+>>> print tokens
+[e][f]
+
+---
+
+raws.tokenlist.__mul__ raws.tokenlist.__imul__
+raws.tokenlist.__init__ raws.tokenlist.__str__
+
+>>> tokens = raws.tokenlist('[x][y]')
+>>> print tokens * 3
+[x][y][x][y][x][y]
+>>> tokens *= 2
+>>> print tokens
+[x][y][x][y]
+
+---
+
+raws.tokenlist.__isub__
+raws.tokenlist.__init__ raws.tokenlist.__str__
+
+>>> tokens = raws.tokenlist('[a][b][c][d][e][f]')
+>>> tokens -= 2
+>>> print tokens
+[a][b][c][d]
+>>> tokens -= 'a'
+>>> print tokens
+[b][c][d]
+
+---
+
+raws.tokenlist.append raws.tokenlist.add
+raws.tokenlist.__init__ raws.tokenlist.__str__ raws.tokenlist.__getitem__
+
+>>> tokens = raws.tokenlist('[a][b][c]')
+>>> tokens.append('e')
+>>> print tokens
+[a][b][c][e]
+>>> print tokens['c'].next
+None
+>>> added = tokens.add('f')
+>>> print tokens
+[a][b][c][e][f]
+>>> print tokens['e'].next
+[f]
