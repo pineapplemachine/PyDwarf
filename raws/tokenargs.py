@@ -31,17 +31,21 @@ class tokenargs(object):
         else:
             return result
         
+    def __delitem__(self, item):
+        '''Remove an item from the list.'''
+        del self.list[item]
+        
     def __str__(self):
         '''Get a string representation.'''
         return ':'.join(self.list)
         
     def __add__(self, items):
         '''Concatenate two lists of arguments.'''
-        return tokenargs(self.list + list(items))
+        return tokenargs(self.list + tokenargs(items))
         
     def __radd__(self, items):
         '''Concatenate two lists of arguments.'''
-        return tokenargs(list(items) + self.list)
+        return tokenargs(tokenargs(items) + self.list)
         
     def __iadd__(self, item):
         '''Add an item or items to the end of the list.'''
@@ -77,10 +81,15 @@ class tokenargs(object):
     def __imul__(self, count):
         '''Concatenate the list with itself some number of times.'''
         self.list *= count
+        return self
         
     def __eq__(self, other):
         '''Check equivalency with another list of arguments.'''
         return len(self.list) == len(other) and all(self.list[index] == str(item) for index, item in enumerate(other))
+        
+    def copy(self):
+        '''Make a copy of the argument list.'''
+        return tokenargs(self.list)
         
     def reset(self, items):
         '''Reset list to contain specified items.'''
