@@ -204,10 +204,13 @@ class queryable(object):
                 queryfilters = filterfunc(pretty, until, conditionargs, untilargs)
             else:
                 filterindex, resultindex, filterfunc = normalfilters
-                if pretty:
+                if pretty or conditionargs:
                     queryfilters = filterfunc(pretty, conditionargs)
                 else:
                     queryfilters = tuple()
+            
+            if not queryfilters:
+                queryfilters = ((lambda token, count: (True, False)),)
             
             if filters is not None:
                 postfilters = filters
@@ -217,10 +220,7 @@ class queryable(object):
                 filterindex += len(prefilters)
             if postfilters is not None:
                 if callable(postfilters): postfilters = (postfilters,)
-                queryfilters = queryfilters + postfilters
-                
-            if not queryfilters:
-                queryfilters = (lambda token, count: (True, False))
+                queryfilters = queryfilters + postfilters    
                 
             result = self.query(
                 filters = queryfilters,
@@ -342,7 +342,7 @@ class queryable(object):
             for key, filter in filteriter:
                 try:
                     returned = filter(token, len(results[key]))
-                except:
+                except TypeError:
                     returned = filter(token)
                 try:
                     matches, terminate = returned

@@ -113,3 +113,23 @@ SUCCESS: Added BUTCHER_SPECIAL to 3 material templates.
 [BUTCHER_SPECIAL:BARS:NONE]
 >>> print df.getobj('MATERIAL_TEMPLATE:STONE_TEMPLATE').getprop('BUTCHER_SPECIAL')
 [BUTCHER_SPECIAL:BOULDER:NONE]
+
+---
+
+pydwarf.scripts.pineapple.castanvil
+raws.queryableprop.allprop raws.queryableobj.getobj raws.queryableobj.allobj raws.queryable.each
+reset
+>>> response = pydwarf.scripts.pineapple.castanvil(df, entities=('MOUNTAIN', 'PLAINS'))
+>>> print response
+SUCCESS: Added object [REACTION:CAST_IRON_ANVIL_PINEAPPLE] to file raw/objects/reaction_smelter_castanvil_pineapple.txt.
+>>> reaction = df.getobj('REACTION:CAST_IRON_ANVIL_PINEAPPLE')
+>>> print reaction.allprop()
+[NAME:cast iron anvil]
+[BUILDING:SMELTER:NONE]
+[REAGENT:A:750:BAR:NO_SUBTYPE:METAL:IRON]
+[PRODUCT:100:1:ANVIL:NONE:METAL:IRON]
+[FUEL]
+[SKILL:SMELT]
+>>> print df.allobj('ENTITY').each(filter=lambda token: token.getprop('PERMITTED_REACTION:CAST_IRON_ANVIL_PINEAPPLE'))
+[ENTITY:MOUNTAIN]
+[ENTITY:PLAINS]

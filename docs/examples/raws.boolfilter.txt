@@ -9,4 +9,4 @@ True
 >>> print filter.match(raws.token('hello:token'))
 True
 >>> print filter.match(raws.token('hello:world'))
-None
+False

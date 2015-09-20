@@ -126,4 +126,4 @@ if __name__ == '__main__':
         resultstext = '\n\n'.join(reversed(realresults))
         print(resultstext)
     else:
-        print('All examples ran successfully.')
+        print('Successfully ran all %d examples.' % len(examples))

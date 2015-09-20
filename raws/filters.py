@@ -199,8 +199,8 @@ class tokenfilter(basefilter):
         for attr, mindepth in (
             ('exact_arg', 0),
             ('re_arg', 0),
-            ('arg_in', 1),
-            ('arg_not_in', 1),
+            ('arg_in', 0),
+            ('arg_not_in', 0),
         ):
             if self.__dict__[attr] is not None:
                 depth = -mindepth

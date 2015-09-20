@@ -41,7 +41,9 @@ class tokenargs(object):
         
     def __add__(self, items):
         '''Concatenate two lists of arguments.'''
-        return tokenargs(self.list + tokenargs(items))
+        result = tokenargs(self.list)
+        result.add(tokenargs(items))
+        return result
         
     def __radd__(self, items):
         '''Concatenate two lists of arguments.'''
