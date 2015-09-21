@@ -4,7 +4,7 @@ raws.queryableobj.getobj
 >>> hematite = df.getobj('INORGANIC:HEMATITE')
 >>> print hematite.get('METAL_ORE:GOLD:100') # Get the last token in the entire file
 [METAL_ORE:GOLD:100]
->>> print hematite.get('METAL_ORE:GOLD:100', 'INORGANIC') # Stop at the next INORGANIC token
+>>> print hematite.get('METAL_ORE:GOLD:100', until='INORGANIC') # Stop at the next INORGANIC token
 None
 
 ---
@@ -15,7 +15,7 @@ raws.queryableobj.getobj
 >>> hematite = df.getobj('INORGANIC:HEMATITE')
 >>> print hematite.last('STATE_NAME_ADJ') # Get the last token in the entire file
 [STATE_NAME_ADJ:ALL_SOLID:slade]
->>> print hematite.last('STATE_NAME_ADJ', 'INORGANIC') # Stop at the next INORGANIC token
+>>> print hematite.last('STATE_NAME_ADJ', until='INORGANIC') # Stop at the next INORGANIC token
 [STATE_NAME_ADJ:ALL_SOLID:hematite]
 
 ---
@@ -26,9 +26,9 @@ raws.queryableobj.getobj raws.tokenlist.__len__
 >>> dwarf = df.getobj('CREATURE:DWARF')
 >>> print len(dwarf.all('INTELLIGENT')) # Gets all INTELLIGENT tokens following CREATURE:DWARF, including those belonging to other creatures
 6
->>> print len(dwarf.all('INTELLIGENT', 'CREATURE')) # Gets only the dwarf's INTELLIGENT token
+>>> print len(dwarf.all('INTELLIGENT', until='CREATURE')) # Gets only the dwarf's INTELLIGENT token
 1
->>> print len(dwarf.all('INTELLIGENT', 'CREATURE:GOBLIN'))
+>>> print len(dwarf.all('INTELLIGENT', until='CREATURE:GOBLIN'))
 3
 
 ---
@@ -333,20 +333,6 @@ True
 True
 >>> print tokens == '[x][y][z]'
 False
-
----
-
-raws.queryable.get raws.queryable.last raws.queryable.all
-raws.tokenargs.__getitem__ raws.tokenlist.__len__
-
->>> print df.get(lambda token: token.value == 'CREATURE' and token.args[0] == 'DWARF')
-[CREATURE:DWARF]
->>> print df.get(lambda token: token.value == 'CREATURE')
-[CREATURE:MONGOOSE]
->>> print df.last(lambda token: token.value == 'CREATURE')
-[CREATURE:GIANT_OPOSSUM]
->>> print len(df.all(lambda token: token.value == 'CREATURE'))
-674
 
 ---
 

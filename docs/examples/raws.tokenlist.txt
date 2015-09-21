@@ -83,7 +83,6 @@ raws.tokenlist.__init__
 >>> tokens += 'd'
 >>> print tokens
 [a][b][c][d]
-SyntaxError: invalid syntax
 >>> tokens += '[e][f]'
 >>> print tokens
 [a][b][c][d][e][f]

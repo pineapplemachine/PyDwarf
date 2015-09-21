@@ -189,10 +189,7 @@ class queryable(object):
             '''%s''' % docstring
             
             if auto is not None:
-                if callable(auto):
-                    filters = auto
-                else:
-                    pretty = auto
+                pretty = auto
             
             tokens, conditionargs, untilargs = self.argstokens(tokens, kwargs)
             
@@ -221,7 +218,7 @@ class queryable(object):
             if postfilters is not None:
                 if callable(postfilters): postfilters = (postfilters,)
                 queryfilters = queryfilters + postfilters    
-                
+            
             result = self.query(
                 filters = queryfilters,
                 tokens = tokens, 

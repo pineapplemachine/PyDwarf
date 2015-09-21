@@ -1,6 +1,6 @@
 raws.queryableaddprop.addprop raws.queryableprop.allprop
 raws.queryableobj.getobj raws.queryable.list
-
+reset
 >>> stew = df.getobj('ITEM_FOOD:ITEM_FOOD_STEW')
 >>> print stew.allprop()
 [NAME:stew]

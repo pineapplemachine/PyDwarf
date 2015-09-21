@@ -3,6 +3,7 @@
 
 import re
 import copy
+import numbers
 
 
 
@@ -168,6 +169,9 @@ class tokenfilter(basefilter):
             exact_value = match_token.value
             exact_args = match_token.args
             
+        if exact_args is not None and isinstance(exact_args, basestring):
+            exact_args = tokenargs.tokenargs(exact_args)
+            
         self.exact_token = exact_token
         self.exact_value = exact_value
         self.except_value = except_value
@@ -196,27 +200,25 @@ class tokenfilter(basefilter):
         
     def autodepths(self):
         '''Internal: Handle various input types for exact_arg, re_arg, arg_in, arg_not_in.''' 
-        for attr, mindepth in (
-            ('exact_arg', 0),
-            ('re_arg', 0),
-            ('arg_in', 0),
-            ('arg_not_in', 0),
-        ):
-            if self.__dict__[attr] is not None:
-                depth = -mindepth
-                arg = self.__dict__[attr]
-                while not isinstance(arg, basestring):
-                    try:
-                        arg = arg[0]
-                    except:
-                        break
-                    else:
-                        depth += 1
-                if depth == 0:
-                    self.__dict__[attr] = ((0, self.__dict__[attr]),)
-                    self.args_count = 1
-                elif depth == 1:
-                    self.__dict__[attr] = (self.__dict__[attr],)
+        self.exact_arg = self.autodepthitem(self.exact_arg)
+        self.re_arg = self.autodepthitem(self.re_arg)
+        self.arg_in = self.autodepthitem(self.arg_in)
+        self.arg_not_in = self.autodepthitem(self.arg_not_in)
+        
+    def autodepthitem(self, item):
+        '''Internal: Used by autodepths method.''' 
+        if item is None: 
+            return None
+        elif isinstance(item, basestring):
+            return ( (0, item), )
+        elif hasattr(item, '__getitem__'):
+            subitem = item[0]
+            if isinstance(subitem, numbers.Number):
+                return (item,)
+            elif hasattr(subitem, '__getitem__') and not isinstance(subitem, basestring):
+                return item
+            else:
+                return ( (0, item), )
         
     def anchor(self):
         '''Internal: Anchor regular expressions.'''
@@ -239,24 +241,30 @@ class tokenfilter(basefilter):
             (self.args_contains is not None and str(self.args_contains) not in [str(a) for a in token.args])
         ):
             return False
+            
         if self.exact_args is not None:
             if not (len(self.exact_args) == token.nargs() and all([self.exact_args[i] == None or str(self.exact_args[i]) == token.args[i] for i in xrange(0, token.nargs())])):
-                return False
-        if self.exact_arg is not None:
-            if not all([token.args[a[0]] == str(a[1]) for a in self.exact_arg]):
-                return False
-        if self.arg_in is not None:
-            if not all([token.args[a[0]] in a[1] for a in self.arg_in]):
-                return False
-        if self.arg_not_in is not None:
-            if any([token.args[a[0]] in a[1] for a in self.arg_not_in]):
                 return False
         if self.re_args is not None:
             if not (len(self.re_args) == token.nargs() and all([self.re_args[i] == None or re.match(self.re_args[i], token.args[i]) for i in xrange(0, token.nargs())])):
                 return False
-        if self.re_arg is not None:
-            if not all([re.match(a[1], token.args[a[0]]) for a in self.re_arg]):
-                return False
+                
+        try:
+            if self.exact_arg is not None:
+                if not all([token.args[a[0]] == str(a[1]) for a in self.exact_arg]):
+                    return False
+            if self.arg_in is not None:
+                if not all([token.args[a[0]] in a[1] for a in self.arg_in]):
+                    return False
+            if self.arg_not_in is not None:
+                if any([token.args[a[0]] in a[1] for a in self.arg_not_in]):
+                    return False
+            if self.re_arg is not None:
+                if not all([re.match(a[1], token.args[a[0]]) for a in self.re_arg]):
+                    return False
+        except IndexError: # Specified index is out of range of the arguments list
+            return False
+                
         if self.exact_prefix is not None or self.re_prefix is not None:
             match_prefix = '' if token.prefix is None else str(token.prefix)
             if token.prev is not None and token.prev.suffix is not None: match_prefix = token.prev.suffix + match_prefix
@@ -333,3 +341,4 @@ class boolfilter(basefilter):
 
 
 import tokenparse
+import tokenargs

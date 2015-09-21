@@ -60,6 +60,11 @@ True
 False
 >>> print filter.match(raws.token('example:x:y:z'))
 False
+>>> filter = raws.filter(exact_args='a:b')
+>>> print filter.match(raws.token('example:a:b'))
+True
+>>> print filter.match(raws.token('example:x:y:z'))
+False
 
 ---
 
@@ -70,6 +75,10 @@ raws.token.__init__ raws.basefilter.match
 >>> print filter.match(raws.token('example:x'))
 True
 >>> print filter.match(raws.token('example:x:y'))
+True
+>>> print filter.match(raws.token('example:a'))
+False
+>>> print filter.match(raws.token('example'))
 False
 >>> filter = raws.filter(exact_arg=(1, 'y'))
 >>> print filter.match(raws.token('example:x:y:z'))
@@ -185,13 +194,13 @@ True
 True
 >>> print filter.match(raws.token('example:x:y:z'))
 False
->>> filter = raws.filter(arg_not_in=('a', 'b', 'c')) # Accepts various assignment types in the same manner as exact_arg.
+>>> filter = raws.filter(arg_not_in=('a', 'b', 'c')) # Accepts various assignment types in the same manner as arg_in and exact_arg.
 >>> print filter.match(raws.token('example:x'))
 True
 >>> print filter.match(raws.token('example:a'))
 False
 >>> print filter.match(raws.token('example:x:y'))
-False
+True
 
 ---
 

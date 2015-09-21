@@ -80,6 +80,7 @@ class dir(queryableobj.queryableobj):
     def __isub__(self, file):
         '''Remove a file from this dir.'''
         self.remove(file)
+        return self
         
     def __delitem__(self, file):
         '''Remove a file from this dir.'''

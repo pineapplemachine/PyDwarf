@@ -85,11 +85,10 @@ KeyError: 'Failed to find file name "not_a_real_file" in dir.'
 raws.dir.__len__ raws.basefile.remove
 
 reset
->>> print len(df)
-851
+>>> dflen = len(df)
 >>> df['raw/objects/creature_standard.txt'].remove()
->>> print len(df)
-850
+>>> print dflen - len(df)
+1
 
 ---
 
@@ -114,16 +113,15 @@ False
 raws.dir.remove raws.dir.__delitem__ raws.dir.__isub__ raws.dir.reset
 raws.dir.__len__
 
->>> print len(df)
-851
+>>> dflen = len(df) # Track original number of files
 >>> df.remove('raw/objects/item_pants.txt')
 >>> del df['data/init/init.txt']
 >>> df -= 'data/init/colors.txt'
->>> print len(df)
-848
+>>> print dflen - len(df) # Three fewer files now
+3
 >>> df.reset()
->>> print len(df)
-851
+>>> print dflen == len(df) # Back to the original number
+True
 
 ---
 
@@ -152,26 +150,19 @@ True
 raws.dir.__iter__
 raws.basefile.__str__
 
->>> print '\n'.join(sorted(str(file) for file in df if file.loc == 'data/init'))
-data/init/announcements.txt
-data/init/arena.txt
-data/init/colors.txt
-data/init/d_init.txt
-data/init/embark_profiles.txt
+>>> print '\n'.join(sorted(str(file) for file in df if file.loc == 'data/init' and file.name.startswith('i')))
 data/init/init.txt
 data/init/init_desk.txt
 data/init/init_lappy.txt
 data/init/interface.txt
-data/init/macros
-data/init/world_gen.txt
 
 ---
 
 raws.dir.clear
 raws.dir.__len__
 reset
->>> print len(df)
-851
+>>> print len(df) > 0
+True
 >>> df.clear()
->>> print len(df)
-0
+>>> print len(df) > 0
+False

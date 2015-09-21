@@ -19,10 +19,10 @@ raws.dir.__getitem__ raws.queryable.list
 
 >>> item_food = df['item_food']
 >>> food_copy = item_food.copy()
->>> print item_food is food_copy
-False
 >>> print item_food == food_copy
 True
+>>> print item_food is food_copy
+False
 >>> exampletoken = food_copy.add('EXAMPLE:TOKEN')
 >>> print exampletoken
 [EXAMPLE:TOKEN]

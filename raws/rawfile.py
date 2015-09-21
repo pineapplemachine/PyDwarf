@@ -9,7 +9,7 @@ import queryableadd
 
 
 
-class rawfile(contentfile.contentfile, queryableobj.queryableobj, queryableadd.queryableadd):
+class rawfile(queryableobj.queryableobj, queryableadd.queryableadd, contentfile.contentfile):
     '''Represents a single raws file within a dir object.'''
     
     def __init__(self, name=None, file=None, path=None, root=None, content=None, tokens=None, dir=None, readpath=True, noheader=False, **kwargs):
@@ -54,6 +54,13 @@ class rawfile(contentfile.contentfile, queryableobj.queryableobj, queryableadd.q
     def __nonzero__(self):
         '''Always returns True.'''
         return True
+        
+    def __iadd__(self, item):
+        '''Add tokens to the end of a file.'''
+        self.add(item)
+        return self
+        
+    __str__ = contentfile.contentfile.__str__
         
     def getcontent(self, short=False):
         '''Get the textual content of the file.'''
