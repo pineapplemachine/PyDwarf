@@ -208,7 +208,7 @@ There are lots of these sorts of methods and in order to understand all of them 
 
 ### Writing Your Script
 
-Now you have an idea for a mod. Maybe you were even able to make the changes you wanted via Python in the command line, or by running a simple script. Good job! I'm proud of your initiative and your imagination. But now it's time to wrap it up in a nice package so that PyDwarf knows how to handle it, so that other can have PyDwarf manage your mod just like any other.
+Now you have an idea for a mod. Maybe you were even able to make the changes you wanted via Python in the command line, or by running a simple script. Good job! I'm proud of your initiative and your imagination. But now it's time to wrap it up in a nice package so that PyDwarf knows how to handle it, so that others can have PyDwarf manage your mod just like any other.
 
 Let's say you've made a simple script for removing all the `[AQUIFER]` tokens like we did in [that one example](#removing-aquifers) only a short while ago, and that your code looks like this.
 
@@ -219,7 +219,7 @@ for aquifer in df.all('AQUIFER'):
 
 ### The Appropriate Place
 
-First thing you'll want to create a Python file in PyDwarf's `scripts/` directory. There are ways to have PyDwarf recognize this script when it's placed elsewhere, but this is definitely where you want to put it for now. For this example let's create a folder called `mynamespace` in which to put the scripts you write and let's create a file in it named `pydwarf.myscript.py`. In order for a script to be recognized here the file name has to start with `pydwarf.` and end with `.py` but everything in between is up to you and PyDwarf doesn't care what subdirectory the script goes in. (But those who download your mod might. Try to keep things neat!)
+First thing you'll want to create a Python file in PyDwarf's `scripts/` directory. There are ways to have PyDwarf recognize this script when it's placed elsewhere, but this is definitely where you want to put it for now. For this example let's create a folder called `mynamespace` in which to put the scripts you write and let's create a file in it named `pydwarf.myscript.py`. In order for a script to be recognized here the file name has to start with `pydwarf.` and end with `.py` but everything in between is up to you and PyDwarf doesn't care what subdirectory the script goes in. (But those who download your mod might. Try to keep things organized!)
 
 In this file you should place your nifty code inside a function like so.
 
@@ -227,7 +227,7 @@ In this file you should place your nifty code inside a function like so.
 import pydwarf
 
 def myscript(df):
-    # Find and remove each aquifier
+    # Find and remove each aquifer
     for aquifer in df.all('AQUIFER'):
         aquifer.remove()
         
@@ -251,7 +251,22 @@ def myscript(df, token='AQUIFER'):
 
 ### Registering Your Script
 
-But we aren't done just yet! PyDwarf won't load any old function as a script, it needs to have a `pydwarf.urist` decorator in order for it to be registered. If you're in a terrible hurry this could be as simple as preceding your function with a single line, `@pydwarf.urist`, but it's much better if you include information about your script, what it does, and how to use it. Here's what your whole `mynamespace/pydwarf.myscript.py` file might look like after you've done this.
+But we aren't done just yet! PyDwarf won't load any old function as a script, it needs to have a `pydwarf.urist` decorator in order for it to be registered. (PyDwarf won't know what to do with your script if it isn't registered.) If you're in a terrible hurry this could be as simple as preceding your function with a single line, `@pydwarf.urist`, like so.
+
+``` python
+import pydwarf
+
+@pydwarf.urist
+def myscript(df, token='AQUIFER'):
+    # Find and remove each token
+    for aquifer in df.all(token):
+        aquifer.remove()
+        
+    # All done, now let PyDwarf know the script did its job successfully.
+    return pydwarf.success()
+```
+
+But people who download and use your script would certainly like it much better if you included information about your script, what it does, and how to use it. Here's what your whole `mynamespace/pydwarf.myscript.py` file might look like with all this information added.
 
 ``` python
 import pydwarf
@@ -274,12 +289,12 @@ def myscript(df, token='AQUIFER'):
     return pydwarf.success()
 ```
 
-There are some other things that PyDwarf gives special treatment if they appear inside the `@urist.pydwarf` decorator but for now these are the only ones you should worry about. 
+You can assign some value to anything you want in that decorator! You could write `@pydwarf.urist(foo = 'bar')` if you felt so inclined and then wehn PyDwarf was asked to provide information about your script, it would go ahead and tell you that foo is equal to bar. But there are several things other than `foo` that PyDwarf gives special treatment to. Here are the really important ones. 
 
-* `name` gives your script a name and a namespace: The former should tell people at a glance what your script is meant for, the latter is for organization so that people can tell how your script might be related to others. 
+* `name` gives your script a name, and that should be something descriptive. You might be wondering what dots and `mynamespace` mean when they're in there. Everything preceding the final dot is the namespace, and everything following is the name. The namespace is for organization, makes it so both PyDwarf and users of your script can tell how it might be related to others. For the scripts packaged with PyDwarf, the namespace corresponds to the author of the script. So, for example, all the scripts in the `pineapple` namespace were written by yours truly.
 * `version` identifies the verison of your script. If you were to improve and rerelease your script you might want to increment the version number for the new script.
 * `author` tells people who actually wrote the script.
-* `description` is to help people understand the purpose of your script.
+* `description` is to help people understand the purpose of your script. It should, of course, be as descriptive as possible.
 * `arguments` describes the purpose of each of your script's arguments, in case it accepts any.
 
 ## Running Your Script
@@ -295,7 +310,7 @@ Go ahead and open a command line in your PyDwarf directory and run the command `
 ``` bash
 client-170:PyDwarf pineapple$ python manager.py -s mynamespace.myscript
 2015.07.30.09.26.40: INFO: Applying yaml configuration from config.yaml.
-2015.07.30.09.26.40: INFO: Running PyDwarf manager version 1.0.3.
+2015.07.30.09.26.40: INFO: Running PyDwarf manager version 1.1.0.
 2015.07.30.09.26.40: INFO: Configuring session using raws input directory /Users/pineapple/Desktop/games/df/df_osx_40_24_original/.
 2015.07.30.09.26.43: INFO: Backing up raws to desination /Users/pineapple/Desktop/games/df/df_osx_40_24_bak/.
 2015.07.30.09.26.43: INFO: Running script mynamespace.myscript.
@@ -328,3 +343,5 @@ client-170:PyDwarf pineapple$ grep AQUIFER /Users/pineapple/Desktop/games/df/df_
 [SOIL_OCEAN][AQUIFER]
 client-170:PyDwarf pineapple$ grep AQUIFER /Users/pineapple/Desktop/games/df/df_osx_40_24/raw/objects/inorganic_stone_soil.txt
 ```
+
+Congratulations on making your first mod with PyDwarf! I hope things go smoothly for you from here. In case you want much more in-depth documentation you can always refer to the [html docs](index.html), and you can post in the GitHub repository's [issue tracker](https://github.com/pineapplemachine/PyDwarf/issues) or on the [Bay12 forum topic](http://www.bay12forums.com/smf/index.php?topic=150857.0).
