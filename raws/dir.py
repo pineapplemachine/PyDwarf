@@ -353,7 +353,9 @@ class dir(queryableobj.queryableobj):
         for file in self.files.itervalues():
             try:
                 file.write(dest)
-            except:
+            except UnicodeDecodeError as e:
+                if self.log: self.log.exception('Failed to write file %s to %s because of mismatched unicode and byte strings.' % (file, dest))
+            except Exception as e:
                 if self.log: self.log.exception('Failed to write file %s to %s.' % (file, dest))
             
     def clean(self, dest=None):

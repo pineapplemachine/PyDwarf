@@ -122,6 +122,7 @@ class tokenargs(object):
             evaluated as an arugment for a token.
         '''
         if isinstance(value, basestring):
+            value = str(value)
             if replace and value in tokenargs.replace:
                 value = tokenargs.replace[value]
             else:
@@ -161,7 +162,7 @@ class tokenargs(object):
             self.add(args)
             
     def remove(self, item):
-        self.list.remove(item)
+        self.list.remove(self.sanitize(item))
             
     def sub(self, item):
         '''Remove some number of items from the end of the list.'''

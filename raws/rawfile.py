@@ -64,7 +64,10 @@ class rawfile(queryableobj.queryableobj, queryableadd.queryableadd, contentfile.
         
     def getcontent(self, short=False):
         '''Get the textual content of the file.'''
-        tokencontent = ''.join([o.shortstr() if short else o.fullstr() for o in self.tokens()])
+        if short:
+            tokencontent = ''.join(token.shortstr() for token in self.tokens())
+        else:
+            tokencontent = ''.join(token.fullstr() for token in self.tokens())
         if self.noheader:
             return tokencontent
         else:

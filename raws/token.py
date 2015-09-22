@@ -226,10 +226,22 @@ class token(queryableaddprop.queryableaddprop):
         
     def shortstr(self):
         '''Get a shortened string representation with only value and arguments.'''
-        return '[%s%s]' %(self.value, (':%s' % self.args) if self.args else '')
+        if self.args:
+            return '[%s:%s]' % (self.value, self.args)
+        else:
+            return '[%s]' % self.value
+    
     def fullstr(self):
         '''Get a full string representation.'''
-        return '%s%s%s' % (self.prefix if self.prefix else '', self.shortstr(), self.suffix if self.suffix else '')
+        short = self.shortstr()
+        if self.prefix and self.suffix:
+            return '%s%s%s' % (self.prefix, short, self.suffix)
+        elif self.prefix:
+            return '%s%s' % (self.prefix, short)
+        elif self.suffix:
+            return '%s%s' % (short, self.suffix)
+        else:
+            return short
         
     def index(self, index):
         '''Return the token at an integer offset relative to this one.'''
@@ -276,7 +288,7 @@ class token(queryableaddprop.queryableaddprop):
         
     def setvalue(self, value):
         '''Set the token's value.'''
-        self.value = value
+        self.value = str(value)
         
     def getprefix(self):
         '''Get the comment text preceding a token.'''
@@ -284,7 +296,7 @@ class token(queryableaddprop.queryableaddprop):
     
     def setprefix(self, value):
         '''Set the comment text preceding a token.'''
-        self.prefix = value
+        self.prefix = str(value)
         
     def getsuffix(self):
         '''Get the comment text following a token.'''
@@ -292,7 +304,7 @@ class token(queryableaddprop.queryableaddprop):
     
     def setsuffix(self, value):
         '''Set the comment text following a token.'''
-        self.suffix = value
+        self.suffix = str(value)
         
     def arg(self, index=None):
         '''
