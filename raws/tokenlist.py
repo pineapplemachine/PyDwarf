@@ -3,6 +3,7 @@
 
 import textwrap
 import numbers
+import traceback
 
 import queryableadd
 
@@ -95,8 +96,9 @@ class tokenlist(queryableadd.queryableadd):
         else:
             try:
                 self.extend(item)
-            except:
-                raise TypeError('Failed to append item because it was of unrecognized type %s.' % type(item))
+            except Exception as e:
+                trace = traceback.format_exc()
+                raise TypeError('Failed to append item of type %s\n%s.' % (type(item), trace))
                 
     def extend(self, items):
         '''Extend the list with another iterable containing tokens.'''

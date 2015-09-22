@@ -424,7 +424,13 @@ class queryable(object):
         elif iter:
             return tokengenerator.tokengenerator(gen())
         else:
-            return tokenlist.tokenlist(gen())
+            results = list(gen())
+            if len(results) == 0 or isinstance(results[0], token.token):
+                # If the first item in the result list is a token but not every
+                # successive item then this bit will have problems
+                return tokenlist.tokenlist(results)
+            else:
+                return results
         
     def equals(self, other):
         '''Check for equivalency with another iterable of tokens.'''
