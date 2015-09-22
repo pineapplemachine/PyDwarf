@@ -1,0 +1,101 @@
+raws.color.record.__str__ raws.color.record.__call__ raws.color.get
+
+
+>>> print raws.color.blue
+blue
+>>> print raws.color.blue()
+1:0:0
+>>> print raws.color.get(1)
+blue
+
+---
+
+raws.color.fg raws.color.bg
+raws.token.__init__
+
+>>> token = raws.token('COLOR:7:0:0')
+>>> print raws.color.fg(token)
+white
+>>> print raws.color.bg(token)
+black
+
+---
+
+raws.color.group
+raws.color.record.__call__
+
+>>> print raws.color.yellow()
+6:0:1
+>>> print raws.color.blue()
+1:0:0
+>>> print raws.color.group(raws.color.yellow, raws.color.blue)
+6:1:1
+>>> print raws.color.group(raws.color.blue, raws.color.yellow)
+1:14:0
+
+---
+
+raws.color.record.fg raws.color.record.bg
+
+
+>>> print raws.color.red.fg()
+4:0:0
+>>> print raws.color.red.bg()
+0:4:0
+>>> print raws.color.lred.fg()
+4:0:1
+>>> print raws.color.lred.bg()
+0:12:0
+
+---
+
+raws.color.get
+raws.color.record.__str__
+
+>>> print '\n'.join(str(raws.color.get(index)) for index in range(0, 16))
+black
+blue
+green
+cyan
+red
+magenta
+brown
+lgray
+dgray
+lblue
+lgreen
+lcyan
+lred
+lmagenta
+yellow
+white
+
+---
+
+raws.color.record.__int__ raws.color.record.__call__
+
+
+>>> print raws.color.green()
+2:0:0
+>>> print raws.color.lgreen()
+2:0:1
+>>> print int(raws.color.green)
+2
+>>> print int(raws.color.lgreen)
+10
+
+---
+
+raws.color.record.group raws.color.record.__call__
+raws.color.record.fg raws.color.record.bg
+
+>>> print raws.color.green.fg()
+2:0:0
+>>> print raws.color.blue.bg()
+0:1:0
+>>> print raws.color.group(raws.color.green, raws.color.blue)
+2:1:0
+>>> print raws.color.green(raws.color.blue)
+2:1:0
+>>> print raws.color.blue(raws.color.green)
+1:2:0

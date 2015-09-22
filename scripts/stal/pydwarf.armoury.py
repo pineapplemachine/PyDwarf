@@ -63,7 +63,7 @@ with open(entities_json, 'rb') as efile: armoury_entities = json.load(efile)
 
 @pydwarf.urist(
     name = 'stal.armoury.items',
-    version = '1.0.0',
+    version = '1.0.1',
     author = ('Stalhansch', 'Sophie Kirschner'),
     description = 'Attempts to improve the balance and realism of combat.',
     arguments = {
@@ -185,7 +185,7 @@ def removeattacks(df, remove_attacks=('SCRATCH', 'BITE'), remove_attacks_from=('
     for creature in df.allobj(type='CREATURE', id_in=remove_attacks_from):
         for attack in creature.allprop(exact_value='ATTACK', arg_in=((0, remove_attacks),)):
             pydwarf.log.debug('Removing attack %s from creature %s.' % (attack, creature))
-            for token in attack.alluntil(until_re_value='(?!ATTACK_).+'): token.remove()
+            for token in attack.all(until_re_value='(?!ATTACK_).+'): token.remove()
             attack.remove()
             removed += 1
     if removed:

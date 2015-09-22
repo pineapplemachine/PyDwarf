@@ -9,8 +9,8 @@ import pydwarf
 )
 def noexotic(df):
     # Do the removing
-    pets = df.all('PET_EXOTIC').each(lambda token: token.setvalue('PET'))
-    mounts = df.all('MOUNT_EXOTIC').each(lambda token: token.setvalue('MOUNT'))
+    pets = df.all('PET_EXOTIC').each(lambda token: token.setvalue('PET'), none=True)
+    mounts = df.all('MOUNT_EXOTIC').each(lambda token: token.setvalue('MOUNT'), none=True)
     
     # All done!
     if len(pets) or len(mounts):

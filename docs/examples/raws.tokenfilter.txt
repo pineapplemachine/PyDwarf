@@ -1,0 +1,245 @@
+raws.tokenfilter.__init__ raws.basefilter.match
+raws.token.__init__
+
+>>> filter = raws.filter('EXAMPLE:TOKEN')
+>>> print filter.match(raws.token('EXAMPLE:TOKEN'))
+True
+>>> print filter.match(raws.token('EXAMPLE:TOKEN:NO:MATCH'))
+False
+
+---
+
+raws.tokenfilter.__init__
+raws.token.__init__ raws.basefilter.match
+
+>>> tokena = raws.token('EXAMPLE')
+>>> tokenb = raws.token('ANOTHER_EXAMPLE')
+>>> tokenc = raws.token('EXAMPLE')
+>>> filter = raws.filter(match_token=tokena)
+>>> print filter.match(tokena)
+True
+>>> print filter.match(tokenb)
+False
+>>> print filter.match(tokenc)
+True
+>>> filter = raws.filter(exact_token=tokena)
+>>> print filter.match(tokena)
+True
+>>> print filter.match(tokenb)
+False
+>>> print filter.match(tokenc)
+False
+
+---
+
+raws.tokenfilter.__init__
+raws.token.__init__ raws.basefilter.match
+
+>>> filter = raws.filter(exact_value='HELLO')
+>>> print filter.match(raws.token('HELLO:WORLD'))
+True
+>>> print filter.match(raws.token('HELLO:THERE'))
+True
+>>> print filter.match(raws.token('GREETINGS:WORLD'))
+False
+>>> filter = raws.filter(except_value="WORLD")
+>>> print filter.match(raws.token("HELLO"))
+True
+>>> print filter.match(raws.token("WORLD"))
+False
+
+---
+
+raws.tokenfilter.__init__
+raws.token.__init__ raws.basefilter.match
+
+>>> filter = raws.filter(exact_args=['x', 'y'])
+>>> print filter.match(raws.token('example:x:y'))
+True
+>>> print filter.match(raws.token('example:a:b'))
+False
+>>> print filter.match(raws.token('example:x:y:z'))
+False
+>>> filter = raws.filter(exact_args='a:b')
+>>> print filter.match(raws.token('example:a:b'))
+True
+>>> print filter.match(raws.token('example:x:y:z'))
+False
+
+---
+
+raws.tokenfilter.__init__
+raws.token.__init__ raws.basefilter.match
+
+>>> filter = raws.filter(exact_arg='x')
+>>> print filter.match(raws.token('example:x'))
+True
+>>> print filter.match(raws.token('example:x:y'))
+True
+>>> print filter.match(raws.token('example:a'))
+False
+>>> print filter.match(raws.token('example'))
+False
+>>> filter = raws.filter(exact_arg=(1, 'y'))
+>>> print filter.match(raws.token('example:x:y:z'))
+True
+>>> print filter.match(raws.token('example:a:b:c'))
+False
+>>> filter = raws.filter(exact_arg=((0, 'x'), (1, 'y')))
+>>> print filter.match(raws.token('example:x:y'))
+True
+>>> print filter.match(raws.token('example:x:y:z'))
+True
+>>> print filter.match(raws.token('example:w:x:y:z'))
+False
+
+---
+
+raws.tokenfilter.__init__
+raws.token.__init__ raws.basefilter.match
+
+>>> prefixfilter = raws.filter(exact_prefix='hello')
+>>> suffixfilter = raws.filter(exact_suffix='world')
+>>> token = raws.token('hello[EXAMPLE]world')
+>>> print prefixfilter.match(token)
+True
+>>> print suffixfilter.match(token)
+True
+>>> print prefixfilter.match(raws.token('greetings[EXAMPLE]earth'))
+False
+>>> tokens = raws.tokenlist('[A]text[B]')
+>>> print raws.filter(exact_suffix='text').match(tokens[0])
+True
+>>> print raws.filter(exact_prefix='text').match(tokens[1])
+True
+
+---
+
+raws.tokenfilter.__init__
+raws.token.__init__ raws.basefilter.match
+
+>>> filter = raws.filter(re_value=r'EXAM.*')
+>>> print filter.match(raws.token('EXAMPLE'))
+True
+>>> print filter.match(raws.token('EXAM'))
+True
+>>> print filter.match(raws.token('HELLO'))
+False
+
+---
+
+raws.tokenfilter.__init__
+raws.token.__init__ raws.basefilter.match
+
+>>> filter = raws.filter(re_args=(r'\d', r'\d', r'\d'))
+>>> print filter.match(raws.token('example:1:2:3'))
+True
+>>> print filter.match(raws.token('example:a:b:c'))
+False
+
+---
+
+raws.tokenfilter.__init__
+raws.token.__init__ raws.basefilter.match
+
+>>> filter = raws.filter(re_arg=r'BEAR_.+') # Accepts various assignment types in the same manner as exact_arg.
+>>> print filter.match(raws.token('CREATURE:BEAR_GRIZZLY'))
+True
+>>> print filter.match(raws.token('CREATURE:DWARF'))
+False
+
+---
+
+raws.tokenfilter.__init__
+raws.token.__init__ raws.basefilter.match
+
+>>> filter = raws.filter(re_prefix=r'(?i)EXAMPLE')
+>>> print filter.match(raws.token('example[TOKEN]'))
+True
+>>> print filter.match(raws.token('different[TOKEN]'))
+False
+>>> filter = raws.filter(re_suffix=r'(?i)EXAMPLE')
+>>> print filter.match(raws.token('example[TOKEN]'))
+False
+>>> print filter.match(raws.token('[TOKEN]example'))
+True
+
+---
+
+raws.tokenfilter.__init__
+raws.token.__init__ raws.basefilter.match
+
+>>> filter = raws.filter(value_in=("A", "B", "C"))
+>>> print filter.match(raws.token("A"))
+True
+>>> print filter.match(raws.token("B"))
+True
+>>> print filter.match(raws.token("F"))
+False
+>>> filter = raws.filter(value_not_in=("A", "B", "C"))
+>>> print filter.match(raws.token("A"))
+False
+>>> print filter.match(raws.token("X"))
+True
+
+---
+
+raws.tokenfilter.__init__
+raws.token.__init__ raws.basefilter.match
+
+>>> filter = raws.filter(arg_in=(1, ('a', 'b'))) # Accepts various assignment types in the same manner as exact_arg.
+>>> print filter.match(raws.token('example:a:a:a'))
+True
+>>> print filter.match(raws.token('example:a:b:c'))
+True
+>>> print filter.match(raws.token('example:x:y:z'))
+False
+>>> filter = raws.filter(arg_not_in=('a', 'b', 'c')) # Accepts various assignment types in the same manner as arg_in and exact_arg.
+>>> print filter.match(raws.token('example:x'))
+True
+>>> print filter.match(raws.token('example:a'))
+False
+>>> print filter.match(raws.token('example:x:y'))
+True
+
+---
+
+raws.tokenfilter.__init__
+raws.token.__init__ raws.basefilter.match
+
+>>> filter = raws.filter(args_contains='x')
+>>> print filter.match(raws.token('example:x:y'))
+True
+>>> print filter.match(raws.token('example:u:v:w:x'))
+True
+>>> print filter.match(raws.token('example:a:b:c'))
+False
+
+---
+
+raws.tokenfilter.__init__
+raws.token.__init__ raws.basefilter.match
+
+>>> filter = raws.filter(args_count=2)
+>>> print filter.match(raws.token('example:x'))
+False
+>>> print filter.match(raws.token('example:x:y'))
+True
+>>> print filter.match(raws.token('example:x:y:z'))
+False
+
+---
+
+raws.tokenfilter.__init__ raws.basefilter.__invert__
+raws.token.__init__ raws.basefilter.match
+
+>>> filter = raws.filter(exact_value='hello', invert=True)
+>>> print filter.match(raws.token('hello'))
+False
+>>> print filter.match(raws.token('world'))
+True
+>>> filter = ~raws.filter(exact_value='world')
+>>> print filter.match(raws.token('hello'))
+True
+>>> print filter.match(raws.token('world'))
+False

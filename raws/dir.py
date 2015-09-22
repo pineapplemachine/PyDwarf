@@ -1,43 +1,49 @@
+#!/usr/bin/env python
+# coding: utf-8
+
 import os
 import shutil
 
-from copytree import copytree
-from queryable import rawsqueryable, rawsqueryableobj, rawstokenlist
-from file import rawsbasefile, rawsfile, rawsbinfile, rawsreffile
+import queryableobj
 
 
 
-class rawsdir(rawsqueryableobj):
-    '''Represents as a whole all the raws contained within a directory.'''
+class dir(queryableobj.queryableobj):
+    '''Represents files contained within a Dwarf Fortress directory.'''
     
     def __init__(self, root=None, dest=None, paths=None, version=None, log=None, **kwargs):
-        '''Constructor for rawsdir object.'''
+        '''Initialize a dir object.'''
         self.files = {}
         self.filenames = {}
         self.root = root    # Root input directory
         self.dest = dest    # Root output directory
         self.paths = paths  # Only worry about these file paths in input/output directories
         self.version = version
-        self.log = log
+        self.log = log # TODO: take this out, it doesn't belong here. move logging statements to session or get rid of them entirely.
         if root: self.read(**kwargs)
         
     def __str__(self):
-        return '\n'.join(['%s %s' % (file.kind, str(file)) for file in self.files.itervalues()])
+        '''Get a string representation.'''
+        return '\n'.join(['%s %s' % (file.kind, str(file)) for file in sorted(self.files.itervalues(), key=lambda f: str(f))])
         
     def __enter__(self):
+        '''Support for with/as syntax.'''
         return self
     def __exit__(self, type, value, traceback):
-        if traceback is None and self.path is not None: self.write(path=self.path)
+        '''Support for with/as syntax.'''
+        if traceback is None and self.root is not None: self.write(self.root)
         
     def __getitem__(self, name):
+        '''Get member file by name or full relative path.'''
         return self.getfile(name)
     
     def __setitem__(self, name, content):
-        if isinstance(content, rawsbasefile):
+        '''Set file given a name.'''
+        if isinstance(content, basefile.basefile):
             if content.dir: content = content.copy()
             content.setpath(name)
             self.add(file=content, replace=True)
-        elif isinstance(content, rawsqueryable):
+        elif isinstance(content, queryable.queryable):
             self.add(file=name, replace=True, tokens=content.tokens())
         elif isinstance(content, basestring):
             self.add(file=name, replace=True, content=content)
@@ -45,20 +51,65 @@ class rawsdir(rawsqueryableobj):
             self.add(file=name, tokens=content)
     
     def __contains__(self, item):
-        if isinstance(item, rawsbasefile):
-            return item in self.files.itervalues()
+        '''Check if the dir contains a file name or object.'''
+        if isinstance(item, basefile.basefile):
+            return any(item is file for file in self.iterfiles())
         else:
-            return str(item) in self.files or str(item) in self.filenames
+            return item in self.files.iterkeys() or item in self.filenames.iterkeys()
+            
+    def __len__(self):
+        '''Get the number of file objects tracked by the dir.'''
+        return len(self.files)
         
-    def getfile(self, name, create=None, conflicts=False):
+    def __nonzero__(self):
+        '''Always returns True.'''
+        return True
+            
+    def __eq__(self, other):
+        '''Check equivalency with another dir object.'''
+        return self.equals(other)
+    def __ne__(self, other):
+        '''Check inequivalency with another dir object.'''
+        return not self.equals(other)
+        
+    def __iadd__(self, file):
+        '''Add a file to the dir.'''
+        self.add(file=file)
+        return self
+        
+    def __isub__(self, file):
+        '''Remove a file from this dir.'''
+        self.remove(file)
+        return self
+        
+    def __delitem__(self, file):
+        '''Remove a file from this dir.'''
+        self.remove(file)
+        
+    def __iter__(self):
+        '''Iterate through the dir's file objects.'''
+        for file in self.iterfiles():
+            yield file
+        
+    def equals(self, other):
+        '''Check equivalency with another dir object.'''
+        if len(self.files) == len(other.files):
+            for file in self.iterfiles():
+                matchingfile = other.getfile(str(file))
+                if not(matchingfile and file == matchingfile): return False
+            return True
+        else:
+            return False
+        
+    def getfile(self, name, create=None, conflicts=False, **kwargs):
         '''Gets the file with a given name. If no file by that name is found,
         None is returned instead. If creature is set to something other than
         None, the behavior when no file by some name exists is altered: A new
         file is created and associated with that name, and then its add
         method is called using the value for create as its argument.'''
         
-        if isinstance(name, rawsbasefile):
-            return name if name in self.files.itervalues() else None
+        if isinstance(name, basefile.basefile):
+            return name if name in self else None
         
         file = self.files.get(name)
         if file is None:
@@ -70,15 +121,22 @@ class rawsdir(rawsqueryableobj):
                     if not conflicts: raise ValueError('Failed to retrieve file from dir because the name found no exact matches, and because multiple files were found with that name.')
                     return file
                     
-        if create is not None and file is None:
-            file = self.add(name)
-            file.add(create)
+        if file is None:
+            if create is not None:
+                file = self.add(name, **kwargs)
+                if create is not False:
+                    file.add(create)
+            else:
+                raise KeyError('Failed to find file name "%s" in dir.' % name)
+        
         return file
         
     def iterfiles(self, *args, **kwargs):
+        '''Iterate through the dir's file objects.'''
         return self.files.itervalues(*args, **kwargs)
         
     def add(self, auto=None, **kwargs):
+        '''Add a file to the dir.'''
         if auto is not None:
             return self.addbyauto(auto, **kwargs)
         elif 'file' in kwargs:
@@ -111,7 +169,8 @@ class rawsdir(rawsqueryableobj):
             raise ValueError('Failed to add file because no recognized arguments were specificed.')
         
     def addbyauto(self, auto, **kwargs):
-        if isinstance(auto, rawsbasefile):
+        '''Internal: Add a file when given an 'auto' argument.'''
+        if isinstance(auto, basefile.basefile):
             return self.addbyfile(auto, **kwargs)
         elif isinstance(auto, basestring):
             if os.path.isfile(auto):
@@ -120,50 +179,72 @@ class rawsdir(rawsqueryableobj):
                 return self.addbydirpath(auto, **kwargs)
             else:
                 return self.addbyname(auto, **kwargs)
-        elif isinstance(auto, rawsdir):
+        elif isinstance(auto, dir):
             return self.addbydir(auto, **kwargs)
+        else:
+            try:
+                self.addbytokens(auto, **kwargs)
+            except:
+                return ValueError('Failed to add file because the argument type %s was unrecognized.' % type(auto))
             
     def addbyfile(self, file, **kwargs):
+        '''Internal: Add a file when given a 'file' argument.'''
         self.addfiletodicts(file, **kwargs)
         return file
     def addbyname(self, name, ext=None, loc=None, kind=None, **kwargs):
+        '''Internal: Add a file when given a 'name' argument.'''
         file = self.filebyname(name=name, ext=ext, loc=loc, kind=kind)
         self.addfiletodicts(file, **kwargs)
         return file
     def addbyfilepath(self, path, root=None, loc=None, kind=None, **kwargs):
+        '''Internal: Add a file when given a 'filepath' argument.'''
         file = self.filebyfilepath(path=path, root=root, loc=loc, kind=kind)
         self.addfiletodicts(file, **kwargs)
         return file
     def addbydirpath(self, path, root=None, loc=None, kind=None, **kwargs):
+        '''Internal: Add a file when given a 'dirpath' argument.'''
         files = self.filesbydirpath(path=path, root=root, loc=loc, kind=kind)
         self.addfilestodicts(files, **kwargs)
         return files
     def addbydir(self, dir, loc=None, **kwargs):
+        '''Internal: Add a file when given a 'dir' argument.'''
         files = self.filesbydir(dir=dir, loc=loc)
         self.addfilestodicts(files, **kwargs)
         return files
     def addbytokens(self, name, tokens, **kwargs):
+        '''Internal: Add a file when given a 'tokens' argument.'''
         file = self.addbyname(name, **kwargs)
         file.add(tokens)
         return file
     def addbybincontent(self, name, content, **kwargs):
-        file = self.addbyname(name, kind=rawsbinfile, **kwargs)
+        '''Internal: Add a file when given a 'content' argument.'''
+        file = self.addbyname(name, kind=binfile.binfile, **kwargs)
         file.content = content
         return file
         
     def filebyname(self, name, ext=None, loc=None, kind=None):
-        if kind is None: kind = rawsfile
+        '''Internal: Create a file object to be added to the dir.'''
+        if kind is None: kind = rawfile.rawfile
         splitloc, name = os.path.split(name)
         if not ext: name, ext = os.path.splitext(name)
         loc = os.path.join(loc, splitloc) if loc else splitloc
         return kind(name=name, ext=ext, loc=loc, dir=self)
     def filebyfilepath(self, path, root=None, loc=None, kind=None):
-        if kind is None: kind = rawsfile
+        '''Internal: Create a file object to be added to the dir.'''
+        if kind is None: kind = rawfile.rawfile
         return kind(path=path, loc=loc, dir=self) 
     def filesbydirpath(self, path, root=None, loc=None, kind=None):
+        '''Internal: Create a file object to be added to the dir.'''
+        files = []
         for walkroot, walkdirs, walkfiles in os.walk(path):
-            return ((kind if kind else rawsbasefile.factory)(path=os.path.join(walkroot, walkfile), root=root, loc=loc, dir=self) for walkfile in walkfiles)
+            for walkfile in walkfiles:
+                if kind:
+                    files.append(kind(path=os.path.join(walkroot, walkfile), root=root, loc=loc, dir=self))
+                else:
+                    files.append(filefactory.filefactory(path=os.path.join(walkroot, walkfile), root=root, loc=loc, dir=self))
+        return files
     def filesbydir(self, dir, loc=None):
+        '''Internal: Create multiple file objects to be added to the dir.'''
         for dirfile in dir.files.iteritems():
             newfile = dirfile.copy()
             newfile.dir = self
@@ -171,11 +252,13 @@ class rawsdir(rawsqueryableobj):
             yield newfile
         
     def addtodicts(self, file, replace=False):
-        if isinstance(file, rawsbasefile):
+        '''Internal: Used to add a file or files to files and filenames dicts.'''
+        if isinstance(file, basefile.basefile):
             self.addfiletodicts(file)
         else:
             self.addfilestodicts(file)
     def addfilestodicts(self, files, replace=False):
+        '''Internal: Used to add multiple files to files and filenames dicts at once.'''
         for file in files: self.addfiletodicts(file, replace)
     def addfiletodicts(self, file, replace=False):
         '''Internal: Used to add a file to files and filenames dictionaries.'''
@@ -195,13 +278,21 @@ class rawsdir(rawsqueryableobj):
         self.filenames[file.name].append(file)
         
     def remove(self, file=None):
-        if file is None: raise KeyError('Failed to remove file because no file was given.')
-        if isinstance(file, basestring): file = self.getfile(file)
+        '''Remove a file from this dir.'''
         
-        if file.dir is not self: raise KeyError('Failed to remove file because it belongs to a different dir.')
-        if not any(file is f for f in self.iterfiles()): raise KeyError('Failed to remove file because it doesn\'t belong to this dir.')
+        if file is None:
+            raise KeyError('Failed to remove file because no file was given.')
+        elif isinstance(file, basestring):
+            file = self.getfile(file)
+        elif (file.dir is not self) or (file not in self):
+            raise KeyError('Failed to remove file because it doesn\'t belong to this dir.')
         
-        self.filenames[file.name].remove(file)
+        filenamelist = self.filenames[file.name]
+        for index, filenameentry in enumerate(filenamelist):
+            if file is filenameentry:
+                del filenamelist[index]
+                break
+        
         self.files[str(file)].dir = None
         del self.files[str(file)]
         
@@ -212,7 +303,7 @@ class rawsdir(rawsqueryableobj):
         '''Deprecated: As of v1.0.2. Use the remove method instead.'''
         return self.remove(file if file is not None else name)
     
-    def read(self, root=None, paths=None):
+    def read(self, root=None, paths=None, skipfails=False):
         '''Reads raws from all text files in the specified directory.'''
         
         if root is None:
@@ -236,7 +327,7 @@ class rawsdir(rawsqueryableobj):
                     # Add files
                     for name in walkfiles:
                         filepath = os.path.join(walkroot, name)
-                        file = rawsbasefile.factory(filepath, root=root, dir=self)
+                        file = filefactory.filefactory(filepath, root=root, dir=self)
                         addeddirs[os.path.abspath(os.path.dirname(filepath)).replace('\\', '/')] = True
                         self.add(file)
                     
@@ -244,15 +335,15 @@ class rawsdir(rawsqueryableobj):
                     for dir in walkdirs:
                         dir = os.path.abspath(os.path.join(walkroot, dir)).replace('\\', '/')
                         if not any([added.startswith(dir) for added in addeddirs.iterkeys()]):
-                            file = rawsbasefile.factory(path=dir, root=root, dir=self)
+                            file = filefactory.filefactory(path=dir, root=root, dir=self)
                             self.add(file)
             
             elif os.path.isfile(path):
-                file = rawsbasefile.factory(path, root=root, dir=self)
+                file = filefactory.filefactory(path, root=root, dir=self)
                 addeddirs[os.path.abspath(os.path.dirname(path))] = True
                 self.add(file)
                 
-            else:
+            elif skipfails:
                 raise ValueError('Failed to read dir because a bad path %s was provided.' % path)
         
     def write(self, dest=None):
@@ -260,9 +351,19 @@ class rawsdir(rawsqueryableobj):
         dest = self.getdestforfileop(dest)
         if self.log: self.log.debug('Writing %d files to %s.' % (len(self.files), dest))
         for file in self.files.itervalues():
-            file.write(dest)
+            try:
+                file.write(dest)
+            except UnicodeDecodeError as e:
+                if self.log: self.log.exception('Failed to write file %s to %s because of mismatched unicode and byte strings.' % (file, dest))
+            except Exception as e:
+                if self.log: self.log.exception('Failed to write file %s to %s.' % (file, dest))
             
     def clean(self, dest=None):
+        '''
+            Cleans an output directory, typically before writing, so that files
+            that are present in the output directory but not in the dir object
+            won't stick around and interfere with things.
+        '''
         dest = self.getdestforfileop(dest)
         if self.log: self.log.debug('Cleaning files in %s.' % dest)
         for path in self.paths:
@@ -271,47 +372,71 @@ class rawsdir(rawsqueryableobj):
                 os.remove(path)
             elif os.path.isdir(path):
                 shutil.rmtree(path)
+                
+    def copy(self):
+        '''Create a copy of this dir.'''
+        copy = dir()
+        copy.root = self.root
+        copy.dest = self.dest
+        copy.paths = self.paths
+        copy.version = self.version
+        copy.log = self.log
+        for file in self.iterfiles():
+            copy.add(file=file.copy())
+        return copy
+            
+    def clear(self):
+        '''Remove all files from this dir.'''
+        for file in self.files.values(): self.remove(file)
+        self.files = {}
+        self.filenames = {}
+        
+    def reset(self):
+        '''
+            Reload the dir object from its associated directory, consequently
+            discarding all changes.
+        '''
+        self.clear()
+        self.read()
             
     def getdestforfileop(self, dest, exception=True):
-        '''Internal'''
+        '''Internal: Wonky method for determining a true destination path given one provided as an argument'''
         if dest is None:
             dest = self.dest if self.dest else self.root
-            if exception and dest is None: raise ValueError('Failed to write dir because no destination path was specified.')
+            if exception and dest is None: raise ValueError(
+                'Failed to write dir because no destination path was specified.'
+            )
         return dest
     
-    def tokens(self, *args, **kwargs):
+    def itokens(self, *args, **kwargs):
         '''Iterate through all tokens.'''
         for file in self.files.itervalues():
-            if isinstance(file, rawsqueryable):
-                for token in file.tokens(*args, **kwargs): yield token
+            if isinstance(file, queryable.queryable):
+                for token in file.tokens(*args, **kwargs):
+                    yield token
                 
-    def getobjheaders(self, type):
-        '''Gets OBJECT:X tokens where X is type. Is also prepared for special cases
-        like type=ITEM_PANTS matching OBJECT:ITEM.
-        
-        Example usage:
-            >>> objheaders = df.getobjheaders('INORGANIC')
-            >>> for token in objheaders: print token; print token.next
-            ...
-            [OBJECT:INORGANIC]
-            [INORGANIC:PLASTER]
-            [OBJECT:INORGANIC]
-            [INORGANIC:SANDSTONE]
-            [OBJECT:INORGANIC]
-            [INORGANIC:IRON]
-            [OBJECT:INORGANIC]
-            [INORGANIC:CLAY]
-            [OBJECT:INORGANIC]
-            [INORGANIC:ONYX]
-            [OBJECT:INORGANIC]
-            [INORGANIC:HEMATITE]
+    def getobjheaders(self, type=None):
+        '''
+            Gets OBJECT:X tokens where X is type. Is also prepared for special
+            cases like type=ITEM_PANTS matching OBJECT:ITEM.
         '''
         
         match_types = self.getobjheadername(type)
-        results = rawstokenlist()
+        results = tokenlist.tokenlist()
         for file in self.files.itervalues():
-            if isinstance(file, rawsqueryable):
+            if isinstance(file, queryable.queryable):
                 root = file.root()
                 if root is not None and root.value == 'OBJECT' and root.nargs() == 1 and root.args[0] in match_types:
                     results.append(root)
         return results
+
+
+
+import copytree
+import queryable
+import tokenlist
+import basefile
+import reffile
+import binfile
+import rawfile
+import filefactory

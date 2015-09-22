@@ -1,0 +1,135 @@
+pydwarf.scripts.pineapple.flybears
+pydwarf.urist.getfn raws.queryableobj.allobj raws.queryable.each raws.queryableprop.getprop raws.token.arg
+reset
+>>> print pydwarf.urist.getfn('pineapple.flybears')(df)
+SUCCESS: Made 4 bear species fliers.
+>>> creatures = df.allobj('CREATURE')
+>>> print creatures.each(filter=lambda token: 'BEAR' in token.arg() and token.getprop('FLIER') is not None)
+[CREATURE:BEAR_SLOTH]
+[CREATURE:BEAR_GRIZZLY]
+[CREATURE:BEAR_BLACK]
+[CREATURE:BEAR_POLAR]
+
+---
+
+pydwarf.scripts.pineapple.noaquifers
+pydwarf.urist.getfn raws.queryable.all raws.tokenlist.__len__
+reset
+>>> print pydwarf.urist.getfn('pineapple.noaquifers')(df)
+SUCCESS: Removed 19 AQUIFER tokens.
+>>> print len(df.all('AQUIFER'))
+0
+
+---
+
+pydwarf.scripts.pineapple.noexotic
+raws.queryableobj.getobj raws.queryable.all raws.tokenlist.__len__ pydwarf.registrar.__getattr__
+reset
+>>> print df.getobj('CREATURE:TIGER').list(range=12, skip=False)
+[CREATURE:TIGER]
+    [DESCRIPTION:A huge, striped predator.  It is found in almost any climate on a lone hunt for its prey.]
+    [NAME:tiger:tigers:tiger]
+    [CASTE_NAME:tiger:tigers:tiger]
+    [CHILD:3][GENERAL_CHILD_NAME:tiger cub:tiger cubs]
+    [CREATURE_TILE:'T'][COLOR:6:0:1]
+    [PETVALUE:200]
+    [PET_EXOTIC]
+    [MOUNT_EXOTIC]
+    [TRAINABLE]
+>>> print pydwarf.scripts.pineapple.noexotic(df)
+SUCCESS: Replaced 303 PET_EXOTIC and 150 MOUNT_EXOTIC tokens.
+>>> print len(df.all(value_in=['PET_EXOTIC', 'MOUNT_EXOTIC']))
+0
+>>> print df.getobj('CREATURE:TIGER').list(range=12, skip=False)
+[CREATURE:TIGER]
+    [DESCRIPTION:A huge, striped predator.  It is found in almost any climate on a lone hunt for its prey.]
+    [NAME:tiger:tigers:tiger]
+    [CASTE_NAME:tiger:tigers:tiger]
+    [CHILD:3][GENERAL_CHILD_NAME:tiger cub:tiger cubs]
+    [CREATURE_TILE:'T'][COLOR:6:0:1]
+    [PETVALUE:200]
+    [PET]
+    [MOUNT]
+    [TRAINABLE]
+
+---
+
+pydwarf.uristscript.within
+pydwarf.registrar.__getattr__
+
+>>> noexotic = pydwarf.scripts.pineapple.noexotic
+>>> noexotic.within('example.namespace')
+False
+>>> noexotic.within('pineapple')
+True
+
+---
+
+pydwarf.scripts.pineapple.adoptsowner
+pydwarf.registrar.__getattr__ raws.queryable.all raws.tokenlist.__len__
+reset
+>>> print len(df.all('ADOPTS_OWNER'))
+1
+>>> print pydwarf.scripts.pineapple.adoptsowner(df)
+SUCCESS: Added 0 ADOPTS_OWNER tokens and removed 1 from object type CREATURE.
+>>> print len(df.all('ADOPTS_OWNER'))
+0
+
+---
+
+pydwarf.scripts.pineapple.bauxitetoaluminum
+pydwarf.registrar.__getattr__ raws.queryable.get raws.queryableobj.getobj
+reset
+>>> print df.getobj('INORGANIC:ALUMINUM').get('MATERIAL_VALUE')
+[MATERIAL_VALUE:40]
+>>> print pydwarf.scripts.pineapple.bauxitetoaluminum(df)
+SUCCESS: Added object [REACTION:SMELT_BAUXITE_ALUMINUM_PINEAPPLE] to file raw/objects/reaction_smelter_bauxtoalum_pineapple.txt.
+>>> print df.getobj('INORGANIC:ALUMINUM').get('MATERIAL_VALUE')
+[MATERIAL_VALUE:30]
+>>> tokens = df['raw/objects/reaction_smelter_bauxtoalum_pineapple.txt'].tokens()
+>>> print ''.join(str(token) for token in tokens)
+[OBJECT:REACTION][REACTION:SMELT_BAUXITE_ALUMINUM_PINEAPPLE][NAME:smelt aluminum from bauxite][SMELTER][REAGENT:1:STONE:NO_SUBTYPE:STONE:BAUXITE][REAGENT:1:STONE:NO_SUBTYPE:STONE:CRYOLITE][PRODUCT:100:1:BAR:NO_SUBTYPE:METAL:ALUMINUM][FUEL]
+
+---
+
+pydwarf.scripts.pineapple.boneflux
+pydwarf.registrar.__getattr__ raws.rawfile.__len__
+reset
+>>> print pydwarf.scripts.pineapple.boneflux(df)
+SUCCESS: Added object [REACTION:BONE_TO_FLUX_PINEAPPLE] to file raw/objects/reaction_kiln_boneflux_pineapple.txt.
+>>> print len(df['raw/objects/reaction_kiln_boneflux_pineapple.txt'])
+10
+
+---
+
+pydwarf.scripts.pineapple.butcherinorganic
+pydwarf.registrar.__getattr__ raws.queryableobj.getobj raws.queryableprop.getprop
+reset
+>>> print pydwarf.scripts.pineapple.butcherinorganic(df)
+SUCCESS: Added BUTCHER_SPECIAL to 3 material templates.
+>>> print df.getobj('MATERIAL_TEMPLATE:WOOD_TEMPLATE').getprop('BUTCHER_SPECIAL')
+[BUTCHER_SPECIAL:WOOD:NONE]
+>>> print df.getobj('MATERIAL_TEMPLATE:METAL_TEMPLATE').getprop('BUTCHER_SPECIAL')
+[BUTCHER_SPECIAL:BARS:NONE]
+>>> print df.getobj('MATERIAL_TEMPLATE:STONE_TEMPLATE').getprop('BUTCHER_SPECIAL')
+[BUTCHER_SPECIAL:BOULDER:NONE]
+
+---
+
+pydwarf.scripts.pineapple.castanvil
+raws.queryableprop.allprop raws.queryableobj.getobj raws.queryableobj.allobj raws.queryable.each
+reset
+>>> response = pydwarf.scripts.pineapple.castanvil(df, entities=('MOUNTAIN', 'PLAINS'))
+>>> print response
+SUCCESS: Added object [REACTION:CAST_IRON_ANVIL_PINEAPPLE] to file raw/objects/reaction_smelter_castanvil_pineapple.txt.
+>>> reaction = df.getobj('REACTION:CAST_IRON_ANVIL_PINEAPPLE')
+>>> print reaction.allprop()
+[NAME:cast iron anvil]
+[BUILDING:SMELTER:NONE]
+[REAGENT:A:750:BAR:NO_SUBTYPE:METAL:IRON]
+[PRODUCT:100:1:ANVIL:NONE:METAL:IRON]
+[FUEL]
+[SKILL:SMELT]
+>>> print df.allobj('ENTITY').each(filter=lambda token: token.getprop('PERMITTED_REACTION:CAST_IRON_ANVIL_PINEAPPLE'))
+[ENTITY:MOUNTAIN]
+[ENTITY:PLAINS]

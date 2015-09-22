@@ -1,9 +1,10 @@
 #!/usr/bin/env python
+# coding: utf-8
 
 __author__ = 'Sophie Kirschner'
 __license__ = 'zlib/libpng'
 __email__ = 'sophiek@pineapplemachine.com'
-__version__ = '1.0.2'
+__version__ = '1.1.0'
 
 
 
@@ -28,29 +29,69 @@ raws.binfile: A file stored in a string, as its binary content.
 raws.basefile: A base class which other file types inherit from.
 
 raws.filter: A convenience alias for raws.tokenfilter.
-raws.parse: A convenience alias for raws.token.parse, which accepts an input string and parses it into a tokenlist.
-raws.parseone: A convenience alias for raws.token.parseone, which acts like raws.token.parse but expects a single token instead of a list of them.
+raws.parse: A convenience alias for raws.token.parse, which accepts an input string and parses it into a token or tokenlist.
 
 '''
 
 
 
-# TODO: rename classes internally to reflect what they're exported as here e.g. rawsbinfile -> binfile
-from filters import rawstokenfilter as tokenfilter
-from filters import rawsboolfilter as boolfilter
-from queryable import rawsqueryable as queryable
-from queryable import rawsqueryableobj as queryableobj
-from queryable import rawstokenlist as tokenlist
-from token import rawstoken as token
-from file import rawsbasefile as basefile
-from file import rawsreffile as reffile
-from file import rawsbinfile as binfile
-from file import rawsfile as rawfile
-from dir import rawsdir as dir
-from copytree import copytree
+import queryable, queryableobj, queryableadd, queryableprop, queryableaddprop
+import queryresult
+import token
+import tokenargs
+import basefile, contentfile, reffile, binfile, rawfile
+import filefactory
+import tokenlist
+import tokengenerator
+import tokenparse
+import dir
+import filters
+import helpers
+
+import copytree
 import objects
 import color
 
+
+
+basefilter = filters.basefilter
+tokenfilter = filters.tokenfilter
+boolfilter = filters.boolfilter
+
+queryable = queryable.queryable
+queryableobj = queryableobj.queryableobj
+queryableadd = queryableadd.queryableadd
+queryableprop = queryableprop.queryableprop
+queryableaddprop = queryableaddprop.queryableaddprop
+
+queryresult = queryresult.queryresult
+
+tokenlist = tokenlist.tokenlist
+tokengenerator = tokengenerator.tokengenerator
+
+token = token.token
+tokenargs = tokenargs.tokenargs
+
+basefile = basefile.basefile
+contentfile = contentfile.contentfile
+reffile = reffile.reffile
+binfile = binfile.binfile
+rawfile = rawfile.rawfile
+filefactory = filefactory.filefactory
+
+dir = dir.dir
+
+copytree = copytree.copytree
+
+parseplural = tokenparse.parseplural
+parsesingular = tokenparse.parsesingular
+parsevariable = tokenparse.parsevariable
+
+copy = helpers.copy
+equal = helpers.equal
+ends = helpers.ends
+
+
+
 filter = tokenfilter
-parse = token.parse
-parseone = token.parseone
+parse = parsevariable

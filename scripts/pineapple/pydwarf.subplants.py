@@ -5,7 +5,7 @@ seasons = ('SPRING', 'SUMMER', 'AUTUMN', 'WINTER')
 
 @pydwarf.urist(
     name = 'pineapple.subplants',
-    version = '1.0.0',
+    version = '1.0.1',
     author = 'Sophie Kirschner',
     description = 'Makes all subterranean plants grow year-round.',
     compatibility = (pydwarf.df_0_34, pydwarf.df_0_40)
@@ -14,7 +14,7 @@ def subterraneanplants(df):
     # Get subterranean plants
     subplants = []
     for plant in df.allobj('PLANT'):
-        if plant.getuntil(pretty='BIOME:SUBTERRANEAN_WATER', until_exact_value='PLANT'):
+        if plant.getprop('BIOME:SUBTERRANEAN_WATER'):
             subplants.append(plant)
     if not len(subplants): return pydwarf.failure('Found no subterranean plants.')
     

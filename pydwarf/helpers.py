@@ -1,14 +1,25 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+
+
+'''Provides helper functions for common tasks.'''
+
+
+
 import os
-from log import log
+from logger import log
 
 
 
 def rel(base, *parts):
+    '''Get a path relative to the directory containing another.'''
     return os.path.join(os.path.dirname(base) if os.path.isfile(base) else base, *parts)
     
     
 
 def findfile(name, paths, recursion=6):
+    '''Find a file given paths the file may be located in or near.'''
     log.debug('Looking for file %s.' % name)
     for path in paths:
         if path is not None:

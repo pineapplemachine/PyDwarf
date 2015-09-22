@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# coding: utf-8
 
 __author__ = 'Sophie Kirschner'
 __license__ = 'zlib/libpng'
@@ -10,9 +11,6 @@ __version__ = '1.0.1'
 '''Recursively imports every PyDwarf script in this directory.'''
 
 
-
-import sys
-sys.path.append('../')
 
 import os
 import imp

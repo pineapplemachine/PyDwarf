@@ -1,5 +1,85 @@
 # Scripts
 
+## dragondeplatino.gemset.art
+
+Created by DragonDePlatino and Sophie Kirschner.
+
+ Writes miscelleneous image files to data/art/. 
+
+#### Arguments:
+
+* **variety:** Which tileset to use. Should be either '24x24' or '48x48'.
+
+## dragondeplatino.gemset.font
+
+Created by DragonDePlatino and Sophie Kirschner.
+
+ Puts the appropriate curses and map files in their appropriate places, and modifies settings in data/init/init.txt such that the new graphics will be loaded. 
+
+#### Arguments:
+
+* **variety:** Which tileset to use. Should be either '24x24' or '48x48'.
+
+## dragondeplatino.gemset.full
+
+Created by DragonDePlatino and Sophie Kirschner.
+
+ Performs a full installation, and this is probably what you want to run. 
+
+#### Arguments:
+
+* **properties:** File path to indicate where to find the json outputted by the gemsetproperties.py utility script.
+
+* **variety:** Which tileset to use. Should be either '24x24' or '48x48'.
+
+## dragondeplatino.gemset.graphics
+
+Created by DragonDePlatino and Sophie Kirschner.
+
+ Writes a number of image and raws files to raw/graphics/. 
+
+#### Arguments:
+
+* **remove_example:** Whether to remove DF's example graphics file raw/graphics/graphics_example.txt.
+
+* **variety:** Which tileset to use. Should be either '24x24' or '48x48'.
+
+## dragondeplatino.gemset.hack
+
+Created by DragonDePlatino and Sophie Kirschner.
+
+ Adds multilevel commands to DFHack's raw/onLoad.init. 
+
+## dragondeplatino.gemset.objects
+
+Created by DragonDePlatino and Sophie Kirschner.
+
+ In the raws, sets the tiles and colors for creatures, inorganics, and some plants. 
+
+#### Arguments:
+
+* **properties:** File path to indicate where to find the json outputted by the gemsetproperties.py utility script.
+
+## dragondeplatino.gemset.overrides
+
+Created by DragonDePlatino and Sophie Kirschner.
+
+ Handles TWBT files: An overrides.txt file is placed in data/init/ and the pertinent image files are placed in `data/art/`. 
+
+#### Arguments:
+
+* **variety:** Which tileset to use. Should be either '24x24' or '48x48'.
+
+## mynamespace.myscript
+
+Created by Yours Truly.
+
+Remove all tokens of a certain kind, [AQUIFER] tokens by default.
+
+#### Arguments:
+
+* **token:** The kind of token to remove.
+
 ## omniclasm.decay.deteriorate.clothes
 
 Created by Omniclasm and Sophie Kirschner.
@@ -48,7 +128,7 @@ With this script running, all undead that have been on the map for a time (defau
 
 Created by Sophie Kirschner.
 
-todo
+ADOPTS_OWNER tokens are added to or removed from creatures.
 
 #### Arguments:
 
@@ -214,6 +294,12 @@ Allows the forging of every type of metal item from the specified metals.
 
 * **metals:** These metals will be made to allow forging of each item specified.
 
+## pineapple.noanimalmen
+
+Created by Sophie Kirschner.
+
+ Removes all creatures which either have a [APPLY_CREATURE_VARIATION:ANIMAL_PERSON] token or have an ID ending in '_MAN'. 
+
 ## pineapple.noaquifers
 
 Created by Sophie Kirschner.
@@ -225,6 +311,12 @@ Removes all AQUIFER tokens.
 Created by Sophie Kirschner.
 
 Replaces all [PET_EXOTIC] and [MOUNT_EXOTIC] tags with their non-exotic counterparts.
+
+## pineapple.nogiantanimals
+
+Created by Sophie Kirschner.
+
+ Removes all creatures which either have a [APPLY_CREATURE_VARIATION:GIANT] token or have an ID matching a few patterns which involve the word 'GIANT' or 'GIGANTIC'. 
 
 ## pineapple.nograzers
 
@@ -256,6 +348,12 @@ Causes all creatures of some type to have a single sexuality, heterosexual being
 
 * **creatures:** An iterable containing creatures whose sexuality should be affected. Set to None to affect all creatures.
 
+## pineapple.sanitize.nonexistentids
+
+Created by Sophie Kirschner.
+
+ Checks for and removes any instances where a COPY_TAGS_FROM or similar token refers to an ID that doesn't exist. 
+
 ## pineapple.skillrust
 
 Created by Sophie Kirschner.
@@ -267,20 +365,6 @@ Modifies skill rust for given creatures. Disables it entirely by default.
 * **rates:** What the skill rust rates are to be changed to. It must be a tuple or list containing three values. The default is ('NONE', 'NONE', 'NONE'), which disables skill rust entirely. Dwarf Fortress's default rates are ('8', '16', '16'). Lower numbers indicate faster skill rust.
 
 * **creatures:** An iterable containing creatures for which to disable skill rust.
-
-## pineapple.stoneclarity
-
-Created by Sophie Kirschner.
-
-Allows powerful editing of the appearances of stone, ore, and gems.
-
-#### Arguments:
-
-* **rules:** By default makes all flux stone white, makes all fuel use \*, makes all ore use £ unmined and \* in stockpiles, makes cobaltite use % unmined and • in stockpiles, makes all gems use ☼. Specify an object other than default_rules to customize behavior, and refer to default_rules as an example of how rules are expected to be represented
-
-* **query:** This query is run for each inorganic found and looks for tokens that should be recognized as indicators that some inorganic belongs to some group. Refer to the default query for more information.
-
-* **fuels:** If left unspecified, stoneclarity will attempt to automatically detect which inorganics are fuels. If you know that no prior script added new inorganics which can be made into coke then you can cut down a on execution time by setting fuels to fuels_vanilla.
 
 ## pineapple.subplants
 
@@ -312,7 +396,11 @@ Utility script for adding a new DFHack script.
 
 #### Arguments:
 
+* **onload:** If set to True then the auto_run line will be added to raw/onLoad.init.
+
 * **\*\*kwargs:** Other named arguments will be passed on to the dir.add method used to create the file object corresponding to the added script.
+
+* **startup:** If set to True then the auto_run line will be added to dfhack.init.
 
 * **auto_run:** If set to True, a line will be added to dfhack.init containing only the name of the added script. If set to None, no such line will be added. If set to an arbitrary string, that string will be added as a new line at the end of dfhack.init.
 

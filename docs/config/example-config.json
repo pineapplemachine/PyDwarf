@@ -1,0 +1,41 @@
+{
+    
+    "comment":  [
+        "This is an example file!",
+        
+        "Before running the manager you will need to change the",
+        "provided paths to better suit your particular setup.",
+        "Please be sure to use forward slashes in these paths",
+        "rather than backslashes."
+    ],
+    
+    "input":    "E:/Sophie/Desktop/Files/Games/Dwarf Fortress/df_40_24_win/",
+    "output":   "E:/Sophie/Desktop/Files/Games/Dwarf Fortress/df_40_24_win/pydwarf_output",
+    "backup":   "E:/Sophie/Desktop/Files/Games/Dwarf Fortress/df_40_24_win/pydwarf_backup",
+    
+    "paths": "auto",
+    
+    "version":  "auto",
+    "hackversion": "auto",
+    
+    "packages": [
+        "scripts"
+    ],
+    
+    "scripts": [
+        "pineapple.noexotic",
+        "putnam.materialsplus",
+        "dragondeplatino.gemset.full",
+        "smeeprocket.transgender",
+        "witty.restrictednobles",
+        
+        {
+            "name": "pineapple.deerappear",
+            "args": {"tile": "'d'", "color": [6, 0, 1]}
+        }
+        
+        "boneflux",
+        
+        "umiman.smallthings.*",
+    ]
+}

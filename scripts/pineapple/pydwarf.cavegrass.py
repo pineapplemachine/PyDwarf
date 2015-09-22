@@ -103,7 +103,7 @@ default_grasses = {
 
 @pydwarf.urist(
     name = 'pineapple.cavegrass',
-    version = '1.0.2',
+    version = '1.0.3',
     author = 'Sophie Kirschner',
     description = '''Changes the grasses in each cavern level to make the different
         levels more visually distinct, as well as adding a much greater variety.
@@ -147,7 +147,7 @@ def cavegrass(df, grasses=default_grasses, add_file='plant_grasses_cavegrass_pin
                     failures += 1
                 else:
                     props = templatetoken.allprop(value_not_in=('ALL_NAMES', 'NAME', 'NAME_PLURAL', 'ADJ'))
-                    grasstoken.add(raws.token.copy(props))
+                    grasstoken.add(props.copy())
             added += 1
         else:
             changed += 1
@@ -156,7 +156,7 @@ def cavegrass(df, grasses=default_grasses, add_file='plant_grasses_cavegrass_pin
         if 'add_tokens' in grassdict:
             grasstoken.add(grassdict['add_tokens'])
         if 'remove_tokens' in grassdict:
-            tokens = raws.token.parse(grassdict['remove_tokens'])
+            tokens = raws.tokenparse.parseplural(grassdict['remove_tokens'])
             for token in tokens:
                 removetoken = grasstoken.getprop(match_token=token)
                 if removetoken:

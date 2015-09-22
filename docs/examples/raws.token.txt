@@ -1,0 +1,404 @@
+raws.token.__init__
+raws.token.fullstr
+
+>>> print raws.token('DISPLAY_COLOR:6:0:1')
+[DISPLAY_COLOR:6:0:1]
+>>> print raws.token(value='DISPLAY_COLOR', args=['6', '0', '1'])
+[DISPLAY_COLOR:6:0:1]
+>>> print raws.token(value='EXAMPLE', arg='TOKEN', suffix=' hiya').fullstr()
+[EXAMPLE:TOKEN] hiya
+
+---
+
+raws.token.__str__ raws.token.shortstr raws.token.fullstr
+raws.token.__init__
+
+>>> token = raws.token('prefix [HI] suffix')
+>>> print str(token)
+[HI]
+>>> print token.shortstr()
+[HI]
+>>> print token.fullstr()
+prefix [HI] suffix
+
+---
+
+raws.token.__eq__ raws.token.__ne__
+raws.token.__init__
+
+>>> example_a = raws.token('EXAMPLE')
+>>> example_b = raws.token('EXAMPLE')
+>>> example_c = raws.token('ANOTHER_EXAMPLE')
+>>> example_d = raws.token('ANOTHER_EXAMPLE')
+>>> example_a == example_a
+True
+>>> example_a == example_b
+True
+>>> example_a == example_c
+False
+>>> example_c == example_d
+True
+>>> print example_a != example_b
+False
+>>> print example_a != example_c
+True
+>>> example_a is example_a
+True
+>>> example_a is example_b
+False
+
+---
+
+raws.token.__gt__ raws.token.__lt__ raws.token.__ge__ raws.token.__le__
+raws.queryableobj.getobj
+
+>>> elf = df.getobj('CREATURE:ELF')
+>>> goblin = df.getobj('CREATURE:GOBLIN') # goblins are defined after elves in creature_standard
+>>> print elf > goblin
+False
+>>> print elf < goblin
+True
+>>> print elf > elf
+False
+>>> print elf >= elf
+True
+>>> print elf < elf
+False
+>>> print elf <= elf
+True
+
+---
+
+raws.token.__add__ raws.token.__radd__
+raws.token.__init__
+
+>>> one = raws.token('NUMBER:ONE')
+>>> two = raws.token('NUMBER:TWO')
+>>> three = raws.token('NUMBER:THREE')
+>>> tokens = one + two + three
+>>> print tokens
+[NUMBER:ONE][NUMBER:TWO][NUMBER:THREE]
+>>> zero = raws.token('NUMBER:ZERO')
+>>> print zero + tokens
+[NUMBER:ZERO][NUMBER:ONE][NUMBER:TWO][NUMBER:THREE]
+
+---
+
+raws.token.getprefix raws.token.getsuffix raws.token.setprefix raws.token.setsuffic
+raws.token.__init__ raws.token.fullstr
+
+>>> token = raws.token('This is a comment [EXAMPLE] so is this')
+>>> print token
+[EXAMPLE]
+>>> print token.getprefix()
+This is a comment 
+>>> print token.getsuffix()
+ so is this
+>>> token.setprefix('Hi ')
+>>> token.setsuffix(' there')
+>>> print token.fullstr()
+Hi [EXAMPLE] there
+
+---
+
+raws.token.setvalue
+raws.token.__init__
+
+>>> token = raws.token()
+>>> token.setvalue('EXAMPLE')
+>>> print token
+[EXAMPLE]
+>>> token.setvalue('BRACES ]]')
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "raws\token.py", line 275, in setvalue
+    self.value = value
+  File "raws\token.py", line 165, in __setattr__
+    self.verifyinternal(value)
+  File "raws\token.py", line 225, in verifyinternal
+    return self.verifytext(value, token.illegal_internal_chars)
+  File "raws\token.py", line 221, in verifytext
+    raise ValueError('Failed to set token attribute to "%s" because the string contains illegal characters.' % value)
+ValueError: Failed to set token attribute to "BRACES ]]" because the string contains illegal characters.
+
+---
+
+raws.token.add
+raws.token.__init__
+
+>>> token = raws.token('ZERO')
+>>> one = token.add('ONE')
+>>> print token.list(skip=False)
+[ZERO][ONE]
+>>> half = token.add('HALF')
+>>> print token.list(skip=False)
+[ZERO][HALF][ONE]
+
+---
+
+raws.token.copy
+raws.token.__init__ raws.token.__eq__
+
+>>> token = raws.token('EXAMPLE:TOKEN')
+>>> copy = token.copy()
+>>> print token == copy
+True
+>>> print token is copy
+False
+>>> copy.args[0] = 'COPIED'
+>>> print copy
+[EXAMPLE:COPIED]
+>>> print token == copy
+False
+
+---
+
+raws.token.setvalue raws.token.getvalue
+raws.token.__init__
+
+>>> token = raws.token('EXAMPLE:a:b:c')
+>>> print token.getvalue()
+EXAMPLE
+>>> token.setvalue('NEW_VALUE')
+>>> print token
+[NEW_VALUE:a:b:c]
+
+---
+
+raws.token.tokens
+raws.tokenlist.__init__ raws.tokenparse.parsevariable
+
+>>> tokens = raws.parse('[HI][HOW][ARE][YOU][?]')
+>>> first = tokens[0]
+>>> last = tokens[-1]
+>>> print first
+[HI]
+>>> print last
+[?]
+>>> print raws.tokenlist(first.tokens()) # Construct a raws.tokenlist object using the generator returned by the tokens method
+[HOW][ARE][YOU][?]
+>>> print raws.tokenlist(first.tokens(skip=False))
+[HI][HOW][ARE][YOU][?]
+>>> print raws.tokenlist(first.tokens(range=1))
+[HOW]
+>>> print raws.tokenlist(first.tokens(until=tokens[3]))
+[HOW][ARE]
+>>> print raws.tokenlist(last.tokens(reverse=True))
+[YOU][ARE][HOW][HI]
+
+---
+
+raws.token.__mul__
+raws.token.__init__ raws.token.__eq__
+
+>>> token = raws.token('EXAMPLE:TOKEN')
+>>> print token * 2
+[EXAMPLE:TOKEN][EXAMPLE:TOKEN]
+>>> print token * 6
+[EXAMPLE:TOKEN][EXAMPLE:TOKEN][EXAMPLE:TOKEN][EXAMPLE:TOKEN][EXAMPLE:TOKEN][EXAMPLE:TOKEN]
+>>> tokens = token * 4
+>>> print tokens[0] == tokens[1]
+True
+>>> print tokens[0] is tokens[1]
+False
+
+---
+
+raws.token.__iter__
+raws.token.__init__
+
+>>> token = raws.token('VALUE:ARG0:ARG1:ARG2')
+>>> print [i for i in token]
+['VALUE', 'ARG0', 'ARG1', 'ARG2']
+
+---
+
+raws.token.__iter__
+raws.token.__init__
+
+>>> token = raws.token('EXAMPLE:OBJECT')
+>>> value, arg = token
+>>> print value
+EXAMPLE
+>>> print arg
+OBJECT
+
+---
+
+raws.token.__len__
+raws.token.__init__
+
+>>> example = raws.token('EXAMPLE')
+>>> print len(example)
+0
+>>> another = raws.token('ANOTHER:EXAMPLE')
+>>> print len(another)
+1
+>>> behold = raws.token('BEHOLD:IT:IS:YET:ANOTHER:EXAMPLE')
+>>> print len(behold)
+5
+
+---
+
+raws.token.follows raws.token.__gt__ raws.token.__lt__
+raws.tokenlist.__init__
+
+>>> tokens = raws.tokenlist('[x][y][z]')
+>>> print tokens[0].follows(tokens[2])
+False
+>>> print tokens[2].follows(tokens[0])
+True
+>>> print tokens[0] > tokens[2]
+False
+>>> print tokens[0] < tokens[2]
+True
+
+---
+
+raws.token.nargs
+raws.token.__init__
+
+>>> token = raws.token('example:1:2:3')
+>>> print token.nargs()
+3
+>>> print token.nargs(3)
+True
+>>> print token.nargs(5)
+False
+
+---
+
+raws.token.arg
+raws.token.__init__ raws.tokenlist.append
+
+>>> token = raws.token('example:token')
+>>> print token.arg()
+token
+>>> token.args.append('hello')
+>>> print token
+[example:token:hello]
+>>> print token.arg(0)
+token
+>>> print token.arg(1)
+hello
+>>> print token.arg()
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "raws/token.py", line 304, in arg
+    if len(self.args) != 1: raise ValueError('Failed to retrieve token argument because it doesn\'t have exactly one.')
+ValueError: Failed to retrieve token argument because it doesn't have exactly one.
+
+---
+
+raws.token.__contains__
+raws.token.__init__
+
+>>> token = raws.token('example:a:b:c')
+>>> print 'a' in token
+True
+>>> print 'x' in token
+False
+
+---
+
+raws.token.__iadd__ raws.token.__isub__
+raws.token.__init__
+
+>>> token = raws.token('example:a:b:c')
+>>> print token
+[example:a:b:c]
+>>> token += 'd'
+>>> print token
+[example:a:b:c:d]
+>>> token -= 2
+>>> print token
+[example:a:b]
+>>> token -= 'a'
+[example:b]
+
+---
+
+raws.token.index raws.queryable.__getitem__
+raws.queryableobj.getobj
+
+>>> dwarf = df.getobj('CREATURE:DWARF')
+>>> print dwarf.index(0)
+[CREATURE:DWARF]
+>>> print dwarf.index(3)
+[CASTE_NAME:dwarf:dwarves:dwarven]
+>>> print dwarf.index(-1)
+[OBJECT:CREATURE]
+>>> print dwarf[0, -1, 3]
+[CREATURE:DWARF]
+[OBJECT:CREATURE]
+    [CASTE_NAME:dwarf:dwarves:dwarven]
+
+---
+
+raws.token.remove
+raws.queryableobj.getobj raws.queryable.get raws.queryable.list
+reset
+>>> dwarf = df.getobj('CREATURE:DWARF')
+>>> print dwarf.list(range=4)
+[DESCRIPTION:A short, sturdy creature fond of drink and industry.]
+[NAME:dwarf:dwarves:dwarven]
+[CASTE_NAME:dwarf:dwarves:dwarven]
+[CREATURE_TILE:1]
+>>> dwarf.get('NAME').remove()
+>>> print dwarf.list(range=4)
+[DESCRIPTION:A short, sturdy creature fond of drink and industry.]
+[CASTE_NAME:dwarf:dwarves:dwarven]
+[CREATURE_TILE:1][COLOR:3:0:0]
+
+---
+
+raws.token.remove
+raws.queryableobj.getobj raws.queryable.list
+reset
+>>> elf = df.getobj('CREATURE:ELF')
+>>> print elf.list(range=6)
+[DESCRIPTION:A medium-sized creature dedicated to the ruthless protection of nature.]
+[NAME:elf:elves:elven]
+[CASTE_NAME:elf:elves:elven]
+[CREATURE_TILE:'e'][COLOR:3:0:0]
+[CREATURE_SOLDIER_TILE:137]
+>>> elf.next.remove(count=4)
+>>> print elf.list(range=6)
+[CREATURE_SOLDIER_TILE:137]
+[INTELLIGENT]
+[CANOPENDOORS]
+[BENIGN]
+[PREFSTRING:grace]
+[SPEECH:elf.txt]
+
+---
+
+raws.token.removeselfandprops
+raws.dir.__getitem__ raws.queryableobj.getobj
+reset
+>>> food = df['item_food']
+>>> removed = food.getobj('ITEM_FOOD:ITEM_FOOD_BISCUITS').removeselfandprops()
+>>> print removed
+[ITEM_FOOD:ITEM_FOOD_BISCUITS]
+[NAME:biscuits]
+[LEVEL:2]
+>>> print food.list()
+[OBJECT:ITEM]
+[ITEM_FOOD:ITEM_FOOD_STEW]
+[NAME:stew]
+[LEVEL:3]
+[ITEM_FOOD:ITEM_FOOD_ROAST]
+[NAME:roast]
+[LEVEL:4]
+
+---
+
+raws.token.strip raws.token.fullstr
+raws.token.__init__
+
+>>> token = raws.token('prefix [EXAMPLE] suffix')
+>>> print token.fullstr()
+prefix [EXAMPLE] suffix
+>>> token.strip()
+>>> print token.fullstr()
+[EXAMPLE]

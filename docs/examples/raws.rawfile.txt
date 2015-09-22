@@ -1,0 +1,110 @@
+raws.basefile.getname raws.basefile.setname
+raws.queryableobj.getobj
+
+>>> dwarf = df.getobj('CREATURE:DWARF')
+>>> creature_standard = dwarf.file
+>>> print creature_standard.getname()
+creature_standard
+>>> creature_standard.setname('example_header')
+>>> print creature_standard.getname()
+example_header
+>>> creature_standard.setname('creature_standard')
+>>> print creature_standard.getname()
+creature_standard
+
+---
+
+raws.rawfile.copy raws.rawfile.add raws.rawfile.__eq__
+raws.dir.__getitem__ raws.queryable.list
+
+>>> item_food = df['item_food']
+>>> food_copy = item_food.copy()
+>>> print item_food == food_copy
+True
+>>> print item_food is food_copy
+False
+>>> exampletoken = food_copy.add('EXAMPLE:TOKEN')
+>>> print exampletoken
+[EXAMPLE:TOKEN]
+>>> print food_copy.list()
+[OBJECT:ITEM]
+[ITEM_FOOD:ITEM_FOOD_BISCUITS]
+[NAME:biscuits]
+[LEVEL:2]
+[ITEM_FOOD:ITEM_FOOD_STEW]
+[NAME:stew]
+[LEVEL:3]
+[ITEM_FOOD:ITEM_FOOD_ROAST]
+[NAME:roast]
+[LEVEL:4][EXAMPLE:TOKEN]
+>>> print item_food == food_copy
+False
+
+---
+
+raws.rawfile.root raws.rawfile.tail
+raws.dir.__getitem__
+
+>>> creature_standard = df['creature_standard']
+>>> print creature_standard.root()
+[OBJECT:CREATURE]
+>>> print creature_standard.tail()
+[MULTIPLY_VALUE:15]
+
+---
+
+raws.rawfile.add
+raws.dir.__getitem__ raws.queryable.list
+reset
+>>> item_food = df['item_food']
+>>> print item_food.list()
+[OBJECT:ITEM]
+[ITEM_FOOD:ITEM_FOOD_BISCUITS]
+[NAME:biscuits]
+[LEVEL:2]
+[ITEM_FOOD:ITEM_FOOD_STEW]
+[NAME:stew]
+[LEVEL:3]
+[ITEM_FOOD:ITEM_FOOD_ROAST]
+[NAME:roast]
+[LEVEL:4]
+>>> tokens = item_food.add('hi! [THIS][IS][AN][EXAMPLE]')
+>>> print tokens
+hi! [THIS][IS][AN][EXAMPLE]
+>>> print item_food.list()
+[OBJECT:ITEM]
+[ITEM_FOOD:ITEM_FOOD_BISCUITS]
+[NAME:biscuits]
+[LEVEL:2]
+[ITEM_FOOD:ITEM_FOOD_STEW]
+[NAME:stew]
+[LEVEL:3]
+[ITEM_FOOD:ITEM_FOOD_ROAST]
+[NAME:roast]
+[LEVEL:4]hi! [THIS][IS][AN][EXAMPLE]
+
+---
+
+raws.rawfile.length raws.rawfile.__len__
+raws.dir.__getitem__
+
+>>> print df['creature_standard'].length()
+5516
+>>> print len(df['creature_standard'])
+5516
+>>> print df['inorganic_metal'].length()
+1022
+>>> print df['item_pants'].length()
+109
+
+---
+
+raws.rawfile.clear
+raws.dir.__getitem__ raws.file.__len__
+reset
+>>> item_pants = df['item_pants']
+>>> print len(item_pants)
+109
+>>> item_pants.clear()
+>>> print len(item_pants)
+0

@@ -1,0 +1,74 @@
+raws.queryable.get raws.queryableprop.getprop
+raws.queryableobj.getobj
+
+>>> iron = df.getobj('INORGANIC:IRON')
+>>> print iron.get(exact_value='USE_MATERIAL_TEMPLATE')
+[USE_MATERIAL_TEMPLATE:METAL_TEMPLATE]
+>>> print iron.get('WAFERS') # Gets the WAFERS token that's a property of adamantite
+[WAFERS]
+>>> print iron.getprop('WAFERS') # Stops at the next INORGANIC token, doesn't pick up adamantine's WAFERS token
+None
+
+---
+
+raws.queryable.last raws.queryableprop.lastprop
+raws.queryableobj.getobj
+
+>>> iron = df.getobj('INORGANIC:IRON')
+>>> print iron.last(re_value='ITEMS_.+') # Gets the property of adamantite, the last ITEMS_ token in the file
+[ITEMS_SOFT]
+>>> print iron.lastprop(re_value='ITEMS_.+') # Gets the last ITEMS_ token which belongs to iron
+[ITEMS_SCALED]
+
+---
+
+raws.queryable.all raws.queryableprop.allprop
+raws.queryableobj.getobj raws.tokenlist.__len__
+
+>>> hematite = df.getobj('INORGANIC:HEMATITE')
+>>> print len(hematite.all('ENVIRONMENT')) # Gets all ENVIRONMENT tokens following hematite
+38
+>>> print hematite.allprop('ENVIRONMENT') # Gets only the ENVIRONMENT tokens belonging to hematite
+[ENVIRONMENT:SEDIMENTARY:VEIN:100]
+[ENVIRONMENT:IGNEOUS_EXTRUSIVE:VEIN:100]
+
+---
+
+raws.queryableprop.allprop
+raws.queryableobj.getobj raws.queryable.list
+
+>>> biscuits = df.getobj('ITEM_FOOD:ITEM_FOOD_BISCUITS')
+>>> print biscuits.file.list()
+[OBJECT:ITEM]
+[ITEM_FOOD:ITEM_FOOD_BISCUITS]
+[NAME:biscuits]
+[LEVEL:2]
+[ITEM_FOOD:ITEM_FOOD_STEW]
+[NAME:stew]
+[LEVEL:3]
+[ITEM_FOOD:ITEM_FOOD_ROAST]
+[NAME:roast]
+[LEVEL:4]
+>>> print biscuits.allprop()
+[NAME:biscuits]
+[LEVEL:2]
+
+---
+
+raws.queryableprop.removeprop
+raws.queryableobj.getobj raws.queryable.list
+reset
+>>> stew = df.getobj('ITEM_FOOD:ITEM_FOOD_STEW')
+>>> removed = stew.removeallprop()
+>>> print removed
+[NAME:stew]
+[LEVEL:3]
+>>> print stew.file.list()
+[OBJECT:ITEM]
+[ITEM_FOOD:ITEM_FOOD_BISCUITS]
+[NAME:biscuits]
+[LEVEL:2]
+[ITEM_FOOD:ITEM_FOOD_STEW]
+[ITEM_FOOD:ITEM_FOOD_ROAST]
+[NAME:roast]
+[LEVEL:4]

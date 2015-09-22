@@ -1,8 +1,21 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+
+
+'''Provide utilities for working with Dwarf Fortress version strings.'''
+
+
+
 import os
 import re
 
-from log import log
-from helpers import findfile
+from logger import log
+import helpers
+
+
+
+# TODO: Use something better than regular expressions for these compatibility checks
 
 
 
@@ -32,6 +45,7 @@ df_0_2x = '|'.join((df_0_21, df_0_22, df_0_23, df_0_27, df_0_28))
 # Generates a regex which should properly match from, until, and each version in-between.
 # For example: pydwarf_range('0.40.14', '0.40.24')
 def df_revision_range(prettymin=None, prettymax=None, major=None, minor=None, minrevision=None, maxrevision=None):
+    '''Get a regular expression representing a range of Dwarf Fortress revisions.'''
     if prettymin:
         parts = prettymin.split('.')
         major = parts[0] if len(parts) else '0'
@@ -44,8 +58,8 @@ def df_revision_range(prettymin=None, prettymax=None, major=None, minor=None, mi
 
 
 
-# Given a version and a compatibility regex, determine compatibility
 def compatible(compatibility, version):
+    '''Given a version regex or iterable thereof and the Dwarf Fortress version, determine if compatibility is met.'''
     if isinstance(compatibility, basestring):
         return re.match(compatibility, version) is not None
     else:
@@ -54,11 +68,12 @@ def compatible(compatibility, version):
 
 
 def detectversion(*args, **kwargs):
-    # Given a list of directories that may be inside a DF directory, e.g. raws input or output, look for release notes.txt and get the version from that
-    path = findfile(name='release notes.txt', *args, **kwargs)
+    '''Internal: Detect Dwarf Fortress version.'''
+    path = helpers.findfile(name='release notes.txt', *args, **kwargs)
     return versionfromreleasenotes(path)
 
 def versionfromreleasenotes(path):
+    '''Internal: Get Dwarf Fortress version given a path to its "release notes.txt" file.'''
     with open(path, 'rb') as releasenotes:
         for line in releasenotes.readlines():
             if line.startswith('Release notes for'): return line.split()[3]

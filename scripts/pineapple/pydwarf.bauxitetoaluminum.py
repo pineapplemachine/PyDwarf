@@ -10,7 +10,7 @@ default_file = 'raw/objects/reaction_smelter_bauxtoalum_pineapple.txt'
 
 @pydwarf.urist(
     name = 'pineapple.bauxitetoaluminum',
-    version = '1.0.1',
+    version = '1.0.2',
     author = 'Sophie Kirschner',
     description = '''Adds a reaction to the smelter to allow the creation of aluminum bars
     from bauxite (as ore) and cryolite (as flux). Credit to this forum discussion for the
@@ -32,7 +32,7 @@ def bauxitetoaluminum(df, aluminum_value=0.75, entities=default_entities, add_to
         aluminum = df.getobj('INORGANIC:ALUMINUM')
         if aluminum is None: return pydwarf.failure('Couldn\'t find aluminum token to affect its value.')
         matvaluetoken = aluminum.getprop('MATERIAL_VALUE')
-        matvaluetoken.args[0] = str( float(matvaluetoken.args[0]) * aluminum_value )
+        matvaluetoken.args[0] = int( float(matvaluetoken.args[0]) * aluminum_value )
     except:
         pydwarf.log.exception('Failed to affect value of aluminum.')
         return pydwarf.failure()

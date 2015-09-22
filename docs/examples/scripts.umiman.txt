@@ -1,0 +1,76 @@
+pydwarf.registrar.__iter__ pydwarf.registrar.__getattr__
+pydwarf.scripts.umiman.smallthings pydwarf.uristscript.__str__
+
+>>> smallthings = pydwarf.scripts.umiman.smallthings
+>>> print '\n'.join(sorted(str(script) for script in smallthings))
+umiman.smallthings.engraving
+umiman.smallthings.prefstring
+umiman.smallthings.speech.nofamily
+umiman.smallthings.speech.threats
+
+---
+
+
+pydwarf.registrar.__getattr__ pydwarf.response.__str__ raws.binfile.__len__
+reset
+>>> print len(df['data/speech/threat.txt'].bin())
+15
+>>> print len(df['data/speech/no_family.txt'].bin())
+28
+>>> responses = pydwarf.scripts.umiman.smallthings.speech(df)
+>>> print '\n'.join('%s: %s' % (key, value) for key, value in responses.iteritems())
+threats: SUCCESS: Ran successfully.
+nofamily: SUCCESS: Ran successfully.
+>>> print len(df['data/speech/threat.txt'])
+8953
+>>> print len(df['data/speech/no_family.txt'])
+1720
+
+---
+
+pydwarf.urist.list pydwarf.uristscript.within
+pydwarf.uristscript.__str__
+
+>>> scripts = pydwarf.urist.list()
+>>> print '\n'.join(sorted(str(script) for script in scripts if script.within('umiman')))
+umiman.smallthings.engraving
+umiman.smallthings.prefstring
+umiman.smallthings.speech.nofamily
+umiman.smallthings.speech.threats
+
+---
+
+pydwarf.scripts.umiman.prefstring
+raws.queryableobj.getobj raws.queryableprop.allprop
+reset
+>>> print df.getobj('CREATURE:DWARF').allprop('PREFSTRING')
+[PREFSTRING:beards]
+>>> response = pydwarf.scripts.umiman.smallthings.prefstring(df)
+>>> print response
+SUCCESS: Added prefstrings to 213 creatures.
+>>> print df.getobj('CREATURE:DWARF').allprop('PREFSTRING')
+[PREFSTRING:beards]
+[PREFSTRING:zany behaviour]
+[PREFSTRING:homicidal fortresses]
+[PREFSTRING:short stature]
+[PREFSTRING:unequaled brews]
+[PREFSTRING:steel]
+[PREFSTRING:funny accents]
+[PREFSTRING:beards]
+
+---
+
+pydwarf.scripts.umiman.engraving
+raws.queryableobj.allobj raws.tokenlist.__len__ raws.dir.__contains__
+reset
+>>> print len(df.allobj('SHAPE'))
+35
+>>> print 'raw/objects/descriptor_shape_umiman.txt' in df
+False
+>>> response = pydwarf.scripts.umiman.smallthings.engraving(df)
+>>> print response
+SUCCESS: Added 43 new shapes.
+>>> print len(df.allobj('SHAPE'))
+78
+>>> print 'raw/objects/descriptor_shape_umiman.txt' in df
+True

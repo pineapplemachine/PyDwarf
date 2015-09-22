@@ -1,0 +1,352 @@
+raws.queryable.get
+raws.queryableobj.getobj
+
+>>> hematite = df.getobj('INORGANIC:HEMATITE')
+>>> print hematite.get('METAL_ORE:GOLD:100') # Get the last token in the entire file
+[METAL_ORE:GOLD:100]
+>>> print hematite.get('METAL_ORE:GOLD:100', until='INORGANIC') # Stop at the next INORGANIC token
+None
+
+---
+
+raws.queryable.last
+raws.queryableobj.getobj
+
+>>> hematite = df.getobj('INORGANIC:HEMATITE')
+>>> print hematite.last('STATE_NAME_ADJ') # Get the last token in the entire file
+[STATE_NAME_ADJ:ALL_SOLID:slade]
+>>> print hematite.last('STATE_NAME_ADJ', until='INORGANIC') # Stop at the next INORGANIC token
+[STATE_NAME_ADJ:ALL_SOLID:hematite]
+
+---
+
+raws.queryable.all
+raws.queryableobj.getobj raws.tokenlist.__len__
+
+>>> dwarf = df.getobj('CREATURE:DWARF')
+>>> print len(dwarf.all('INTELLIGENT')) # Gets all INTELLIGENT tokens following CREATURE:DWARF, including those belonging to other creatures
+6
+>>> print len(dwarf.all('INTELLIGENT', until='CREATURE')) # Gets only the dwarf's INTELLIGENT token
+1
+>>> print len(dwarf.all('INTELLIGENT', until='CREATURE:GOBLIN'))
+3
+
+---
+
+raws.queryable.all
+raws.queryableobj.getobj
+
+>>> hematite = df.getobj('INORGANIC:HEMATITE')
+>>> print hematite.all(until='INORGANIC')
+[USE_MATERIAL_TEMPLATE:STONE_TEMPLATE]
+[STATE_NAME_ADJ:ALL_SOLID:hematite][DISPLAY_COLOR:4:7:0][TILE:156]
+[ENVIRONMENT:SEDIMENTARY:VEIN:100]
+[ENVIRONMENT:IGNEOUS_EXTRUSIVE:VEIN:100]
+[ITEM_SYMBOL:'*']
+[METAL_ORE:IRON:100]
+[SOLID_DENSITY:5260]
+[MATERIAL_VALUE:8]
+[IS_STONE]
+[MELTING_POINT:12736]
+>>> print hematite.all(until='ENVIRONMENT')
+[USE_MATERIAL_TEMPLATE:STONE_TEMPLATE]
+[STATE_NAME_ADJ:ALL_SOLID:hematite][DISPLAY_COLOR:4:7:0][TILE:156]
+
+---
+
+raws.queryable.all
+raws.queryableobj.getobj raws.queryable.each
+
+>>> dwarven = df.getobj('TRANSLATION:DWARF')
+>>> print dwarven.all(exact_value='T_WORD', re_arg=(0, 'AL.*'))
+[T_WORD:ALE:mabdug]
+[T_WORD:ALCHEMY:anzish]
+[T_WORD:ALLY:astel]
+[T_WORD:ALLIANCE:boshut]
+[T_WORD:ALLEGIANCE:uzan]
+>>> intelligence = df.all('INTELLIGENT')
+>>> print intelligence.each(lambda token: token.get('CREATURE', reverse=True)) # Get the creature token most immediately preceding each intelligent token
+[CREATURE:DWARF]
+[CREATURE:HUMAN]
+[CREATURE:ELF]
+[CREATURE:GOBLIN]
+[CREATURE:FAIRY]
+[CREATURE:PIXIE]
+
+---
+
+raws.queryable.get
+
+
+>>> print df.get(exact_value='TRANSLATION', exact_args=['HUMAN'])
+[TRANSLATION:HUMAN]
+>>> print df.get(value_in=('EXAMPLE', 'ALSO_NOT_A_REAL_TOKEN', 'PICKED_COLOR'), exact_args=['6', '0', '1'])
+[PICKED_COLOR:6:0:1]
+>>> bear = df.get(match_token=raws.token('CREATURE:BEAR_GRIZZLY'))
+>>> print bear
+[CREATURE:BEAR_GRIZZLY]
+>>> print bear.get(exact_value='DESCRIPTION')
+[DESCRIPTION:A huge brown creature found in temperate woodland.  It is known for its ferocious attack, usually when it or its young are threatened.]
+>>> print bear.get(exact_value='CREATURE')
+[CREATURE:BEAR_BLACK]
+
+---
+
+raws.queryable.list
+raws.queryableobj.getobj raws.queryable.get
+reset
+>>> forest = df.getobj('ENTITY:FOREST')
+>>> print forest.list(range=5, skip=False)
+[ENTITY:FOREST]
+    [CREATURE:ELF]
+    [TRANSLATION:ELF]
+    [WEAPON:ITEM_WEAPON_SWORD_SHORT]
+    [WEAPON:ITEM_WEAPON_SPEAR]
+>>> sword = forest.get('WEAPON:ITEM_WEAPON_SWORD_SHORT')
+>>> sword.remove()
+>>> print forest.list(range=5, skip=False)
+[ENTITY:FOREST]
+    [CREATURE:ELF]
+    [TRANSLATION:ELF]
+    [WEAPON:ITEM_WEAPON_SPEAR]
+    [WEAPON:ITEM_WEAPON_BOW]
+
+---
+
+raws.queryable.__getitem__
+raws.dir.__getitem__
+
+>>> food = df['item_food']
+>>> print food[...]
+[OBJECT:ITEM]
+[ITEM_FOOD:ITEM_FOOD_BISCUITS]
+[NAME:biscuits]
+[LEVEL:2]
+[ITEM_FOOD:ITEM_FOOD_STEW]
+[NAME:stew]
+[LEVEL:3]
+[ITEM_FOOD:ITEM_FOOD_ROAST]
+[NAME:roast]
+[LEVEL:4]
+>>> print food[0]
+[OBJECT:ITEM]
+>>> print food[-1]
+[LEVEL:4]
+>>> print food['NAME']
+[NAME:biscuits]
+>>> token = raws.token('NAME:biscuits')
+>>> print food[token]
+[NAME:biscuits]
+>>> print food[lambda token, count: (token.value == 'NAME', False)]
+[NAME:biscuits]
+[NAME:stew]
+[NAME:roast]
+>>> print food[1:4]
+[ITEM_FOOD:ITEM_FOOD_BISCUITS]
+[NAME:biscuits]
+[LEVEL:2]
+>>> print food[0, 'NAME']
+[OBJECT:ITEM]
+[NAME:biscuits]
+>>> print food[0, 2:4, 'OBJECT', None]
+[OBJECT:ITEM]
+[NAME:biscuits]
+[LEVEL:2]
+[OBJECT:ITEM]
+
+---
+
+raws.queryable.__getitem__
+raws.dir.__getitem__
+
+>>> food = df['item_food']
+>>> print food[raws]
+Traceback (most recent call last):
+    File "<stdin>", line 1, in <module>
+    File "raws/queryable.py", line 43, in __getitem__
+        return self.getitem(*args, **kwargs)
+    File "raws/queryable.py", line 85, in getitem
+        raise TypeError('Failed to get item because the argument was of an unrecognized type %s.' % type(item))
+TypeError: Failed to get item because the argument was of an unrecognized type <type 'module'>.
+
+---
+
+raws.queryable.itokens raws.queryable.tokens raws.queryable.list
+raws.dir.__getitem__ raws.tokenlist.__eq__ raws.tokengenerator.__eq__
+
+>>> food = df['item_food']  
+>>> print type(food.itokens()) # Get tokens as a generator
+<type 'generator'>
+>>> print type(food.tokens()) # Get tokens as a regenerator
+<class 'raws.tokengenerator.tokengenerator'>
+>>> print type(food.list()) # Get tokens as a list
+<class 'raws.tokenlist.tokenlist'>
+>>> print food.itokens() == food.tokens()
+True
+>>> print food.itokens() == food.list()
+True
+>>> print food.tokens() == food.itokens()
+True
+>>> print food.tokens() == food.list()
+True
+>>> print food.list() == food.itokens()
+True
+>>> print food.list() == food.tokens()
+True
+
+---
+
+raws.queryable.itokens raws.queryable.tokens
+raws.dir.__getitem__
+
+>>> food = df['item_food']
+>>> print type(food.itokens())
+<type 'generator'>
+>>> print food.tokens()
+[OBJECT:ITEM]
+[ITEM_FOOD:ITEM_FOOD_BISCUITS]
+[NAME:biscuits]
+[LEVEL:2]
+[ITEM_FOOD:ITEM_FOOD_STEW]
+[NAME:stew]
+[LEVEL:3]
+[ITEM_FOOD:ITEM_FOOD_ROAST]
+[NAME:roast]
+[LEVEL:4]
+
+---
+
+raws.queryable.__contains__
+raws.tokenlist.__init__
+
+>>> tokens = raws.tokenlist('[A][B][C][D][E][F]')
+>>> print 'B' in tokens
+True
+>>> print 'G' in tokens
+False
+>>> print tokens[0] in tokens
+True
+>>> print raws.token('[A]') in tokens
+False
+>>> (lambda token: token.value == 'C') in tokens
+True
+>>> (lambda token: token.value == 'G') in tokens
+False
+>>> print ('A', 'B') in tokens
+True
+>>> print ('A', 'G') in tokens
+False
+
+---
+
+raws.queryable.__iter__ raws.queryableobj.allobj
+raws.tokenlist.__init__ raws.token.__str__
+
+>>> pants = sorted(df.allobj('ITEM_PANTS', iter=True), key=lambda token: str(token))
+>>> for token in pants: print token
+...
+[ITEM_PANTS:ITEM_PANTS_BRAIES]
+[ITEM_PANTS:ITEM_PANTS_GREAVES]
+[ITEM_PANTS:ITEM_PANTS_LEGGINGS]
+[ITEM_PANTS:ITEM_PANTS_LOINCLOTH]
+[ITEM_PANTS:ITEM_PANTS_PANTS]
+[ITEM_PANTS:ITEM_PANTS_SKIRT]
+[ITEM_PANTS:ITEM_PANTS_SKIRT_LONG]
+[ITEM_PANTS:ITEM_PANTS_SKIRT_SHORT]
+[ITEM_PANTS:ITEM_PANTS_THONG]
+
+---
+
+raws.queryable.all raws.queryable.list
+raws.dir.__getitem__
+
+>>> creature_standard = df['raw/objects/creature_standard.txt']
+>>> descriptions = creature_standard.all('DESCRIPTION')
+>>> print len(descriptions)
+33
+>>> print descriptions.list(range=5)
+[DESCRIPTION:A short, sturdy creature fond of drink and industry.]
+[DESCRIPTION:A medium-sized creature prone to great ambition.]
+[DESCRIPTION:A medium-sized creature dedicated to the ruthless protection of nature.]
+[DESCRIPTION:A medium-sized humanoid driven to cruelty by its evil nature.]
+[DESCRIPTION:A small, squat humanoid with large pointy ears and yellow glowing eyes.]
+>>> print descriptions.list(reverse=True, range=5)
+[DESCRIPTION:A bird of prey so large and ferocious it dwarfs many dragons.  All beneath its mighty wings should fear the sky.]
+[DESCRIPTION:A giant creature with many eyes and arms to terrify the sea.]
+[DESCRIPTION:A giant limbless dragon that lives in the sea.]
+[DESCRIPTION:A man-like creature with the tail of a fish instead of legs.]
+[DESCRIPTION:A giant dragon-like monster with seven biting heads.]
+
+---
+
+raws.queryable.__reversed__
+raws.dir.__getitem__ raws.queryable.list
+
+>>> food = df['item_food']
+>>> print food.list()
+[OBJECT:ITEM]
+[ITEM_FOOD:ITEM_FOOD_BISCUITS]
+[NAME:biscuits]
+[LEVEL:2]
+[ITEM_FOOD:ITEM_FOOD_STEW]
+[NAME:stew]
+[LEVEL:3]
+[ITEM_FOOD:ITEM_FOOD_ROAST]
+[NAME:roast]
+[LEVEL:4]
+>>> print reversed(food.list())
+[LEVEL:4]
+[NAME:roast]
+[ITEM_FOOD:ITEM_FOOD_ROAST]
+[LEVEL:3]
+[NAME:stew]
+[ITEM_FOOD:ITEM_FOOD_STEW]
+[LEVEL:2]
+[NAME:biscuits]
+[ITEM_FOOD:ITEM_FOOD_BISCUITS]
+[OBJECT:ITEM]
+
+---
+
+raws.queryable.each raws.tokenargs.append
+raws.queryable.list
+reset
+>>> tokens = df.each(lambda token: token.args.append('lol'))
+>>> print df['creature_standard'].list(range=8)
+[OBJECT:CREATURE:lol]
+[CREATURE:DWARF:lol]
+    [DESCRIPTION:A short, sturdy creature fond of drink and industry.:lol]
+    [NAME:dwarf:dwarves:dwarven:lol]
+    [CASTE_NAME:dwarf:dwarves:dwarven:lol]
+    [CREATURE_TILE:1:lol][COLOR:3:0:0:lol]
+    [CREATURE_SOLDIER_TILE:2:lol]
+    
+---
+
+raws.queryable.__eq__
+raws.tokenlist.__init__
+
+>>> tokens = raws.tokenlist('[a][b][c]')
+>>> print tokens == (token for token in tokens)
+True
+>>> print tokens == '[a][b][c]'
+True
+>>> print tokens == '[x][y][z]'
+False
+
+---
+
+raws.dir.__getitem__ raws.queryable.all
+
+
+>>> print df['item_food'].all()
+[OBJECT:ITEM]
+[ITEM_FOOD:ITEM_FOOD_BISCUITS]
+[NAME:biscuits]
+[LEVEL:2]
+[ITEM_FOOD:ITEM_FOOD_STEW]
+[NAME:stew]
+[LEVEL:3]
+[ITEM_FOOD:ITEM_FOOD_ROAST]
+[NAME:roast]
+[LEVEL:4]

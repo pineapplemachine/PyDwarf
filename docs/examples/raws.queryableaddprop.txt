@@ -1,0 +1,42 @@
+raws.queryableaddprop.addprop raws.queryableprop.allprop
+raws.queryableobj.getobj raws.queryable.list
+reset
+>>> stew = df.getobj('ITEM_FOOD:ITEM_FOOD_STEW')
+>>> print stew.allprop()
+[NAME:stew]
+[LEVEL:3]
+>>> stew.addprop('EXAMPLE:TOKEN')
+>>> print stew.allprop()
+[EXAMPLE:TOKEN]
+[NAME:stew]
+[LEVEL:3]
+>>> print stew.file.list()
+[OBJECT:ITEM]
+[ITEM_FOOD:ITEM_FOOD_BISCUITS]
+[NAME:biscuits]
+[LEVEL:2]
+[ITEM_FOOD:ITEM_FOOD_STEW][EXAMPLE:TOKEN]
+[NAME:stew]
+[LEVEL:3]
+[ITEM_FOOD:ITEM_FOOD_ROAST]
+[NAME:roast]
+[LEVEL:4]
+
+---
+
+raws.queryableaddprop.setprop
+raws.queryableobj.getobj raws.queryableprop.allprop
+reset
+>>> stew = df.getobj('ITEM_FOOD:ITEM_FOOD_STEW')
+>>> print stew.allprop()
+[NAME:stew]
+[LEVEL:3]
+>>> stew.setprop('NAME:superior stew')
+>>> print stew.allprop()
+[NAME:superior stew]
+[LEVEL:3]
+>>> stew.setprop('NEW_PROP:example')
+>>> print stew.allprop()
+[NEW_PROP:example]
+[NAME:superior stew]
+[LEVEL:3]

@@ -1,0 +1,168 @@
+raws.dir.copy raws.dir.__eq__
+raws.queryableobj.getobj raws.token.add
+
+>>> dfcopy = df.copy()
+>>> print dfcopy == df
+True
+>>> dwarf = dfcopy.getobj('CREATURE:DWARF')
+>>> token = dwarf.add('MAKE:THE:COPY:DIFFERENT')
+>>> print dfcopy == df
+False
+
+---
+
+raws.dir.reset
+raws.queryableobj.getobj raws.token.remove
+
+>>> dwarf = df.getobj('CREATURE:DWARF')
+>>> dwarf.remove()
+>>> print df.getobj('CREATURE:DWARF')
+None
+>>> df.reset()
+>>> print df.getobj('CREATURE:DWARF')
+[CREATURE:DWARF]
+
+---
+
+raws.dir.getobjheaders
+raws.token.__add__ raws.tokenlist.__str__
+
+>>> objheaders = df.getobjheaders('INORGANIC')
+>>> print '\n'.join(sorted(str(token + token.next) for token in objheaders))
+[OBJECT:INORGANIC]
+[INORGANIC:CLAY]
+[OBJECT:INORGANIC]
+[INORGANIC:HEMATITE]
+[OBJECT:INORGANIC]
+[INORGANIC:IRON]
+[OBJECT:INORGANIC]
+[INORGANIC:ONYX]
+[OBJECT:INORGANIC]
+[INORGANIC:PLASTER]
+[OBJECT:INORGANIC]
+[INORGANIC:SANDSTONE]
+
+---
+
+raws.dir.__str__
+
+
+>>> lines = str(df).split('\n')
+>>> print '\n'.join(lines[0:8])
+ref data/art/curses_640x300.bmp
+ref data/art/curses_640x300.png
+ref data/art/curses_800x600.bmp
+ref data/art/curses_800x600.png
+ref data/art/curses_square_16x16.bmp
+ref data/art/curses_square_16x16.png
+ref data/art/font license.txt
+ref data/art/font.ttf
+
+---
+
+raws.dir.__getitem__
+
+
+>>> df['raw/objects/creature_standard.txt'] is df['creature_standard']
+True
+
+---
+
+raws.dir.__getitem__
+
+
+>>> file = df['not_a_real_file']
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "raws/dir.py", line 39, in __getitem__
+    return self.getfile(name)
+  File "raws/dir.py", line 116, in getfile
+    raise KeyError('Failed to find file name "%s" in dir.')
+KeyError: 'Failed to find file name "not_a_real_file" in dir.'
+
+---
+
+raws.dir.__len__ raws.basefile.remove
+
+reset
+>>> dflen = len(df)
+>>> df['raw/objects/creature_standard.txt'].remove()
+>>> print dflen - len(df)
+1
+
+---
+
+raws.dir.__contains__
+raws.dir.__getitem__ raws.binfile.__init__
+
+>>> print 'raw/objects/creature_standard.txt' in df
+True
+>>> print 'creature_standard' in df
+True
+>>> print 'not_a_file' in df
+False
+>>> food = df['item_food']
+>>> print food in df
+True
+>>> newfile = raws.binfile()
+>>> print newfile in df
+False
+
+---
+
+raws.dir.remove raws.dir.__delitem__ raws.dir.__isub__ raws.dir.reset
+raws.dir.__len__
+
+>>> dflen = len(df) # Track original number of files
+>>> df.remove('raw/objects/item_pants.txt')
+>>> del df['data/init/init.txt']
+>>> df -= 'data/init/colors.txt'
+>>> print dflen - len(df) # Three fewer files now
+3
+>>> df.reset()
+>>> print dflen == len(df) # Back to the original number
+True
+
+---
+
+raws.binfile.__init__ raws.dir.__contains__ raws.dir.add
+
+
+>>> newfile = raws.binfile('data/init/newfile.txt')
+>>> print newfile.loc
+data/init
+>>> print newfile.name
+newfile
+>>> print newfile.ext
+.txt
+>>> print newfile in df
+False
+>>> print 'data/init/newfile.txt' in df
+False
+>>> added = df.add(newfile) # returns the newfile object
+>>> print newfile in df
+True
+>>> print 'data/init/newfile.txt' in df
+True
+
+---
+
+raws.dir.__iter__
+raws.basefile.__str__
+
+>>> print '\n'.join(sorted(str(file) for file in df if file.loc == 'data/init' and file.name.startswith('i')))
+data/init/init.txt
+data/init/init_desk.txt
+data/init/init_lappy.txt
+data/init/interface.txt
+
+---
+
+raws.dir.clear
+raws.dir.__len__
+reset
+>>> print len(df) > 0
+True
+>>> df.clear()
+>>> print len(df) > 0
+False

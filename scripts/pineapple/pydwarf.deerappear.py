@@ -2,7 +2,7 @@ import pydwarf
 
 @pydwarf.urist(
     name = 'pineapple.deerappear',
-    version = '1.0.0',
+    version = '1.0.1',
     author = 'Sophie Kirschner',
     description = 'Changes the appearance of each deer from a brown D to yellow d.',
     arguments = {
@@ -17,9 +17,9 @@ def deerappear(df, creature='DEER', tile="'d'", color=['6','0','1']):
     deertoken = df.getobj('CREATURE', creature)
     if deertoken:
         # Find the first token, following [CREATURE:DEER], that looks like [CREATURE_TILE:'D']
-        deertile = deertoken.getuntil(exact_value='CREATURE_TILE', args_count=1, until_exact_value='CREATURE')
+        deertile = deertoken.getprop(exact_value='CREATURE_TILE', args_count=1)
         # Find the first token, following [CREATURE:DEER], that looks like [COLOR:6:0:0]
-        deercolor = deertoken.getuntil(exact_value='COLOR', args_count=3, until_exact_value='CREATURE')
+        deercolor = deertoken.getprop(exact_value='COLOR', args_count=3)
         if deertile and deercolor:
             # Change the token to look like [CREATURE_TILE:'d']
             deertile.args[0] = tile

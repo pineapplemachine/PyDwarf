@@ -1,15 +1,26 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+
+
+'''Generate formatted documentation for registered scripts based on their metadata.'''
+
+
+
 import os
 import textwrap
 
 
+
 def __main__():
+    '''Internal: Set up default templates.'''
     template.format['txt'] = txttemplate()
     template.format['md'] = mdtemplate()
     template.format['html'] = htmltemplate()
     
     
 
-class template:
+class template(object):
     '''Internal: Helpful class for handling different formats used by the urist.doc method.'''
     
     format = {}

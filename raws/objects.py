@@ -1,10 +1,15 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+
+
 def getoption(version, *options):
     '''Internal: Used by objects functions to get an option corresponding to some Dwarf Fortress version.'''
     if version:
         if isinstance(version, basestring): # For strings
             pass
         elif 'config' in version.__dict__ and 'version' in version.config.__dict__: # For dirs
-            version = rawsdir.config.version
+            version = version.config.version
         elif 'version' in version.__dict__: # For configs
             version = version.version
         else:
@@ -122,7 +127,18 @@ def objectdict(version=None):
     
 def headerforobject(type, version=None):
     '''Returns the header for a particular object type given a version.'''
-    return objectdict(version)[type]
+    try:
+        return objectdict(version)[type.value if isinstance(type, token.token) else type]
+    except KeyError:
+        raise KeyError('Failed to retrieve header for object type %s, likely because the object type was unrecognized.')
+        
 def objectsforheader(header, version=None):
     '''Returns the object types corresponding to a particular header given a version.'''
-    return headerdict(version)[header]
+    try:
+        return headerdict(version)[header.arg() if isinstance(header, token.token) else header]
+    except KeyError:
+        raise KeyError('Failed to retrieve objects for header %s, likely because the header was unrecognized.')
+
+
+
+import token

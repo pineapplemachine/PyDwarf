@@ -1,0 +1,18 @@
+raws.helpers.ends
+raws.tokenparse.parse raws.tokenlist.add
+
+>>> tokens = raws.parse('[FIRST][SECOND][THIRD]')
+>>> print [str(token) for token in raws.helpers.ends(tokens)]
+['[FIRST]', '[THIRD]']
+>>> fourth = tokens.add('FOURTH')
+>>> tokensiter = (token for token in tokens)
+>>> print [str(token) for token in raws.helpers.ends(tokensiter)]
+['[FIRST]', '[FOURTH]']
+
+---
+
+raws.helpers.equal
+raws.token.__init__ raws.tokenparse.parsevariable
+
+>>> print raws.equal(raws.token('[HELLO]'), raws.parse('[HELLO]'))
+True

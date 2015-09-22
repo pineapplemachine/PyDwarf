@@ -40,7 +40,7 @@ shapenamedict = {
 
 @pydwarf.urist(
     name = 'umiman.smallthings.prefstring',
-    version = '1.0.0',
+    version = '1.0.1',
     author = ('Umiman', 'Fieari', 'Sophie Kirschner'),
     description = '''This mod simply just adds to the number of prefstrings for
         everything in the game to a minimum of five each. Prefstrings are the stuff
@@ -69,8 +69,8 @@ def prefstring(df):
             pydwarf.log.debug('Found prefstrings for %s but there was no corresponding creature in the DF raws. Skipping.' % smallcreature)
             failedcreatures += 1
         else:
-            prefs = smallcreature.alluntil(exact_value='PREFSTRING', args_count=1, until_exact_value='CREATURE')
-            dfcreature.add(tokens=raws.token.copy(prefs))
+            prefs = smallcreature.allprop(exact_value='PREFSTRING', args_count=1)
+            dfcreature.add(tokens=prefs.copy())
             pydwarf.log.debug('Added %d prefstrings to %s.' % (len(prefs), dfcreature))
             
     # All done!
@@ -83,7 +83,7 @@ def prefstring(df):
 
 @pydwarf.urist(
     name = 'umiman.smallthings.engraving',
-    version = '1.0.0',
+    version = '1.0.1',
     author = ('Umiman', 'Fieari', 'Sophie Kirschner'),
     description = '''Has this been done before? While I think it's impossible to change
         any of the inbuilt engraving stuff like, "this is a picture of a dwarf and a
@@ -119,7 +119,7 @@ def engraving(df):
             pydwarf.log.debug('Adding shape %s...' % smallshape)
             
             # Get the tokens describing this shape
-            smallshapetokens = smallshape.until(exact_value='SHAPE')
+            smallshapetokens = smallshape.all(until_exact_value='SHAPE')
             
             # Shapes in DF's descriptor_shape_standard all have a [WORD:X] token but these do not
             # To compensate, let's do our best to map each shape to a word automatically
@@ -132,8 +132,8 @@ def engraving(df):
                 pydwarf.log.error('Found no names for %s.' % shallshape)
                 
             # Actually add the new shape to the raws
-            dfshapesfile.add(raws.token.copy(smallshape))
-            dfshapesfile.add(raws.token.copy(smallshapetokens))
+            dfshapesfile.add(smallshape.copy())
+            dfshapesfile.add(smallshapetokens.copy())
             
             # And also add the word, provided one was found
             if shapeword:

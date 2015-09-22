@@ -1,3 +1,31 @@
+v1.1.0: Chalcedony
+
+Fixed issue where raws files without headers weren't recognized as such, especially relevant to files like data/init/init.txt.
+Fixed some raws classes having shitty __repr__ overrides.
+Fixed bug where adding text to a raws.binfile object that had none would cause an exception.
+Fixed bug in pineapple.utils.addhack where text that should be added to raw/onLoad.init was added to dfhack.init instead.
+Fixed bug where a token's prop methods would also query the immediately following object header.
+Renamed some arguments: "implicit_braces" to "implicit", "until_token" to "until", "include_self" to "skip", "fail_on_multiple" to "failmulti".
+Renamed some of the short arguments for manager.py.
+Removed methods until, getuntil, lastuntil, and alluntil from raws.queryable as their functionality has been absorbed by the get, last, and all methods.
+Removed script pineapple.stoneclarity because it was obtuse, not very useful, and getting to be a pain to debug.
+Added yaml configuration files and made a yaml file the default configuration option.
+Added scripts underneath dragondeplatino.gemset for automated installation of 24px and 48px graphics packs.
+Added scripts pineapple.noanimalmen and pineapple.nogiantanimals.
+Added a description to pineapple.adoptsowner.
+Added docs/bin/verify.py which does something like unit testing to help catch stray bugs.
+Added class raws.tokengenerator which most methods that previously returned a generator return now, it allows iterating the same generator multiple times because that's really convenient sometimes even if it can be suboptimal.
+Added class pydwarf.registrar, it allows syntax like pydwarf.scripts.pineapple.flybears(df) in place of pydwarf.urist.getfn('pineapple.flybears')(df).
+Improved how python override config files are loaded.
+Improved converting between file objects, e.g. binfile to rawfile.
+Improved how queries are internally handled and made it easier to define custom filters and queries.
+Improved documentation and error handling all around.
+Improved internal representation of some token attributes, this will make them easier to mess around with in scripts: token.value = x now involves the same input verification as token.setvalue(x).
+Improved the way that token collections are represented as strings.
+Improved class inheritance in raws and pydwarf packages, any classes that previously weren't new-style are now.
+
+
+
 v1.0.2: Magma Forge
 
 Fixed the vagueness of most exceptions in the raws and pydwarf packages, most of them should now be reasonably forthcoming about what went wrong and why.
