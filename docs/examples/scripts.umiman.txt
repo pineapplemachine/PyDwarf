@@ -10,7 +10,7 @@ umiman.smallthings.speech.threats
 
 ---
 
-
+pydwarf.scripts.umiman.smallthings.speech.threats pydwarf.scripts.umiman.smallthings.speech.nofamily
 pydwarf.registrar.__getattr__ pydwarf.response.__str__ raws.binfile.__len__
 reset
 >>> print len(df['data/speech/threat.txt'].bin())

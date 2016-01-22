@@ -20,7 +20,7 @@ client-170:PyDwarf pineapple$ python
 >>> emptydir = raws.dir()
 ```
 
-Realistically, you're not going to be so interested in an empty `raws.dir` object. In almost all cases you'll actually want to load it from somewhere. Let's actually load our Dwarf Fortress directory as a `raws.dir`.
+Realistically, you're not going to be so interested in an empty `raws.dir` object. In almost all cases you'll actually want to load it from somewhere. Let's actually load our actual Dwarf Fortress directory as a `raws.dir` instance.
 
 ``` python
 >>> df = raws.dir('df_osx_40_23')
@@ -45,7 +45,7 @@ It's also possible to add files to or remove them from a `raws.dir` using its `a
 
 #### raws.reffile
 
-These files are pretty simple: When a `raws.dir` is loaded for some directory these are files it remembers the location so that when its output is written it can just copy the file over. Without intervention, PyDwarf will never look at the contents of these files.
+These files are pretty simple: When a `raws.dir` is loaded for some directory these are files it remembers the location of so that when its output is written it can just copy the file over. Without intervention, PyDwarf will never look at or modify the contents of these files.
 
 #### raws.binfile
 
@@ -113,9 +113,9 @@ Each token has a number of important attributes.
 
 So you've familiarized yourself with how PyDwarf keeps track of all this data and now you're ready to have a go yourself. But where do you start? How do you tell PyDwarf to find that one specific token for you?
 
-Anything that can contain raws data - `raws.dir`, `raws.rawfile`, `raws.token` objects, and a few more - has access to a number of methods to make finding what you need easier. Most of them are abstractions of a base `query` method, which is for finding a token or tokens which meet some condition.
+Anything that can contain raws data - including `raws.dir`, `raws.rawfile`, `raws.token` objects, and a few more - has access to a number of methods to make finding what you need easier. Most of them are abstractions of a base `query` method, which is for finding a token or tokens which meet some condition.
 
-Here you can see just how the `query` method works. Don't expect to be using it much if at all, but know that the methods you will be using all use this method to do most of their work.
+Here you can see just how the `query` method works. Don't expect to be using it much if at all, but know that the methods you will be using frequently all use this method to do most of their work.
 
 The definition of the `query` method looks like this.
 
@@ -177,14 +177,14 @@ raw/objects/creature_standard.txt
 
 We can do this because we know that the `[CREATURE:DWARF]` token we want will always appear after an `[OBJECT:CREATURE]` token in some file. So first we used a query to get all the `[OBJECT:CREATURE]` headers, then we used the `each` method of `raws.tokencollection` to find the `[CREATURE:DWARF]` token which followed one of those headers.
 
-You could also do something like this, since you know what file the token is in, but it's not the best practice. What if a mod you installed moved the `[CREATURE:DWARF]` definition to a different file?
+You could also do something like this, since you know what file the token is in, but it's not the best practice. What if a mod you installed moved the `[CREATURE:DWARF]` definition to a different file? What if Toady renamed the file in a future update?
 
 ``` python
 >>> print df['raw/objects/creature_standard.txt'].get('CREATURE:DWARF')
 [CREATURE:DWARF]
 ```
 
-Fortunately, you won't have to worry about this stuff. PyDwarf helpfully provides methods that concern themselves about all these caveats so that you don't have to. You could have found that token just like this, using the `getobj` method.
+Fortunately, you won't have to worry about this stuff. PyDwarf helpfully provides methods that concern themselves about all these caveats so that you don't have to. You could have found that token just like this, using the `getobj` method. Don't you feel silly now, having gone through all that unnecessary trouble?
 
 ``` python
 >>> dwarf = df.getobj('CREATURE:DWARF')
@@ -289,10 +289,10 @@ def myscript(df, token='AQUIFER'):
     return pydwarf.success()
 ```
 
-You can assign some value to anything you want in that decorator! You could write `@pydwarf.urist(foo = 'bar')` if you felt so inclined and then wehn PyDwarf was asked to provide information about your script, it would go ahead and tell you that foo is equal to bar. But there are several things other than `foo` that PyDwarf gives special treatment to. Here are the really important ones. 
+You can assign some value to anything you want in that decorator! You could write `@pydwarf.urist(foo = 'bar')` if you felt so inclined and then when PyDwarf was asked to provide information about your script, it would go ahead and tell you that foo is equal to bar. But there are several things other than `foo` that PyDwarf gives special treatment to. Here are the really important ones. 
 
 * `name` gives your script a name, and that should be something descriptive. You might be wondering what dots and `mynamespace` mean when they're in there. Everything preceding the final dot is the namespace, and everything following is the name. The namespace is for organization, makes it so both PyDwarf and users of your script can tell how it might be related to others. For the scripts packaged with PyDwarf, the namespace corresponds to the author of the script. So, for example, all the scripts in the `pineapple` namespace were written by yours truly.
-* `version` identifies the verison of your script. If you were to improve and rerelease your script you might want to increment the version number for the new script.
+* `version` identifies the verison of your script. If you were to improve and rerelease your script you might want to increment the version number for the new script to make it easy for people to tell which is the newer script.
 * `author` tells people who actually wrote the script.
 * `description` is to help people understand the purpose of your script. It should, of course, be as descriptive as possible.
 * `arguments` describes the purpose of each of your script's arguments, in case it accepts any.
@@ -342,6 +342,7 @@ client-170:PyDwarf pineapple$ grep AQUIFER /Users/pineapple/Desktop/games/df/df_
 [SOIL_OCEAN][AQUIFER]
 [SOIL_OCEAN][AQUIFER]
 client-170:PyDwarf pineapple$ grep AQUIFER /Users/pineapple/Desktop/games/df/df_osx_40_24/raw/objects/inorganic_stone_soil.txt
+client-170:PyDwarf pineapple$
 ```
 
-Congratulations on making your first mod with PyDwarf! I hope things go smoothly for you from here. In case you want much more in-depth documentation you can always refer to the [html docs](index.html), and you can post in the GitHub repository's [issue tracker](https://github.com/pineapplemachine/PyDwarf/issues) or on the [Bay12 forum topic](http://www.bay12forums.com/smf/index.php?topic=150857.0).
+Congratulations on making your first mod with PyDwarf! I hope things go smoothly for you from here. In case you want more in-depth documentation you can always refer to the [html docs](index.html), and you can post in the GitHub repository's [issue tracker](https://github.com/pineapplemachine/PyDwarf/issues) or on the [Bay12 forum topic](http://www.bay12forums.com/smf/index.php?topic=150857.0).
