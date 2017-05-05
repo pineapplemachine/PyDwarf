@@ -1,7 +1,11 @@
+# Witty
+
+## Restricted Nobles
+
 Restricted Nobles created by Witty. (http://www.bay12forums.com/smf/index.php?topic=150702.0)
 Restricted Nobles ported to PyDwarf by Sophie Kirschner. (http://www.pineapplemachine.com)
 
-How this works; 
+How this works;
 
 I used the CREATURE_CLASS token to declare an arbitrary distinction (DWARF or GOBLIN, in this case) for the appropriate creature and then used the ALLOWED_CLASS (For Dwarf Only Nobles) or REJECTED_CLASS (Goblin Excluded Nobles) to restrict the allowed nobility. 
 
