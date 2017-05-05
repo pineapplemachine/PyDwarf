@@ -114,17 +114,17 @@ class urist(object):
         if candidates and len(candidates):
             original_candidates = list(candidates)
             culled_match = 0
-            culled_compatibility = 0
+            # culled_compatibility = 0
             culled_dependency = 0
             
             candidates, culled_match = urist.cullcandidates_match(match, candidates)
-            candidates, culled_compatibility = urist.cullcandidates_compatibility(version, candidates)
+            # candidates, culled_compatibility = urist.cullcandidates_compatibility(version, candidates)
             candidates, culled_dependency = urist.cullcandidates_dependency(session, candidates)
             candidates = urist.cullcandidates_duplicates(candidates)
             
             return candidates, original_candidates, {
                 'Unmatched metadata': culled_match,
-                'Incompatible with Dwarf Fortress version %s' % version: culled_compatibility,
+                # 'Incompatible with Dwarf Fortress version %s' % version: culled_compatibility,
                 'Unfulfilled dependencies': culled_dependency
             }
             
