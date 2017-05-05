@@ -24,6 +24,14 @@ pydwarf.helpers: Contains some miscellaneous utility functions.
 
 
 
+import sys
+import os
+
+# Expose the packaged yaml dependency
+basedir = os.path.dirname(os.path.abspath(__file__)) + '/..'
+sys.path.append(basedir)
+sys.path.append(os.path.join(basedir, 'lib'))
+
 import logger
 import response
 import helpers
