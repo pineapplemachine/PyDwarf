@@ -5,6 +5,7 @@ default_required_property = ('INTELLIGENT', 'CAN_LEARN')
 
 @pydwarf.urist(
     name = 'pineapple.nomaxage',
+    title = 'Remove MAXAGE Tokens',
     version = '1.0.0',
     author = 'Sophie Kirschner',
     description = '''Removes MAXAGE tokens from creatures.''',

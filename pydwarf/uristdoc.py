@@ -128,11 +128,11 @@ class mdtemplate(template):
     def concat(self, items):
         return '''# Scripts\n\n%s''' % '\n\n'.join(items)
         
-    def header(self, name=None, version=None, author=None, description=None, **kwargs):
+    def header(self, name=None, version=None, author=None, description=None, title=None, **kwargs):
         headeritems = (
             self.fmt('## %s', name),
             #self.fmt('Version %s', version),
-            self.fmt('Created by %s.', self.join(author, natural=True)),
+            self.fmt('%sCreated by %s.', (title + '. ' if title else '', self.join(author, natural=True))),
             self.norm(description)
         )
         return '\n\n'.join(item for item in headeritems if item)

@@ -38,6 +38,7 @@ default_lover_chance = (0, 0)
 
 @pydwarf.urist(
     name = 'pineapple.orientation',
+    title = 'Change Sexual Orientation',
     version = '1.0.0',
     author = 'Sophie Kirschner',
     description = '''Causes all creatures of some type to have a single sexuality,

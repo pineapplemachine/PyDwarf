@@ -126,7 +126,7 @@ With this script running, all undead that have been on the map for a time (defau
 
 ## pineapple.adoptsowner
 
-Created by Sophie Kirschner.
+Remove ADOPTS_OWNER Tokens. Created by Sophie Kirschner.
 
 ADOPTS_OWNER tokens are added to or removed from creatures.
 
@@ -138,7 +138,7 @@ ADOPTS_OWNER tokens are added to or removed from creatures.
 
 ## pineapple.bauxitetoaluminum
 
-Created by Sophie Kirschner.
+Smelt Bauxite to Aluminum. Created by Sophie Kirschner.
 
 Adds a reaction to the smelter to allow the creation of aluminum bars from bauxite (as ore) and cryolite (as flux). Credit to this forum discussion for the reaction and general inspiration: http://www.bay12forums.com/smf/index.php?topic=31523.0
 
@@ -152,7 +152,7 @@ Adds a reaction to the smelter to allow the creation of aluminum bars from bauxi
 
 ## pineapple.boneflux
 
-Created by Sophie Kirschner.
+Flux From Bones. Created by Sophie Kirschner.
 
 Adds a reaction to the kiln which consumes bones and produces flux. Inspired by/stolen from Rubble's Bone Flux mod.
 
@@ -170,7 +170,7 @@ Adds a reaction to the kiln which consumes bones and produces flux. Inspired by/
 
 ## pineapple.butcherinorganic
 
-Created by Sophie Kirschner.
+Butcher Inorganic Corpses. Created by Sophie Kirschner.
 
 Allows butchering of some inorganics, get things like wood or stone from some corpses. Inspired by/stolen from Igfig's Modest Mod.
 
@@ -180,7 +180,7 @@ Allows butchering of some inorganics, get things like wood or stone from some co
 
 ## pineapple.castanvil
 
-Created by Sophie Kirschner.
+Cast Anvil at Smelter. Created by Sophie Kirschner.
 
 Adds a reaction to the smelter which makes it possible to create an iron anvil without already having a forge. Inspired by/stolen from Rubble's Cast Anvil mod.
 
@@ -194,7 +194,7 @@ Adds a reaction to the smelter which makes it possible to create an iron anvil w
 
 ## pineapple.cavegrass
 
-Created by Sophie Kirschner.
+Modify Cave Grass. Created by Sophie Kirschner.
 
 Changes the grasses in each cavern level to make the different levels more visually distinct, as well as adding a much greater variety. With default arguments the first cavern will be primarly green and yellow, the second blue and cyan, the third red and gray. Inspired by/stolen from Rubble's Cave Color mod.
 
@@ -204,7 +204,7 @@ Changes the grasses in each cavern level to make the different levels more visua
 
 ## pineapple.deerappear
 
-Created by Sophie Kirschner.
+Change Creature Apperance. Created by Sophie Kirschner.
 
 Changes the appearance of each deer from a brown D to yellow d.
 
@@ -218,7 +218,7 @@ Changes the appearance of each deer from a brown D to yellow d.
 
 ## pineapple.diff
 
-Created by Sophie Kirschner.
+Diff-based Mod Merging. Created by Sophie Kirschner.
 
 Merges and applies changes made to some modded raws via diff checking. Should be reasonably smart about automatic conflict resolution but if it complains then I recommend giving things a manual checkover afterwards. Also, the token-based diff'ing approach should work much better than any line-based diff. Using this tool to apply mods made to other versions of Dwarf Fortress probably won't work so well.
 
@@ -228,7 +228,7 @@ Merges and applies changes made to some modded raws via diff checking. Should be
 
 ## pineapple.discipline
 
-Created by Sophie Kirschner.
+Natural Discipline Skill Bonuses. Created by Sophie Kirschner.
 
 Applies natural discipline skill bonuses to creatures that should probably have them. Credit to Mictlantecuhtli for creating the mod which inspired this one. www.bay12forums.com/smf/index.php?topic=140460.0
 
@@ -242,7 +242,7 @@ Applies natural discipline skill bonuses to creatures that should probably have 
 
 ## pineapple.easypatch
 
-Created by Sophie Kirschner.
+Easy Patch. Created by Sophie Kirschner.
 
 Given a path to a file, a directory, a content string, a tokenlist, a raws file object, or an iterable containing a combination of these, a file or files are added to the dir object, and these same objects can be permitted using the permitted_entities argument.
 
@@ -254,13 +254,13 @@ Given a path to a file, a directory, a content string, a tokenlist, a raws file 
 
 ## pineapple.flybears
 
-Created by Sophie Kirschner.
+Flybears. Created by Sophie Kirschner.
 
 Example script which causes all female bears to fly.
 
 ## pineapple.greensteel
 
-Created by Sophie Kirschner.
+Green Steel Alloy. Created by Sophie Kirschner.
 
 Adds an alloy which is lighter and sharper than steel but not so much as adamantine. It can be made from similar ingredients as steel with the addition of adamantine bars or a new adamant ore.
 
@@ -270,7 +270,7 @@ Adds an alloy which is lighter and sharper than steel but not so much as adamant
 
 ## pineapple.maxage
 
-Created by Sophie Kirschner.
+Add MAXAGE Tokens. Created by Sophie Kirschner.
 
 Applies a MAXAGE to most vanilla creatures which don't already have one.
 
@@ -284,7 +284,7 @@ Applies a MAXAGE to most vanilla creatures which don't already have one.
 
 ## pineapple.metalitems
 
-Created by Sophie Kirschner.
+Forge More Metal Items. Created by Sophie Kirschner.
 
 Allows the forging of every type of metal item from the specified metals.
 
@@ -296,7 +296,7 @@ Allows the forging of every type of metal item from the specified metals.
 
 ## pineapple.noanimalmen
 
-Created by Sophie Kirschner.
+Remove Animal Men. Created by Sophie Kirschner.
 
  Removes all creatures which either have a [APPLY_CREATURE_VARIATION:ANIMAL_PERSON] token or have an ID ending in '_MAN'. 
 
@@ -308,25 +308,25 @@ Removes all AQUIFER tokens.
 
 ## pineapple.noexotic
 
-Created by Sophie Kirschner.
+No Exotic Pets or Mounts. Created by Sophie Kirschner.
 
 Replaces all [PET_EXOTIC] and [MOUNT_EXOTIC] tags with their non-exotic counterparts.
 
 ## pineapple.nogiantanimals
 
-Created by Sophie Kirschner.
+Remove Giant Creatures. Created by Sophie Kirschner.
 
  Removes all creatures which either have a [APPLY_CREATURE_VARIATION:GIANT] token or have an ID matching a few patterns which involve the word 'GIANT' or 'GIGANTIC'. 
 
 ## pineapple.nograzers
 
-Created by Sophie Kirschner.
+Remove Grazing Tokens. Created by Sophie Kirschner.
 
 Removes all [GRAZER] and [STANDARD_GRAZER] tokens.
 
 ## pineapple.nomaxage
 
-Created by Sophie Kirschner.
+Remove MAXAGE Tokens. Created by Sophie Kirschner.
 
 Removes MAXAGE tokens from creatures.
 
@@ -338,7 +338,7 @@ Removes MAXAGE tokens from creatures.
 
 ## pineapple.orientation
 
-Created by Sophie Kirschner.
+Change Sexual Orientation. Created by Sophie Kirschner.
 
 Causes all creatures of some type to have a single sexuality, heterosexual being the default. (You boring snob!)
 
@@ -348,6 +348,12 @@ Causes all creatures of some type to have a single sexuality, heterosexual being
 
 * **creatures:** An iterable containing creatures whose sexuality should be affected. Set to None to affect all creatures.
 
+## pineapple.playanimalmen
+
+Animal Men Playable in Adventure Mode. Created by Sophie Kirschner.
+
+Makes all animal men playable in adventure mode by adding a [OUTSIDER_CONTROLLABLE] token to each.
+
 ## pineapple.sanitize.nonexistentids
 
 Created by Sophie Kirschner.
@@ -356,7 +362,7 @@ Created by Sophie Kirschner.
 
 ## pineapple.skillrust
 
-Created by Sophie Kirschner.
+Modify Skill Rust. Created by Sophie Kirschner.
 
 Modifies skill rust for given creatures. Disables it entirely by default.
 
@@ -368,13 +374,13 @@ Modifies skill rust for given creatures. Disables it entirely by default.
 
 ## pineapple.subplants
 
-Created by Sophie Kirschner.
+Subterranean Plants Grow Year-Round. Created by Sophie Kirschner.
 
 Makes all subterranean plants grow year-round.
 
 ## pineapple.useablemats
 
-Created by Sophie Kirschner.
+Craft With Scales, Feathers, and Chitin. Created by Sophie Kirschner.
 
 Causes scales, feathers, and chitin to become useful for crafting. Inspired by/stolen from Rubble's Usable Scale/Feathers/Chitin fixes.
 
@@ -498,7 +504,7 @@ Utility script for permitting several objects at once with entities.
 
 ## pineapple.woodmechanisms
 
-Created by Sophie Kirschner.
+Craft Wooden Mechanisms. Created by Sophie Kirschner.
 
 Allows construction of wooden mechanisms at the craftdwarf's workshop. Inspired by/stolen from Rubble's Wooden Mechanisms mod.
 

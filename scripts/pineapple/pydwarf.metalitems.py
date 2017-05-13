@@ -22,6 +22,7 @@ item_tokens_no_anvil.remove('ITEMS_ANVIL')
 
 @pydwarf.urist(
     name = 'pineapple.metalitems',
+    title = 'Forge More Metal Items',
     version = '1.0.2',
     author = 'Sophie Kirschner',
     description = 'Allows the forging of every type of metal item from the specified metals.',

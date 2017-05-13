@@ -9,14 +9,16 @@ default_templates = {
 
 @pydwarf.urist(
     name = 'pineapple.butcherinorganic',
+    title = 'Butcher Inorganic Corpses',
     version = '1.0.0',
     author = 'Sophie Kirschner',
-    description = '''Allows butchering of some inorganics, get things like wood or stone from some corpses.
-        Inspired by/stolen from Igfig's Modest Mod.''',
+    description = '''Allows butchering of some inorganics, get things like wood
+        or stone from some corpses. Inspired by/stolen from Igfig's Modest Mod.''',
     arguments = {
-        'templates': '''Associates material template names as keys with items as values. Each named template
-            will be given a BUTCHER_SPECIAL:ITEM:NONE token, where ITEM is the value given. Defaults to
-            adding logs, bars, and boulders to wood, metal, and stone templates respectively.'''
+        'templates': '''Associates material template names as keys with items as
+            values. Each named template will be given a BUTCHER_SPECIAL:ITEM:NONE
+            token, where ITEM is the value given. Defaults to adding logs, bars,
+            and boulders to wood, metal, and stone templates respectively.'''
     },
     compatibility = (pydwarf.df_0_3x, pydwarf.df_0_40)
 )

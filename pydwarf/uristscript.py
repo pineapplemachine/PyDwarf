@@ -86,10 +86,11 @@ class uristscript(object):
         template = uristdoc.template.format.get(format if format else 'txt')
         if template is None: raise KeyError('Failed to create documentation string because the format %s was unrecognized.' % format)
         
-        handled_metadata_keys = ('name', 'namespace', 'author', 'version', 'description', 'arguments', 'dependency', 'compatibility')
+        handled_metadata_keys = ('name', 'namespace', 'author', 'version', 'description', 'arguments', 'dependency', 'compatibility', 'title')
         
         return template.full(
             name = self.getname(),
+            title = self.meta('title'),
             version = self.meta('version'),
             author = self.meta('author'),
             description = self.meta('description'),

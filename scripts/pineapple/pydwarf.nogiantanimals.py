@@ -2,6 +2,7 @@ import pydwarf
 
 @pydwarf.urist(
     name = 'pineapple.nogiantanimals',
+    title = 'Remove Giant Creatures',
     version = '1.0.0',
     author = 'Sophie Kirschner',
     description = '''

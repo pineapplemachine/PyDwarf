@@ -2,6 +2,7 @@ import pydwarf
 
 @pydwarf.urist(
     name = 'pineapple.flybears',
+    title = 'Flybears',
     version = '1.0.0',
     author = 'Sophie Kirschner',
     description = 'Example script which causes all female bears to fly.',

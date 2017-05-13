@@ -29,6 +29,7 @@ class diffrecord:
         
 @pydwarf.urist(
     name = 'pineapple.diff',
+    title = 'Diff-based Mod Merging',
     version = '1.0.2',
     author = 'Sophie Kirschner',
     description = '''Merges and applies changes made to some modded raws via diff checking.

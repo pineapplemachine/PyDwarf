@@ -103,6 +103,7 @@ default_grasses = {
 
 @pydwarf.urist(
     name = 'pineapple.cavegrass',
+    title = 'Modify Cave Grass',
     version = '1.0.3',
     author = 'Sophie Kirschner',
     description = '''Changes the grasses in each cavern level to make the different

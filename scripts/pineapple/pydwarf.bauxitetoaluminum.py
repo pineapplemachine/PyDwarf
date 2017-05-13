@@ -10,6 +10,7 @@ default_file = 'raw/objects/reaction_smelter_bauxtoalum_pineapple.txt'
 
 @pydwarf.urist(
     name = 'pineapple.bauxitetoaluminum',
+    title = 'Smelt Bauxite to Aluminum',
     version = '1.0.2',
     author = 'Sophie Kirschner',
     description = '''Adds a reaction to the smelter to allow the creation of aluminum bars

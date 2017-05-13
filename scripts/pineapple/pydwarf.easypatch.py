@@ -7,6 +7,7 @@ import raws
 
 @pydwarf.urist(
     name = 'pineapple.easypatch',
+    title = 'Easy Patch',
     version = '1.0.0',
     author = 'Sophie Kirschner',
     description = '''Given a path to a file, a directory, a content string, a tokenlist, a raws

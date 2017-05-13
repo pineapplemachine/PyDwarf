@@ -12,11 +12,12 @@ default_file = 'raw/objects/reaction_smelter_castanvil_pineapple.txt'
 
 @pydwarf.urist(
     name = 'pineapple.castanvil',
+    title = 'Cast Anvil at Smelter',
     version = '1.0.1',
     author = 'Sophie Kirschner',
     description = '''Adds a reaction to the smelter which makes it possible to
-    create an iron anvil without already having a forge.
-    Inspired by/stolen from Rubble's Cast Anvil mod.''',
+        create an iron anvil without already having a forge.
+        Inspired by/stolen from Rubble's Cast Anvil mod.''',
     arguments = {
         'anvil_cost': 'The cost in iron bars to create an anvil in this way. Defaults to 5.',
         'entities': 'Adds the reaction to these entities. Defaults to only MOUNTAIN.',

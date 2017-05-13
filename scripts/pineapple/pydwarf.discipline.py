@@ -27,6 +27,7 @@ default_badger_bonus = 0.5
 
 @pydwarf.urist(
     name = 'pineapple.discipline',
+    title = 'Natural Discipline Skill Bonuses',
     version = '1.0.0',
     author = 'Sophie Kirschner',
     description = '''Applies natural discipline skill bonuses to creatures that should probably

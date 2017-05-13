@@ -2,6 +2,7 @@ import pydwarf
 
 @pydwarf.urist(
     name = 'pineapple.adoptsowner',
+    title = 'Remove ADOPTS_OWNER Tokens',
     version = '1.0.0',
     author = 'Sophie Kirschner',
     description = '''ADOPTS_OWNER tokens are added to or removed from creatures.''',

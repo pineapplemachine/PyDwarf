@@ -2,6 +2,7 @@ import pydwarf
 
 @pydwarf.urist(
     name = 'pineapple.nograzers',
+    title = 'Remove Grazing Tokens',
     version = '1.0.1',
     author = 'Sophie Kirschner',
     description = 'Removes all [GRAZER] and [STANDARD_GRAZER] tokens.',
