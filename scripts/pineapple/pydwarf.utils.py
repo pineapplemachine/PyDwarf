@@ -5,25 +5,30 @@ import raws
 
 @pydwarf.urist(
     name = 'pineapple.utils.addtoentity',
-    version = '1.0.2',
+    version = '1.0.3',
     author = 'Sophie Kirschner',
     description = '''A simple utility script which adds tokens to entities.''',
     arguments = {
-        'entities': 'Adds tokens to these entities.',
+        'entities': 'Adds tokens to these entities. If this is the string "*" then tokens are added to all entities.',
         'tokens': 'A string or collection of tokens to add to each entity.',
     },
     compatibility = '.*'
 )
 def addtoentity(df, entities, tokens):
-    if isinstance(entities, basestring): entities = (entities,)
-    pydwarf.log.debug('Adding tokens to entities %s.' % ', '.join(str(ent) for ent in entities))
-    entitytokens = df.allobj(type='ENTITY', id_in=entities)
+    if entities == '*':
+        pydwarf.log.debug('Adding tokens to all entities.')
+        entitytokens = df.allobj(type='ENTITY')
+    else:
+        if isinstance(entities, basestring):
+            entities = (entities,)
+        pydwarf.log.debug('Adding tokens to entities %s.' % ', '.join(str(ent) for ent in entities))
+        entitytokens = df.allobj(type='ENTITY', id_in=entities)
     
     for entitytoken in entitytokens:
         entitytoken.addprop(tokens)
         if isinstance(tokens, raws.queryable): tokens = raws.helpers.copy(tokens) # TODO: What about other iterables containing token objects, e.g. lists and tuples?
         
-    if len(entitytokens) != len(entities):
+    if entities != '*' and len(entitytokens) != len(entities):
         return pydwarf.failure('Failed to add tokens to all given entities because only %d of %d exist.' % (len(entitytokens), len(entities)))
     else:
         return pydwarf.success('Added tokens to %d entities.' % len(entitytokens))
@@ -250,22 +255,23 @@ def addobjects(df, add_to_file, objects, **kwargs):
 
 @pydwarf.urist(
     name = 'pineapple.utils.permitobject',
-    version = '1.0.0',
+    version = '1.0.1',
     author = 'Sophie Kirschner',
     description = '''Utility script for permitting an object with entities.''',
     arguments = {
         'type': '''Specifies the object type.''',
         'id': '''Specifies the object id.''',
-        'permit_entities': '''For relevant object types such as reactions, buildings, and items,
-            if permit_entities is specified then tokens are added to those entities to permit
-            the added object.''',
+        'permit_entities': '''For relevant object types such as reactions,
+            buildings, and items, if permit_entities is specified then tokens
+            are added to those entities to permit the added object.
+            If this is the string "*", then all entities will be permitted.''',
         'item_rarity': '''Some items, when adding tokens to entities to permit them, accept an
             optional second argument specifying rarity. It should be one of 'RARE', 'UNCOMMON',
             'COMMON', or 'FORCED'. This argument can be used to set that rarity.'''
     },
     compatibility = '.*'
 )
-def permitobject(df, type=None, id=None, permit_entities=None, item_rarity=None):
+def permitobject(df, type=None, id=None, permit_entities=None, all_entities=False, item_rarity=None):
     # Decide what tokens need to be added to the entities based on the object type
     if type == 'REACTION':
         tokens = raws.token(value='PERMITTED_REACTION', args=[id])
@@ -278,7 +284,9 @@ def permitobject(df, type=None, id=None, permit_entities=None, item_rarity=None)
     else:
         tokens = None
     
-    pydwarf.log.debug('Permitting object [%s:%s] for %d entities.' % (type, id, len(permit_entities)))
+    pydwarf.log.debug('Permitting object [%s:%s] for %s entities.' % (
+        type, id, 'all' if all_entities == '*' else len(permit_entities)
+    ))
     
     # Actually add those tokens
     if tokens is None:
@@ -288,7 +296,7 @@ def permitobject(df, type=None, id=None, permit_entities=None, item_rarity=None)
     else:
         response = addtoentity(
             df,
-            entities = permit_entities, 
+            entities = permit_entities,
             tokens = tokens
         )
         if not response:
