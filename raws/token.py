@@ -370,6 +370,14 @@ class token(queryableaddprop.queryableaddprop):
             return self.addone(token, reverse=reverse, knit=knit)
         elif tokens is not None:
             return self.addall(tokens, reverse=reverse, knit=knit)
+    
+    def addbefore(self, *args, **kwargs):
+        '''Add a token or tokens immediately before this one.'''
+        return self.add(*args, reverse=True, **kwargs)
+    
+    def addafter(self, *args, **kwargs):
+        '''Add a token or tokens immediately after this one.'''
+        return self.add(*args, reverse=False, **kwargs)
         
     def addone(self, token, reverse=False, knit=True):
         '''Internal: Utility method called by add when adding a single token.'''
