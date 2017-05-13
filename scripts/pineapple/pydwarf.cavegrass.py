@@ -18,6 +18,7 @@ default_grasses = {
         'add_tokens': '[NAME:pale fern][NAME_PLURAL:pale ferns][ADJ:pale fern]',
         # And these are the same as above
         'colors': raws.color.lgreen() + raws.color.lgray() + raws.color.brown() + raws.color.dgray(),
+        'tiles': ["'.'", "'`'", "'''"],
         'depth': (1, 1)
     },
     'THORN GRASS PINEAPPLE': {
@@ -25,6 +26,7 @@ default_grasses = {
         'add_tokens': '[ALL_NAMES:thorn grass]',
         'remove_tokens': '[WET]', # Removes these tokens after applying the template
         'colors': raws.color.lgreen() + raws.color.green() + raws.color.lgray() + raws.color.dgray(),
+        'tiles': ["','", "'`'", "'''"],
         'depth': (1, 1)
     },
     'ANGEL WEED PINEAPPLE': {
@@ -63,6 +65,7 @@ default_grasses = {
         'template': 'CAVE MOSS',
         'add_tokens': '[ALL_NAMES:royal mold]',
         'colors': raws.color.lmagenta() + raws.color.magenta() + raws.color.dgray() + raws.color.dgray(),
+        'tiles': ["'.'", "'.'", "','", "'`'", "'''"],
         'depth': (2, 3)
     },
     'IRONWEED PINEAPPLE': {
@@ -95,6 +98,7 @@ default_grasses = {
         'template': 'CAVE MOSS',
         'add_tokens': '[ALL_NAMES:ghost moss]',
         'colors': raws.color.lred() + raws.color.magenta() + raws.color.lgray() + raws.color.dgray(),
+        'tiles': ["'.'", "'`'"],
         'depth': (3, 3)
     }
 }
@@ -104,7 +108,7 @@ default_grasses = {
 @pydwarf.urist(
     name = 'pineapple.cavegrass',
     title = 'Modify Cave Grass',
-    version = '1.0.3',
+    version = '1.0.4',
     author = 'Sophie Kirschner',
     description = '''Changes the grasses in each cavern level to make the different
         levels more visually distinct, as well as adding a much greater variety.
@@ -122,7 +126,7 @@ def cavegrass(df, grasses=default_grasses, add_file='plant_grasses_cavegrass_pin
     grassfile = None
     if add_file:
         try:
-            grassfile = df.add(add_file)
+            grassfile = df.add('raw/objects/%s' % add_file)
             grassfile.add('OBJECT:PLANT')
         except:
             pydwarf.log.exception('Failed to add file %s.' % add_file)
@@ -176,6 +180,12 @@ def cavegrass(df, grasses=default_grasses, add_file='plant_grasses_cavegrass_pin
                 grassdepth.args = list(grassdict['depth'])
             else:
                 grasstoken.add(raws.token(value='UNDERGROUND_DEPTH', args=list(grassdict['depth'])))
+        if 'tiles' in grassdict:
+            grasstiles = grasstoken.getprop('GRASS_TILES')
+            if grasstiles:
+                grasstiles.args = list(grassdict['tiles'])
+            else:
+                grasstiles.add(raws.token(value='GRASS_TILES', args=list(grassdict['tiles'])))
                 
     # All done!
     if failures == 0:
