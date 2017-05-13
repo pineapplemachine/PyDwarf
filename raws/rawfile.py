@@ -23,19 +23,21 @@ class rawfile(queryableobj.queryableobj, queryableadd.queryableadd, contentfile.
         self.roottoken = None
         self.tailtoken = None
         
+        if content is not None or tokens is not None:
+            readpath = False
+        
         if file:
             self.read(file)
         elif path and readpath:
             self.read(path)
-            
-        if name is not None: self.name = name
         
         if content is not None:
             self.setcontent(content)
         elif tokens is not None:
             self.settokens(tokens, setfile=True)
         
-        if name: self.name = name
+        if name:
+            self.name = name
         
         if (not self.path) and (not self.ext): self.ext = '.txt'
         self.kind = 'raw'
