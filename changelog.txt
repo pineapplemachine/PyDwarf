@@ -1,3 +1,18 @@
+v1.1.2: Full Moon
+
+Fixed issue with pineapple.cavegrass script where an essential raws file was placed in the wrong location.
+Added "addbefore" and "addafter" methods to tokens, more grokkable alternatives to writing "add(reverse=True/False)".
+Added option to pineapple.utils.addtoentity to permit an object for all entities if the input is "*".
+Added script pineapple.playanimalmen.
+Added scripts underneath azerty.agriculture, a PyDwarf version of Extended Agriculture.
+
+
+v1.1.1: Goblins
+
+Fixed issue that made PyDwarf scripts with compatibility fields unusable with more recent versions of Dwarf Fortress.
+Fixed yaml dependency issue that could make using PyDwarf in the Python CLI awkward for modders.
+
+
 v1.1.0: Chalcedony
 
 Fixed issue where raws files without headers weren't recognized as such, especially relevant to files like data/init/init.txt.
@@ -23,7 +38,6 @@ Improved documentation and error handling all around.
 Improved internal representation of some token attributes, this will make them easier to mess around with in scripts: token.value = x now involves the same input verification as token.setvalue(x).
 Improved the way that token collections are represented as strings.
 Improved class inheritance in raws and pydwarf packages, any classes that previously weren't new-style are now.
-
 
 
 v1.0.2: Magma Forge
@@ -54,6 +68,7 @@ Improved the raws.tokenfilter constructor, which is now decent enough to handle 
 Improved stal.armoury, putnam.materialsplus, putnam.microreduce, shukaro.higherlearning, and shukaro.creationforge by rewriting each of them entirely.
 Tweaked almost every script in some way, really, mostly in the interest of utilizing newer and more awesome functionality.
 
+
 v1.0.1: Strange Mood
 
 Fixed pineapple.boneflux reaction by being less bad at string formatting
@@ -79,6 +94,7 @@ Improved argument handling for raws.boolfilter static methods all, any, one, and
 Tweaked grass colors in pineapple.cavegrass
 Tweaked names, craftable items, and material values in pineapple.greensteel
 
+
 v1.0.0: A New Hope
 
-First Release
+First Release!
