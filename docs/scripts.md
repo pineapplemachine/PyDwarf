@@ -362,6 +362,16 @@ Changes the grasses in each cavern level to make the different levels more visua
 
 * **grasses:** A dictionary specifying which grasses to change and modify. See the default_grasses dict for documentation.
 
+## pineapple.dagger
+
+Add Dagger Weapon. Created by Sophie Kirschner.
+
+Adds daggers, which are smaller and less lethal than short swords, and may be held as tools by civilians. They can be made from one unit of metal, stone, or ceramics.
+
+#### Arguments:
+
+* **entities:** The entities which should be allowed to produce daggers. Defaults to all entities.
+
 ## pineapple.deerappear
 
 Change Creature Apperance. Created by Sophie Kirschner.
