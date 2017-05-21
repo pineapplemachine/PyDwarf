@@ -1,0 +1,22 @@
+item_weapon_staff_pineapple
+
+[OBJECT:ITEM]
+
+[ITEM_TOOL:ITEM_WEAPON_STAFF_PINEAPPLE]
+    [NAME:staff:staves]
+    [SIZE:300]
+    [VALUE:80]
+    [TILE:'/']
+    [TOOL_USE:MEAT_CARVING] Hackish but means civilians will carry staves too
+    [SKILL:PIKE]
+    [TWO_HANDED:42000]
+    [MINIMUM_SIZE:5000]
+    [MATERIAL_SIZE:3]
+    [METAL_MAT]
+    [WOOD_MAT]
+    [ATTACK:BLUNT:6000:4500:bash:bashes:NO_SUB:1200]
+        [ATTACK_PREPARE_AND_RECOVER:3:3]
+    [ATTACK:BLUNT:4000:4000:strike:strikes:shaft:1000]
+        [ATTACK_PREPARE_AND_RECOVER:2:2]
+    [ATTACK:BLUNT:50:1200:jab:jabs:NO_SUB:1000]
+        [ATTACK_PREPARE_AND_RECOVER:3:2]

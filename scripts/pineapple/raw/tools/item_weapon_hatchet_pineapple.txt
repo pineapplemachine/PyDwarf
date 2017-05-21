@@ -1,0 +1,22 @@
+item_weapon_hatchet_pineapple
+
+[OBJECT:ITEM]
+
+[ITEM_TOOL:ITEM_WEAPON_HATCHET_PINEAPPLE]
+    [NAME:hatchet:hatchets]
+    [SIZE:90]
+    [VALUE:75]
+    [TILE:'/']
+    [TOOL_USE:MEAT_CLEAVING]
+    [SKILL:AXE]
+    [TWO_HANDED:31000]
+    [MINIMUM_SIZE:16000]
+    [MATERIAL_SIZE:2]
+    [CAN_STONE]
+    [METAL_MAT]
+    [ATTACK:EDGE:15000:3000:hack:hacks:NO_SUB:1000]
+        [ATTACK_PREPARE_AND_RECOVER:3:3]
+    [ATTACK:BLUNT:15000:3000:slap:slaps:flat:1000]
+        [ATTACK_PREPARE_AND_RECOVER:3:3]
+    [ATTACK:BLUNT:60:600:strike:strikes:shaft:900]
+        [ATTACK_PREPARE_AND_RECOVER:3:3]

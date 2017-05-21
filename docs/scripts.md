@@ -362,16 +362,6 @@ Changes the grasses in each cavern level to make the different levels more visua
 
 * **grasses:** A dictionary specifying which grasses to change and modify. See the default_grasses dict for documentation.
 
-## pineapple.dagger
-
-Add Dagger Weapon. Created by Sophie Kirschner.
-
-Adds daggers, which are smaller and less lethal than short swords, and may be held as tools by civilians. They can be made from one unit of metal, stone, or ceramics.
-
-#### Arguments:
-
-* **entities:** The entities which should be allowed to produce daggers. Defaults to all entities.
-
 ## pineapple.deerappear
 
 Change Creature Apperance. Created by Sophie Kirschner.
@@ -547,6 +537,46 @@ Modifies skill rust for given creatures. Disables it entirely by default.
 Subterranean Plants Grow Year-Round. Created by Sophie Kirschner.
 
 Makes all subterranean plants grow year-round.
+
+## pineapple.tools.dagger
+
+Add Dagger. Created by Sophie Kirschner.
+
+Adds daggers, which are smaller and less lethal than short swords, and may be held as tools by civilians. They can be made from one unit of metal, stone, or ceramics.
+
+#### Arguments:
+
+* **entities:** The entities which should be allowed to produce daggers. Defaults to all entities.
+
+## pineapple.tools.hatchet
+
+Add Hatchet. Created by Sophie Kirschner.
+
+Adds hatchets, small axes which make for weak weapons but adequate tree-chopping tools. They can be made from two units of metal or stone.
+
+#### Arguments:
+
+* **entities:** The entities which should be allowed to produce hatchets. Defaults to MOUNTAIN and PLAINS.
+
+## pineapple.tools.mallet
+
+Add Mallet. Created by Sophie Kirschner.
+
+Adds mallets, small hammers which may be carried as tools by civilians and are somewhat suitable as weapons. They can be made from two units of metal, stone, or wood.
+
+#### Arguments:
+
+* **entities:** The entities which should be allowed to produce mallets. Defaults to all entities.
+
+## pineapple.tools.staff
+
+Add Staff. Created by Sophie Kirschner.
+
+Adds staves, which are tools that may be carried by civilains. They are also serviceable as weapons and can be made from three units of metal or wood.
+
+#### Arguments:
+
+* **entities:** The entities which should be allowed to produce staves. Defaults to all entities.
 
 ## pineapple.useablemats
 
