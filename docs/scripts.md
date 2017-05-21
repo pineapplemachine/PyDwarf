@@ -1,5 +1,165 @@
 # Scripts
 
+## azerty.agriculture.brazilwood
+
+Brazilwood. Created by Azerty.
+
+Adds brazilwood, known also as the pernambuco tree, which yields a red dye known as brazilin.
+
+## azerty.agriculture.castorbean
+
+Castorbean. Created by Azerty.
+
+Adds the castorbean or castor-oil-plant, a flowering plant from which castor oil may be extracted.
+
+## azerty.agriculture.catechudye
+
+Catechu Dye from Acacias. Created by Azerty.
+
+Modifies the acacia to yield brown catechu dye.
+
+## azerty.agriculture.copraoil
+
+Copra Oil from Coconuts. Created by Azerty.
+
+Modifies coconut palms' coconuts to yield copra oil.
+
+## azerty.agriculture.hennatree
+
+Henna. Created by Azerty.
+
+Adds henna, a tree which yields a red-brown dye used commonly in body art.
+
+## azerty.agriculture.indigotree
+
+Indigo Tree. Created by Azerty.
+
+Adds the indigo tree, or true indigo, a plant whose leaves may be processed to obtain indigo dye.
+
+## azerty.agriculture.juniper
+
+Common Juniper. Created by Azerty.
+
+Adds the common juniper, a coniferous tree from which brown dye may be extracted and from whose berries gin may be brewed.
+
+## azerty.agriculture.macadamiaoil
+
+Macadamia Oil. Created by Azerty.
+
+Modifies macadamias' nuts to yield macadamia oil.
+
+## azerty.agriculture.madder
+
+Madder. Created by Azerty.
+
+Adds common madder or dyer's madder, a plant of the Rubia genus, whose roots are a source of red dye.
+
+## azerty.agriculture.oilpalm
+
+Oil Palm. Created by Azerty.
+
+Adds oil palm or elaeis, a tree from which palm oil may be extracted.
+
+## azerty.agriculture.okra
+
+Okra. Created by Azerty.
+
+Adds okra, known also as ladies' fingers or gumbo, a plant from which okra oil may be extracted.
+
+## azerty.agriculture.opiumpoppy
+
+Opium Poppy. Created by Azerty.
+
+Adds the opium poppy, which yields poppy seeds that can be processed to produce poppyseed oil.
+
+## azerty.agriculture.peanutoil
+
+Peanut Oil. Created by Azerty.
+
+Modifies peanuts such that peanut oil may be extracted from them.
+
+## azerty.agriculture.plantpowder
+
+Mill Powder from Wood and Plants. Created by Azerty.
+
+Adds reactions to mill powder from logs and from plants. These reactions may be used, for example, to extract dye or oil from plants added or modified by other azerty.agriculture scripts.
+
+#### Arguments:
+
+* **entities:** The entities which should be permitted this reaction. Defaults to all entities.
+
+## azerty.agriculture.rapeseed
+
+Rapeseed. Created by Azerty.
+
+Adds rapeseed, a yellow flowering plant, from which rapeseed oil may be extracted.
+
+## azerty.agriculture.redsafflower
+
+Red Safflower. Created by Azerty.
+
+Adds yellow safflower, a plant which yields both safflower oil and red safflower dye.
+
+## azerty.agriculture.sesame
+
+Sesame. Created by Azerty.
+
+Adds sesame, a plant whose seeds from which sesame oil may be produced.
+
+## azerty.agriculture.soybeanoil
+
+Peanut Oil. Created by Azerty.
+
+Modifies soybeans to yield soybean oil.
+
+## azerty.agriculture.sugarbeets
+
+Sugar and Syrup from Beets. Created by Azerty.
+
+Modifies beets to yield sugar.
+
+## azerty.agriculture.sugarcane
+
+Sugarcane. Created by Azerty.
+
+Adds sugarcane, a tall grass from which sugar may be extracted and rum brewed.
+
+## azerty.agriculture.sunflower
+
+Sunflower. Created by Azerty.
+
+Adds sunflowers, a plant that may be used to produce sunflower oil.
+
+## azerty.agriculture.walnutoil
+
+Walnut Oil. Created by Azerty.
+
+Modifies walnuts to yield walnut oil.
+
+## azerty.agriculture.weld
+
+Dyer's Rocket. Created by Azerty.
+
+Adds weld, known also as dyer's rocket, a plant from which yellow dye may be extracted.
+
+## azerty.agriculture.whitemustard
+
+White Mustard. Created by Azerty.
+
+Adds white mustard, a plant producing mustard seeds that oil may be extracted from.
+
+## azerty.agriculture.woad
+
+Dyer's Woad. Created by Azerty.
+
+Adds woad or glastum, a flowering plant from whose leaves blue dye may be produced.
+
+## azerty.agriculture.yellowsafflower
+
+Yellow Safflower. Created by Azerty.
+
+Adds yellow safflower, a plant which yields both safflower oil and yellow safflower dye.
+
 ## dragondeplatino.gemset.art
 
 Created by DragonDePlatino and Sophie Kirschner.
@@ -456,7 +616,7 @@ A simple utility script which adds tokens to entities.
 
 * **tokens:** A string or collection of tokens to add to each entity.
 
-* **entities:** Adds tokens to these entities.
+* **entities:** Adds tokens to these entities. If this is the string "\*" then tokens are added to all entities.
 
 ## pineapple.utils.objecttokens
 
@@ -482,7 +642,7 @@ Utility script for permitting an object with entities.
 
 #### Arguments:
 
-* **permit_entities:** For relevant object types such as reactions, buildings, and items, if permit_entities is specified then tokens are added to those entities to permit the added object.
+* **permit_entities:** For relevant object types such as reactions, buildings, and items, if permit_entities is specified then tokens are added to those entities to permit the added object. If this is the string "\*", then all entities will be permitted.
 
 * **type:** Specifies the object type.
 
