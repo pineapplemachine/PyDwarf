@@ -3,7 +3,7 @@ import pydwarf
 @pydwarf.urist(
     name = 'pineapple.playanimalmen',
     title = 'Animal Men Playable in Adventure Mode',
-    version = '1.0',
+    version = '1.0.0',
     author = 'Sophie Kirschner',
     description = '''Makes all animal men playable in adventure mode by adding a
         [OUTSIDER_CONTROLLABLE] token to each.''',
