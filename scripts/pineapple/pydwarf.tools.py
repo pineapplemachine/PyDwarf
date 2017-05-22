@@ -62,7 +62,7 @@ def hatchet(df, entities=['MOUNTAIN', 'PLAINS']):
             Defaults to all entities.'''
     }
 )
-def mallet(df, entities=['*']):
+def mallet(df, entities='*'):
     return pydwarf.scripts.pineapple.easypatch(
         df,
         files = toolsdir + '/item_weapon_mallet_pineapple.txt',
@@ -83,7 +83,7 @@ def mallet(df, entities=['*']):
             Defaults to all entities.'''
     }
 )
-def staff(df, entities=['*']):
+def staff(df, entities='*'):
     return pydwarf.scripts.pineapple.easypatch(
         df,
         files = toolsdir + '/item_weapon_staff_pineapple.txt',
