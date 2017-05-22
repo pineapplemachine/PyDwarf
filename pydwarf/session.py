@@ -60,7 +60,11 @@ class session(object):
             Backup the session's Dwarf Fortress directory, run specified
             scripts, and then write the output.
         '''
-        if self.conf is None: raise ValueError('Failed to run session because it doesn\'t have a configuration object.')
+        if self.conf is None:
+            raise ValueError(
+                'Failed to run session because it doesn\'t have a ' +
+                'configuration object.'
+            )
         
         # Backup
         if self.conf.backup:
@@ -124,20 +128,23 @@ class session(object):
         else:
             return True
     
-    def funcs(self, info):
+    def funcs(self, uristinstance, scriptname, scriptfunc, scriptmatch, checkversion):
         '''
             Get function information associated with an entry in a configuration
             object's scripts attribute.
         '''
-        uristinstance, scriptname, scriptfunc, scriptargs, scriptmatch, checkversion = urist.info(info, self.dfversion)
         if uristinstance is None and scriptfunc is None and scriptname is not None:
-            candidates, original, culled = urist.get(scriptname, version=checkversion, match=scriptmatch, session=self)
+            candidates, original, culled = urist.get(
+                scriptname, version=checkversion, match=scriptmatch, session=self
+            )
             if len(candidates):
                 return candidates
             elif len(original):
                 log.info('All of candidates %s were culled.' % [c.getname() for c in original])
                 for reason, culled in culled.iteritems():
-                    if len(culled): log.info('Candidates %s were culled for reason: %s' % ([c.getname() for c in culled], reason))
+                    if len(culled): log.info('Candidates %s were culled for reason: %s' % (
+                        [c.getname() for c in culled], reason
+                    ))
                 return None
         elif uristinstance is not None:
             return (uristinstance,)
@@ -148,9 +155,11 @@ class session(object):
     
     def handle(self, info):
         '''Handle a single script.'''
-        funcs = self.funcs(info)
+        uristinstance, name, func, args, match, version = urist.info(info, self.dfversion)
+        funcs = self.funcs(uristinstance, name, func, match, version)
         if funcs:
-            for func in funcs: self.eval(func)
+            for fn in funcs:
+                self.eval(fn, args)
         else:
             log.error('Found no scripts matching %s.' % info)
             
