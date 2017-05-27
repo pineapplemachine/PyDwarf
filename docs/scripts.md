@@ -514,6 +514,16 @@ Animal Men Playable in Adventure Mode. Created by Sophie Kirschner.
 
 Makes all animal men playable in adventure mode by adding a [OUTSIDER_CONTROLLABLE] token to each.
 
+## pineapple.playcivs.controllable
+
+Civilizations Playable in Fortress Mode. Created by Sophie Kirschner.
+
+Makes civilizations playable in fortress mode by adding [SITE_CONTROLLABLE] tokens to them. Defaults to making all civilizations controllable in this way, but the script accepts an entities argument that can be used to set which entities should receive the token. Any entities which possess the token at the time of running the script but aren't in the entities list will have the token removed! Note that if this isn't used in conjunction with other mods, it may not be practical to play as non-dwarf civilizations due to missing items, professions, reactions, etc.
+
+#### Arguments:
+
+* **entities:** The entities to which [SITE_CONTROLLABLE] tokens should belong. Defaults to "\*", meaning all entities should be controllable.
+
 ## pineapple.sanitize.nonexistentids
 
 Created by Sophie Kirschner.

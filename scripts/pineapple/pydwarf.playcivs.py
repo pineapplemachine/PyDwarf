@@ -1,7 +1,9 @@
 import pydwarf
 
+
+
 @pydwarf.urist(
-    name = 'pineapple.playcivs',
+    name = 'pineapple.playcivs.controllable',
     title = 'Civilizations Playable in Fortress Mode',
     version = '1.0.0',
     author = 'Sophie Kirschner',
@@ -19,7 +21,7 @@ import pydwarf
             belong. Defaults to "*", meaning all entities should be controllable.'''
     }
 )
-def playanimalmen(df, entities='*'):
+def controllable(df, entities='*'):
     controllable = set()
     
     if entities == '*': # Enable all entities
