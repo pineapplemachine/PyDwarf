@@ -1,3 +1,11 @@
+v1.1.3: Flux Stone
+
+Fixed issue where arguments passed to scripts would be ignored.
+Added script pineapple.playcivs.controllable which manages SITE_CONTROLLABLE tokens on entities.
+Added scripts underneath pineapple.tools which add minor tools and weapons such as daggers, mallets, and hatchets.
+Added json format option for scripts documentation output.
+
+
 v1.1.2: Full Moon
 
 Fixed issue with pineapple.cavegrass script where an essential raws file was placed in the wrong location.
