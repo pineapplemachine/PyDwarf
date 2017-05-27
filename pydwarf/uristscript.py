@@ -81,7 +81,8 @@ class uristscript(object):
             description = self.meta('description'),
             compatibility = self.meta('compatibility'),
             arguments = self.meta('arguments'),
-            metadata = {key: value for key, value in self.metadata.iteritems() if key not in handled_metadata_keys}
+            metadata = {key: value for key, value in self.metadata.iteritems() if key not in handled_metadata_keys},
+            allmeta = self.metadata,
         )
 
 

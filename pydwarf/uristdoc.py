@@ -17,6 +17,7 @@ def __main__():
     template.format['txt'] = txttemplate()
     template.format['md'] = mdtemplate()
     template.format['html'] = htmltemplate()
+    template.format['json'] = jsontemplate()
     
     
 
@@ -187,6 +188,29 @@ class htmltemplate(template):
     def metadata(self, metadata):
         return '<h3>Metadata</h3>\n<ul>%s</ul>' % '\n'.join(('<li><strong>%s:</strong> %s</li>' % (key, self.norm(value)) for key, value in metadata.iteritems()))
 
+
+class jsontemplate(template):
+    def __init__(self):
+        pass
+        
+    def preprocesstext(self, text):
+        # Doesn't handle control characters, but why the fuck would you
+        # put control characters in the text
+        # TODO: Maybe at least check for and remove control characters
+        return text.replace('"', '\"')
+        
+    def concat(self, items):
+        return '[%s]' % ','.join(items)
+    
+    def full(self, delimiter=None, allmeta=None, **kwargs):
+        import json
+        jmeta = dict(allmeta)
+        if 'description' in jmeta:
+            jmeta['description'] = self.norm(jmeta['description'])
+        if 'arguments' in jmeta:
+            for key in jmeta['arguments']:
+                jmeta['arguments'][key] = self.norm(jmeta['arguments'][key])
+        return json.dumps(jmeta)
 
 
 __main__()
