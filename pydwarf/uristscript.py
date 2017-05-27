@@ -52,25 +52,7 @@ class uristscript(object):
     def matches(self, match):
         '''Determine whether the script's metadata matches the keys, values in a dict.'''
         return all([self.meta(i) == j for i, j in match.iteritems()]) if match else True
-        
-    def depsatisfied(self, session):
-        '''Given a session determine if a script's dependencies have been satisfied.'''
-        # TODO: move this to the session class
-        deps = self.meta('dependency')
-        if deps is not None:
-            # Allow single dependencies to be indicated without being inside an iterable
-            if isinstance(deps, basestring) or isinstance(deps, dict): deps = (deps,)
-            # Check each dependency
-            satisfied = 0
-            for dep in deps:
-                log.debug('Checking for dependency %s...' % dep)
-                satisfied += session.successful(dep)
-            # All done
-            log.debug('Satisifed %d of %d dependencies.' % (satisfied, len(deps)))
-            return satisfied == len(deps)
-        else:
-            return True
-        
+    
     @staticmethod
     def splitname(name):
         '''Split a full name string into namespace and name.'''
@@ -86,7 +68,10 @@ class uristscript(object):
         template = uristdoc.template.format.get(format if format else 'txt')
         if template is None: raise KeyError('Failed to create documentation string because the format %s was unrecognized.' % format)
         
-        handled_metadata_keys = ('name', 'namespace', 'author', 'version', 'description', 'arguments', 'dependency', 'compatibility', 'title')
+        handled_metadata_keys = (
+            'name', 'namespace', 'author', 'version',
+            'description', 'arguments', 'compatibility', 'title'
+        )
         
         return template.full(
             name = self.getname(),
@@ -95,7 +80,6 @@ class uristscript(object):
             author = self.meta('author'),
             description = self.meta('description'),
             compatibility = self.meta('compatibility'),
-            dependencies = self.meta('dependency'),
             arguments = self.meta('arguments'),
             metadata = {key: value for key, value in self.metadata.iteritems() if key not in handled_metadata_keys}
         )

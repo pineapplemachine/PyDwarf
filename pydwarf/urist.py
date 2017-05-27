@@ -115,17 +115,14 @@ class urist(object):
             original_candidates = list(candidates)
             culled_match = 0
             # culled_compatibility = 0
-            culled_dependency = 0
             
             candidates, culled_match = urist.cullcandidates_match(match, candidates)
             # candidates, culled_compatibility = urist.cullcandidates_compatibility(version, candidates)
-            candidates, culled_dependency = urist.cullcandidates_dependency(session, candidates)
             candidates = urist.cullcandidates_duplicates(candidates)
             
             return candidates, original_candidates, {
                 'Unmatched metadata': culled_match,
                 # 'Incompatible with Dwarf Fortress version %s' % version: culled_compatibility,
-                'Unfulfilled dependencies': culled_dependency
             }
             
         else:
@@ -149,16 +146,6 @@ class urist(object):
                 compatibility = candidate.meta('compatibility')
                 ((comp if versionutils.compatible(compatibility, version) else culled) if compatibility else nocomp).append(candidate)
             return comp + nocomp, culled
-        else:
-            return candidates, []
-    
-    @staticmethod
-    def cullcandidates_dependency(session, candidates):
-        '''Internal: Cull candidates retrieved for some script info based on unfulfilled dependencies.'''
-        if session:
-            newcand, culled = [], []
-            for cand in candidates: (newcand if cand.depsatisfied(session) else culled).append(cand)
-            return newcand, culled
         else:
             return candidates, []
     

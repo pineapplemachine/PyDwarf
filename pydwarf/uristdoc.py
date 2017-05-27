@@ -63,8 +63,6 @@ class template(object):
         
     def header(self, **kwargs):
         return None
-    def dependencies(self, **kwargs):
-        return None
     def arguments(self, **kwargs):
         return None
     def metadata(self, **kwargs):
@@ -75,18 +73,15 @@ class template(object):
     def wrap(self, text):
         return textwrap.fill(text) if self.wraptext else text
         
-    def full(self, delimiter=None, dependencies=None, arguments=None, metadata=None, **kwargs):
+    def full(self, delimiter=None, arguments=None, metadata=None, **kwargs):
         if delimiter is None: delimiter = self.delimiter
-        dependencies = (dependencies,) if dependencies and isinstance(dependencies, basestring) else dependencies
         
         kwargs = {key: self.preprocess(value) for key, value in kwargs.iteritems()}
-        dependencies = self.preprocess(dependencies)
         arguments = self.preprocess(arguments)
         metadata = self.preprocess(metadata)
         
         body = delimiter.join(item for item in (
             self.header(**kwargs),
-            self.dependencies(dependencies) if dependencies else None,
             self.arguments(arguments) if arguments else None,
             self.metadata(metadata) if metadata else None
         ) if item)
@@ -108,8 +103,6 @@ class txttemplate(template):
         header = 'Script %s:' % ' '.join(item for item in headeritems if item)
         return '%s\n\n%s' % (header, self.norm(description)) if description else header
     
-    def dependencies(self, dependencies):
-        return 'Dependencies:\n%s' % '\n'.join(dependencies)
     def arguments(self, arguments):
         return 'Arguments:\n%s' % '\n'.join(('  %s: %s' % (key, self.norm(value)) for key, value in arguments.iteritems()))
     def metadata(self, metadata):
@@ -137,8 +130,6 @@ class mdtemplate(template):
         )
         return '\n\n'.join(item for item in headeritems if item)
     
-    def dependencies(self, dependencies):
-        return '#### Dependencies:\n\n%s' % '  \n'.join('* %s' % dep for dep in dependencies)
     def arguments(self, arguments):
         return '#### Arguments:\n\n%s' % '\n\n'.join(('* **%s:** %s' % (key, self.norm(value)) for key, value in arguments.iteritems()))
     def metadata(self, metadata):
@@ -191,8 +182,6 @@ class htmltemplate(template):
         )
         return '\n'.join(item for item in headeritems if item)
     
-    def dependencies(self, dependencies):
-        return '<h3>Dependencies</h3>\n<ul>%s</ul>' % '\n'.join('<li>%s</li>' % dep for dep in dependencies)
     def arguments(self, arguments):
         return '<h3>Arguments</h3>\n<ul>%s</ul>' % '\n'.join(('<li><strong>%s:</strong> %s</li>' % (key, self.norm(value)) for key, value in arguments.iteritems()))
     def metadata(self, metadata):
