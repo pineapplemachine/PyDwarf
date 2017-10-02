@@ -38,12 +38,11 @@ class diffrecord:
         diff'ing approach should work much better than any line-based diff. Using this tool
         to apply mods made to other versions of Dwarf Fortress probably won't work so well.''',
     arguments = {
-        'paths': '''Should be an iterable containing paths to a directory containing
-            raws files in the same directory structure as a normal Dwarf Fortress
-            install. Files that do not yet exist in the raws will be added anew.
-            Files that do exist will be compared to the current raws and the
-            according additions/removals will be made.
-            At least one path must be given.'''
+        'paths': '''Must be be one or more file paths in a list, where each
+            path points to a directory with the same structure as a normal
+            Dwarf Fortress install; the raw files inside the directories will
+            be added to the modded install if they did not already exist and,
+            if they did exist, then this script will attempt to merge them.'''
     },
     compatibility = '.*'
 )
@@ -57,8 +56,6 @@ def diff(df, paths):
                 file for file in raws.dir(root=path).files.values()
                 if isinstance(file, raws.rawfile)
             ]
-            for file in rfiles:
-                pydwarf.log.info(file)
         else:
             return pydwarf.failure('Failed to load raws from path %s.' % path)
         newfiles.append(rfiles)
@@ -152,4 +149,4 @@ def diff(df, paths):
     if conflicts == 0:
         return pydwarf.success('Merged %d mods without conflicts.' % len(paths))
     else:
-        return pydwarf.failure('Merged %d mods with %d conflicts. Recommended you search in outputted raws for text like "<<<<<<diff potential conflict!" and resolve manually.' % (len(paths), conflicts))
+        return pydwarf.success('Merged %d mods with %d conflicts. Recommended you search in outputted raws for text like "<<<<<<diff potential conflict!" and resolve manually.' % (len(paths), conflicts))
