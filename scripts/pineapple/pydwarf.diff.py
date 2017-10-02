@@ -30,7 +30,7 @@ class diffrecord:
 @pydwarf.urist(
     name = 'pineapple.diff',
     title = 'Diff-based Mod Merging',
-    version = '1.0.2',
+    version = '1.1.0',
     author = 'Sophie Kirschner',
     description = '''Merges and applies changes made to some modded raws via diff checking.
         Should be reasonably smart about automatic conflict resolution but if it complains
@@ -38,10 +38,12 @@ class diffrecord:
         diff'ing approach should work much better than any line-based diff. Using this tool
         to apply mods made to other versions of Dwarf Fortress probably won't work so well.''',
     arguments = {
-        'paths': '''Should be an iterable containing paths to individual raws files or to
-            directories containing many. Files that do not yet exist in the raws will be
-            added anew. Files that do exist will be compared to the current raws and the
-            according additions/removals will be made. At least one path must be given.'''
+        'paths': '''Should be an iterable containing paths to a directory containing
+            raws files in the same directory structure as a normal Dwarf Fortress
+            install. Files that do not yet exist in the raws will be added anew.
+            Files that do exist will be compared to the current raws and the
+            according additions/removals will be made.
+            At least one path must be given.'''
     },
     compatibility = '.*'
 )
@@ -50,11 +52,13 @@ def diff(df, paths):
     # Get all the files in the mods
     newfiles = []
     for path in paths:
-        if os.path.isfile(path) and path.endswith('.txt'):
-            with open(path, 'rb') as rfilestream:
-                rfiles = (raws.rawfile(rfile=rfilestream, path=path),)
-        elif os.path.isdir(path):
-            rfiles = raws.dir(path=path).files.values()
+        if os.path.isdir(path):
+            rfiles = [
+                file for file in raws.dir(root=path).files.values()
+                if isinstance(file, raws.rawfile)
+            ]
+            for file in rfiles:
+                pydwarf.log.info(file)
         else:
             return pydwarf.failure('Failed to load raws from path %s.' % path)
         newfiles.append(rfiles)
@@ -65,30 +69,35 @@ def diff(df, paths):
     currentfiletokensdict = {}
     for newfilelist in newfiles:
         for newfile in newfilelist:
-            pydwarf.log.info('Handling diff for file %s...' % newfile.header)
+            pydwarf.log.info('Handling diff for file %s...' % newfile.path)
             
             # Get list of tokens for current file (And don't do it for the same file twice)
             currentfiletokens = None
-            if newfile.header in currentfiletokensdict:
-                currentfiletokens = currentfiletokensdict[newfile.header]
-            elif newfile.header in df.files:
-                currentfiletokens = list(df.getfile(newfile.header))
-                currentfiletokensdict[newfile.header] = currentfiletokens
+            if str(newfile) in currentfiletokensdict:
+                currentfiletokens = currentfiletokensdict[str(newfile)]
+            elif str(newfile) in df.files:
+                currentfiletokens = list(df[str(newfile)].tokens())
+                currentfiletokensdict[str(newfile)] = currentfiletokens
             
             # Do a diff
             if currentfiletokens:
                 newfiletokens = list(newfile.tokens())
-                diff = difflib.SequenceMatcher(None, currentfiletokens, newfiletokens)
-                if newfile.header not in operations: operations[newfile.header] = {'insert': [], 'delete': [], 'replace': [], 'equal': []}
+                diff = difflib.SequenceMatcher(
+                    None, currentfiletokens, newfiletokens
+                )
+                if str(newfile) not in operations:
+                    operations[str(newfile)] = {
+                        'insert': [], 'delete': [], 'replace': [], 'equal': []
+                    }
                 for item in diff.get_opcodes():
                     if item[0] != 'equals':
                         op = item[0]
-                        operations[newfile.header][op].append(diffrecord(currentfiletokens, newfiletokens, newfile.path, *item))
+                        operations[str(newfile)][op].append(diffrecord(currentfiletokens, newfiletokens, newfile.path, *item))
                                 
             # File doesn't exist yet, don't bother with a diff
             else:
                 pydwarf.log.debug('File didn\'t exist yet, adding...')
-                df.add(newfile)
+                df.add(newfile.copy())
                 
     for fileheader, fileops in operations.iteritems():
         # Do some handling for potentially conflicting replacements
