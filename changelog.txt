@@ -1,4 +1,13 @@
+v1.1.4: Werebeast
+2 October 2017
+
+Fixed issue with pineapple.diff script.
+Added a neat helpful tutorial for using pineapple.diff at docs/pineapple.diff.md.
+Added script ketsuban.milkbooze.
+
+
 v1.1.3: Flux Stone
+27 May 2017
 
 Fixed issue where arguments passed to scripts would be ignored.
 Added script pineapple.playcivs.controllable which manages SITE_CONTROLLABLE tokens on entities.
@@ -7,6 +16,7 @@ Added json format option for scripts documentation output.
 
 
 v1.1.2: Full Moon
+21 May 2017
 
 Fixed issue with pineapple.cavegrass script where an essential raws file was placed in the wrong location.
 Added "addbefore" and "addafter" methods to tokens, more grokkable alternatives to writing "add(reverse=True/False)".
@@ -16,12 +26,14 @@ Added scripts underneath azerty.agriculture, a PyDwarf version of Extended Agric
 
 
 v1.1.1: Goblins
+5 May 2017
 
 Fixed issue that made PyDwarf scripts with compatibility fields unusable with more recent versions of Dwarf Fortress.
 Fixed yaml dependency issue that could make using PyDwarf in the Python CLI awkward for modders.
 
 
 v1.1.0: Chalcedony
+22 September 2015
 
 Fixed issue where raws files without headers weren't recognized as such, especially relevant to files like data/init/init.txt.
 Fixed some raws classes having shitty __repr__ overrides.
@@ -49,6 +61,7 @@ Improved class inheritance in raws and pydwarf packages, any classes that previo
 
 
 v1.0.2: Magma Forge
+8 July 2015
 
 Fixed the vagueness of most exceptions in the raws and pydwarf packages, most of them should now be reasonably forthcoming about what went wrong and why.
 Fixed bug in raws.token.add which was arising from a dumb typo and really should have been caught long before.
@@ -78,6 +91,7 @@ Tweaked almost every script in some way, really, mostly in the interest of utili
 
 
 v1.0.1: Strange Mood
+22 June 2015
 
 Fixed pineapple.boneflux reaction by being less bad at string formatting
 Fixed pineapple.utils.addreaction not adding an OBJECT:REACTION token to created files
@@ -104,5 +118,6 @@ Tweaked names, craftable items, and material values in pineapple.greensteel
 
 
 v1.0.0: A New Hope
+7 June 2015
 
 First Release!
