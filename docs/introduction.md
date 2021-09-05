@@ -30,7 +30,7 @@ The steps given here are specifically for Windows, but the procedure on other op
 
 - Likewise, set `backup` to the name of your backup folder created earlier (for example `C:/df_40_24_backup`)
 
-## Run Some Scripts
+## List, Run, and Install Scripts
 
 - And the really fun part is the `scripts` parameter. Here names of scripts are given in the order that they should be run. It's also possible to pass arguments to scripts here, which can customize the way they behave. Check out the example config file for how to do that! One way to get a list of the available scripts is to run `python manager.py --list`, and one way to see documentation regarding a particular one of these scripts a description of its purpose and usage is to run `python manager.py --meta script.name`, where `script.name` is the name of the script you want to see.
 
