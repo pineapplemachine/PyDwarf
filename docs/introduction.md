@@ -7,6 +7,7 @@ The steps given here are specifically for Windows, but the procedure on other op
 - First thing, ensure that [Python 2.7](https://www.python.org/download/releases/2.7.8/) is installed on your computer. PyDwarf will not run with Python 3. If you have multiple version of python installed but would prefer to keep Python 3 as your default, substituting `python2` for `python` at the beginning of PyDwarf commands should work (e.g. `python2 manager.py`)
   - **On Windows:** there are lots of [helpful resources for windows](http://stackoverflow.com/questions/4583367/how-to-run-multiple-python-version-on-windows) available to guide you through other ways to achieve this
   - **On Mac:** some optional suggestions for managing python on macOS can be [found here](https://docs.python-guide.org/starting/install/osx/)
+  - when in doubt, you can check your python version with `python --version`
 
 ## Setting up DF Folders (input, output and backup)
 
