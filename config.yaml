@@ -1,12 +1,17 @@
 # Before running the manager you will need to change the
 # provided paths to better suit your particular setup.
-    
+
 # Dwarf Fortress file are read from here,
-input: 'E:/Sophie/Desktop/Files/Games/Dwarf Fortress/df_40_24_win_original/'
+# input: 'E:/Sophie/Desktop/Files/Games/Dwarf Fortress/df_40_24_win_original/'
+input: '/Applications/Lazy Mac Pack v0.47.05 dfhack-r1/DF_v0.47.05/'
+
 # Are outputted here,
-output: 'E:/Sophie/Desktop/Files/Games/Dwarf Fortress/df_40_24_win/'
+# output: 'E:/Sophie/Desktop/Files/Games/Dwarf Fortress/df_40_24_win/'
+output: '/Applications/Lazy Mac Pack v0.47.05 dfhack-r1/DF_v0.47.05_modded/'
+
 # And are backed up to here.
-backup: 'E:/Sophie/Desktop/Files/Games/Dwarf Fortress/df_40_24_win_backup/'
+# backup: 'E:/Sophie/Desktop/Files/Games/Dwarf Fortress/df_40_24_win_backup/'
+backup: '/Applications/Lazy Mac Pack v0.47.05 dfhack-r1/DF_v0.47.05_backup/'
 
 # Tells PyDwarf which files in the DF directory are important.
 # Set to auto for automatic detection.
@@ -32,5 +37,6 @@ scripts:
   # Run a script with arguments.
   - name: pineapple.deerappear
     args: {tile: "'d'", color: [6, 0, 1]}
+
   # Run all scripts under the umiman.smallthings namespace.
   - umiman.smallthings.*
