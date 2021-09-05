@@ -17,7 +17,7 @@ If you're interested in writing your own mods for PyDwarf or in understanding it
 ## Links & Documentation
 
 - [Download and install Python 2.7](https://www.python.org/downloads/release/python-279/)
-- [Series of Python tutorials](learnpythonthehardway.org/book/ex0.html)
+- [Series of Python tutorials](https://learnpythonthehardway.org/book/ex0.html)
 - [Tutorial for your first time using PyDwarf](docs/introduction.md)
 - [Tutorial for getting started modding with PyDwarf](docs/modding.md)
 - [Documentation for advanced configuring of PyDwarf](docs/config.md)
