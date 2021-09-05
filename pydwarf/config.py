@@ -33,7 +33,7 @@ class config(object):
         Objects store settings used by session objects to determine
         customizeable behavior.
     '''
-    
+
     def __init__(
         self,
         version=None, paths=None, hackversion=None, input=None, output=None, backup=None,
@@ -50,16 +50,16 @@ class config(object):
         self.packages = packages        # These packages are imported (probably because they contain PyDwarf scripts)
         self.verbose = verbose          # Log DEBUG messages to stdout if True, otherwise only INFO and above
         self.log = log                  # Log file goes here
-        
+
     @staticmethod
     def load(root=None, json='config.json', yaml='config.yaml', override='config.py', logoverridefailure=False, args=None):
         '''
             Load a config object given default configuration file paths and
             command line arguments.
         '''
-        
+
         conf = config()
-        
+
         # Load default config files with the precedence: python override > json > yaml
         if yaml:
             if root: yaml = os.path.join(root, yaml)
@@ -75,7 +75,7 @@ class config(object):
                 if logoverridefailure:
                     log.debug('Tried and failed to apply default override from module %s. (But that\'s okay! It\'s just a default.)' % override)
                     log.debug(traceback.format_exc())
-        
+
         # Handle --config argument
         if args and args.get('config'):
             argsconf = args['config']
@@ -90,34 +90,34 @@ class config(object):
                         conf.override(applyconf)
                 except:
                     log.exception('Failed to load configuration from %s.' % applyconf)
-                
+
         # Apply other command line arguments
         if args: conf.apply(args)
-        
+
         # Handle things like automatic version detection, package importing
         conf.setup()
-        
+
         # All done!
         return conf
-        
+
     def __str__(self):
         '''Get a string representation.'''
         return str(self.__dict__)
-        
+
     def __getitem__(self, attr):
         '''Get configuration argument.'''
         return self.__dict__[attr]
     def __setitem__(self, attr, value):
         '''Set configuration argument.'''
         self.__dict__[attr] = value
-        
+
     def __iter__(self):
         '''Iterate through configuration dict.'''
         return iter(self.__dict__)
     def iteritems(self):
         '''Iterate through configuration dict items.'''
         return self.__dict__.iteritems()
-        
+
     def __add__(self, other):
         '''Merge two configuration objects.'''
         return config.concat(self, other)
@@ -128,11 +128,11 @@ class config(object):
         '''Merge another configuration object into this one.'''
         self.apply(item)
         return self
-    
+
     def __and__(self, other):
         '''Get the intersection of two configuration objects.'''
         return config.intersect(self, other)
-        
+
     def json(self, path, *args, **kwargs):
         '''Load json configuration from a file.'''
         log.info('Applying json configuration from %s.' % path)
@@ -146,14 +146,14 @@ class config(object):
                 raise ValueError('Failed to load json from %s because of a misplaced backslash at %s. Perhaps you meant to use a forward slash instead?' % (path, strerror[17:]))
             else:
                 raise error
-                
+
     def yaml(self, path, *args, **kwargs):
         '''Load yaml configuration from a file.'''
         log.info('Applying yaml configuration from %s.' % path)
         with open(path, 'rb') as yamlfile:
             yamldata = yaml.load(yamlfile)
             return self.apply(yamldata, *args, **kwargs)
-            
+
     def override(self, module, *args, **kwargs):
         '''Load python configuration from a file.'''
         log.info('Applying python configuration from %s.' % module)
@@ -168,27 +168,27 @@ class config(object):
         except:
             log.exception('Failed to load override module %s because it has no export attribute.' % module)
         self.apply(export)
-    
+
     def apply(self, data, applynone=False):
         '''Apply another dict or config object's settings to this one.'''
         if data:
-            for key, value in data.iteritems(): 
+            for key, value in data.iteritems():
                 if applynone or value is not None: self.__dict__[key] = value
         return self
-        
+
     def copy(self):
         '''Copy the config object.'''
         copy = config()
         for key, value in self: copy[key] = value
         return copy
-        
+
     @staticmethod
     def concat(*configs):
         '''Merge two config objects.'''
         result = config()
         for conf in configs: result.apply(conf)
         return result
-        
+
     @staticmethod
     def intersect(*configs):
         '''Get the intersection of two configuration objects.'''
@@ -200,7 +200,7 @@ class config(object):
             else:
                 result[attr] = value
         return result
-        
+
     def setup(self, logger=True):
         '''
             Setup logger and handle 'auto' arguments after a configuration
@@ -216,7 +216,7 @@ class config(object):
         self.setuphackversion()
         # Import packages
         self.setuppackages()
-        
+
     def setuplogger(self):
         '''Internal: Setup the logger object.'''
         # Handler for console output
@@ -227,7 +227,7 @@ class config(object):
             if not os.path.exists(logdir): os.makedirs(logdir)
             logfilehandler.__init__(self.log) # Call the constructor given a filepath, now that we actually have one to give
             log.addHandler(logfilehandler)
-        
+
     def setuppackages(self):
         '''Internal: Import packages.'''
         self.importedpackages = []
@@ -237,15 +237,16 @@ class config(object):
                 self.importedpackages.append(importlib.import_module(package))
             except:
                 log.exception('Failed to import package %s.' % package)
-        
+
     def setuppaths(self):
         '''Internal: Handle 'auto' for --paths.'''
         if self.paths == 'auto' or self.paths == ['auto'] or self.paths == ('auto',):
             self.paths = auto_paths
-        
+
     def setupversion(self):
         '''Internal: Handle 'auto' for --version.'''
         # Handle automatic version detection
+        print("input is "+self.input+"\n")
         if self.version == 'auto':
             log.debug('Attempting to automatically detect Dwarf Fortress version.')
             self.version = detectversion(paths=(self.input, self.output))
@@ -257,27 +258,27 @@ class config(object):
             log.warning('No Dwarf Fortress version was specified. Scripts will be run regardless of their indicated compatibility.')
         else:
             log.info('Managing Dwarf Fortress version %s.' % self.version)
-        
+
     def setuphackversion(self):
         '''Internal: Handle 'auto' for --hackversion.''' # TODO: Probably doesn't work for all releases
         if self.hackversion == 'auto':
             log.debug('Attempting to automatically detect DFHack version.')
-            
+
             dfhackdir = findfile(name='hack', paths=(self.input, self.output))
             if dfhackdir is None:
                 log.error('Unable to detect DFHack directory.')
                 return
             else:
                 log.debug('Detected DFHack directory at %s.' % dfhackdir)
-                
+
             newspath = os.path.join(dfhackdir, 'NEWS')
             if os.path.isfile(newspath):
                 with open(newspath, 'rb') as news: self.hackversion = news.readline().strip()
-                
+
             if self.hackversion is None:
                 log.error('Unable to detect DFHack version.')
             else:
                 log.debug('Detected DFHack version %s.' % self.hackversion)
-                
+
         elif self.hackversion is None:
             log.warning('No DFHack version was specified.')
