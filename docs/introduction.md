@@ -11,7 +11,7 @@ The steps given here are specifically for Windows, but the procedure on other op
 
 ## Setting up DF Folders (input, output and backup)
 
-- In order to keep everything working as smoothly as possible, you should copy your Dwarf Fortress directory to another location before messing about with PyDwarf. Navigate to the directory containing your Dwarf Fortress folder, copy it, and paste it somewhere. It may be easiest to place the copy in the same location and append `_original` to the end of the directory's name. After doing this you might, for example, have a folder at `C:/df_40_24_win` and another at `C:/df_40_24_win_original`.
+- In order to keep everything working as smoothly as possible, you should copy your Dwarf Fortress directory to another location before messing about with PyDwarf. Navigate to the directory containing your Dwarf Fortress folder, copy it, and paste it somewhere. It may be easiest to place the copy in the same location and append `_original` to the end of the directory's name. After doing this you might, for example, have a folder at `C:/df_40_24_win` which will become the `output` folder and another at `C:/df_40_24_win_original` which will become the `input` folder.
 
 - Create a folder where Dwarf Fortress files can be backed up to. This helps to ensure that if something weird goes wrong with your original, inputted folder - and don't worry, it really shouldn't - then you'll still have a copy of your original files lying around somewhere. This could be something like the name of the `input` folder with `_backup` appended: `C:/df_40_24_win_backup`.
 
