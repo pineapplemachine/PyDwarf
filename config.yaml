@@ -37,8 +37,6 @@ scripts:
   # Run a script with arguments.
   - name: pineapple.deerappear
     args: {tile: "'d'", color: [6, 0, 1]}
-  # Run a script by partial name. (Automatically expands to pineapple.boneflux.)
-  # - pineapple.boneflux #DEBUG: WORKS!
-  - boneflux #DEBUG: DOESNT WORK
+
   # Run all scripts under the umiman.smallthings namespace.
   - umiman.smallthings.*

@@ -192,11 +192,3 @@ scripts:
   - name: pineapple.boneflux
     args: {bone_count: 4}
 ```
-
-The scripts `witty.restrictednobles` and `pineapple.flybears` would be run.
-
-``` yaml
-scripts:
-  - restrictednobles
-  - flybears
-```
