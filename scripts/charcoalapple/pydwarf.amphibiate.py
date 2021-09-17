@@ -24,15 +24,26 @@ default_entities="MOUNTAIN"
 )
 
 def amphibiate(df):
-    animal_peeps = df.allobj('CREATURE',re_id='.+_MAN')
+    # Prevents ANY creature from being aquatic ...
+    pydwarf.urist.getfn('pineapple.utils.objecttokens')(
+        df,
+        object_type = 'CREATURE',
+        token = 'AQUATIC',
+        add_to = None,
+        remove_from = '*'
+    )
+    
     #.each(lambda token: token.get('AQUATIC'))
-
+    animal_peeps = df.allobj('CREATURE',re_id='.+_MAN')
     #doesn't work because people derive aquatic from base creature
-    aquamen = animal_peeps.all('AQUATIC').each(lambda token: token.setvalue('AMPHIBIOUS'))
+    aquamen = animal_peeps.all('AQUATIC')
 
+    # aquamen = animal_peeps.all('AQUATIC').each(lambda token: token.setvalue('AMPHIBIOUS'))
     #animal_peeps = df.allobj('CREATURE',re_id='.+_MAN')
-
-
+    print "there are "
+    print len(animal_peeps), " animal folk "
+    print "but only"
+    print len(aquamen), "aquatic"
     """
     for peep in animal_peeps:
         print peep.get('NAME')
@@ -44,10 +55,12 @@ def amphibiate(df):
     for aq in animal_peeps:
         #aq.removeprop('AQUATIC')
         #if corresponding creature is aquatic, add amphibious?
-        print aq.get('NAME')
+        # print aq.get('NAME')
 
         try:
-            aq.get('APPLY_CREATURE_VARIATION:ANIMAL_PERSON').add('AMPHIBIOUS')
+            aq.add('AMPHIBIOUS')
+            # aq.remove('AQUATIC')
+            # aq.get('APPLY_CREATURE_VARIATION:ANIMAL_PERSON').add('AMPHIBIOUS')
         except:
             print 'this one, isnt an animal person'
 

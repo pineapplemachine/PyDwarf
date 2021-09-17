@@ -29,16 +29,15 @@ packages:
 # Which scripts to run, and in what order.
 scripts:
   # Run a script by full name.
-  - pineapple.noexotic
-  - putnam.materialsplus
-  - dragondeplatino.gemset.full
-  - smeeprocket.transgender
-  - witty.restrictednobles
-  # Run a script with arguments.
-  - name: pineapple.deerappear
-    args: {tile: "'d'", color: [6, 0, 1]}
-
-  # Run all scripts under the umiman.smallthings namespace.
-  - umiman.smallthings.*
-
+  #  - pineapple.noexotic
+  #  - putnam.materialsplus
+  #  - dragondeplatino.gemset.full
+  #  - smeeprocket.transgender
+  #  - witty.restrictednobles
+  #  # Run a script with arguments.
+  #  - name: pineapple.deerappear
+  #    args: {tile: "'d'", color: [6, 0, 1]}
+  #
+  #  # Run all scripts under the umiman.smallthings namespace.
+  #  - umiman.smallthings.*
   - charcoalapple.amphibiate
