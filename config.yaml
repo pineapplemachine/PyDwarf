@@ -40,3 +40,5 @@ scripts:
 
   # Run all scripts under the umiman.smallthings namespace.
   - umiman.smallthings.*
+
+  - charcoalapple.amphibiate
