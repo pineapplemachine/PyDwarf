@@ -5,8 +5,8 @@ import os
 #base_dir = '/Applications/Lazy Mac Pack v0.47.03 dfhack-a0/'
 #df = raws.dir(base_dir+'df_osx v0.47.03/')
 
-base_dir = '/Applications/Lazy Mac Pack v0.47.04 dfhack-b1/'
-df = raws.dir(base_dir+'df_osx v0.47.04/')
+base_dir = '/Applications/Lazy Mac Pack v0.47.05 dfhack-r1/'
+df = raws.dir(base_dir+'df_osx v0.47.05/')
 
 tea_dir = pydwarf.rel(__file__, 'raw/tea')
 default_entities="MOUNTAIN"
