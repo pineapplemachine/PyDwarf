@@ -69,12 +69,8 @@ def compatible(compatibility, version):
 
 def detectversion(*args, **kwargs):
     '''Internal: Detect Dwarf Fortress version.'''
-    # *args usually passes paths=(self.input,self.output) as a folder to search?
     path = helpers.findfile(name='release notes.txt', *args, **kwargs)
-    if path is None:
-        return None
-    else:
-        return versionfromreleasenotes(path)
+    return versionfromreleasenotes(path)
 
 def versionfromreleasenotes(path):
     '''Internal: Get Dwarf Fortress version given a path to its "release notes.txt" file.'''

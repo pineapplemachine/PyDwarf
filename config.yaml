@@ -1,17 +1,12 @@
 # Before running the manager you will need to change the
 # provided paths to better suit your particular setup.
-
+    
 # Dwarf Fortress file are read from here,
-# input: 'E:/Sophie/Desktop/Files/Games/Dwarf Fortress/df_40_24_win_original/'
-input: '/Applications/Lazy Mac Pack v0.47.05 dfhack-r1/DF_v0.47.05/'
-
+input: 'E:/Sophie/Desktop/Files/Games/Dwarf Fortress/df_40_24_win_original/'
 # Are outputted here,
-# output: 'E:/Sophie/Desktop/Files/Games/Dwarf Fortress/df_40_24_win/'
-output: '/Applications/Lazy Mac Pack v0.47.05 dfhack-r1/DF_v0.47.05_modded/'
-
+output: 'E:/Sophie/Desktop/Files/Games/Dwarf Fortress/df_40_24_win/'
 # And are backed up to here.
-# backup: 'E:/Sophie/Desktop/Files/Games/Dwarf Fortress/df_40_24_win_backup/'
-backup: '/Applications/Lazy Mac Pack v0.47.05 dfhack-r1/DF_v0.47.05_backup/'
+backup: 'E:/Sophie/Desktop/Files/Games/Dwarf Fortress/df_40_24_win_backup/'
 
 # Tells PyDwarf which files in the DF directory are important.
 # Set to auto for automatic detection.
@@ -29,15 +24,13 @@ packages:
 # Which scripts to run, and in what order.
 scripts:
   # Run a script by full name.
-  #  - pineapple.noexotic
-  #  - putnam.materialsplus
-  #  - dragondeplatino.gemset.full
-  #  - smeeprocket.transgender
-  #  - witty.restrictednobles
-  #  # Run a script with arguments.
-  #  - name: pineapple.deerappear
-  #    args: {tile: "'d'", color: [6, 0, 1]}
-  #
-  #  # Run all scripts under the umiman.smallthings namespace.
-  #  - umiman.smallthings.*
-  - charcoalapple.amphibiate
+  - pineapple.noexotic
+  - putnam.materialsplus
+  - dragondeplatino.gemset.full
+  - smeeprocket.transgender
+  - witty.restrictednobles
+  # Run a script with arguments.
+  - name: pineapple.deerappear
+    args: {tile: "'d'", color: [6, 0, 1]}
+  # Run all scripts under the umiman.smallthings namespace.
+  - umiman.smallthings.*
