@@ -1,0 +1,222 @@
+plant_tea_charcoalapple
+
+[OBJECT:PLANT]
+
+#copied largely from plant_new_trees
+
+[PLANT:TEA_BREWABLE] camellia sinensis
+	[NAME:brewable tea tree][NAME_PLURAL:brewable tea trees][ADJ:tea tree]
+	[USE_MATERIAL_TEMPLATE:STRUCTURAL:STRUCTURAL_PLANT_TEMPLATE]
+	[BASIC_MAT:LOCAL_PLANT_MAT:STRUCTURAL]
+	[PICKED_TILE:5][PICKED_COLOR:2:0:0] #green leaves?
+
+	[USE_MATERIAL_TEMPLATE:WOOD:WOOD_TEMPLATE]
+		[STATE_NAME:ALL_SOLID:tea wood]
+		[STATE_ADJ:ALL_SOLID:tea wood]
+		[PREFIX:NONE]
+	 	[SOLID_DENSITY:560] ESTIMATED - https://www.researchgate.net/figure/291818249_fig2_Fig-2-Parameter-estimates-a-crown-area-wood-density-branch-count-height-and-b
+	 	[STATE_COLOR:ALL_SOLID:TAUPE_PALE] *** not yet searched
+	------------------------------------------------------- - - - - - - - -- - leaf def here
+			--maybe replicated in tea leaf template?
+	[USE_MATERIAL_TEMPLATE:LEAF:LEAF_TEMPLATE]
+			[STATE_NAME_ADJ:ALL_SOLID:tea leaves]
+			[STATE_COLOR:ALL_SOLID:SEA_GREEN]
+			[DISPLAY_COLOR:2:0:0]
+			[EDIBLE_VERMIN][EDIBLE_RAW][EDIBLE_COOKED]
+			[STOCKPILE_PLANT_GROWTH]
+
+			[MATERIAL_REACTION_PRODUCT:MILL_PLANT_PART_POWDER:LOCAL_PLANT_MAT:POWDER]
+			[MATERIAL_REACTION_PRODUCT:DRINK_MAT:LOCAL_PLANT_MAT:DRINK]
+			[MATERIAL_REACTION_PRODUCT:INFUSION_MAT:LOCAL_PLANT_MAT:INFUSION]
+			//got to be a more elegant way to handle this
+			[REACTION_CLASS:BREWABLE_PLANT]
+			[MATERIAL_REACTION_PRODUCT:BREWABLE_PLANT_PART:LOCAL_PLANT_MAT:LEAVES]
+
+	[USE_MATERIAL_TEMPLATE:FLOWER:FLOWER_TEMPLATE]
+		[STATE_COLOR:ALL:WHITE]
+		[DISPLAY_COLOR:7:0:1]
+
+	[USE_MATERIAL_TEMPLATE:SEED:SEED_TEMPLATE]
+		[MATERIAL_VALUE:1]
+		[EDIBLE_VERMIN]
+	[SEED:tea seed:tea seeds:6:0:0:LOCAL_PLANT_MAT:SEED]
+
+	------------------------------------------------------- - - - - - - - -- - powder def here
+   [USE_MATERIAL_TEMPLATE:MILL:PLANT_POWDER_TEMPLATE]
+       [STATE_NAME_ADJ:ALL_SOLID:tea powder]
+       [STATE_COLOR:ALL_SOLID:GREEN]
+       [DISPLAY_COLOR:2:0:1]
+       [MATERIAL_VALUE:20]
+       [EDIBLE_RAW]
+
+       [STOCKPILE_PLANT_GROWTH]
+       [MATERIAL_REACTION_PRODUCT:DRINK_MAT:LOCAL_PLANT_MAT:DRINK]
+       [MATERIAL_REACTION_PRODUCT:INFUSION_MAT:LOCAL_PLANT_MAT:INFUSION]
+       //got to be a more elegant way to handle this
+       [REACTION_CLASS:BREWABLE_PLANT]
+       [MATERIAL_REACTION_PRODUCT:MILL_PLANT_PART_POWDER:LOCAL_PLANT_MAT:POWDER] --does this mean it can be re-milled?
+       [MATERIAL_REACTION_PRODUCT:BREWABLE_PLANT_PART:LOCAL_PLANT_MAT:POWDER]
+
+       [PREFIX:NONE]
+       !Add some powder_brewable tag here?
+   [MILL:LOCAL_PLANT_MAT:MILL]
+
+ 	//EVENTUALLY shouldn't be alcohol? need to add all tea products here
+ 	-------------------------------------------------------tea def here
+ 	  [USE_MATERIAL_TEMPLATE:DRINK:PLANT_ALCOHOL_TEMPLATE]
+ 	      [STATE_NAME_ADJ:ALL_SOLID:frozen tea]
+ 	      [STATE_NAME_ADJ:LIQUID:tea]
+ 	      [STATE_NAME_ADJ:GAS:boiling tea]
+				[STATE_COLOR:LIQUID:GREEN-YELLOW]
+ 	      [MATERIAL_VALUE:2]
+ 	      [DISPLAY_COLOR:2:0:0]
+ 	      [EDIBLE_RAW]
+ 	      [EDIBLE_COOKED]
+ 	      [PREFIX:NONE]
+		[DRINK:LOCAL_PLANT_MAT:DRINK]
+		[INFUSION:LOCAL_PLANT_MAT:INFUSION]
+
+	[TREE:LOCAL_PLANT_MAT:WOOD][TREE_TILE:5] -- - - - - - - - display tree here
+	[TRUNK_PERIOD:10] --how many years to grow 1 level
+	[HEAVY_BRANCH_DENSITY:25]
+	[BRANCH_DENSITY:50]
+	[MAX_TRUNK_HEIGHT:8] 10-20 ft tall, 15ft wide
+	[HEAVY_BRANCH_RADIUS:1]
+	[BRANCH_RADIUS:2] -- should be 2?
+	[TRUNK_BRANCHING:2] --should be 2?
+	[MAX_TRUNK_DIAMETER:1]
+	[TRUNK_WIDTH_PERIOD:200]
+	[ROOT_DENSITY:5]
+	[ROOT_RADIUS:3]
+	[STANDARD_TILE_NAMES]
+
+	[FREQUENCY:70] !boosted for fun, should be relatively low i'd guess
+	[CLUSTERSIZE:100]
+	[SPRING][SUMMER][AUTUMN][WINTER] !allows farm growth
+	[PREFSTRING:leaves]
+	[DRY]
+  [BIOME:ANY_TEMPERATE_FOREST]
+	[BIOME:ANY_TROPICAL]
+ #{to-do: verify this https://en.wikipedia.org/wiki/Camellia_sinensis}
+	[SAPLING]
+
+	*** variously processed leaves brewed for different kinds of tea
+	[GROWTH:LEAVES]
+		[GROWTH_NAME:tea leaf:tea leaves]
+		[GROWTH_ITEM:PLANT_GROWTH:NONE:LOCAL_PLANT_MAT:LEAF]
+		[GROWTH_DENSITY:1000]
+		[GROWTH_HOST_TILE:BRANCHES_AND_TWIGS]
+		[GROWTH_HOST_TILE:SAPLING]
+		[GROWTH_HOST_TILE:TRUNK] --added to increase ease of debugging, remove later
+		[GROWTH_DROPS_OFF] --added to increase ease of debugging, remove later
+		[GROWTH_PRINT:0:6:2:0:0:ALL:1]
+
+	[GROWTH:FLOWERS]
+		[GROWTH_NAME:tea flower:STP]
+		[GROWTH_ITEM:PLANT_GROWTH:NONE:LOCAL_PLANT_MAT:FLOWER]
+		[GROWTH_DENSITY:1000]
+		[GROWTH_HOST_TILE:BRANCHES_AND_TWIGS]
+		[GROWTH_TIMING:60000:119999] midspring - mid summer?
+		#Camellia sinensis usually will produce an abundant crop twice a year, once in the spring and again in the summer. Harvesting can be done every seven to 15 days during these periods, until the plant no longer produces new growth.
+		[GROWTH_PRINT:5:5:7:0:1:60000:119999:2]
+
+	[GROWTH:FRUIT]
+		[GROWTH_NAME:tea tree capsule:STP]
+		[GROWTH_ITEM:PLANT_GROWTH:NONE:LOCAL_PLANT_MAT:FRUIT]
+		[GROWTH_DENSITY:1000]
+		[GROWTH_HOST_TILE:BRANCHES_AND_TWIGS]
+		[GROWTH_TIMING:120000:200000] #year round?
+		[GROWTH_DROPS_OFF_NO_CLOUD]
+		[GROWTH_PRINT:'%':'%':6:0:0:120000:200000:3]
+		[GROWTH_HAS_SEED]
+
+--------------------------------------------------------------------------------SHRUB below
+[OBJECT:PLANT]
+
+[PLANT:TEA_SHRUB] camellia sinensis
+	[NAME:brewable tea shrub][NAME_PLURAL:brewable tea shrub][ADJ:tea tree]
+	[USE_MATERIAL_TEMPLATE:STRUCTURAL:STRUCTURAL_PLANT_TEMPLATE]
+	[BASIC_MAT:LOCAL_PLANT_MAT:STRUCTURAL]
+	[PICKED_TILE:006][PICKED_COLOR:2:0:0] #green leaves?
+
+
+	[USE_MATERIAL_TEMPLATE:LEAF:LEAF_TEMPLATE]
+		[STATE_COLOR:ALL:SEA_GREEN]
+		[DISPLAY_COLOR:2:0:0]
+		[STOCKPILE_PLANT_GROWTH]
+	[USE_MATERIAL_TEMPLATE:FLOWER:FLOWER_TEMPLATE]
+		[STATE_COLOR:ALL:WHITE]
+		[DISPLAY_COLOR:7:0:1]
+	[USE_MATERIAL_TEMPLATE:FRUIT:FRUIT_TEMPLATE]
+		[STATE_COLOR:ALL:MAHOGANY]
+		[DISPLAY_COLOR:6:0:0]
+	[USE_MATERIAL_TEMPLATE:SEED:SEED_TEMPLATE]
+		[MATERIAL_VALUE:1]
+		[EDIBLE_VERMIN]
+	[SEED:tea seed:tea seeds:6:0:0:LOCAL_PLANT_MAT:SEED]
+
+	[USE_MATERIAL_TEMPLATE:LEAF:TEA_LEAF_TEMPLATE] --implies stockpile
+      [STATE_NAME_ADJ:ALL_SOLID:tea leaves]
+      [STATE_COLOR:ALL_SOLID:SEA_GREEN]
+      [DISPLAY_COLOR:2:0:0]
+			--rest in template?
+  [USE_MATERIAL_TEMPLATE:MILL:TEA_POWDER_TEMPLATE]
+      [STATE_NAME_ADJ:ALL_SOLID:tea powder]
+      [STATE_COLOR:ALL_SOLID:GREEN]
+      [DISPLAY_COLOR:2:0:1]
+      [MATERIAL_VALUE:20]
+      [PREFIX:NONE]
+      !Add some powder_brewable tag here?
+  [MILL:LOCAL_PLANT_MAT:MILL]
+
+--replace this with BREWED_TEA_TEMPLATE in material_template_teatime
+--that's where syndrome definition can go
+
+  [USE_MATERIAL_TEMPLATE:DRINK:PLANT_ALCOHOL_TEMPLATE]
+      [STATE_NAME_ADJ:ALL_SOLID:frozen tea]
+      [STATE_NAME_ADJ:LIQUID:tea]
+      [STATE_NAME_ADJ:GAS:boiling tea]
+      [MATERIAL_VALUE:2]
+      [DISPLAY_COLOR:2:0:0]
+      [EDIBLE_RAW]
+      [EDIBLE_COOKED]
+      [PREFIX:NONE]
+
+	[FREQUENCY:70] !boosted for fun, should be relatively low i'd guess
+	[CLUSTERSIZE:100]
+	[SPRING][SUMMER][AUTUMN][WINTER] !allows farm growth
+	[PREFSTRING:leaves]
+	[DRY]
+  [BIOME:ANY_TEMPERATE_FOREST]
+	[BIOME:ANY_TROPICAL]
+ #{to-do: verify this https://en.wikipedia.org/wiki/Camellia_sinensis}
+
+
+	*** variously processed leaves brewed for different kinds of tea
+	[GROWTH:LEAVES]
+		[GROWTH_NAME:tea leaf:tea leaves]
+		[GROWTH_ITEM:PLANT_GROWTH:NONE:LOCAL_PLANT_MAT:LEAF]
+		[GROWTH_DENSITY:1000]
+		[GROWTH_HOST_TILE:BRANCHES_AND_TWIGS]
+		[GROWTH_HOST_TILE:SAPLING]
+		[GROWTH_DROPS_OFF]
+		[GROWTH_PRINT:0:6:2:0:0:ALL:1] --update this tile
+
+	[GROWTH:FLOWERS]
+		[GROWTH_NAME:tea flower:STP]
+		[GROWTH_ITEM:PLANT_GROWTH:NONE:LOCAL_PLANT_MAT:FLOWER]
+		[GROWTH_DENSITY:1000]
+		[GROWTH_HOST_TILE:BRANCHES_AND_TWIGS]
+		[GROWTH_TIMING:60000:119999] #October to December
+		[GROWTH_PRINT:5:5:7:0:1:60000:119999:2]
+		[GROWTH_HAS_SEED]
+
+	[GROWTH:FRUIT]
+		[GROWTH_NAME:tea tree capsule:STP]
+		[GROWTH_ITEM:PLANT_GROWTH:NONE:LOCAL_PLANT_MAT:FRUIT]
+		[GROWTH_DENSITY:1000]
+		[GROWTH_HOST_TILE:BRANCHES_AND_TWIGS]
+		[GROWTH_TIMING:120000:200000] #summer ish?
+		[GROWTH_DROPS_OFF_NO_CLOUD]
+		[GROWTH_PRINT:'%':'%':6:0:0:120000:200000:3]
+		[GROWTH_HAS_SEED]

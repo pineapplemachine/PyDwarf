@@ -1,0 +1,288 @@
+materialGENERATOR_template_teatime
+
+//OBJECT:MATERIAL_TEMPLATE//
+
+--switch plant leaves to GREEN_LEAF_TEMPLATE
+
+--intermediate products should use GLOB templates?
+
+--"dry processed tea" has its own material template?
+----including brewable
+
+//forbidden from brewing "fresh" leaves for now
+!MATERIAL_REACTION_PRODUCT:DRINK_MAT:LOCAL_PLANT_MAT:DRINK!
+!MATERIAL_REACTION_PRODUCT:INFUSION_MAT:LOCAL_PLANT_MAT:INFUSION!
+!REACTION_CLASS:BREWABLE_PLANT!
+!MATERIAL_REACTION_PRODUCT:BREWABLE_PLANT_PART:LOCAL_PLANT_MAT:LEAVES!
+
+{USE_MATERIAL_TEMPLATE:LEAF:TEA_LEAF_TEMPLATE}
+
+[MATERIAL_TEMPLATE:LEAF:TEA_LEAF_TEMPLATE]
+  [STOCKPILE_PLANT_GROWTH]
+  [GROWTH_DROPS_OFF]
+  --could make these edible again?
+  [MATERIAL_REACTION_PRODUCT:MILL_PLANT_PART_POWDER:LOCAL_PLANT_MAT:POWDER]
+
+	[STATE_COLOR:ALL_SOLID:SEA_GREEN]
+	[STATE_NAME:ALL_SOLID:tea leaf]
+	[STATE_ADJ:ALL_SOLID:tea leaf]
+	[STATE_COLOR:LIQUID:GREEN-YELLOW]
+	[STATE_NAME:LIQUID:leaf juice]
+	[STATE_ADJ:LIQUID:leaf juice]
+	[STATE_COLOR:GAS:BLACK]
+	[STATE_NAME:GAS:leaf vapor]
+	[STATE_ADJ:GAS:leaf vapor]
+	[DISPLAY_COLOR:2:0:0]
+	[MATERIAL_VALUE:1]
+
+	[SPEC_HEAT:800]
+	[IGNITE_POINT:10400]
+	[MELTING_POINT:NONE]
+	[BOILING_POINT:NONE]
+	[HEATDAM_POINT:10500]
+	[COLDDAM_POINT:9900]
+	[MAT_FIXED_TEMP:NONE]
+	[SOLID_DENSITY:600]
+	[LIQUID_DENSITY:NONE]
+	[MOLAR_MASS:NONE]
+	[IMPACT_YIELD:10000]
+	[IMPACT_FRACTURE:10000]
+	[IMPACT_STRAIN_AT_YIELD:50000]
+	[COMPRESSIVE_YIELD:10000]
+	[COMPRESSIVE_FRACTURE:10000]
+	[COMPRESSIVE_STRAIN_AT_YIELD:50000]
+	[TENSILE_YIELD:10000]
+	[TENSILE_FRACTURE:10000]
+	[TENSILE_STRAIN_AT_YIELD:50000]
+	[TORSION_YIELD:10000]
+	[TORSION_FRACTURE:10000]
+	[TORSION_STRAIN_AT_YIELD:50000]
+	[SHEAR_YIELD:20000] average value of some species found online
+	[SHEAR_FRACTURE:20000]
+	[SHEAR_STRAIN_AT_YIELD:50000]
+	[BENDING_YIELD:10000]
+	[BENDING_FRACTURE:10000]
+	[BENDING_STRAIN_AT_YIELD:50000]
+	[MAX_EDGE:0]
+	[ABSORPTION:100]
+	[ROTS]
+
+
+[MATERIAL_TEMPLATE:LEAF:GREEN_LEAF_TEMPLATE]
+  {default_tea_mat} --py script can expand
+  {TEAVEC:0,0,0,0,0} --replaced with long string by python
+  [STATE_NAME:ALL_SOLID:fresh tea leaf]
+  [STATE_ADJ:ALL_SOLID:fresh tea leaf]
+
+--these probably aren't needed, like these to be populated by teavec
+  {MRP:fixable} -> unshaped green
+  {MRP:witherable} -> withered leaves
+
+[MATERIAL_TEMPLATE:LEAF:FIXED_GREEN_LEAF_TEMPLATE] --unshaped
+    {default_tea_mat} --py script can expand
+    {TEAVEC:0,0,1,0,0} --replaced with long string by python
+    [STATE_NAME:ALL_SOLID:fixed green tea leaf]
+    [STATE_ADJ:ALL_SOLID:fixed green tea leaf]
+
+    [IS_GREEN]
+    [IS_FIXED]
+    {MRP:shapeable}->finished green tea
+
+[MATERIAL_TEMPLATE:LEAF:DRY_GREEN_TEA_TEMPLATE]   --GREEN TEA
+    {default_tea_mat} --py script can expand
+    {TEAVEC:0,0,1,1,0} --replaced with long string by python
+    [STATE_NAME:ALL_SOLID:green tea needles]
+    [STATE_ADJ:ALL_SOLID:green tea needles]
+
+    [IS_GREEN]
+    [IS_FIXED]
+    [IS_SHAPED]
+    {MRP:postable} -> powdered green tea
+    {MRP:brewable} -> green tea soup
+
+
+[MATERIAL_TEMPLATE:LEAF:WITHERED_LEAF_TEMPLATE]
+  {default_tea_mat} --py script can expand
+  {TEAVEC:1,0,0,0,0}
+  [STATE_COLOR:ALL_SOLID:GREEN-YELLOW]
+  [STATE_NAME:ALL_SOLID:withered tea leaf]
+  [STATE_ADJ:ALL_SOLID:withered tea leaf]
+
+  [IS_WITHERED]
+  {MRP:shapeable} -> white
+  {MRP:bruisable} -> pre-oolong
+  {MRP:fermentable} -> raw/ripe maocha
+
+[MATERIAL_TEMPLATE:LEAF:DRY_WHITE_TEA_TEMPLATE] --WHITE TEA
+  {default_tea_mat} --py script can expand
+  {TEAVEC:1,0,0,1,0}
+  [STATE_COLOR:ALL_SOLID:CREAM]
+  [STATE_NAME:ALL_SOLID:white tea needles]
+  [STATE_ADJ:ALL_SOLID:white tea needles]
+
+  [IS_WITHERED]
+  [IS_SHAPED]
+  {MRP:brewable}
+
+[MATERIAL_TEMPLATE:LEAF:FERMENTED_LEAF_TEMPLATE] -- raw maocha
+  {default_tea_mat} --py script can expand
+  {TEAVEC:1,0,2,0,0}
+  [STATE_COLOR:ALL_SOLID:OLIVE]
+  [STATE_NAME:ALL_SOLID:loose fermented tea]
+  [STATE_ADJ:ALL_SOLID:loose fermented tea]
+
+  [IS_WITHERED]
+  [IS_FERMENTED]
+  {MRP:compressable} -> raw cake
+
+[MATERIAL_TEMPLATE:LEAF:PILE_FERMENTED_LEAF_TEMPLATE] -- ripe maocha
+  {default_tea_mat} --py script can expand
+  {TEAVEC:1,0,3,0,0}
+  [STATE_COLOR:ALL_SOLID:TAUPE_DARK]
+  [STATE_NAME:ALL_SOLID:loose pile-fermented tea]
+  [STATE_ADJ:ALL_SOLID:loose pile-fermented tea]
+
+  [IS_WITHERED]
+  [IS_FERMENTED]
+  {MRP:compressable} -> raw cake
+
+[MATERIAL_TEMPLATE:LEAF:DRY_FERMENTED_TEA_CAKE_TEMPLATE] ---RAW TEA CAKE
+  {default_tea_mat} --py script can expand
+  {TEAVEC:1,0,2,3,0}
+  [STATE_COLOR:ALL_SOLID:DARK_OLIVE]
+  [STATE_NAME:ALL_SOLID:fermented tea cake]
+  [STATE_ADJ:ALL_SOLID:lfermented tea cake]
+
+  [IS_WITHERED]
+  [IS_FERMENTED]
+  [IS_COMPRESSED]
+  {MRP:brewable}
+
+[MATERIAL_TEMPLATE:LEAF:DRY_PILE_FERMENTED_TEA_CAKE_TEMPLATE] ---RIPE TEA CAKE
+  {default_tea_mat} --py script can expand
+  {TEAVEC:1,0,3,3,0}
+  [STATE_COLOR:ALL_SOLID:TAUPE_DARK]
+  [STATE_NAME:ALL_SOLID:pile-fermented tea cake]
+  [STATE_ADJ:ALL_SOLID:pile-fermented tea cake]
+
+  [IS_WITHERED]
+  [IS_FERMENTED]
+  [IS_COMPRESSED]
+  {MRP:brewable}
+
+
+[MATERIAL_TEMPLATE:LEAF:WITHERED_BRUISED_LEAF_TEMPLATE] --pre red & oolong
+    {default_tea_mat}--py script can expand
+    {TEAVEC:1,1,0,0,0}
+    [STATE_COLOR:ALL_SOLID:FERN_GREEN]
+    [STATE_NAME:ALL_SOLID:withered, bruised tea leaf]
+    [STATE_ADJ:ALL_SOLID:withered, bruised tea leaf]\
+    {MRP:heavy_bruisable} -> pre-red
+    {MRP:fixable} -> unshaped oolong
+
+[MATERIAL_TEMPLATE:LEAF:WITHERED_BRUISED_FIXED_LEAF_TEMPLATE] --pre-oolong
+      {default_tea_mat} --py script can expand
+      {TEAVEC:1,1,1,0,0}
+      [STATE_COLOR:ALL_SOLID:FERN_GREEN]
+      [STATE_NAME:ALL_SOLID:withered, bruised tea leaf]
+      [STATE_ADJ:ALL_SOLID:withered, bruised tea leaf]
+
+      {MRP:shapeable} -> oolong, ball-oolong
+      {MRP:rollable}
+
+                              //OOLONG:TWISTED_TEA_MAT//
+                              //TWISTSHAPE:NONE:OOLONG:NONE//
+[MATERIAL_TEMPLATE:LEAF:DRY_OOLONG_TEA_TEMPLATE]  --TWISTED OOLONG
+      {default_tea_mat} --py script can expand
+      {TEAVEC:1,1,1,1,0}
+      [STATE_COLOR:ALL_SOLID:AUBURN]
+      [STATE_NAME:ALL_SOLID:oolong tea strips]
+      [STATE_ADJ:ALL_SOLID:oolong tea strips]
+
+      {MRP:brewable}
+      {MRP:roastable} -> roasted oolong
+
+                                //OOLONG:TWISTED_ROASTED_TEA_MAT//
+                                //{TWISTSHAPE}:NONE:OOLONG:ROASTED//
+[MATERIAL_TEMPLATE:LEAF:DRY_ROAST_OOLONG_TEA_TEMPLATE]   --ROASTED OOLONG
+      {TEAVEC:1,1,1,1,2}
+      {default_tea_mat} --py script can expand
+      [STATE_COLOR:ALL_SOLID:DARK_SCARLET]
+      [STATE_NAME:ALL_SOLID:roasted oolong tea strips]
+      [STATE_ADJ:ALL_SOLID:roasted oolong tea strips]
+
+      {MRP:brewable} -> oolong
+
+[MATERIAL_TEMPLATE:LEAF:HEAVILY_BRUISED_LEAF_TEMPLATE] -pre red
+    {TEAVEC:1,2,0,0,0}
+    {default_tea_mat} --py script can expand
+    [STATE_COLOR:ALL_SOLID:BURNT_UMBER]
+    [STATE_NAME:ALL_SOLID:withered, bruised tea leaf]
+    [STATE_ADJ:ALL_SOLID:withered, bruised tea leaf]
+
+    {MRP:shapeable} -> red
+
+[MATERIAL_TEMPLATE:LEAF:DRY_RED_TEA_TEMPLATE] --RED TEA
+    {TEAVEC:1,2,0,1,0}
+    {default_tea_mat}--py script can expand
+    [STATE_COLOR:ALL_SOLID:BURNT_UMBER]
+    [STATE_NAME:ALL_SOLID: red tea curls]
+    [STATE_ADJ:ALL_SOLID: red tea curls]
+    {MRP:brewable}
+
+
+
+[MATERIAL_TEMPLATE:TEA_POWDER_TEMPLATE]
+
+  [STOCKPILE_PLANT_GROWTH]
+  [MATERIAL_REACTION_PRODUCT:DRINK_MAT:LOCAL_PLANT_MAT:DRINK]
+  [MATERIAL_REACTION_PRODUCT:INFUSION_MAT:LOCAL_PLANT_MAT:INFUSION]
+  [REACTION_CLASS:BREWABLE_PLANT]
+  [MATERIAL_REACTION_PRODUCT:MILL_PLANT_PART_POWDER:LOCAL_PLANT_MAT:POWDER] --does this mean it can be re-milled?
+  [MATERIAL_REACTION_PRODUCT:BREWABLE_PLANT_PART:LOCAL_PLANT_MAT:POWDER]
+
+  	[STATE_COLOR:ALL_SOLID:GREEN]
+  	[STATE_NAME:ALL_SOLID:tea powder]
+  	[STATE_ADJ:ALL_SOLID:tea powder]
+  	[STATE_COLOR:LIQUID:YELLOW_GREEN]
+  	[STATE_NAME:LIQUID:none]
+  	[STATE_ADJ:LIQUID:none]
+  	[STATE_COLOR:GAS:BLACK]
+  	[STATE_NAME:GAS:none]
+  	[STATE_ADJ:GAS:none]
+  	[DISPLAY_COLOR:7:0:1]
+  	[MATERIAL_VALUE:1]
+  	[SPEC_HEAT:800]
+  	[IGNITE_POINT:10400]
+  	[MELTING_POINT:NONE]
+  	[BOILING_POINT:NONE]
+  	[HEATDAM_POINT:10500]
+  	[COLDDAM_POINT:9900]
+  	[MAT_FIXED_TEMP:NONE]
+  	[SOLID_DENSITY:600]
+  	[LIQUID_DENSITY:NONE]
+  	[MOLAR_MASS:NONE]
+  	[IMPACT_YIELD:10000]
+  	[IMPACT_FRACTURE:10000]
+  	[IMPACT_STRAIN_AT_YIELD:1000]
+  	[COMPRESSIVE_YIELD:10000]
+  	[COMPRESSIVE_FRACTURE:10000]
+  	[COMPRESSIVE_STRAIN_AT_YIELD:1000]
+  	[TENSILE_YIELD:10000]
+  	[TENSILE_FRACTURE:10000]
+  	[TENSILE_STRAIN_AT_YIELD:1000]
+  	[TORSION_YIELD:10000]
+  	[TORSION_FRACTURE:10000]
+  	[TORSION_STRAIN_AT_YIELD:1000]
+  	[SHEAR_YIELD:10000] no data
+  	[SHEAR_FRACTURE:10000]
+  	[SHEAR_STRAIN_AT_YIELD:1000]
+  	[BENDING_YIELD:10000]
+  	[BENDING_FRACTURE:10000]
+  	[BENDING_STRAIN_AT_YIELD:1000]
+  	[MAX_EDGE:0]
+  	[ABSORPTION:100]
+  	[POWDER_MISC_PLANT]
+
+
+  [MATERIAL_TEMPLATE:FAKE_TEMPLATE] --used as an endcap for parsing files
